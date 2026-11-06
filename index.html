@@ -635,6 +635,17 @@ header{z-index:50;isolation:isolate}
 </section>
 <section id="more" class="hidden">
 <div class="card more-intro"><h2>その他の防災メニュー</h2><p class="notice">必要な備えを、目的から選べます。</p></div>
+<div class="card" id="releaseCandidatePanel">
+<h2>リリース候補版の総合診断</h2>
+<p class="notice">安全・避難・備蓄・記録・データ保護などの主要機能を、自動検査します。登録済みの記録は書き換えません。</p>
+<button class="primary" type="button" style="width:100%;min-height:48px" onclick="checkReleaseCandidate()">主要機能をまとめて診断する</button>
+<div id="releaseCandidateResults" role="status" aria-live="polite"></div>
+<details class="more-fold" style="margin-top:9px"><summary>今回のリリース対象と今後の機能 <span aria-hidden="true">⌄</span></summary>
+<div class="more-fold-body">
+<p class="notice">現在のリリース候補：お片付け・住まいの安全・備蓄管理・避難計画・災害時モード・家族とペットのカルテ・停電断水シミュレーター・バックアップ・オフライン利用。</p>
+<p class="notice">今後の開発対象：ユーザー投稿型の防災用品レビュー、気象庁データを用いた天気、全国の防災イベント、防災士試験対策など。利用できない機能を完成済みとは表示しません。</p>
+</div></details>
+</div>
 <div class="card" id="releaseReadinessPanel">
 <h2>✅ リリース前チェック</h2>
 <p class="notice">保存・通信・オフライン起動の準備・バックアップ機能をまとめて確認します。既存の記録データは変更しません。</p>
@@ -1718,6 +1729,33 @@ function openFullBackupFromReadiness(){
  while(parent&&parent!==document.body){if(parent.tagName==='DETAILS')parent.open=true;parent=parent.parentElement;}
  target.scrollIntoView({block:'center',behavior:'smooth'});
  const status=document.getElementById('allBackupStatus');if(status)status.textContent='復元前に、必ず最新の全データをバックアップして保存してください。';
+}
+function checkReleaseCandidate(){
+ const box=document.getElementById('releaseCandidateResults');if(!box)return;
+ box.replaceChildren();
+ const results=[];
+ const add=(title,check,detail)=>{try{const ok=!!check();results.push({title,ok,detail:ok?'正常に確認できました':detail})}catch(e){results.push({title,ok:false,detail})}};
+ add('画面遷移',()=>['home','supplies','tidy','evacuation','emergency','homeSafety','family','outage','readiness'].every(validPage),'必要な画面を確認できません');
+ add('住まいの安全と優先チェック',()=>Array.isArray(criticalSafetyIds)&&criticalSafetyIds.length>0&&typeof renderHomeNextThree==='function'&&!!document.getElementById('homeNextThreeActions'),'優先対策の画面を確認してください');
+ add('備蓄の保存形式',()=>Array.isArray(supplies)&&supplies.every(x=>x&&typeof x==='object'&&typeof x.name==='string'),'登録済み備蓄の形式を確認してください');
+ add('避難計画と災害時モード',()=>!!document.getElementById('emergencyPlan')&&Array.isArray(evacuationFields)&&evacuationFields.length>=3&&typeof readEvacuationPlan()==='object','避難計画の保存形式を確認してください');
+ add('家族・ペットのカルテ',()=>Array.isArray(loadFamilyProfiles())&&!!document.getElementById('familyRecords'),'カルテの保存と表示を確認してください');
+ add('停電・断水の試算',()=>!!document.getElementById('outageResult')&&!!document.getElementById('outageToilet')&&typeof renderOutageSimulation==='function','シミュレーターを確認してください');
+ add('バックアップと復元の安全確認',()=>{
+  const sample={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:{[key]:'[]'}};
+  return validateFullBackupObject(JSON.parse(JSON.stringify(sample))).keys.includes(key)&&typeof dryRunFullRestore==='function'&&typeof restoreOriginalSnapshot==='function';
+ },'バックアップの形式検証に問題があります');
+ add('保存データのバックアップ適合性',()=>{
+  const data={};allBackupKeys.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)data[k]=v});
+  if(!Object.keys(data).length)return true;
+  const sample={format:'toto-full-backup-v1',data};
+  return validateFullBackupObject(sample).keys.length===Object.keys(data).length;
+ },'保存データの総合点検から、記録の形式を確認してください');
+ add('オフライン対応の入口',()=>!!document.getElementById('offlineStartupStatus')&&'serviceWorker' in navigator,'機内モードでの実際の起動は別途確認が必要です');
+ const summary=document.createElement('p');summary.className='notice';summary.style.fontWeight='800';
+ summary.textContent='自動診断：'+results.filter(x=>x.ok).length+'/'+results.length+'項目';box.append(summary);
+ results.forEach(row=>{const p=document.createElement('p');p.className='notice';p.style.margin='8px 0';p.textContent=(row.ok?'✅ ':'⚠️ ')+row.title+'：'+row.detail;box.append(p)});
+ const note=document.createElement('p');note.className='notice';note.textContent='この診断は画面・関数・データ形式の自動検査です。実機での復元、オフライン起動、端末間移行、避難情報の正確性を保証しません。';box.append(note);
 }
 async function checkReleaseReadiness(){
  const output=document.getElementById('releaseReadinessResults');
