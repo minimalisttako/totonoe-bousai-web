@@ -413,6 +413,41 @@ header{z-index:50;isolation:isolate}
 .page-mascot-friends .approved-art.bird{background-position:right center}
 #emergency .emergency-tako-message .emergency-mascot-image{position:relative!important;display:block;flex:0 0 49px;width:49px!important;height:49px!important;border-radius:12px;background-image:var(--mascot-approved-sheet);background-size:300% 100%;background-position:left center;background-repeat:no-repeat}
 @media(max-width:370px){#home .game-mascot-scene{gap:4px}#home .game-mascot-scene .approved-art{flex-basis:70px;width:70px!important;height:70px!important}}
+
+/* UI finishing pass: readable compact guidance, safe touch targets, stable mobile layout. */
+#home .game-home-stage{padding:17px 16px 15px}
+#home .game-home-stage h2{font-size:clamp(19px,5.4vw,23px);line-height:1.38;letter-spacing:0}
+#home .game-home-lead{font-size:13px;line-height:1.65}
+#home .game-home-tag{font-size:11px}
+#home .game-mascot-scene{gap:8px;min-height:90px}
+#home .game-mascot-scene .approved-art{border-radius:15px;box-shadow:0 2px 6px #345a5915}
+#home .game-dialogue{border-color:#c9e0e9;background:#fff;box-shadow:0 2px 8px #3861770c;padding:11px 12px;font-size:13px;line-height:1.6}
+#home .game-dialogue strong{display:inline-block;margin-right:5px}
+#home .game-support-comments{gap:8px;padding-top:10px}
+#home .game-support-comments p{font-size:12px;line-height:1.6;color:#476875}
+#home .game-support-comments #gameTriceraNote{color:#486958}
+#home .game-progress-snapshot .game-snapshot-item{padding:9px 7px;min-height:56px}
+#home .game-snapshot-label{line-height:1.45}
+#home .game-next-action{min-height:48px;line-height:1.55;background:#e9f6fa;border-color:#9ac8d6}
+#home .home-quick-links button{min-height:60px;font-size:13px;line-height:1.4}
+.page-mascot-help{min-height:88px;gap:11px;padding:12px;margin-bottom:14px}
+.page-mascot-words strong{font-size:12px}
+.page-mascot-words p{font-size:13px;line-height:1.6}
+.page-mascot-words .guide-support{font-size:12px;line-height:1.55}
+.page-mascot-friends{flex-shrink:0}
+#emergency .emergency-tako-message{min-height:65px;align-items:center}
+#emergency .emergency-tako-message p{font-size:14px;line-height:1.6}
+#home .game-next-action:focus-visible,#home .home-quick-links button:focus-visible,main>section .page-navigation button:focus-visible{outline:3px solid #3678a0;outline-offset:2px}
+@media(max-width:390px){
+ #home .game-home-stage{padding:15px 12px 14px}
+ #home .game-mascot-scene{gap:5px}
+ #home .game-support-comments p{font-size:12px}
+ .page-mascot-help{gap:9px;padding:11px}
+ .page-mascot-words p{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){
+ #home .game-next-action,#home .home-quick-links button{transition:none;animation:none}
+}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
