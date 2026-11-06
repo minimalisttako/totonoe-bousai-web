@@ -687,6 +687,12 @@ header{z-index:50;isolation:isolate}
 <button class="secondary" type="button" style="width:100%;min-height:48px" onclick="copyReleaseQaReport()">検証結果をコピー</button>
 <button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="resetReleaseQa()">検証結果をリセット（2回押して確定）</button>
 <p id="releaseQaActionStatus" class="notice" role="status" aria-live="polite"></p>
+<div class="card" style="margin-top:12px">
+<h3>自動スモークテスト</h3>
+<p class="notice">画面の配置・重要な機能の接続・バックアップ形式・オフライン用ファイルを検査します。登録済みの防災記録は変更しません。実機操作試験の代わりにはなりません。</p>
+<button class="secondary" type="button" id="releaseSmokeButton" style="width:100%;min-height:48px" onclick="runReleaseSmokeTests()">主要機能をまとめて自動点検する</button>
+<div id="releaseSmokeResults" class="notice" role="status" aria-live="polite"></div>
+</div>
 </div></details>
 <details class="more-fold" id="releaseScopeFold"><summary>初回リリースの対象と今後の機能 <span aria-hidden="true">⌄</span></summary>
 <div class="more-fold-body">
@@ -983,6 +989,47 @@ async function runAppIntegrityAudit(){
  const summary=document.createElement('p');summary.className='notice';summary.textContent=(pass===rows.length?'✅ ':'⚠️ ')+'自動整合性チェック：'+pass+'/'+rows.length+'項目';host.append(summary);
  for(const row of rows){const item=document.createElement('p');item.className='notice';item.textContent=(row.ok?'✅ ':'⚠️ ')+row.name+'：'+row.description;host.append(item);}
  const note=document.createElement('p');note.className='notice';note.textContent='コード・画面構成の自動検査です。実機の操作性、バックアップからの実復元、災害時の動作を保証するものではありません。';host.append(note);
+}
+async function runReleaseSmokeTests(){
+ const output=document.getElementById('releaseSmokeResults'),button=document.getElementById('releaseSmokeButton');
+ if(!output)return;
+ output.replaceChildren();if(button)button.disabled=true;
+ const rows=[];
+ const add=(label,fn)=>{try{const result=fn();rows.push({label,ok:!!result,detail:result?'':'必要な画面・機能を確認できません'})}catch(e){rows.push({label,ok:false,detail:'自動確認を完了できませんでした'})}};
+ const hasPage=id=>!!document.querySelector('main>section#'+id);
+ add('ホーム・防災学習・備蓄・片付け',()=>['home','learn','supplies','tidy'].every(hasPage));
+ add('安全点検・避難計画・災害時モード',()=>['homeSafety','evacuation','emergency'].every(hasPage));
+ add('家族カルテ・停電断水・準備状況',()=>['family','outage','readiness'].every(hasPage));
+ add('保存した記録の読み取り',()=>{for(const k of allBackupKeys){const v=localStorage.getItem(k);if(v!==null&&typeof v!=='string')return false}return true});
+ add('バックアップ形式の正常判定',()=>{
+  const sample={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:{[key]:'[]'}};
+  return validateFullBackupObject(JSON.parse(JSON.stringify(sample))).keys.includes(key);
+ });
+ add('不正なバックアップの拒否',()=>{
+  const bad=[{format:'wrong',data:{[key]:'[]'}},{format:'toto-full-backup-v1',data:{[key]:'not-json'}},{format:'toto-full-backup-v1',data:{'untrusted-record':'[]'}}];
+  return bad.every(item=>{try{validateFullBackupObject(item);return false}catch(e){return true}});
+ });
+ add('避難・安全・備蓄の集約',()=>{
+  const items=getReadinessOverview();
+  return ['homeSafety','evacuation','supplies'].every(id=>items.some(x=>x.page===id));
+ });
+ add('主要メニューの操作先',()=>['home','learn','supplies','tidy','more'].every(id=>!!document.querySelector('nav button[data-page="'+id+'"]')));
+ try{
+  const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
+  const cache=('caches' in window)?await caches.open('totonoe-offline-shell-v8'):null;
+  const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
+  const complete=!!registration&&!!cache&&(await Promise.all(paths.map(async p=>{
+   const response=await cache.match(new URL(p,registration.scope).href);return !!(response&&response.ok);
+  }))).every(Boolean);
+  rows.push({label:'オフライン用ファイル9件',ok:complete,detail:complete?'':'通信できる状態でアプリを開き直し、再確認してください'});
+ }catch(e){rows.push({label:'オフライン用ファイル9件',ok:false,detail:'オフライン保存状況を取得できません'})}
+ const good=rows.filter(x=>x.ok).length;
+ const title=document.createElement('p');title.style.fontWeight='700';
+ title.textContent='自動点検：'+good+'/'+rows.length+'項目'+(good===rows.length?'（自動点検はすべて正常）':'（確認が必要な項目あり）');
+ output.append(title);
+ rows.forEach(x=>{const line=document.createElement('p');line.textContent=(x.ok?'✅ ':'⚠️ ')+x.label+(x.detail?'：'+x.detail:'');output.append(line)});
+ const note=document.createElement('p');note.textContent='この自動点検は機能の接続や保存形式などの確認です。Android実機・画面の見やすさ・復元操作の実証は、上の実機検証表で別途記録してください。';output.append(note);
+ if(button)button.disabled=false;
 }
 async function copyReleaseQaReport(){
  const data=readReleaseQa();
