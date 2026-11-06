@@ -492,6 +492,7 @@ header{z-index:50;isolation:isolate}
 #firstTimeGuideFold .more-menu-button{min-height:53px;touch-action:manipulation}
 #restoreRehearsalStatus{overflow-wrap:anywhere}
 #releaseQaFold .release-qa-row{display:flex;align-items:flex-start;gap:12px;padding:12px 2px;border-bottom:1px solid #d9e6e6;min-height:56px}
+#releaseQaFold .release-qa-select{min-width:104px;min-height:44px;max-width:135px;border:1px solid #aebfc1;border-radius:8px;background:#fff;color:#294d4d;font-size:13px;padding:6px;flex-shrink:0}
 #releaseQaFold .release-qa-row input{margin-top:4px;width:21px;height:21px;flex-shrink:0;accent-color:#347b69}
 #releaseQaFold .release-qa-row span{display:grid;gap:4px;min-width:0}
 #releaseQaFold .release-qa-row strong{font-size:14px}
@@ -677,7 +678,7 @@ header{z-index:50;isolation:isolate}
 <button class="more-menu-button" type="button" onclick="show('readiness')"><strong>⑤ わが家の準備状況を見直す</strong><span>記録をまとめて確認 ↗</span></button>
 </div></details>
 <details class="more-fold" id="releaseQaFold"><summary>リリース前の実機検証表 <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
-<p class="notice">実際に確認できた項目だけを記録してください。判定はこの端末内に保存されます。別の機種のテストを自動で完了扱いにはしません。</p>
+<p class="notice">実際に「未確認・OK・要修正」を実際の検証結果に合わせて選んでください。判定はこの端末内に保存され、別の端末は自動でOKになりません。</p>
 <p id="releaseQaStatus" class="notice" role="status" aria-live="polite"></p>
 <div id="releaseQaItems"></div>
 <details class="more-fold" style="margin:12px 0"><summary>アプリの自動整合性チェック <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
@@ -685,7 +686,7 @@ header{z-index:50;isolation:isolate}
 <button class="secondary" type="button" style="width:100%;min-height:48px" onclick="runAppIntegrityAudit()">自動整合性チェックを実行</button>
 <div id="appIntegrityAuditResults" role="status" aria-live="polite"></div></div></details>
 <button class="secondary" type="button" style="width:100%;min-height:48px" onclick="copyReleaseQaReport()">検証結果をコピー</button>
-<button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="resetReleaseQa()">検証結果をリセット（2回押して確定）</button>
+<button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="resetReleaseQa()">検証結果をすべて未確認に戻す（2回押して確定）</button>
 <p id="releaseQaActionStatus" class="notice" role="status" aria-live="polite"></p>
 <details class="compact-filter"><summary>検証結果を手動でコピーする <span aria-hidden="true">⌄</span></summary><div class="compact-filter-body">
 <textarea class="field" id="releaseQaExportText" rows="8" readonly placeholder="「検証結果をコピー」を押すとここに表示します。"></textarea>
@@ -938,124 +939,40 @@ let armedReleaseQaReset=false;
 function readReleaseQa(){
  try{const v=JSON.parse(localStorage.getItem(releaseQaKey)||'{}');return v&&typeof v==='object'&&!Array.isArray(v)?v:{}}catch(e){return {}}
 }
+function releaseQaState(value){return value===true||value==='ok'?'ok':value==='problem'?'problem':'pending'}
 function renderReleaseQa(){
  const box=document.getElementById('releaseQaItems'),status=document.getElementById('releaseQaStatus');if(!box||!status)return;
  const data=readReleaseQa();box.replaceChildren();
- const done=releaseQaItems.filter(([id])=>qaIsCurrent(data[id])).length;
- const old=releaseQaItems.filter(([id])=>qaIsOld(data[id])).length;
- status.textContent='最新版の実機確認：'+done+'/'+releaseQaItems.length+'項目'+(old?' ／ 旧版の確認・再点検が必要：'+old+'項目':'')+'。未確認の項目は完了として扱いません。';
+ const done=releaseQaItems.filter(([id])=>releaseQaState(data[id])==='ok').length;
+ const problems=releaseQaItems.filter(([id])=>releaseQaState(data[id])==='problem').length;
+ const pending=releaseQaItems.length-done-problems;
+ status.textContent='実機検証：OK '+done+'件 ／ 要修正 '+problems+'件 ／ 未確認 '+pending+'件。'+(problems?' 要修正の項目を解消するまでリリース判断は保留してください。':pending?' 未確認の項目を実機で確認してください。':'全項目の確認記録があります。最終的なリリース判断は別途必要です。');
  for(const [id,title,details] of releaseQaItems){
   const label=document.createElement('label');label.className='release-qa-row';
-  const input=document.createElement('input');input.type='checkbox';input.checked=qaIsCurrent(data[id]);
   const content=document.createElement('span');
   const strong=document.createElement('strong');strong.textContent=title;
-  const small=document.createElement('small');small.textContent=details+(qaIsOld(data[id])?' ／ 旧版で確認済み・最新版で再点検':'');
-  content.append(strong,small);label.append(input,content);
-  input.onchange=()=>{
-   const next=readReleaseQa();next[id]=input.checked?{checked:true,build:releaseQaBuild,checkedAt:new Date().toISOString()}:false;
-   try{localStorage.setItem(releaseQaKey,JSON.stringify(next));armedReleaseQaReset=false;renderReleaseQa()}
-   catch(e){input.checked=!input.checked;document.getElementById('releaseQaActionStatus').textContent='確認状態を保存できませんでした。'}
-  };
-  box.append(label);
- }
-}
-async function runAppIntegrityAudit(){
- const host=document.getElementById('appIntegrityAuditResults');if(!host)return;
- host.replaceChildren();
- const rows=[];
- const add=(name,ok,description)=>rows.push({name,ok,description});
- const requiredPages=['home','learn','select','set','stock','supplies','tidy','more','homeSafety','evacuation','emergency','diagnosis','pouch','seasonalCheck','outage','family','readiness'];
- const missing=requiredPages.filter(id=>!document.getElementById(id)||!document.querySelector('main>section#'+id));
- add('主要画面',missing.length===0,missing.length?'不足：'+missing.join('、'):requiredPages.length+'画面を確認');
- const visible=new Set(Array.from(document.querySelectorAll('main>section:not(.hidden)')).map(el=>el.id));
- add('画面の表示状態',visible.size===1,visible.size===1?'表示中：'+Array.from(visible)[0]:'表示中の画面が'+visible.size+'件あります');
- const routes=Array.from(document.querySelectorAll('button[onclick]')).flatMap(el=>{
-  const call=el.getAttribute('onclick')||'',match=call.match(/\\bshow\\(['"]([^'"]+)['"]\\)/);
-  return match?[match[1]]:[];
- });
- const invalidRoutes=Array.from(new Set(routes.filter(id=>!validPage(id))));
- add('画面移動リンク',invalidRoutes.length===0,invalidRoutes.length?'未登録の移動先：'+invalidRoutes.join('、'):routes.length+'件の移動先が存在');
- const keyInputs=['allBackupText','calcPeople','calcDays','evPlace','evContacts','outagePeople','outageDays','familyType','familyCount'];
- const absent=keyInputs.filter(id=>!document.getElementById(id));
- add('重要な入力欄',absent.length===0,absent.length?'不足：'+absent.join('、'):keyInputs.length+'件を確認');
- let saved=0,invalid=0;
- try{
-  const records={};
-  for(const k of allBackupKeys){const v=localStorage.getItem(k);if(v!==null){saved++;records[k]=v;}}
-  if(saved){try{validateFullBackupObject({format:'toto-full-backup-v1',data:records});}catch(e){invalid=1;}}
-  add('保存済みデータの形式',invalid===0,saved?saved+'種類を検査'+(invalid?'（形式に不整合）':''):'未登録のため検証対象なし');
- }catch(e){add('保存済みデータの形式',false,'保存データの読み取りに失敗');}
- const https=location.protocol==='https:'&&window.isSecureContext;
- add('安全な接続',https,https?'HTTPSで動作中':'HTTPSで開いてください');
- let offline=false,offlineDescription='登録またはキャッシュを確認できません';
- try{
-  if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./');
-   const cache=await caches.open('totonoe-offline-shell-v8');
-   const assets=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
-   const found=await Promise.all(assets.map(async path=>Boolean(await cache.match(new URL(path,reg?.scope||new URL('./',location.href)).href))));
-   offline=!!reg&&found.every(Boolean);offlineDescription='保存済み '+found.filter(Boolean).length+'/'+assets.length+'件';
+  const small=document.createElement('small');small.textContent=details;
+  content.append(strong,small);
+  const input=document.createElement('select');input.className='release-qa-select';
+  input.setAttribute('aria-label',title+'の実機検証結果');
+  for(const [value,text] of [['pending','未確認'],['ok','✅ OK'],['problem','⚠️ 要修正']]){
+   const option=document.createElement('option');option.value=value;option.textContent=text;input.append(option)
   }
- }catch(e){}
- add('オフライン一式',offline,offlineDescription+'（実際の機内モード起動は別途確認）');
- const pass=rows.filter(x=>x.ok).length;
- const summary=document.createElement('p');summary.className='notice';summary.textContent=(pass===rows.length?'✅ ':'⚠️ ')+'自動整合性チェック：'+pass+'/'+rows.length+'項目';host.append(summary);
- for(const row of rows){const item=document.createElement('p');item.className='notice';item.textContent=(row.ok?'✅ ':'⚠️ ')+row.name+'：'+row.description;host.append(item);}
- const note=document.createElement('p');note.className='notice';note.textContent='コード・画面構成の自動検査です。実機の操作性、バックアップからの実復元、災害時の動作を保証するものではありません。';host.append(note);
-}
-async function runReleaseSmokeTests(){
- const output=document.getElementById('releaseSmokeResults'),button=document.getElementById('releaseSmokeButton');
- if(!output)return;
- output.replaceChildren();if(button)button.disabled=true;
- const rows=[];
- const add=(label,fn)=>{try{const result=fn();rows.push({label,ok:!!result,detail:result?'':'必要な画面・機能を確認できません'})}catch(e){rows.push({label,ok:false,detail:'自動確認を完了できませんでした'})}};
- const hasPage=id=>!!document.querySelector('main>section#'+id);
- add('ホーム・防災学習・備蓄・片付け',()=>['home','learn','supplies','tidy'].every(hasPage));
- add('安全点検・避難計画・災害時モード',()=>['homeSafety','evacuation','emergency'].every(hasPage));
- add('家族カルテ・停電断水・準備状況',()=>['family','outage','readiness'].every(hasPage));
- add('保存した記録の読み取り',()=>{for(const k of allBackupKeys){const v=localStorage.getItem(k);if(v!==null&&typeof v!=='string')return false}return true});
- add('バックアップ形式の正常判定',()=>{
-  const sample={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:{[key]:'[]'}};
-  return validateFullBackupObject(JSON.parse(JSON.stringify(sample))).keys.includes(key);
- });
- add('不正なバックアップの拒否',()=>{
-  const bad=[{format:'wrong',data:{[key]:'[]'}},{format:'toto-full-backup-v1',data:{[key]:'not-json'}},{format:'toto-full-backup-v1',data:{'untrusted-record':'[]'}}];
-  return bad.every(item=>{try{validateFullBackupObject(item);return false}catch(e){return true}});
- });
- add('避難・安全・備蓄の集約',()=>{
-  const items=getReadinessOverview();
-  return ['homeSafety','evacuation','supplies'].every(id=>items.some(x=>x.page===id));
- });
- add('主要メニューの操作先',()=>['home','learn','supplies','tidy','more'].every(id=>!!document.querySelector('nav button[data-page="'+id+'"]')));
- try{
-  const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
-  const cache=('caches' in window)?await caches.open('totonoe-offline-shell-v8'):null;
-  const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
-  const complete=!!registration&&!!cache&&(await Promise.all(paths.map(async p=>{
-   const response=await cache.match(new URL(p,registration.scope).href);return !!(response&&response.ok);
-  }))).every(Boolean);
-  rows.push({label:'オフライン用ファイル9件',ok:complete,detail:complete?'':'通信できる状態でアプリを開き直し、再確認してください'});
- }catch(e){rows.push({label:'オフライン用ファイル9件',ok:false,detail:'オフライン保存状況を取得できません'})}
- const good=rows.filter(x=>x.ok).length;
- const title=document.createElement('p');title.style.fontWeight='700';
- title.textContent='自動点検：'+good+'/'+rows.length+'項目'+(good===rows.length?'（自動点検はすべて正常）':'（確認が必要な項目あり）');
- output.append(title);
- rows.forEach(x=>{const line=document.createElement('p');line.textContent=(x.ok?'✅ ':'⚠️ ')+x.label+(x.detail?'：'+x.detail:'');output.append(line)});
- const note=document.createElement('p');note.textContent='この自動点検は機能の接続や保存形式などの確認です。Android実機・画面の見やすさ・復元操作の実証は、上の実機検証表で別途記録してください。';output.append(note);
- if(button)button.disabled=false;
+  input.value=releaseQaState(data[id]);
+  input.onchange=()=>{
+   const next=readReleaseQa();next[id]=input.value;
+   try{localStorage.setItem(releaseQaKey,JSON.stringify(next));armedReleaseQaReset=false;renderReleaseQa()}
+   catch(e){input.value=releaseQaState(data[id]);document.getElementById('releaseQaActionStatus').textContent='検証結果を保存できませんでした。'}
+  };
+  label.append(content,input);box.append(label);
+ }
 }
 async function copyReleaseQaReport(){
- const body=releaseQaReportText(readReleaseQa()),status=document.getElementById('releaseQaActionStatus');
- const field=document.getElementById('releaseQaExportText');
- if(field)field.value=body;
- try{
-  if(!navigator.clipboard?.writeText)throw Error('unsupported');
-  await navigator.clipboard.writeText(body);
-  status.textContent='最新版の検証結果をコピーしました。';
- }catch(e){
-  if(field){let p=field.parentElement;while(p&&p!==document.body){if(p.tagName==='DETAILS')p.open=true;p=p.parentElement}field.focus();field.select()}
-  status.textContent='自動コピーできません。開いたテキスト欄を長押ししてコピーしてください。';
- }
+ const data=readReleaseQa(),name={ok:'✅ OK',problem:'⚠️ 要修正',pending:'□ 未確認'};
+ const body=['ととのえ防災｜リリース前の実機検証','記録日：'+todayLocalDate(),...releaseQaItems.map(([id,title])=>name[releaseQaState(data[id])]+'：'+title),'','※端末上で記録された確認結果です。未確認・要修正項目は解消を確認するまで完了とみなしません。'].join('\n');
+ const status=document.getElementById('releaseQaActionStatus');
+ try{if(!navigator.clipboard?.writeText)throw Error('unsupported');await navigator.clipboard.writeText(body);status.textContent='検証結果をコピーしました。'}
+ catch(e){status.textContent='自動コピーできませんでした。結果は端末に保存されています。'}
 }
 function resetReleaseQa(){
  const status=document.getElementById('releaseQaActionStatus');
