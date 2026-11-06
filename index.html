@@ -484,6 +484,11 @@ header{z-index:50;isolation:isolate}
 #family .family-record button{min-height:44px;min-width:68px}
 #family .card>.secondary{min-height:48px;width:100%;margin:7px 0}
 #family #familyChecklist h3{font-size:15px;margin:13px 0 5px}
+#readiness .readiness-row{display:grid;width:100%;grid-template-columns:minmax(0,1fr) 24px;grid-template-rows:auto auto;text-align:left;padding:12px;margin:9px 0;min-height:58px;border:1px solid #d4e3e9;border-radius:12px;background:#f8fcfd;color:#31566b;gap:3px 8px;overflow-wrap:anywhere}
+#readiness .readiness-row strong{grid-column:1;font-size:14px}
+#readiness .readiness-row small{grid-column:1;color:#52717e;font-size:12px;line-height:1.5}
+#readiness .readiness-row span{grid-row:1/3;grid-column:2;align-self:center}
+#readiness .readiness-row:focus-visible{outline:3px solid #316d99;outline-offset:2px}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -491,7 +496,8 @@ header{z-index:50;isolation:isolate}
 <p class="game-home-lead">お片付けと防災を、<br>無理なく一歩ずつ。</p>
 <div class="game-mascot-scene" role="img" aria-label="黒い帽子のピンクのたこ、緑のトリケラさん、白いシマエナガさんの単体イラスト"><span class="game-mascot octo character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/tako.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/tako-blink.svg" width="160" height="160" decoding="async"></span><span class="game-mascot tricera character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/tricera.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/tricera-blink.svg" width="160" height="160" decoding="async"></span><span class="game-mascot bird character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/shimaenaga.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/shimaenaga-blink.svg" width="160" height="160" decoding="async"></span></div>
 <div class="game-dialogue" aria-live="polite"><strong id="gameSpeaker">たこ</strong><span id="gameDialogueText">「まずはひとつ、一緒に片付けていこうね。」</span></div><div class="game-support-comments"><p id="gameTriceraNote"></p><p class="game-season-note" id="gameSeasonNote"></p></div><div class="game-progress-snapshot" aria-label="現在の備えの概要"><div class="game-snapshot-item" id="gameSafetySnapshot"><span class="game-snapshot-label">住まいの安全</span><strong class="game-snapshot-value" id="gameSafetyValue">確認中</strong></div><div class="game-snapshot-item" id="gameTidySnapshot"><span class="game-snapshot-label">お片付け</span><strong class="game-snapshot-value" id="gameTidyValue">確認中</strong></div><div class="game-snapshot-item" id="gameStockSnapshot"><span class="game-snapshot-label">備蓄</span><strong class="game-snapshot-value" id="gameStockValue">確認中</strong></div></div><button type="button" id="gameNextAction" class="game-next-action" onclick="show('homeSafety')">次の一歩を確認する ↗</button>
-</div><div class="game-dashboard-title"><span>YOUR MISSIONS</span><span>今日のメニュー</span></div><div class="emergency-home-entry"><p id="homeOfflineNotice" class="home-offline-notice hidden" role="status" aria-live="polite"></p><button class="emergency-shortcut" type="button" onclick="show('emergency')" aria-label="災害時モードを開く"><span aria-hidden="true">🛡️</span><strong>災害時モード</strong><span aria-hidden="true">↗</span></button></div><div class="home-quick-links" aria-label="よく使う機能"><button type="button" onclick="show('homeSafety')">🛡️ 住まいの安全</button><button type="button" onclick="show('evacuation')">♧ 避難計画</button><button type="button" onclick="show('tidy')">⌂ お片付け</button><button type="button" onclick="show('supplies')">▣ 備蓄管理</button></div><button class="secondary" type="button" style="width:100%;margin:0 0 10px;min-height:45px" onclick="show('outage')">停電・断水に備える：不足量を試算する ↗</button><div class="card" id="homeNextThreeCard" aria-label="備えの優先順位">
+</div><div class="game-dashboard-title"><span>YOUR MISSIONS</span><span>今日のメニュー</span></div><div class="emergency-home-entry"><p id="homeOfflineNotice" class="home-offline-notice hidden" role="status" aria-live="polite"></p><button class="emergency-shortcut" type="button" onclick="show('emergency')" aria-label="災害時モードを開く"><span aria-hidden="true">🛡️</span><strong>災害時モード</strong><span aria-hidden="true">↗</span></button></div><div class="home-quick-links" aria-label="よく使う機能"><button type="button" onclick="show('homeSafety')">🛡️ 住まいの安全</button><button type="button" onclick="show('evacuation')">♧ 避難計画</button><button type="button" onclick="show('tidy')">⌂ お片付け</button><button type="button" onclick="show('supplies')">▣ 備蓄管理</button></div><button class="secondary" type="button" style="width:100%;margin:0 0 10px;min-height:45px" onclick="show('outage')">停電・断水に備える：不足量を試算する ↗</button><button class="secondary" type="button" style="width:100%;min-height:46px;margin:0 0 10px" onclick="show('readiness')">わが家の防災準備状況をまとめて確認 ↗</button>
+<div class="card" id="homeNextThreeCard" aria-label="備えの優先順位">
 <h2>今日の優先チェック</h2>
 <p class="notice" id="homeNextThreeIntro">今の備えに合わせて、次の確認先を表示します。</p>
 <div id="homeNextThreeActions"></div>
@@ -557,6 +563,21 @@ header{z-index:50;isolation:isolate}
 <div class="card"><h2>確認する項目</h2><p class="notice">実際に確認した項目だけ「確認済み」にしてください。該当しない物は「対象外」を選べます。</p><label class="seasonal-only-pending"><input type="checkbox" id="seasonalPendingOnly" onchange="renderSeasonalCheck()"> 未確認だけ表示</label><p id="seasonalEmpty" class="notice" role="status"></p><div id="seasonalItems"></div></div>
 <div class="card"><button class="secondary" type="button" onclick="show('home')">ホームへ戻る</button></div>
 </section>
+<section id="readiness" class="hidden">
+<div class="card">
+<h2>わが家の防災準備状況</h2>
+<p class="notice">登録済みの記録から、優先して確認する項目をまとめます。防災の安全性を点数化したり、災害への耐性を保証するものではありません。</p>
+<p id="readinessSummary" class="notice" role="status" aria-live="polite"></p>
+<div id="readinessItems" aria-live="polite"></div>
+<button class="secondary" type="button" style="width:100%;min-height:48px" onclick="renderReadinessOverview()">最新の記録で更新する</button>
+</div>
+<div class="card">
+<h2>次に確認すること</h2>
+<p class="notice">命を守る安全対策を優先し、必要な備えを少しずつ進めてください。</p>
+<div id="readinessNextActions"></div>
+</div>
+<div class="card"><button class="secondary" type="button" onclick="show('home')">ホームへ戻る</button></div>
+</section>
 <section id="family" class="hidden">
 <div class="card">
 <h2>家族・ペットの防災カルテ</h2>
@@ -611,6 +632,7 @@ header{z-index:50;isolation:isolate}
 <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
 <p class="notice" id="backupIntegrityResult" role="status" aria-live="polite">実データの復元は行わず、バックアップの生成と読み取りを確認します。</p>
 </div>
+<div class="card more-important"><h2>備えをまとめて確認</h2><button class="more-menu-button" type="button" onclick="show('readiness')"><strong>わが家の防災準備状況</strong><span>安全・避難計画・備蓄・家族の備え ↗</span></button></div>
 <div class="card more-important"><h2>家族に合わせた備え</h2><button class="more-menu-button" type="button" onclick="show('family')"><strong>家族・ペットの防災カルテ</strong><span>必要な備え・人数・ペット用品を確認 ↗</span></button></div>
 <div class="card more-important"><h2>防災シミュレーション</h2>
 <button class="more-menu-button" type="button" onclick="show('outage')"><strong>停電・断水シミュレーター</strong><span>水・非常用トイレ・停電時の備えを確認 ↗</span></button></div>
@@ -761,6 +783,61 @@ function renderOutageSimulation(){
  if(!Number.isInteger(toiletStock)||toiletStock<0||toiletStock>100000){line('トイレの備蓄回数','0〜100000回で入力してください。',true);return}
  line('トイレの不足目安',whole(Math.max(0,required-toiletStock))+'回',required>toiletStock);
 }
+function getReadinessOverview(){
+ const result=[];
+ const add=(name,detail,page,attention)=>result.push({name,detail,page,attention});
+ try{
+  const safety=readHomeSafety(),open=criticalSafetyIds.filter(id=>safety[id]!=='done'&&safety[id]!=='na').length;
+  add('住まいの安全',open?'優先対策の未確認・要対策 '+open+'件':'優先対策は記録上すべて確認済み','homeSafety',open>0);
+ }catch(e){add('住まいの安全','記録を確認できません','homeSafety',true)}
+ try{
+  const plan=readEvacuationPlan(),fields=['evPlace','evTiming','evContacts'];
+  const missing=fields.filter(id=>typeof plan[id]!=='string'||!plan[id].trim()).length;
+  add('マイ避難計画',missing?'重要3項目のうち未記入 '+missing+'件':'避難先・避難判断・連絡方法を記入済み','evacuation',missing>0);
+ }catch(e){add('マイ避難計画','記録を確認できません','evacuation',true)}
+ try{
+  const today=todayLocalDate(),soon=dateAfterDays(30);
+  const expired=supplies.filter(x=>x.exp&&x.exp<today).length;
+  const due=supplies.filter(x=>(x.exp&&x.exp>=today&&x.exp<=soon)||(x.nextCheck&&x.nextCheck<=today)).length;
+  const short=supplies.filter(x=>String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.qty)<Number(x.target)).length;
+  add('備蓄の期限と不足',!supplies.length?'備蓄登録はまだありません':'期限切れ '+expired+'件 ／ 点検・期限間近 '+due+'件 ／ 目標不足 '+short+'件','supplies',!supplies.length||expired+due+short>0);
+ }catch(e){add('備蓄の期限と不足','記録を確認できません','supplies',true)}
+ try{
+  const humans=loadFamilyProfiles().filter(x=>x.type!=='pet').reduce((n,x)=>n+x.count,0);
+  const pets=loadFamilyProfiles().filter(x=>x.type==='pet').reduce((n,x)=>n+x.count,0);
+  add('家族・ペット',humans+pets?'登録：人 '+humans+'人・ペット '+pets+'頭':'未登録（任意の機能です）','family',false);
+ }catch(e){add('家族・ペット','記録を確認できません','family',false)}
+ try{
+  const people=Number(document.getElementById('outagePeople')?.value),mode=document.getElementById('outageDays')?.value;
+  const days=Number(mode==='custom'?document.getElementById('outageCustomDays')?.value:mode);
+  if(!Number.isInteger(people)||people<1||people>30||!Number.isInteger(days)||days<1||days>365)throw Error('invalid');
+  const total=people*days*3,today=todayLocalDate();
+  const waters=supplies.filter(x=>x.category==='water');
+  const valid=waters.filter(x=>String(x.factor??'').trim()!==''&&Number.isFinite(Number(x.factor))&&Number(x.factor)>0&&Number.isInteger(Number(x.qty))&&Number(x.qty)>=0&&(!x.exp||x.exp>=today));
+  const liters=valid.reduce((v,x)=>v+Number(x.factor)*Number(x.qty),0);
+  const fmt=v=>Number(v.toFixed(2)).toLocaleString('ja-JP');
+  const unknown=waters.length>valid.length;
+  add('飲料水の計算',people+'人・'+days+'日：目安 '+fmt(total)+'L ／ 容量が分かる登録済み '+fmt(liters)+'L ／ 不足目安 '+fmt(Math.max(0,total-liters))+'L'+(unknown?'（未集計の水あり）':''),'outage',liters<total);
+ }catch(e){add('飲料水の計算','シミュレーターで人数・日数を設定してください','outage',false)}
+ return result;
+}
+function renderReadinessOverview(){
+ const box=document.getElementById('readinessItems'),next=document.getElementById('readinessNextActions'),summary=document.getElementById('readinessSummary');
+ if(!box||!next||!summary)return;
+ const items=getReadinessOverview();box.replaceChildren();next.replaceChildren();
+ const attention=items.filter(x=>x.attention);
+ summary.textContent='確認する項目：'+attention.length+'カテゴリー ／ 表示中：'+items.length+'カテゴリー（登録状況から算出）';
+ const makeButton=(item,index)=>{
+  const btn=document.createElement('button');btn.type='button';btn.className='readiness-row';btn.onclick=()=>show(item.page);
+  const title=document.createElement('strong');title.textContent=(index===null?'':(index+1)+'. ')+item.name;
+  const detail=document.createElement('small');detail.textContent=item.detail;
+  const arrow=document.createElement('span');arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');
+  btn.append(title,detail,arrow);return btn;
+ };
+ items.forEach(item=>box.append(makeButton(item,null)));
+ const sorted=attention.length?attention:items.filter(x=>x.page==='homeSafety'||x.page==='evacuation'||x.page==='supplies');
+ sorted.slice(0,3).forEach((item,index)=>next.append(makeButton(item,index)));
+}
 function renderHomeNextThree(){
  const box=document.getElementById('homeNextThreeActions');
  const intro=document.getElementById('homeNextThreeIntro');
@@ -803,7 +880,7 @@ function renderHomeNextThree(){
 }
 function renderHomeStockMiniStatus(){const el=document.getElementById('homeStockMiniStatus');if(!el)return;const today=todayLocalDate(),future=dateAfterDays(30);const expires=supplies.filter(x=>x.exp&&x.exp<=future).length,missing=supplies.filter(x=>String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.qty)<Number(x.target)).length,inspection=supplies.filter(x=>x.nextCheck&&x.nextCheck<=today).length,pouchDue=readPouchItems().filter(x=>x.nextCheck&&x.nextCheck<=today).length;const n=expires+missing+inspection+pouchDue;el.textContent=n?'要確認 '+n+'件（期限・不足・点検の合計）':'期限・不足・点検を確認'}
 function initHomeGroups(){let settings={};try{const stored=JSON.parse(localStorage.getItem(homeGroupKey)||'{}');if(stored&&typeof stored==='object'&&!Array.isArray(stored))settings=stored}catch(e){}document.querySelectorAll('#home details[data-home-group]').forEach(el=>{const id=el.getAttribute('data-home-group');el.open=typeof settings[id]==='boolean'?settings[id]:false;el.addEventListener('toggle',()=>{try{const current=JSON.parse(localStorage.getItem(homeGroupKey)||'{}');const next=current&&typeof current==='object'&&!Array.isArray(current)?current:{};next[id]=el.open;localStorage.setItem(homeGroupKey,JSON.stringify(next))}catch(e){}})})}
-const pageNames={home:'ホーム',learn:'学ぶ',select:'整理を学ぶ',set:'整頓を学ぶ',stock:'備蓄を学ぶ',supplies:'備蓄管理',tidy:'お片付けノート',more:'その他',emergency:'災害時モード',evacuation:'マイ避難計画',homeSafety:'住まいの安全点検',pouch:'防災ポーチ',seasonalCheck:'季節別点検',diagnosis:'防災弱点診断',reviews:'防災用品レビュー',outage:'停電・断水シミュレーター',family:'家族・ペットの防災カルテ'};let activePage='home',previousPage='home';
+const pageNames={home:'ホーム',learn:'学ぶ',select:'整理を学ぶ',set:'整頓を学ぶ',stock:'備蓄を学ぶ',supplies:'備蓄管理',tidy:'お片付けノート',more:'その他',emergency:'災害時モード',evacuation:'マイ避難計画',homeSafety:'住まいの安全点検',pouch:'防災ポーチ',seasonalCheck:'季節別点検',diagnosis:'防災弱点診断',reviews:'防災用品レビュー',outage:'停電・断水シミュレーター',family:'家族・ペットの防災カルテ',readiness:'わが家の防災準備状況'};let activePage='home',previousPage='home';
 function goBackPage(){show(previousPage!==activePage&&validPage(previousPage)?previousPage:'home')}
 function updatePageNavigation(id){const bar=document.getElementById('pageNavigation'),title=document.getElementById('pageCurrentTitle'),back=document.getElementById('pageBackButton');if(bar)bar.classList.toggle('hidden',id==='home');if(title)title.textContent=pageNames[id]||'ととのえ防災';if(back)back.textContent='‹ '+(pageNames[previousPage]||'ホーム')+'へ戻る'}
 
@@ -935,7 +1012,7 @@ function renderPageMascotGuide(id){
  const sub=mascotSupportingLine(id,guide[0]);
  banner.querySelector('.guide-support').textContent=sub;
 }
-function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family'){renderFamilySuggestedItems();renderFamilyProfiles()}window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
+function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family','readiness'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family'){renderFamilySuggestedItems();renderFamilyProfiles()}if(id==='readiness')renderReadinessOverview();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
 function priorityTitlesFromAnswers(){try{const v=JSON.parse(localStorage.getItem(diagnosisKey)||'null');if(!v||!['apartment','house','other'].includes(v.dResidence))return null;const p=[];const add=(n,title)=>p.push({n,title});if(v.dFurniture!=='ready')add(0,'まず命を守る：家具の転倒・落下を防ぐ');if(v.dResidence==='house')add(1,'戸建ての立地と避難先を確認する');add(1,'地域の災害リスクと避難先を確認する');if(v.dResidence==='apartment')add(2,'集合住宅の設備・避難方法を確認する');if(v.dFurniture==='ready')add(2,'命を守るための安全確認を続ける');if(v.dWater!=='ready')add(v.dWater==='none'?3:4,'飲料水を確認する');if(v.dFood!=='ready')add(v.dFood==='none'?3:4,'食料を確認する');if(v.dToilet!=='ready')add(v.dToilet==='none'?3:4,'非常用トイレを確認する');if(v.dPeople==='5')add(4,'世帯人数に合う備蓄量を再計算する');if(!p.some(x=>x.n<3))add(5,'備えの維持と定期点検');return p.sort((a,b)=>a.n-b.n).map(x=>x.title)}catch(e){return null}}
 function homeMissionItems(){try{let titles=activePriorityTitles;if(!Array.isArray(titles)||!titles.length){titles=JSON.parse(localStorage.getItem(priorityKey)||'null')}if(!Array.isArray(titles)||!titles.length)titles=priorityTitlesFromAnswers();if(!Array.isArray(titles)||!titles.length)return null;const items=[];titles.forEach(title=>{if(typeof title==='string'&&Object.prototype.hasOwnProperty.call(missionTemplates,title))missionTemplates[title].forEach((label,i)=>items.push({key:title+'::'+i,label}))});if(!items.length)return null;const state=getMissionState();const incomplete=items.filter(item=>state[item.key]!==true);return {items:incomplete.slice(0,3),total:items.length,completed:items.length-incomplete.length,remaining:incomplete.length}}catch(e){return null}}
 function syncDiagnosisMissionUI(){const state=getMissionState();document.querySelectorAll('.diagnosis-mission input[data-mission-key]').forEach(input=>input.checked=state[input.dataset.missionKey]===true);document.querySelectorAll('.diagnosis-result-item').forEach(card=>{const checks=[...card.querySelectorAll('.diagnosis-mission input')],p=card.querySelector('.mission-progress');if(p&&checks.length){const n=checks.filter(x=>x.checked).length;p.textContent='ミッション '+n+' / '+checks.length+' 完了'+(n===checks.length?' ✅':'')}})}
