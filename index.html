@@ -309,6 +309,28 @@ header .page-navigation strong{font-size:13px;color:#49685a;white-space:nowrap;o
 #home .home-quick-links button:active{transform:scale(.97)}
 #home .emergency-shortcut{min-height:49px}
 @media(max-width:390px){#home .game-home-stage{min-height:258px}#home .game-season-note{font-size:10px}}
+
+/* Character dialogue sits BELOW the mascot art, never on top of it. */
+#home .game-home-stage{min-height:0;padding-bottom:14px}
+#home .game-mascot-scene{top:84px;bottom:auto;right:5px;height:146px}
+#home .game-dialogue{margin-top:158px;min-height:53px;position:relative}
+#home .game-season-note{margin-top:8px}
+@media(max-width:390px){#home .game-home-stage{min-height:0}#home .game-mascot-scene{top:79px;height:136px}#home .game-dialogue{margin-top:155px}}
+/* Compact character assistants on functional pages. No overlay or fixed positioning. */
+.page-mascot-help{display:flex;align-items:center;gap:12px;min-height:91px;margin:0 0 13px;padding:12px 13px;border:1px solid #d7e5ed;border-radius:17px;background:linear-gradient(125deg,#f1f8ff,#f8fcff 62%,#f1f9f3);box-shadow:0 2px 9px #1c536010}
+.page-mascot-help.tidy-tone{border-color:#f0dddd;background:linear-gradient(120deg,#fff5f5,#fffbfb)}
+.page-mascot-help.stock-tone{border-color:#d7e8d5;background:linear-gradient(120deg,#f3fbf2,#fbfefa)}
+.page-mascot-help.urgent-tone{border-color:#e6e6de;background:#f8faf8}
+.page-mascot-friends{position:relative;flex:0 0 89px;width:89px;height:72px;align-self:center}
+.page-mascot-friends .game-mascot{position:absolute;filter:drop-shadow(0 2px 2px #4d625a16)}
+.page-mascot-friends .octo{width:68px;height:73px;left:0;bottom:-1px;z-index:2}
+.page-mascot-friends .tricera{width:57px;height:59px;right:-3px;bottom:0;z-index:3}
+.page-mascot-friends .bird{width:43px;height:43px;right:0;bottom:0;z-index:3}
+.page-mascot-words{flex:1;min-width:0;line-height:1.55}
+.page-mascot-words strong{display:block;color:#355e77;font-size:13px;margin-bottom:3px}
+.page-mascot-words p{font-size:13px;line-height:1.65;margin:0;color:#446674;overflow-wrap:anywhere}
+.page-mascot-help.urgent-tone .page-mascot-words p{font-size:12px}
+@media(max-width:365px){.page-mascot-help{gap:8px;padding:10px}.page-mascot-friends{flex-basis:74px;width:74px}.page-mascot-words p{font-size:12px}}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -413,7 +435,48 @@ function initHomeGroups(){let settings={};try{const stored=JSON.parse(localStora
 const pageNames={home:'ホーム',learn:'学ぶ',select:'整理を学ぶ',set:'整頓を学ぶ',stock:'備蓄を学ぶ',supplies:'備蓄管理',tidy:'お片付けノート',more:'その他',emergency:'災害時モード',evacuation:'マイ避難計画',homeSafety:'住まいの安全点検',pouch:'防災ポーチ',seasonalCheck:'季節別点検',diagnosis:'防災弱点診断',reviews:'防災用品レビュー'};let activePage='home',previousPage='home';
 function goBackPage(){show(previousPage!==activePage&&validPage(previousPage)?previousPage:'home')}
 function updatePageNavigation(id){const bar=document.getElementById('pageNavigation'),title=document.getElementById('pageCurrentTitle'),back=document.getElementById('pageBackButton');if(bar)bar.classList.toggle('hidden',id==='home');if(title)title.textContent=pageNames[id]||'ととのえ防災';if(back)back.textContent='‹ '+(pageNames[previousPage]||'ホーム')+'へ戻る'}
-function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===(['select','set','stock'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency'].includes(id)?'more':id)));if(id==='home'){updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness()}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
+
+const pageMascotGuides={
+ learn:['tidy','まずは整理から。暮らしを整えながら防災も学びましょう。'],
+ select:['tidy','いまの暮らしに必要な物を選んでいきましょう。'],
+ set:['tidy','物の定位置を決めると、いざというときにも役立ちます。'],
+ stock:['stock','普段使う物と非常時の備えを、一緒に見直しましょう。'],
+ supplies:['stock','食料・水・トイレなどの不足と期限を確認しましょう。'],
+ reviews:['stock','買い足す前に、本当に必要かを確認しましょう。'],
+ diagnosis:['safety','住まいに合った対策を、優先順位から確認しましょう。'],
+ emergency:['urgent','身の安全を最優先に。最新の避難情報を確認してください。'],
+ evacuation:['safety','避難先だけでなく、経路と連絡方法も確かめましょう。'],
+ homeSafety:['safety','まず寝る場所と避難経路の安全を確認しましょう。'],
+ pouch:['stock','持ち歩く備えは、必要な物を無理のない量で。'],
+ tidy:['tidy','一度に全部しなくても大丈夫。できるところから進めましょう。'],
+ seasonalCheck:['safety','季節の変わり目に、必要な備えを点検しましょう。'],
+ more:['safety','今必要な防災メニューから、ひとつずつ進めましょう。']
+};
+function renderPageMascotGuide(id){
+ const section=document.getElementById(id),guide=pageMascotGuides[id];
+ if(!section||!guide)return;
+ let banner=section.querySelector(':scope > .page-mascot-help');
+ if(!banner){
+  banner=document.createElement('aside');
+  banner.className='page-mascot-help';
+  banner.setAttribute('aria-label','キャラクターの案内');
+  const friends=document.createElement('div');friends.className='page-mascot-friends';friends.setAttribute('aria-hidden','true');
+  for(const kind of ['octo',guide[0]==='stock'?'bird':'tricera']){
+   const svg=document.querySelector('#home .game-mascot-scene .game-mascot.'+kind);
+   if(svg)friends.append(svg.cloneNode(true));
+  }
+  const words=document.createElement('div');words.className='page-mascot-words';
+  const title=document.createElement('strong'),line=document.createElement('p');
+  words.append(title,line);banner.append(friends,words);section.prepend(banner);
+ }
+ banner.classList.toggle('tidy-tone',guide[0]==='tidy');
+ banner.classList.toggle('stock-tone',guide[0]==='stock');
+ banner.classList.toggle('urgent-tone',guide[0]==='urgent');
+ const role=guide[0]==='stock'?'たこ ＆ シマエナガさん':'たこ ＆ トリケラさん';
+ banner.querySelector('strong').textContent=role;
+ banner.querySelector('p').textContent=guide[1];
+}
+function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===(['select','set','stock'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency'].includes(id)?'more':id)));if(id!=='home')renderPageMascotGuide(id);if(id==='home'){updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness()}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
 function priorityTitlesFromAnswers(){try{const v=JSON.parse(localStorage.getItem(diagnosisKey)||'null');if(!v||!['apartment','house','other'].includes(v.dResidence))return null;const p=[];const add=(n,title)=>p.push({n,title});if(v.dFurniture!=='ready')add(0,'まず命を守る：家具の転倒・落下を防ぐ');if(v.dResidence==='house')add(1,'戸建ての立地と避難先を確認する');add(1,'地域の災害リスクと避難先を確認する');if(v.dResidence==='apartment')add(2,'集合住宅の設備・避難方法を確認する');if(v.dFurniture==='ready')add(2,'命を守るための安全確認を続ける');if(v.dWater!=='ready')add(v.dWater==='none'?3:4,'飲料水を確認する');if(v.dFood!=='ready')add(v.dFood==='none'?3:4,'食料を確認する');if(v.dToilet!=='ready')add(v.dToilet==='none'?3:4,'非常用トイレを確認する');if(v.dPeople==='5')add(4,'世帯人数に合う備蓄量を再計算する');if(!p.some(x=>x.n<3))add(5,'備えの維持と定期点検');return p.sort((a,b)=>a.n-b.n).map(x=>x.title)}catch(e){return null}}
 function homeMissionItems(){try{let titles=activePriorityTitles;if(!Array.isArray(titles)||!titles.length){titles=JSON.parse(localStorage.getItem(priorityKey)||'null')}if(!Array.isArray(titles)||!titles.length)titles=priorityTitlesFromAnswers();if(!Array.isArray(titles)||!titles.length)return null;const items=[];titles.forEach(title=>{if(typeof title==='string'&&Object.prototype.hasOwnProperty.call(missionTemplates,title))missionTemplates[title].forEach((label,i)=>items.push({key:title+'::'+i,label}))});if(!items.length)return null;const state=getMissionState();const incomplete=items.filter(item=>state[item.key]!==true);return {items:incomplete.slice(0,3),total:items.length,completed:items.length-incomplete.length,remaining:incomplete.length}}catch(e){return null}}
 function syncDiagnosisMissionUI(){const state=getMissionState();document.querySelectorAll('.diagnosis-mission input[data-mission-key]').forEach(input=>input.checked=state[input.dataset.missionKey]===true);document.querySelectorAll('.diagnosis-result-item').forEach(card=>{const checks=[...card.querySelectorAll('.diagnosis-mission input')],p=card.querySelector('.mission-progress');if(p&&checks.length){const n=checks.filter(x=>x.checked).length;p.textContent='ミッション '+n+' / '+checks.length+' 完了'+(n===checks.length?' ✅':'')}})}
