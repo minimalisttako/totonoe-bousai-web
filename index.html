@@ -671,6 +671,12 @@ header{z-index:50;isolation:isolate}
 <button class="more-menu-button" type="button" onclick="show('tidy')"><strong>④ お片付けを進める</strong><span>安全な動線と収納の見直し ↗</span></button>
 <button class="more-menu-button" type="button" onclick="show('readiness')"><strong>⑤ わが家の準備状況を見直す</strong><span>記録をまとめて確認 ↗</span></button>
 </div></details>
+<details class="more-fold" id="releaseScopeFold"><summary>初回リリースの対象と今後の機能 <span aria-hidden="true">⌄</span></summary>
+<div class="more-fold-body">
+<p class="notice"><strong>初回リリース候補：</strong>住まいの安全点検、家庭の防災診断、避難計画、備蓄・防災ポーチ管理、お片付けの記録、家族・ペットカルテ、停電・断水シミュレーター、バックアップ、災害時モード。</p>
+<p class="notice"><strong>今後の開発候補：</strong>公開レビューの投稿・閲覧、気象庁データに基づく天気、全国の防災イベント、防災士試験対策・無料学習。現時点では正式な提供機能として案内しません。</p>
+<p class="notice">試作版のため、正式リリース前にはiPhone・Androidの実機操作、復元、機内モードでの起動を別途確認します。</p>
+</div></details>
 <div class="card more-important"><h2>備えをまとめて確認</h2><button class="more-menu-button" type="button" onclick="show('readiness')"><strong>わが家の防災準備状況</strong><span>安全・避難計画・備蓄・家族の備え ↗</span></button></div>
 <div class="card more-important"><h2>家族に合わせた備え</h2><button class="more-menu-button" type="button" onclick="show('family')"><strong>家族・ペットの防災カルテ</strong><span>必要な備え・人数・ペット用品を確認 ↗</span></button></div>
 <div class="card more-important"><h2>防災シミュレーション</h2>
@@ -1171,7 +1177,15 @@ if(furniture==='ready')add(2,'命を守るための安全確認を続ける','�
 suggestions.sort((a,b)=>a.priority-b.priority);activePriorityTitles=suggestions.map(x=>x.title);let prioritySaved=false;try{localStorage.setItem(priorityKey,JSON.stringify(activePriorityTitles));prioritySaved=true}catch(e){}renderTasks();status.textContent=prioritySaved?'診断結果を保存し、ホームの「今日やること」に反映しました。':'診断結果はホームに反映しましたが、再読み込み後の保存には失敗しました。';const out=document.getElementById('diagnosisResult');out.replaceChildren();out.classList.remove('hidden');const h=document.createElement('h2');h.textContent='あなたの家庭で優先したい対策';out.append(h);const p=document.createElement('p');p.className='notice';p.textContent='命を守る対策（家具の転倒・落下防止、地域の災害リスクと避難方法）を先に、飲料水・食料・トイレなどの生活維持をその後に表示しています。災害の種類や地域によって緊急度は変わります。';out.append(p);suggestions.forEach((item,i)=>{const card=document.createElement('div');card.className='diagnosis-result-item';const title=document.createElement('strong');title.textContent=(i+1)+'．'+item.title;const desc=document.createElement('p');desc.textContent=item.detail;card.append(title,desc);buildMissionChecklist(item,card);out.append(card)});const btn=document.createElement('button');btn.className='secondary';btn.textContent='備蓄必要量を計算する ↗';btn.onclick=()=>openStockCalculator();const homeButton=document.createElement('button');homeButton.className='primary';homeButton.textContent='ホームの優先ミッションを見る ↗';homeButton.style.marginRight='9px';homeButton.style.marginBottom='9px';homeButton.onclick=()=>{show('home');document.querySelector('.mission-card').scrollIntoView({behavior:'smooth',block:'start'})};out.append(homeButton,btn);out.scrollIntoView({behavior:'smooth',block:'start'})}
 const evacuationKey='toto-evacuation-plan-v1',evacuationDrillKey='toto-evacuation-drills-v1';
 const emergencyChecklistKey='toto-emergency-checklist-v1',evacuationReviewKey='toto-evacuation-review-v1';const homeSafetyKey='toto-home-safety-v1';const pouchKey='toto-pouch-v1';const tidyKey='toto-tidy-v1';const tidyTargetKey='toto-tidy-target-v1';const tidyDefaultsMigratedKey='toto-tidy-defaults-v2';const purchaseKey='toto-purchase-check-v1';const seasonalKey='toto-seasonal-check-v1';const supplyHistoryKey='toto-supply-transactions-v1';const outageScenarioKey='toto-outage-scenario-v1';const familyProfileKey='toto-family-profiles-v1';const allBackupKeys=[key,taskKey,diagnosisKey,priorityKey,missionKey,missionHistoryKey,stockDaysKey,toiletFrequencyKey,evacuationKey,evacuationDrillKey,emergencyChecklistKey,evacuationReviewKey,homeSafetyKey,pouchKey,tidyKey,tidyTargetKey,tidyDefaultsMigratedKey,purchaseKey,seasonalKey,supplyHistoryKey,outageScenarioKey,familyProfileKey];
-function buildFullBackup(){const data={};allBackupKeys.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)data[k]=v});if(!Object.keys(data).length)throw Error('no saved data');return JSON.stringify({format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data},null,2)}
+function buildFullBackup(){
+ const data={};
+ allBackupKeys.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)data[k]=v});
+ if(!Object.keys(data).length)throw Error('no saved data');
+ const content=JSON.stringify({format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data},null,2);
+ // Reject an incomplete or incompatible export before letting users trust it.
+ validateFullBackupObject(JSON.parse(content));
+ return content;
+}
 function validateFullBackupObject(obj){
 if(!obj||obj.format!=='toto-full-backup-v1'||!obj.data||typeof obj.data!=='object'||Array.isArray(obj.data)||Object.getPrototypeOf(obj.data)!==Object.prototype)throw Error('format');
 const data=obj.data,keys=Object.keys(data);
@@ -1239,7 +1253,7 @@ function dryRunFullRestore(){
  }
  if(status)status.textContent='予行検証が完了しました。実際に復元する場合は「復元する内容を確認」を押してから復元してください。';
 }
-function exportAllData(){const status=document.getElementById('allBackupStatus');try{document.getElementById('allBackupText').value=buildFullBackup();invalidateFullRestorePreview();status.textContent='全データを表示しました。文字列をコピーしてiPhoneのメモなどに保存してください。'}catch(e){status.textContent='バックアップを作成できません。保存領域をご確認ください。'}}
+function exportAllData(){const status=document.getElementById('allBackupStatus');try{document.getElementById('allBackupText').value=buildFullBackup();invalidateFullRestorePreview();status.textContent='検証済みの全データを表示しました。文字列をコピーしてiPhoneのメモなどに保存してください。'}catch(e){status.textContent='バックアップを作成できません。保存領域をご確認ください。'}}
 let pendingFullRestore=null;
 let verifiedFullRestoreSignature=null;
 let verifiedFullRestoreOriginalSnapshot=null;
