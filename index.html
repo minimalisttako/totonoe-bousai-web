@@ -680,7 +680,7 @@ header{z-index:50;isolation:isolate}
 <details class="more-fold" id="releaseQaFold"><summary>リリース前の実機検証表 <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
 <p class="notice">実際に「未確認・OK・要修正」を実際の検証結果に合わせて選んでください。判定はこの端末内に保存され、別の端末は自動でOKになりません。</p>
 <p id="releaseQaStatus" class="notice" role="status" aria-live="polite"></p>
-<div id="releaseQaItems"></div>
+<div id="releaseQaItems"></div><button class="secondary" type="button" style="width:100%;min-height:48px;margin:8px 0" onclick="runAppIntegrityAudit()">画面・保存・リンクの自動整合性チェック</button><div id="appIntegrityAuditResults" class="notice" role="status" aria-live="polite"></div>
 <details class="more-fold" style="margin:12px 0"><summary>アプリの自動整合性チェック <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
 <p class="notice">画面・移動先・入力欄・保存データの読み取り・オフライン準備をまとめて検査します。記録の削除・復元や画面移動は行いません。</p>
 <button class="secondary" type="button" style="width:100%;min-height:48px" onclick="runAppIntegrityAudit()">自動整合性チェックを実行</button>
@@ -970,6 +970,40 @@ function renderReleaseQa(){
   };
   label.append(content,input);box.append(label);
  }
+}
+async function runAppIntegrityAudit(){
+ const target=document.getElementById('appIntegrityAuditResults');if(!target)return;
+ target.replaceChildren();
+ const checks=[],add=(name,pass,description)=>checks.push({name,pass,description});
+ const pages=['home','learn','select','set','stock','supplies','tidy','more','homeSafety','evacuation','emergency','diagnosis','pouch','seasonalCheck','outage','family','readiness'];
+ const missing=pages.filter(id=>!validPage(id));
+ add('主要画面',missing.length===0,missing.length?'不足：'+missing.join('、'):pages.length+'画面を確認');
+ const active=Array.from(document.querySelectorAll('main>section:not(.hidden)'));
+ add('表示画面の一意性',active.length===1,active.length+'画面が表示中');
+ const routes=Array.from(document.querySelectorAll('button[onclick]')).map(x=>x.getAttribute('onclick')||'').map(x=>x.match(/\bshow\(['"]([^'"]+)['"]\)/)).filter(Boolean).map(m=>m[1]);
+ const bad=Array.from(new Set(routes.filter(id=>!validPage(id))));
+ add('移動先の整合性',bad.length===0,bad.length?'不正な移動先：'+bad.join('、'):routes.length+'件の移動先を確認');
+ const inputs=['allBackupText','calcPeople','calcDays','evPlace','outagePeople','familyCount'];
+ const absent=inputs.filter(id=>!document.getElementById(id));
+ add('重要な入力欄',absent.length===0,absent.length?'不足：'+absent.join('、'):inputs.length+'項目を確認');
+ try{
+  const data={};
+  for(const k of allBackupKeys){const v=localStorage.getItem(k);if(v!==null)data[k]=v}
+  const keys=Object.keys(data);
+  if(keys.length)validateFullBackupObject({format:'toto-full-backup-v1',data});
+  add('保存形式',true,keys.length+'種類を検証');
+ }catch(e){add('保存形式',false,'保存済みデータの形式を確認してください')}
+ add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
+ try{
+  const reg=await navigator.serviceWorker.getRegistration('./');
+  const c=await caches.open('totonoe-offline-shell-v8');
+  const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tricera.svg','./assets/shimaenaga.svg','./assets/app-icon.svg'];
+  const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
+  add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
+ }catch(e){add('オフライン用ファイル',false,'確認できません')}
+ const ok=checks.filter(c=>c.pass).length;
+ const summary=document.createElement('p');summary.textContent='自動検査 '+ok+'/'+checks.length+'項目。実機試験の代わりにはなりません。';target.append(summary);
+ checks.forEach(c=>{const p=document.createElement('p');p.textContent=(c.pass?'✅ ':'⚠️ ')+c.name+'：'+c.description;target.append(p)});
 }
 async function copyReleaseQaReport(){
  const data=readReleaseQa(),name={ok:'✅ OK',problem:'⚠️ 要修正',pending:'□ 未確認'};
