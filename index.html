@@ -687,6 +687,10 @@ header{z-index:50;isolation:isolate}
 <button class="secondary" type="button" style="width:100%;min-height:48px" onclick="copyReleaseQaReport()">検証結果をコピー</button>
 <button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="resetReleaseQa()">検証結果をリセット（2回押して確定）</button>
 <p id="releaseQaActionStatus" class="notice" role="status" aria-live="polite"></p>
+<details class="compact-filter"><summary>検証結果を手動でコピーする <span aria-hidden="true">⌄</span></summary><div class="compact-filter-body">
+<textarea class="field" id="releaseQaExportText" rows="8" readonly placeholder="「検証結果をコピー」を押すとここに表示します。"></textarea>
+<p class="notice">自動コピーできない場合は、この文章を長押ししてコピーしてください。</p>
+</div></details>
 <div class="card" style="margin-top:12px">
 <h3>自動スモークテスト</h3>
 <p class="notice">画面の配置・重要な機能の接続・バックアップ形式・オフライン用ファイルを検査します。登録済みの防災記録は変更しません。実機操作試験の代わりにはなりません。</p>
@@ -913,6 +917,14 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
+const releaseQaBuild='rc-2026-11-06-qa2';
+function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
+function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
+function releaseQaReportText(data){
+ return ['ととのえ防災｜リリース前の実機検証','アプリ版：'+releaseQaBuild,'出力日：'+todayLocalDate(),
+ ...releaseQaItems.map(([id,title])=>(qaIsCurrent(data[id])?'✅ ':qaIsOld(data[id])?'↻ ':'□ ')+title+(qaIsCurrent(data[id])&&data[id].checkedAt?'（確認：'+data[id].checkedAt.slice(0,10)+'）':'')),
+ '','※↻は旧版での確認。最新版での再確認が必要です。未チェックは未確認です。'].join('\n');
+}
 const releaseQaItems=[
  ['ios','iPhone：画面移動とボタン操作','実際のiPhoneでホーム・備蓄・避難計画・その他を確認'],
  ['save','保存と再起動','備蓄または点検の記録を保存し、ページを開き直して残っていることを確認'],
@@ -929,17 +941,18 @@ function readReleaseQa(){
 function renderReleaseQa(){
  const box=document.getElementById('releaseQaItems'),status=document.getElementById('releaseQaStatus');if(!box||!status)return;
  const data=readReleaseQa();box.replaceChildren();
- const done=releaseQaItems.filter(([id])=>data[id]===true).length;
- status.textContent='実機確認済み：'+done+'/'+releaseQaItems.length+'項目。未確認の項目は完了として扱いません。';
+ const done=releaseQaItems.filter(([id])=>qaIsCurrent(data[id])).length;
+ const old=releaseQaItems.filter(([id])=>qaIsOld(data[id])).length;
+ status.textContent='最新版の実機確認：'+done+'/'+releaseQaItems.length+'項目'+(old?' ／ 旧版の確認・再点検が必要：'+old+'項目':'')+'。未確認の項目は完了として扱いません。';
  for(const [id,title,details] of releaseQaItems){
   const label=document.createElement('label');label.className='release-qa-row';
-  const input=document.createElement('input');input.type='checkbox';input.checked=data[id]===true;
+  const input=document.createElement('input');input.type='checkbox';input.checked=qaIsCurrent(data[id]);
   const content=document.createElement('span');
   const strong=document.createElement('strong');strong.textContent=title;
-  const small=document.createElement('small');small.textContent=details;
+  const small=document.createElement('small');small.textContent=details+(qaIsOld(data[id])?' ／ 旧版で確認済み・最新版で再点検':'');
   content.append(strong,small);label.append(input,content);
   input.onchange=()=>{
-   const next=readReleaseQa();next[id]=input.checked;
+   const next=readReleaseQa();next[id]=input.checked?{checked:true,build:releaseQaBuild,checkedAt:new Date().toISOString()}:false;
    try{localStorage.setItem(releaseQaKey,JSON.stringify(next));armedReleaseQaReset=false;renderReleaseQa()}
    catch(e){input.checked=!input.checked;document.getElementById('releaseQaActionStatus').textContent='確認状態を保存できませんでした。'}
   };
@@ -1032,11 +1045,17 @@ async function runReleaseSmokeTests(){
  if(button)button.disabled=false;
 }
 async function copyReleaseQaReport(){
- const data=readReleaseQa();
- const body=['ととのえ防災｜リリース前の実機検証','記録日：'+todayLocalDate(),...releaseQaItems.map(([id,title])=>(data[id]===true?'✅ ':'□ ')+title),'','※ユーザー自身の実機確認記録です。未チェック項目は未確認です。'].join('\n');
- const status=document.getElementById('releaseQaActionStatus');
- try{if(!navigator.clipboard?.writeText)throw Error('unsupported');await navigator.clipboard.writeText(body);status.textContent='検証結果をコピーしました。'}
- catch(e){status.textContent='自動コピーできませんでした。項目の状態は端末に保存されています。'}
+ const body=releaseQaReportText(readReleaseQa()),status=document.getElementById('releaseQaActionStatus');
+ const field=document.getElementById('releaseQaExportText');
+ if(field)field.value=body;
+ try{
+  if(!navigator.clipboard?.writeText)throw Error('unsupported');
+  await navigator.clipboard.writeText(body);
+  status.textContent='最新版の検証結果をコピーしました。';
+ }catch(e){
+  if(field){let p=field.parentElement;while(p&&p!==document.body){if(p.tagName==='DETAILS')p.open=true;p=p.parentElement}field.focus();field.select()}
+  status.textContent='自動コピーできません。開いたテキスト欄を長押ししてコピーしてください。';
+ }
 }
 function resetReleaseQa(){
  const status=document.getElementById('releaseQaActionStatus');
