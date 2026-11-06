@@ -489,6 +489,8 @@ header{z-index:50;isolation:isolate}
 #readiness .readiness-row small{grid-column:1;color:#52717e;font-size:12px;line-height:1.5}
 #readiness .readiness-row span{grid-row:1/3;grid-column:2;align-self:center}
 #readiness .readiness-row:focus-visible{outline:3px solid #316d99;outline-offset:2px}
+#firstTimeGuideFold .more-menu-button{min-height:53px;touch-action:manipulation}
+#restoreRehearsalStatus{overflow-wrap:anywhere}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -636,12 +638,23 @@ header{z-index:50;isolation:isolate}
 <button type="button" class="secondary" style="width:100%;margin-top:10px" onclick="openFullBackupFromReadiness()">全データのバックアップへ ↗</button>
 <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
 <p class="notice" id="backupIntegrityResult" role="status" aria-live="polite">実データの復元は行わず、バックアップの生成と読み取りを確認します。</p>
+<button class="secondary" type="button" style="width:100%;min-height:48px;margin:8px 0" onclick="simulateFullRestore()">復元リハーサルを実行（記録は変更しません）</button>
+<p id="restoreRehearsalStatus" class="notice" role="status" aria-live="polite">テスト用データを使って、復元形式の確認・上書き・失敗時の保護をメモリ上で検証します。</p>
 <details class="more-fold"><summary>保存データの総合点検 <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
 <p class="notice">登録済みデータの読み取り・形式・バックアップ適合性をこの端末内で検査します。削除・復元・外部送信は行いません。</p>
 <button class="secondary" type="button" style="width:100%;min-height:48px" onclick="runDataHealthAudit()">保存データを安全に点検する</button>
 <div id="dataHealthAudit" role="status" aria-live="polite"></div>
 </div></details>
 </div>
+<details class="more-fold" id="firstTimeGuideFold"><summary>はじめての使い方 <span aria-hidden="true">⌄</span></summary>
+<div class="more-fold-body">
+<p class="notice">初めて使う場合は、下の順番を目安に進めてください。命に関わる安全対策が最優先です。すべてを一度に終える必要はありません。</p>
+<button class="more-menu-button" type="button" onclick="show('homeSafety')"><strong>① 住まいの安全を確認</strong><span>家具固定・寝る場所・避難経路 ↗</span></button>
+<button class="more-menu-button" type="button" onclick="show('evacuation')"><strong>② 避難計画を記録</strong><span>避難先・タイミング・連絡方法 ↗</span></button>
+<button class="more-menu-button" type="button" onclick="show('supplies')"><strong>③ 備蓄を確認</strong><span>飲料水・食料・非常用トイレ ↗</span></button>
+<button class="more-menu-button" type="button" onclick="show('tidy')"><strong>④ お片付けを進める</strong><span>安全な動線と収納の見直し ↗</span></button>
+<button class="more-menu-button" type="button" onclick="show('readiness')"><strong>⑤ わが家の準備状況を見直す</strong><span>記録をまとめて確認 ↗</span></button>
+</div></details>
 <div class="card more-important"><h2>備えをまとめて確認</h2><button class="more-menu-button" type="button" onclick="show('readiness')"><strong>わが家の防災準備状況</strong><span>安全・避難計画・備蓄・家族の備え ↗</span></button></div>
 <div class="card more-important"><h2>家族に合わせた備え</h2><button class="more-menu-button" type="button" onclick="show('family')"><strong>家族・ペットの防災カルテ</strong><span>必要な備え・人数・ペット用品を確認 ↗</span></button></div>
 <div class="card more-important"><h2>防災シミュレーション</h2>
@@ -1565,6 +1578,34 @@ async function initOfflineStartup(){
   const count=readyFiles.filter(Boolean).length;
   set(count===necessary.length?'必須ファイル9件の保存を確認しました。機内モードでの起動もお試しください。':'オフライン用ファイル：'+count+'/9件。通信できる状態でアプリを開き直してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
+}
+function simulateFullRestore(){
+ const status=document.getElementById('restoreRehearsalStatus');if(!status)return;
+ const steps=[];
+ try{
+  const fixture={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:{[key]:JSON.stringify([{name:'テスト用品',qty:'2',category:'other'}]),[familyProfileKey]:JSON.stringify([{id:'test-person',label:'家族A',type:'adult',count:2}])}};
+  const validated=validateFullBackupObject(JSON.parse(JSON.stringify(fixture)));
+  if(validated.keys.length!==2)throw Error('validation mismatch');
+  steps.push('バックアップの読み取り・検証');
+  const inMemoryStore=new Map([[key,'[]'],['unrelated-record','保持する内容']]);
+  const before=new Map(inMemoryStore);
+  validated.keys.forEach(k=>inMemoryStore.set(k,validated.data[k]));
+  if(inMemoryStore.get(key)!==fixture.data[key]||inMemoryStore.get(familyProfileKey)!==fixture.data[familyProfileKey])throw Error('copy mismatch');
+  if(inMemoryStore.get('unrelated-record')!==before.get('unrelated-record'))throw Error('unexpected overwrite');
+  steps.push('対象データだけの上書き（メモリ上）');
+  let rejected=false;
+  try{validateFullBackupObject({format:'invalid',data:{[key]:'[]'}})}catch(e){rejected=true}
+  if(!rejected)throw Error('invalid backup accepted');
+  steps.push('不正な形式の拒否');
+  const original=new Map(inMemoryStore);
+  try{
+   inMemoryStore.set(key,'変更テスト');
+   throw Error('simulated write failure');
+  }catch(e){inMemoryStore.clear();original.forEach((v,k)=>inMemoryStore.set(k,v))}
+  if([...original].some(([k,v])=>inMemoryStore.get(k)!==v))throw Error('rollback mismatch');
+  steps.push('失敗時の元データ保護（メモリ上）');
+  status.textContent='✅ 復元リハーサル '+steps.length+'/'+steps.length+'項目OK：'+steps.join(' ／ ')+'。実際の端末記録の読み書きや復元はしていません。';
+ }catch(e){status.textContent='⚠️ 復元リハーサルを完了できませんでした（確認済み '+steps.length+'項目）。実際の端末記録は変更していません。'}
 }
 function checkBackupIntegrity(){
  const status=document.getElementById('backupIntegrityResult');
