@@ -633,7 +633,7 @@ header{z-index:50;isolation:isolate}
 <div class="card" id="releaseReadinessPanel">
 <h2>✅ リリース前チェック</h2>
 <p class="notice">保存・通信・オフライン起動の準備・バックアップ機能をまとめて確認します。既存の記録データは変更しません。</p>
-<button class="primary" id="releaseReadinessRun" type="button" onclick="checkReleaseReadiness()" style="width:100%;min-height:48px">4項目を診断する</button>
+<button class="primary" id="releaseReadinessRun" type="button" onclick="checkReleaseReadiness()" style="width:100%;min-height:48px">5項目を診断する</button>
 <div id="releaseReadinessResults" role="status" aria-live="polite"></div>
 <button type="button" class="secondary" style="width:100%;margin-top:10px" onclick="openFullBackupFromReadiness()">全データのバックアップへ ↗</button>
 <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
@@ -1214,7 +1214,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v7'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v8'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -1554,7 +1554,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v7');
+  const cache=await caches.open('totonoe-offline-shell-v8');
   const urls=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -1572,7 +1572,7 @@ async function initOfflineStartup(){
   const registration=await navigator.serviceWorker.register('./offline-worker.js',{scope:'./',updateViaCache:'none'});
   let readyTimer;const ready=await Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>{readyTimer=setTimeout(()=>reject(new Error('activation timeout')),12000)})]).finally(()=>clearTimeout(readyTimer));
   if(ready.scope!==registration.scope)throw Error('scope mismatch');
-  const cache=await caches.open('totonoe-offline-shell-v7');
+  const cache=await caches.open('totonoe-offline-shell-v8');
   const necessary=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=await cache.match(new URL(p,registration.scope).href);return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
@@ -1660,7 +1660,7 @@ async function checkReleaseReadiness(){
  if('serviceWorker' in navigator&&'caches' in window){
   try {
    const reg=await navigator.serviceWorker.getRegistration('./');
-   const cache=await caches.open('totonoe-offline-shell-v7');
+   const cache=await caches.open('totonoe-offline-shell-v8');
    const paths=['./','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./manifest.webmanifest'];
    const found=await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)}));
    const count=found.filter(Boolean).length;
@@ -1669,6 +1669,18 @@ async function checkReleaseReadiness(){
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
  add('バックアップ機能',backup,backup?'バックアップ画面が利用できます':'バックアップ画面が見つかりません');
+ try{
+  let source;
+  const snapshot={};
+  for(const k of allBackupKeys){const value=localStorage.getItem(k);if(value!==null)snapshot[k]=value}
+  if(Object.keys(snapshot).length){
+   source={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:snapshot};
+  }else{
+   source={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:{[key]:'[]'}};
+  }
+  const decoded=validateFullBackupObject(JSON.parse(JSON.stringify(source)));
+  add('記録のバックアップ形式',decoded.keys.length>0,Object.keys(snapshot).length?'保存データ'+decoded.keys.length+'種類の形式を確認':'初期状態のテスト形式を確認（記録未登録）');
+ }catch(e){add('記録のバックアップ形式',false,'形式を確認できません。保存データを点検してください')}
  const summary=document.createElement('p');
  summary.style.fontWeight='700';
  summary.textContent='自動確認：'+rows.filter(r=>r.ok).length+'/'+rows.length+'項目';
