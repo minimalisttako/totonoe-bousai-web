@@ -362,6 +362,13 @@ header{z-index:50;isolation:isolate}
 .page-mascot-friends{position:relative;contain:layout paint}
 .page-mascot-friends .game-mascot{transform:none!important}
 #emergency .emergency-tako-message{contain:layout paint;overflow:hidden}
+/* Safari scrolling: render SVG artwork as ordinary images, not independent SVG compositor layers. */
+#home .game-mascot-scene img.game-mascot,.page-mascot-friends img.game-mascot{display:block;will-change:auto;backface-visibility:visible;filter:none!important;transform:none!important}
+.page-mascot-help{overflow:hidden;clip-path:inset(0 round 17px);isolation:isolate}
+.page-mascot-friends{overflow:hidden;clip-path:inset(0)}
+#home .game-home-stage{overflow:hidden;clip-path:inset(0 round 23px)}
+#home .game-dialogue{overflow-wrap:anywhere;clip-path:inset(0 round 13px)}
+#emergency .emergency-tako-message img.emergency-mascot-image{display:block;position:static;flex:0 0 44px;width:44px;height:48px;object-fit:contain;filter:none;transform:none}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -493,7 +500,7 @@ function renderPageMascotGuide(id){
    const row=document.createElement('div');row.className='emergency-tako-message';
    row.setAttribute('aria-label','たこからのメッセージ');
    const mascot=document.querySelector('#home .game-mascot-scene .game-mascot.octo');
-   if(mascot){const art=mascot.cloneNode(true);art.removeAttribute('class');art.setAttribute('aria-hidden','true');row.append(art)}
+   if(mascot){const art=mascot.cloneNode(true);art.className='emergency-mascot-image';art.alt='';art.setAttribute('aria-hidden','true');row.append(art)}
    const p=document.createElement('p');p.textContent='まずは、ご自身の安全を。できることを、一つずつ。';
    row.append(p);
    const heading=card.querySelector('h2');if(heading)heading.after(row);else card.prepend(row);
@@ -520,7 +527,7 @@ function renderPageMascotGuide(id){
  const role=guide[0]==='stock'?'たこ ＆ シマエナガさん':'たこ ＆ トリケラさん';
  banner.querySelector('strong').textContent=role;
  banner.querySelector('p').textContent='たこ：'+guide[1];
- const sub=guide[0]==='stock'?'シマエナガさん：備蓄は数量だけでなく、期限や使い方も確認してください。':guide[0]==='tidy'?'トリケラさん：焦らんでええで。できるところから一つずつやろうな。':guide[0]==='urgent'?'':'トリケラさん：まず安全を確かめような。無理はせんでええで。';
+ const sub=guide[0]==='stock'?'シマエナガさん：備蓄は数量だけでなく、期限や使い方も確認してください。':guide[0]==='tidy'?'トリケラさん：無理せず1つずつでええんやで。できる所から進めような。':guide[0]==='urgent'?'':'トリケラさん：慌てんでもええんやで。安全を一つずつ確かめような。';
  banner.querySelector('.guide-support').textContent=sub;
 }
 function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===(['select','set','stock'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency'].includes(id)?'more':id)));if(id!=='home')renderPageMascotGuide(id);if(id==='home'){updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness()}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
@@ -786,10 +793,10 @@ function renderGameHomeDialogue(){
  if(!speaker||!message)return;
  const safety=criticalSafetyState(),steps=tidyStepTotals(),rate=tidyJourneyProgress();
  let name='たこ',line='まずは、ひとつ片付けてみましょう！';
- if(safety.remaining.length){name='トリケラさん';line='寝る場所や避難経路の安全を先に確かめような。'}
+ if(safety.remaining.length){name='トリケラさん';line='寝る場所と避難経路から見ていこうな。無理せず1つずつでええんやで。'}
  else if(steps.total&&steps.complete===steps.total){name='たこ';line='お片付けがひと区切りです。備えも見直しましょう！'}
  else if(steps.complete>0){name='たこ';line='小さな作業も、もう'+steps.complete+'個完了しました。'}
- else if(rate>=50){name='トリケラさん';line='備蓄の場所を決めて、必要な物を確かめていこうな。'}
+ else if(rate>=50){name='トリケラさん';line='備蓄の置き場所も決めておこうな。1つずつでええんやで。'}
  speaker.textContent=name;message.textContent='「'+line+'」';
  if(season){
   const month=new Date().getMonth()+1;
@@ -920,7 +927,24 @@ function renderSeasonalCheck(){
  renderHomeSeasonalSummary()
 }
 function renderReviews(){const q=document.getElementById('reviewSearch').value.toLowerCase();const el=document.getElementById('reviewList');el.replaceChildren();examples.filter(r=>(r.name+r.cat).toLowerCase().includes(q)).forEach(r=>{const d=document.createElement('div');d.className='item';const b=document.createElement('b');b.textContent=r.name;const p=document.createElement('p');p.textContent='★'.repeat(r.stars)+'☆'.repeat(5-r.stars)+' ｜ '+r.cat+'\n'+r.text;d.append(b,p);el.append(d)});if(!el.childNodes.length)el.textContent='該当する商品はありません。'}loadDiagnosis();loadEvacuationPlan();initStockCalculator();renderTasks();renderSupplies();renderReviews();renderMissionHistory();renderHomeInspectionAlerts();renderHomeStockAlerts();renderEvacuationSummary();renderEvacuationDrills();renderEmergencyPlan();renderEmergencyChecklist();renderEvacuationReviewForm();renderHomeEvacuationReview();
-renderHomeSafetyAlert();renderHomeSafetyChecks();renderPouch();renderHomeStockMiniStatus();initializeSupplyInspectionDefaults();initializePouchCheckDate();renderTidy();restoreSeasonalType();renderSeasonalCheck();initHomeGroups();initMoreGroups();show(savedPage());
+renderHomeSafetyAlert();renderHomeSafetyChecks();renderPouch();renderHomeStockMiniStatus();initializeSupplyInspectionDefaults();initializePouchCheckDate();renderTidy();restoreSeasonalType();renderSeasonalCheck();initHomeGroups();initMoreGroups();function stabilizeMascotImages(){
+ const scene=document.querySelector('#home .game-mascot-scene');
+ if(!scene)return;
+ scene.querySelectorAll('svg.game-mascot').forEach(svg=>{
+  try{
+   const img=document.createElement('img');
+   img.className=svg.getAttribute('class')||'game-mascot';
+   img.alt='';
+   img.setAttribute('aria-hidden','true');
+   img.decoding='sync';
+   img.draggable=false;
+   img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(svg));
+   svg.replaceWith(img);
+  }catch(e){/* retain inline illustration when image conversion is unsupported */}
+ });
+}
+stabilizeMascotImages();
+show(savedPage());
 
 
 async function initOfflineStartup(){
