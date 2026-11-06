@@ -1005,6 +1005,36 @@ async function runAppIntegrityAudit(){
  const summary=document.createElement('p');summary.textContent='自動検査 '+ok+'/'+checks.length+'項目。実機試験の代わりにはなりません。';target.append(summary);
  checks.forEach(c=>{const p=document.createElement('p');p.textContent=(c.pass?'✅ ':'⚠️ ')+c.name+'：'+c.description;target.append(p)});
 }
+async function runReleaseSmokeTests(){
+ const output=document.getElementById('releaseSmokeResults'),button=document.getElementById('releaseSmokeButton');if(!output)return;
+ output.replaceChildren();if(button)button.disabled=true;
+ const rows=[];const add=(name,fn)=>{try{rows.push({name,ok:!!fn()})}catch(e){rows.push({name,ok:false})}};
+ const page=id=>!!document.querySelector('main>section#'+id);
+ add('ホーム・学習・備蓄・片付け',()=>['home','learn','supplies','tidy'].every(page));
+ add('安全点検・避難計画・災害時モード',()=>['homeSafety','evacuation','emergency'].every(page));
+ add('家族・断水停電・準備状況',()=>['family','outage','readiness'].every(page));
+ add('端末記録の読み取り',()=>{for(const k of allBackupKeys){const v=localStorage.getItem(k);if(v!==null&&typeof v!=='string')return false;}return true});
+ add('正常なバックアップ形式の受理',()=>validateFullBackupObject({format:'toto-full-backup-v1',data:{[key]:'[]'}}).keys.includes(key));
+ add('不正なバックアップ形式の拒否',()=>[{format:'wrong',data:{[key]:'[]'}},{format:'toto-full-backup-v1',data:{[key]:'not-json'}},{format:'toto-full-backup-v1',data:{unknown:'[]'}}].every(v=>{try{validateFullBackupObject(v);return false}catch(e){return true}}));
+ add('安全・避難・備蓄の情報連携',()=>['homeSafety','evacuation','supplies'].every(id=>getReadinessOverview().some(x=>x.page===id)));
+ add('下部メニューの操作先',()=>['home','learn','supplies','tidy','more'].every(id=>!!document.querySelector('nav button[data-page="'+id+'"]')));
+ try{
+  const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
+  const names=('caches' in window)?await caches.keys():[];
+  let ok=false;
+  if(registration&&names.includes('totonoe-offline-shell-v8')){
+   const cache=await caches.open('totonoe-offline-shell-v8');
+   const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
+   ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
+  }
+  rows.push({name:'オフライン用ファイル9件',ok});
+ }catch(e){rows.push({name:'オフライン用ファイル9件',ok:false})}
+ const good=rows.filter(x=>x.ok).length;const summary=document.createElement('p');summary.style.fontWeight='700';
+ summary.textContent='自動点検 '+good+'/'+rows.length+'項目'+(good===rows.length?' OK':'：確認が必要な項目あり');output.append(summary);
+ for(const item of rows){const line=document.createElement('p');line.textContent=(item.ok?'✅ ':'⚠️ ')+item.name;output.append(line)}
+ const note=document.createElement('p');note.textContent='自動テストは画面・連携・形式・オフラインファイルの存在確認です。実際の操作・端末間の復元・画面の見やすさは上の実機検証表で別途確認してください。';output.append(note);
+ if(button)button.disabled=false;
+}
 async function copyReleaseQaReport(){
  const data=readReleaseQa(),name={ok:'✅ OK',problem:'⚠️ 要修正',pending:'□ 未確認'};
  const body=['ととのえ防災｜リリース前の実機検証','記録日：'+todayLocalDate(),...releaseQaItems.map(([id,title])=>name[releaseQaState(data[id])]+'：'+title),'','※端末上で記録された確認結果です。未確認・要修正項目は解消を確認するまで完了とみなしません。'].join('\n');
