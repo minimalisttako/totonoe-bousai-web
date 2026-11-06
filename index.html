@@ -611,6 +611,13 @@ const tidyStepTemplates={
 };
 const tidyGenericSteps=['床や周辺に出ている物を片付ける','不要な物と必要な物を分ける','必要な物の定位置を決める','転倒・落下・避難動線の危険を確認する'];
 function tidyStepsFor(place){return tidyStepTemplates[place]||tidyGenericSteps}
+const tidySafetyLinks={'寝室':['sleep','bedpath'],'玄関':['door'],'廊下':['hall'],'リビング':['fix']};
+function tidySafetyLinkedStatus(place){
+ const ids=tidySafetyLinks[place]||[];
+ const safety=readHomeSafety();
+ const pending=ids.filter(id=>safety[id]!=='done'&&safety[id]!=='na');
+ return {ids,pending};
+}
 let activeTidyChecklistId=null;
 function toggleTidyStep(id,index,value){
  const items=readTidyPlaces(),item=items.find(x=>x.id===id),status=document.getElementById('tidyActionStatus');if(!item)return;
@@ -619,7 +626,7 @@ function toggleTidyStep(id,index,value){
  const complete=checks.every(Boolean);
  const next=items.map(x=>x.id===id?{...x,stepChecks:checks,done:complete,completedAt:complete?(x.completedAt||todayLocalDate()):''}:x);
  if(!saveTidyPlaces(next)){status.textContent='保存できませんでした。';renderTidy();return}
- activeTidyChecklistId=id;status.textContent=complete?'「'+item.place+'」の4項目が完了しました。':'「'+item.place+'」のチェックを保存しました。';
+ activeTidyChecklistId=id;status.textContent=complete?'「'+item.place+'」の片付け4項目が完了しました。関連する命を守る安全点検は別に確認してください。':'「'+item.place+'」のチェックを保存しました。';
  renderTidy();
 }
 function renderTidy(){
@@ -647,6 +654,15 @@ function renderTidy(){
    const text=document.createElement('span');text.textContent=step;label.append(input,text);instructions.append(label);
   });
   checklist.append(instructions);
+  const linked=tidySafetyLinkedStatus(item.place);
+  if(linked.ids.length){
+   const panel=document.createElement('div');panel.className='notice';panel.style.marginTop='12px';
+   const text=document.createElement('p');
+   text.textContent=linked.pending.length?'🛡️ 命を守る安全確認：残り'+linked.pending.length+'項目。片付けのチェックだけでは対策済みになりません。':'🛡️ 関連する安全確認は自己確認済みです。';
+   panel.append(text);
+   const safetyButton=document.createElement('button');safetyButton.type='button';safetyButton.className='secondary';safetyButton.textContent='住まいの安全点検を開く ↗';safetyButton.onclick=()=>show('homeSafety');panel.append(safetyButton);
+   checklist.append(panel);
+  }
   if(checked===steps.length){const doneText=document.createElement('p');doneText.className='notice';doneText.textContent='✓ この場所の片付けは完了です。';checklist.append(doneText)}
   const extra=document.createElement('details');extra.className='tidy-record-details';
   const more=document.createElement('summary');more.textContent='メモ・記録・削除（必要なときだけ）';extra.append(more);
