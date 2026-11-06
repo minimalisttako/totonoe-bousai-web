@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "ととのえ防災",
+  "short_name": "ととのえ防災",
+  "description": "暮らしを整えて、もしもに備える。お片付けと防災の記録アプリ。",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7f3",
+  "theme_color": "#174c3e",
+  "icons": [
+    {
+      "src": "./assets/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
