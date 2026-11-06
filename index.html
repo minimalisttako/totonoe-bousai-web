@@ -680,6 +680,10 @@ header{z-index:50;isolation:isolate}
 <p class="notice">実際に確認できた項目だけを記録してください。判定はこの端末内に保存されます。別の機種のテストを自動で完了扱いにはしません。</p>
 <p id="releaseQaStatus" class="notice" role="status" aria-live="polite"></p>
 <div id="releaseQaItems"></div>
+<details class="more-fold" style="margin:12px 0"><summary>アプリの自動整合性チェック <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
+<p class="notice">画面・移動先・入力欄・保存データの読み取り・オフライン準備をまとめて検査します。記録の削除・復元や画面移動は行いません。</p>
+<button class="secondary" type="button" style="width:100%;min-height:48px" onclick="runAppIntegrityAudit()">自動整合性チェックを実行</button>
+<div id="appIntegrityAuditResults" role="status" aria-live="polite"></div></div></details>
 <button class="secondary" type="button" style="width:100%;min-height:48px" onclick="copyReleaseQaReport()">検証結果をコピー</button>
 <button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="resetReleaseQa()">検証結果をリセット（2回押して確定）</button>
 <p id="releaseQaActionStatus" class="notice" role="status" aria-live="polite"></p>
@@ -935,6 +939,50 @@ function renderReleaseQa(){
   };
   box.append(label);
  }
+}
+async function runAppIntegrityAudit(){
+ const host=document.getElementById('appIntegrityAuditResults');if(!host)return;
+ host.replaceChildren();
+ const rows=[];
+ const add=(name,ok,description)=>rows.push({name,ok,description});
+ const requiredPages=['home','learn','select','set','stock','supplies','tidy','more','homeSafety','evacuation','emergency','diagnosis','pouch','seasonalCheck','outage','family','readiness'];
+ const missing=requiredPages.filter(id=>!document.getElementById(id)||!document.querySelector('main>section#'+id));
+ add('主要画面',missing.length===0,missing.length?'不足：'+missing.join('、'):requiredPages.length+'画面を確認');
+ const visible=new Set(Array.from(document.querySelectorAll('main>section:not(.hidden)')).map(el=>el.id));
+ add('画面の表示状態',visible.size===1,visible.size===1?'表示中：'+Array.from(visible)[0]:'表示中の画面が'+visible.size+'件あります');
+ const routes=Array.from(document.querySelectorAll('button[onclick]')).flatMap(el=>{
+  const call=el.getAttribute('onclick')||'',match=call.match(/\\bshow\\(['"]([^'"]+)['"]\\)/);
+  return match?[match[1]]:[];
+ });
+ const invalidRoutes=Array.from(new Set(routes.filter(id=>!validPage(id))));
+ add('画面移動リンク',invalidRoutes.length===0,invalidRoutes.length?'未登録の移動先：'+invalidRoutes.join('、'):routes.length+'件の移動先が存在');
+ const keyInputs=['allBackupText','calcPeople','calcDays','evPlace','evContacts','outagePeople','outageDays','familyType','familyCount'];
+ const absent=keyInputs.filter(id=>!document.getElementById(id));
+ add('重要な入力欄',absent.length===0,absent.length?'不足：'+absent.join('、'):keyInputs.length+'件を確認');
+ let saved=0,invalid=0;
+ try{
+  const records={};
+  for(const k of allBackupKeys){const v=localStorage.getItem(k);if(v!==null){saved++;records[k]=v;}}
+  if(saved){try{validateFullBackupObject({format:'toto-full-backup-v1',data:records});}catch(e){invalid=1;}}
+  add('保存済みデータの形式',invalid===0,saved?saved+'種類を検査'+(invalid?'（形式に不整合）':''):'未登録のため検証対象なし');
+ }catch(e){add('保存済みデータの形式',false,'保存データの読み取りに失敗');}
+ const https=location.protocol==='https:'&&window.isSecureContext;
+ add('安全な接続',https,https?'HTTPSで動作中':'HTTPSで開いてください');
+ let offline=false,offlineDescription='登録またはキャッシュを確認できません';
+ try{
+  if('serviceWorker' in navigator&&'caches' in window){
+   const reg=await navigator.serviceWorker.getRegistration('./');
+   const cache=await caches.open('totonoe-offline-shell-v8');
+   const assets=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
+   const found=await Promise.all(assets.map(async path=>Boolean(await cache.match(new URL(path,reg?.scope||new URL('./',location.href)).href))));
+   offline=!!reg&&found.every(Boolean);offlineDescription='保存済み '+found.filter(Boolean).length+'/'+assets.length+'件';
+  }
+ }catch(e){}
+ add('オフライン一式',offline,offlineDescription+'（実際の機内モード起動は別途確認）');
+ const pass=rows.filter(x=>x.ok).length;
+ const summary=document.createElement('p');summary.className='notice';summary.textContent=(pass===rows.length?'✅ ':'⚠️ ')+'自動整合性チェック：'+pass+'/'+rows.length+'項目';host.append(summary);
+ for(const row of rows){const item=document.createElement('p');item.className='notice';item.textContent=(row.ok?'✅ ':'⚠️ ')+row.name+'：'+row.description;host.append(item);}
+ const note=document.createElement('p');note.className='notice';note.textContent='コード・画面構成の自動検査です。実機の操作性、バックアップからの実復元、災害時の動作を保証するものではありません。';host.append(note);
 }
 async function copyReleaseQaReport(){
  const data=readReleaseQa();
