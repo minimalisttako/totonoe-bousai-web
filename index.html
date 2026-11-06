@@ -491,6 +491,11 @@ header{z-index:50;isolation:isolate}
 #readiness .readiness-row:focus-visible{outline:3px solid #316d99;outline-offset:2px}
 #firstTimeGuideFold .more-menu-button{min-height:53px;touch-action:manipulation}
 #restoreRehearsalStatus{overflow-wrap:anywhere}
+#releaseQaFold .release-qa-row{display:flex;align-items:flex-start;gap:12px;padding:12px 2px;border-bottom:1px solid #d9e6e6;min-height:56px}
+#releaseQaFold .release-qa-row input{margin-top:4px;width:21px;height:21px;flex-shrink:0;accent-color:#347b69}
+#releaseQaFold .release-qa-row span{display:grid;gap:4px;min-width:0}
+#releaseQaFold .release-qa-row strong{font-size:14px}
+#releaseQaFold .release-qa-row small{color:#60777b;font-size:12px;line-height:1.5}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -670,6 +675,14 @@ header{z-index:50;isolation:isolate}
 <button class="more-menu-button" type="button" onclick="show('supplies')"><strong>③ 備蓄を確認</strong><span>飲料水・食料・非常用トイレ ↗</span></button>
 <button class="more-menu-button" type="button" onclick="show('tidy')"><strong>④ お片付けを進める</strong><span>安全な動線と収納の見直し ↗</span></button>
 <button class="more-menu-button" type="button" onclick="show('readiness')"><strong>⑤ わが家の準備状況を見直す</strong><span>記録をまとめて確認 ↗</span></button>
+</div></details>
+<details class="more-fold" id="releaseQaFold"><summary>リリース前の実機検証表 <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
+<p class="notice">実際に確認できた項目だけを記録してください。判定はこの端末内に保存されます。別の機種のテストを自動で完了扱いにはしません。</p>
+<p id="releaseQaStatus" class="notice" role="status" aria-live="polite"></p>
+<div id="releaseQaItems"></div>
+<button class="secondary" type="button" style="width:100%;min-height:48px" onclick="copyReleaseQaReport()">検証結果をコピー</button>
+<button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="resetReleaseQa()">検証結果をリセット（2回押して確定）</button>
+<p id="releaseQaActionStatus" class="notice" role="status" aria-live="polite"></p>
 </div></details>
 <details class="more-fold" id="releaseScopeFold"><summary>初回リリースの対象と今後の機能 <span aria-hidden="true">⌄</span></summary>
 <div class="more-fold-body">
@@ -887,6 +900,55 @@ async function copyReadinessExport(){
  }catch(e){
   field.focus();field.select();status.textContent='自動コピーできません。テキスト欄を長押ししてコピーしてください。';
  }
+}
+// Device-specific QA results are intentionally separate from user preparedness backups.
+const releaseQaKey='toto-release-qa-v1';
+const releaseQaItems=[
+ ['ios','iPhone：画面移動とボタン操作','実際のiPhoneでホーム・備蓄・避難計画・その他を確認'],
+ ['save','保存と再起動','備蓄または点検の記録を保存し、ページを開き直して残っていることを確認'],
+ ['offline','機内モードでの再起動','オンラインで準備した後、機内モードでアプリを閉じて開き直し、主要画面を確認'],
+ ['backup','バックアップの保管','全データをJSONファイル等に保存し、そのファイルを再度読み込んで予行比較できることを確認'],
+ ['restore','復元の実地試験','元のデータを別に保管し、テスト環境で復元後の内容を確認'],
+ ['android','Android：主要画面の動作','実際のAndroid端末で操作・記録保存・再起動を確認'],
+ ['a11y','見やすさと操作しやすさ','文字のはみ出し、ボタン、拡大表示や読み上げ操作を確認']
+];
+let armedReleaseQaReset=false;
+function readReleaseQa(){
+ try{const v=JSON.parse(localStorage.getItem(releaseQaKey)||'{}');return v&&typeof v==='object'&&!Array.isArray(v)?v:{}}catch(e){return {}}
+}
+function renderReleaseQa(){
+ const box=document.getElementById('releaseQaItems'),status=document.getElementById('releaseQaStatus');if(!box||!status)return;
+ const data=readReleaseQa();box.replaceChildren();
+ const done=releaseQaItems.filter(([id])=>data[id]===true).length;
+ status.textContent='実機確認済み：'+done+'/'+releaseQaItems.length+'項目。未確認の項目は完了として扱いません。';
+ for(const [id,title,details] of releaseQaItems){
+  const label=document.createElement('label');label.className='release-qa-row';
+  const input=document.createElement('input');input.type='checkbox';input.checked=data[id]===true;
+  const content=document.createElement('span');
+  const strong=document.createElement('strong');strong.textContent=title;
+  const small=document.createElement('small');small.textContent=details;
+  content.append(strong,small);label.append(input,content);
+  input.onchange=()=>{
+   const next=readReleaseQa();next[id]=input.checked;
+   try{localStorage.setItem(releaseQaKey,JSON.stringify(next));armedReleaseQaReset=false;renderReleaseQa()}
+   catch(e){input.checked=!input.checked;document.getElementById('releaseQaActionStatus').textContent='確認状態を保存できませんでした。'}
+  };
+  box.append(label);
+ }
+}
+async function copyReleaseQaReport(){
+ const data=readReleaseQa();
+ const body=['ととのえ防災｜リリース前の実機検証','記録日：'+todayLocalDate(),...releaseQaItems.map(([id,title])=>(data[id]===true?'✅ ':'□ ')+title),'','※ユーザー自身の実機確認記録です。未チェック項目は未確認です。'].join('\n');
+ const status=document.getElementById('releaseQaActionStatus');
+ try{if(!navigator.clipboard?.writeText)throw Error('unsupported');await navigator.clipboard.writeText(body);status.textContent='検証結果をコピーしました。'}
+ catch(e){status.textContent='自動コピーできませんでした。項目の状態は端末に保存されています。'}
+}
+function resetReleaseQa(){
+ const status=document.getElementById('releaseQaActionStatus');
+ if(!armedReleaseQaReset){armedReleaseQaReset=true;status.textContent='確認：チェックをすべて未確認に戻す場合は、もう一度同じボタンを押してください。';return}
+ armedReleaseQaReset=false;
+ try{localStorage.removeItem(releaseQaKey);renderReleaseQa();status.textContent='実機確認のチェックをリセットしました。備蓄や避難計画は変更していません。'}
+ catch(e){status.textContent='検証結果をリセットできませんでした。'}
 }
 function runDataHealthAudit(){
  const box=document.getElementById('dataHealthAudit');if(!box)return;
@@ -1113,7 +1175,7 @@ function renderPageMascotGuide(id){
  const sub=mascotSupportingLine(id,guide[0]);
  banner.querySelector('.guide-support').textContent=sub;
 }
-function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family','readiness'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family'){renderFamilySuggestedItems();renderFamilyProfiles()}if(id==='readiness')renderReadinessOverview();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
+function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family','readiness'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family'){renderFamilySuggestedItems();renderFamilyProfiles()}if(id==='readiness')renderReadinessOverview();if(id==='more')renderReleaseQa();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
 function priorityTitlesFromAnswers(){try{const v=JSON.parse(localStorage.getItem(diagnosisKey)||'null');if(!v||!['apartment','house','other'].includes(v.dResidence))return null;const p=[];const add=(n,title)=>p.push({n,title});if(v.dFurniture!=='ready')add(0,'まず命を守る：家具の転倒・落下を防ぐ');if(v.dResidence==='house')add(1,'戸建ての立地と避難先を確認する');add(1,'地域の災害リスクと避難先を確認する');if(v.dResidence==='apartment')add(2,'集合住宅の設備・避難方法を確認する');if(v.dFurniture==='ready')add(2,'命を守るための安全確認を続ける');if(v.dWater!=='ready')add(v.dWater==='none'?3:4,'飲料水を確認する');if(v.dFood!=='ready')add(v.dFood==='none'?3:4,'食料を確認する');if(v.dToilet!=='ready')add(v.dToilet==='none'?3:4,'非常用トイレを確認する');if(v.dPeople==='5')add(4,'世帯人数に合う備蓄量を再計算する');if(!p.some(x=>x.n<3))add(5,'備えの維持と定期点検');return p.sort((a,b)=>a.n-b.n).map(x=>x.title)}catch(e){return null}}
 function homeMissionItems(){try{let titles=activePriorityTitles;if(!Array.isArray(titles)||!titles.length){titles=JSON.parse(localStorage.getItem(priorityKey)||'null')}if(!Array.isArray(titles)||!titles.length)titles=priorityTitlesFromAnswers();if(!Array.isArray(titles)||!titles.length)return null;const items=[];titles.forEach(title=>{if(typeof title==='string'&&Object.prototype.hasOwnProperty.call(missionTemplates,title))missionTemplates[title].forEach((label,i)=>items.push({key:title+'::'+i,label}))});if(!items.length)return null;const state=getMissionState();const incomplete=items.filter(item=>state[item.key]!==true);return {items:incomplete.slice(0,3),total:items.length,completed:items.length-incomplete.length,remaining:incomplete.length}}catch(e){return null}}
 function syncDiagnosisMissionUI(){const state=getMissionState();document.querySelectorAll('.diagnosis-mission input[data-mission-key]').forEach(input=>input.checked=state[input.dataset.missionKey]===true);document.querySelectorAll('.diagnosis-result-item').forEach(card=>{const checks=[...card.querySelectorAll('.diagnosis-mission input')],p=card.querySelector('.mission-progress');if(p&&checks.length){const n=checks.filter(x=>x.checked).length;p.textContent='ミッション '+n+' / '+checks.length+' 完了'+(n===checks.length?' ✅':'')}})}
