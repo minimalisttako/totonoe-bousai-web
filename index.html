@@ -656,7 +656,7 @@ header{z-index:50;isolation:isolate}
 <h2>✅ リリース前チェック</h2>
 <p class="notice">保存・通信・オフライン起動の準備・バックアップ機能をまとめて確認します。既存の記録データは変更しません。</p>
 <button class="primary" id="releaseReadinessRun" type="button" onclick="checkReleaseReadiness()" style="width:100%;min-height:48px">5項目を診断する</button>
-<div id="releaseReadinessResults" role="status" aria-live="polite"></div>
+<div id="releaseReadinessResults" role="status" aria-live="polite"></div><button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="openReleaseQa()">実機検証表を開く ↗</button>
 <button type="button" class="secondary" style="width:100%;margin-top:10px" onclick="openFullBackupFromReadiness()">全データのバックアップへ ↗</button>
 <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
 <p class="notice" id="backupIntegrityResult" role="status" aria-live="polite">実データの復元は行わず、バックアップの生成と読み取りを確認します。</p>
@@ -938,6 +938,10 @@ const releaseQaItems=[
 let armedReleaseQaReset=false;
 function readReleaseQa(){
  try{const v=JSON.parse(localStorage.getItem(releaseQaKey)||'{}');return v&&typeof v==='object'&&!Array.isArray(v)?v:{}}catch(e){return {}}
+}
+function openReleaseQa(){
+ const fold=document.getElementById('releaseQaFold');if(!fold)return;
+ fold.open=true;renderReleaseQa();fold.scrollIntoView({block:'start',behavior:'smooth'});
 }
 function releaseQaState(value){return value===true||value==='ok'?'ok':value==='problem'?'problem':'pending'}
 function renderReleaseQa(){
