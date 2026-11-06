@@ -331,6 +331,17 @@ header .page-navigation strong{font-size:13px;color:#49685a;white-space:nowrap;o
 .page-mascot-words p{font-size:13px;line-height:1.65;margin:0;color:#446674;overflow-wrap:anywhere}
 .page-mascot-help.urgent-tone .page-mascot-words p{font-size:12px}
 @media(max-width:365px){.page-mascot-help{gap:8px;padding:10px}.page-mascot-friends{flex-basis:74px;width:74px}.page-mascot-words p{font-size:12px}}
+
+/* Final mobile layout: character scene and speech occupy separate rows. */
+#home .game-home-stage{display:flex;flex-direction:column;min-height:0}
+#home .game-mascot-scene{position:relative;top:auto;right:auto;bottom:auto;width:100%;height:132px;flex:0 0 132px;margin-top:6px}
+#home .game-dialogue{position:relative;margin-top:8px;min-height:0;width:100%;overflow-wrap:anywhere}
+#home .game-home-stage h2,#home .game-home-lead{max-width:100%}
+#home .game-mascot.octo{right:72px;bottom:0}
+#home .game-mascot.tricera{right:6px;bottom:0}
+#home .game-mascot.bird{right:7px;top:0}
+.page-mascot-words .guide-support{font-size:11px;line-height:1.5;color:#567568;margin-top:4px}
+@media(max-width:390px){#home .game-mascot-scene{position:relative;top:auto;right:auto;bottom:auto;height:125px;flex-basis:125px}#home .game-dialogue{margin-top:7px}}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -466,15 +477,17 @@ function renderPageMascotGuide(id){
    if(svg)friends.append(svg.cloneNode(true));
   }
   const words=document.createElement('div');words.className='page-mascot-words';
-  const title=document.createElement('strong'),line=document.createElement('p');
-  words.append(title,line);banner.append(friends,words);section.prepend(banner);
+  const title=document.createElement('strong'),line=document.createElement('p'),support=document.createElement('p');support.className='guide-support';
+  words.append(title,line,support);banner.append(friends,words);section.prepend(banner);
  }
  banner.classList.toggle('tidy-tone',guide[0]==='tidy');
  banner.classList.toggle('stock-tone',guide[0]==='stock');
  banner.classList.toggle('urgent-tone',guide[0]==='urgent');
  const role=guide[0]==='stock'?'たこ ＆ シマエナガさん':'たこ ＆ トリケラさん';
  banner.querySelector('strong').textContent=role;
- banner.querySelector('p').textContent=guide[1];
+ banner.querySelector('p').textContent='たこ：'+guide[1];
+ const sub=guide[0]==='stock'?'シマエナガさん：使った分の補充も忘れずに。':guide[0]==='tidy'?'トリケラさん：無理なく、一つずつで大丈夫です。':guide[0]==='urgent'?'トリケラさん：危険が迫っている場合は安全確保を優先してください。':'トリケラさん：家族や住まいに合わせて確認しましょう。';
+ banner.querySelector('.guide-support').textContent=sub;
 }
 function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===(['select','set','stock'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency'].includes(id)?'more':id)));if(id!=='home')renderPageMascotGuide(id);if(id==='home'){updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness()}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
 function priorityTitlesFromAnswers(){try{const v=JSON.parse(localStorage.getItem(diagnosisKey)||'null');if(!v||!['apartment','house','other'].includes(v.dResidence))return null;const p=[];const add=(n,title)=>p.push({n,title});if(v.dFurniture!=='ready')add(0,'まず命を守る：家具の転倒・落下を防ぐ');if(v.dResidence==='house')add(1,'戸建ての立地と避難先を確認する');add(1,'地域の災害リスクと避難先を確認する');if(v.dResidence==='apartment')add(2,'集合住宅の設備・避難方法を確認する');if(v.dFurniture==='ready')add(2,'命を守るための安全確認を続ける');if(v.dWater!=='ready')add(v.dWater==='none'?3:4,'飲料水を確認する');if(v.dFood!=='ready')add(v.dFood==='none'?3:4,'食料を確認する');if(v.dToilet!=='ready')add(v.dToilet==='none'?3:4,'非常用トイレを確認する');if(v.dPeople==='5')add(4,'世帯人数に合う備蓄量を再計算する');if(!p.some(x=>x.n<3))add(5,'備えの維持と定期点検');return p.sort((a,b)=>a.n-b.n).map(x=>x.title)}catch(e){return null}}
