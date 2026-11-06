@@ -451,6 +451,11 @@ header{z-index:50;isolation:isolate}
 @media(max-width:390px){#home .game-mascot-scene{height:108px;min-height:108px;flex-basis:108px;gap:4px}#home .game-mascot-scene .character-art{flex-basis:82px;width:82px!important;height:102px!important}}
 @media(max-width:355px){#home .game-mascot-scene .character-art{flex-basis:74px;width:74px!important}}
 @media(prefers-reduced-motion:reduce){.character-art .mascot-blink{animation:none!important;opacity:0!important}}
+/* Final accessibility polish: reliable tap targets and safe wrapped text on small phones. */
+#releaseReadinessPanel button,#home .home-quick-links button,#home .game-next-action{min-height:48px;touch-action:manipulation}
+#releaseReadinessPanel .notice,#backupIntegrityResult,#home .game-dialogue,#home .game-support-comments p{overflow-wrap:anywhere;word-break:normal}
+@media(max-width:390px){#releaseReadinessPanel{padding:15px}#releaseReadinessPanel button{font-size:14px}}
+@media(prefers-reduced-motion:reduce){#releaseReadinessPanel *{animation:none!important;transition:none!important}}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -528,6 +533,8 @@ header{z-index:50;isolation:isolate}
 <button class="primary" id="releaseReadinessRun" type="button" onclick="checkReleaseReadiness()" style="width:100%;min-height:48px">4項目を診断する</button>
 <div id="releaseReadinessResults" role="status" aria-live="polite"></div>
 <button type="button" class="secondary" style="width:100%;margin-top:10px" onclick="openFullBackupFromReadiness()">全データのバックアップへ ↗</button>
+<button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
+<p class="notice" id="backupIntegrityResult" role="status" aria-live="polite">実データの復元は行わず、バックアップの生成と読み取りを確認します。</p>
 </div>
 <div class="card more-important"><h2>避難・安全を確認する</h2>
 <button class="more-menu-button" type="button" onclick="show('evacuation')"><strong>マイ避難計画</strong><span>避難先・連絡方法を確認 ↗</span></button>
@@ -1180,6 +1187,31 @@ async function initOfflineStartup(){
   const count=readyFiles.filter(Boolean).length;
   set(count===necessary.length?'必須ファイル9件の保存を確認しました。機内モードでの起動もお試しください。':'オフライン用ファイル：'+count+'/9件。通信できる状態でアプリを開き直してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
+}
+function checkBackupIntegrity(){
+ const status=document.getElementById('backupIntegrityResult');
+ if(!status)return;
+ try{
+  const fixture={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:{[key]:'[]'}};
+  const accepted=validateFullBackupObject(JSON.parse(JSON.stringify(fixture)));
+  let invalidRejected=false;
+  try{validateFullBackupObject({format:'wrong',data:{[key]:'[]'}})}catch(e){invalidRejected=true}
+  if(!accepted.keys.includes(key)||!invalidRejected)throw Error('validator mismatch');
+  let saved=0;
+  const current={};
+  for(const k of allBackupKeys){
+   const v=localStorage.getItem(k);
+   if(v!==null){current[k]=v;saved++;}
+  }
+  if(saved===0){status.textContent='✅ 復元形式の検証は正常です。まだ記録データがないため、実データの確認は省略しました。';return}
+  const sample={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:current};
+  const roundtrip=JSON.parse(JSON.stringify(sample));
+  const verified=validateFullBackupObject(roundtrip);
+  if(verified.keys.length!==saved||verified.keys.some(k=>roundtrip.data[k]!==current[k]))throw Error('roundtrip');
+  status.textContent='✅ 保存データ'+saved+'種類について、バックアップの生成・読み取り・形式検証が正常です。実際の復元やファイル保存は行っていません。';
+ }catch(e){
+  status.textContent='⚠️ バックアップの整合性を確認できませんでした。記録は変更していません。念のため別途保存し、内容を確認してください。';
+ }
 }
 function openFullBackupFromReadiness(){
  show('supplies');
