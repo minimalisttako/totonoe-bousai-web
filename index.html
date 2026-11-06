@@ -475,54 +475,54 @@ function goBackPage(){show(previousPage!==activePage&&validPage(previousPage)?pr
 function updatePageNavigation(id){const bar=document.getElementById('pageNavigation'),title=document.getElementById('pageCurrentTitle'),back=document.getElementById('pageBackButton');if(bar)bar.classList.toggle('hidden',id==='home');if(title)title.textContent=pageNames[id]||'ととのえ防災';if(back)back.textContent='‹ '+(pageNames[previousPage]||'ホーム')+'へ戻る'}
 
 const pageMascotGuides={
- learn:['tidy','まずは整理の基本から見ていきましょう。気になるところからで大丈夫ですよ。'],
- select:['tidy','今の暮らしに必要な物から、一緒に見直していきましょう。'],
- set:['tidy','よく使う物から、戻す場所を決めていきましょう。'],
- stock:['stock','まずは家にある物を確認しましょう。足りない物は、そのあとで大丈夫ですよ。'],
- supplies:['stock','水・食料・トイレの備えから、順番に確認していきましょう。'],
- reviews:['stock','買う前に、実際に使った人の感想も参考にしてみましょう。'],
- diagnosis:['safety','住まいに合った対策を、一緒に優先順位から見ていきましょう。'],
+ learn:['tidy','まずは整理の基本から見ていこうね。気になるところからで大丈夫だよ。'],
+ select:['tidy','今の暮らしに必要な物から、一緒に見直していこうね。'],
+ set:['tidy','よく使う物から、戻す場所を決めていこうね。'],
+ stock:['stock','まずは家にある物を確認しようね。足りない物はそのあとで大丈夫だよ。'],
+ supplies:['stock','水・食料・トイレの備えから、順番に確認していこうね。'],
+ reviews:['stock','買う前に、使った人の感想も参考にしてみようね。'],
+ diagnosis:['safety','住まいに合った対策を、優先順位から一緒に見ていこうね。'],
  emergency:['urgent','身の安全を最優先に。最新の避難情報を確認してください。'],
- evacuation:['safety','まず避難先を確認しましょう。次に経路と連絡方法を見ていきます。'],
- homeSafety:['safety','最初は寝る場所と避難経路から確認しましょう。ここは大切なところです。'],
- pouch:['stock','普段の外出を思い浮かべながら、必要な物を一緒に選びましょう。'],
- tidy:['tidy','一度に全部やる必要はありません。今日はひとつから始めましょう。'],
- seasonalCheck:['safety','季節が変わるタイミングで、必要な備えを確認していきましょう。'],
- more:['safety','どこから始めても大丈夫ですよ。今必要なメニューをご案内します。']
+ evacuation:['safety','まずは避難先を確認しようね。次に経路と連絡方法を見ていこう。'],
+ homeSafety:['safety','最初は寝る場所と避難経路から確認しようね。ここは大切なところだよ。'],
+ pouch:['stock','普段の外出を思い浮かべながら、必要な物を一緒に選んでいこうね。'],
+ tidy:['tidy','一度に全部やらなくて大丈夫だよ。今日はひとつから始めようね。'],
+ seasonalCheck:['safety','季節が変わるタイミングで、必要な備えを確認していこうね。'],
+ more:['safety','どこから始めても大丈夫だよ。今必要なメニューから見ていこうね。']
 };
 function contextualMascotAdvice(id,fallback){
  const today=todayLocalDate();
  if(id==='tidy'||id==='learn'||id==='select'||id==='set'){
   const items=readTidyPlaces(),steps=tidyStepTotals(),remaining=items.filter(x=>x.done!==true);
-  if(steps.total&&steps.complete===steps.total)return 'お片付けのチェックがすべて終わりましたね。次は備えと安全対策を確認しましょう。';
-  if(remaining.length)return '小さな作業は'+steps.complete+' / '+steps.total+'項目まで進んでいます。次は「'+remaining[0].place+'」を一緒に確認しましょう。';
+  if(steps.total&&steps.complete===steps.total)return 'お片付けのチェックが全部終わったね。次は備えと安全対策を確認しよう。';
+  if(remaining.length)return '小さな作業は'+steps.complete+' / '+steps.total+'項目まで進んだね。次は「'+remaining[0].place+'」を一緒に確認しよう。';
   return fallback;
  }
  if(id==='supplies'||id==='stock'){
   const items=Array.isArray(supplies)?supplies:[];
-  if(!items.length)return '最初は家にある備蓄から登録してみましょう。ひとつずつで大丈夫ですよ。';
+  if(!items.length)return '最初は家にある備蓄から登録してみようね。ひとつずつで大丈夫だよ。';
   const expired=items.filter(x=>x.exp&&x.exp<today).length;
   const missing=items.filter(x=>String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.qty)<Number(x.target)).length;
-  if(expired)return '期限を過ぎた備蓄が'+expired+'件あります。まず状態を確認して、必要なら入れ替えましょう。';
-  if(missing)return '目標より少ない備蓄が'+missing+'種類あります。必要度の高い物から補充していきましょう。';
-  return '備蓄は'+items.length+'種類登録できていますね。次は数量と期限を確認しましょう。';
+  if(expired)return '期限を過ぎた備蓄が'+expired+'件あるよ。まず状態を確認して、必要なら入れ替えようね。';
+  if(missing)return '目標より少ない備蓄が'+missing+'種類あるよ。必要度の高い物から補充していこうね。';
+  return '備蓄は'+items.length+'種類登録できたね。次は数量と期限を確認しよう。';
  }
  if(id==='evacuation'){
   const plan=readEvacuationPlan();
   const important=[['evPlace','避難先'],['evTiming','避難するタイミング'],['evContacts','連絡方法']];
   const missing=important.filter(([key])=>typeof plan[key]!=='string'||!plan[key].trim());
-  return missing.length?'「'+missing[0][1]+'」など'+missing.length+'件が未設定です。平常時に、ひとつずつ決めていきましょう。':'避難先・タイミング・連絡方法は記入できていますね。時々見直しておきましょう。';
+  return missing.length?'「'+missing[0][1]+'」など'+missing.length+'件が未設定だよ。平常時にひとつずつ決めていこうね。':'避難先・タイミング・連絡方法は記入できているね。時々見直しておこう。';
  }
  if(id==='pouch'){
   const items=readPouchItems();
-  if(!items.length)return '防災ポーチは必須ではありません。普段の外出に必要な物から考えてみましょう。';
+  if(!items.length)return '防災ポーチは必須じゃないよ。普段の外出に必要な物から考えてみようね。';
   const due=items.filter(x=>x.nextCheck&&x.nextCheck<=today).length;
-  if(due)return '点検予定の持ち物が'+due+'件あります。まず状態をひとつずつ確認しましょう。';
-  return '防災ポーチには'+items.length+'件登録できていますね。持ち歩く物を確認しましょう。';
+  if(due)return '点検予定の持ち物が'+due+'件あるよ。まず状態をひとつずつ確認しようね。';
+  return '防災ポーチには'+items.length+'件登録できたね。持ち歩く物を確認しよう。';
  }
  if(id==='homeSafety'){
   const state=criticalSafetyState();
-  return state.remaining.length?'優先する安全点検が'+state.remaining.length+'項目あります。まず寝る場所と避難経路から確認しましょう。':'優先安全対策はすべて確認できていますね。家具の配置などが変わったら見直しましょう。';
+  return state.remaining.length?'優先する安全点検が'+state.remaining.length+'項目あるよ。まず寝る場所と避難経路から確認しようね。':'優先安全対策は全部確認できたね。家具の配置などが変わったら見直そう。';
  }
  return fallback;
 }
@@ -828,10 +828,10 @@ function renderGameHomeDialogue(){
  const speaker=document.getElementById('gameSpeaker'),message=document.getElementById('gameDialogueText'),season=document.getElementById('gameSeasonNote');
  if(!speaker||!message)return;
  const safety=criticalSafetyState(),steps=tidyStepTotals(),rate=tidyJourneyProgress();
- let name='たこ',line='まずは、ひとつ片付けてみましょう！';
+ let name='たこ',line='まずは、ひとつ片付けてみようね。';
  if(safety.remaining.length){name='トリケラさん';line='寝る場所と避難経路から見ていこうな。無理せず1つずつでええんやで。'}
- else if(steps.total&&steps.complete===steps.total){name='たこ';line='お片付けがひと区切りつきましたね。次は備えを確認しましょう。'}
- else if(steps.complete>0){name='たこ';line='小さな作業が'+steps.complete+'個進んでいますね。この調子でひとつずつ確認しましょう。'}
+ else if(steps.total&&steps.complete===steps.total){name='たこ';line='お片付けがひと区切りついたね。次は備えを確認しよう。'}
+ else if(steps.complete>0){name='たこ';line='小さな作業が'+steps.complete+'個進んだね。次もひとつずつ確認していこう。'}
  else if(rate>=50){name='トリケラさん';line='備蓄の置き場所も決めておこうな。1つずつでええんやで。'}
  speaker.textContent=name;message.textContent='「'+line+'」';
  if(season){
