@@ -479,7 +479,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href);
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v3'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -753,8 +753,8 @@ async function initOfflineStartup(){
   const registration=await navigator.serviceWorker.register('./offline-worker.js',{scope:'./',updateViaCache:'none'});
   let readyTimer;const ready=await Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>{readyTimer=setTimeout(()=>reject(new Error('activation timeout')),12000)})]).finally(()=>clearTimeout(readyTimer));
   if(ready.scope!==registration.scope)throw Error('scope mismatch');
-  const saved=await caches.match(new URL('./',registration.scope).href,{cacheName:'totonoe-offline-shell-v2'});
-  set(saved?'アプリ本体を端末に保存済みです。平常時に機内モードで開き直し、起動できることを確認してください。':'アプリ本体の保存を確認できません。通信できる状態で開き直してください。');
+  const saved=await caches.match(new URL('./',registration.scope).href,{cacheName:'totonoe-offline-shell-v3'});
+  set(saved&&saved.ok?'アプリ本体を端末に保存済みです。平常時に機内モードで開き直し、起動できることを確認してください。':'アプリ本体の保存を確認できません。通信できる状態で開き直してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 initOfflineStartup();
