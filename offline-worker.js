@@ -1,4 +1,4 @@
-const SHELL_CACHE = 'totonoe-offline-shell-v4';
+const SHELL_CACHE = 'totonoe-offline-shell-v5';
 const SHELL_URL = new URL('./', self.registration.scope).href;
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
@@ -6,7 +6,7 @@ self.addEventListener('install', event => {
     if (!response.ok || response.redirected || !(response.headers.get('content-type') || '').includes('text/html')) throw new Error('App shell unavailable');
     const cache = await caches.open(SHELL_CACHE);
     await cache.put(SHELL_URL, response);
-    const mascotFiles=['tako.svg','tako-blink.svg','tricera.svg','tricera-blink.svg','shimaenaga.svg','shimaenaga-blink.svg'];
+    const mascotFiles=['tako.svg','tako-blink.svg','tricera.svg','tricera-blink.svg','shimaenaga.svg','shimaenaga-blink.svg','app-icon.svg'];
     for(const file of mascotFiles){
       const url=new URL('./assets/'+file,self.registration.scope).href;
       try{
@@ -14,6 +14,11 @@ self.addEventListener('install', event => {
         if(art.ok&&!art.redirected)await cache.put(url,art);
       }catch(_){}
     }
+    const manifestUrl=new URL('./manifest.webmanifest',self.registration.scope).href;
+    try{
+      const manifest=await fetch(new Request(manifestUrl,{cache:'reload'}));
+      if(manifest.ok&&!manifest.redirected)await cache.put(manifestUrl,manifest);
+    }catch(_){}
     await self.skipWaiting();
   })());
 });
@@ -27,7 +32,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const request = event.request, url = new URL(request.url);
   const scope = new URL(self.registration.scope);
-  if(request.method==='GET'&&url.origin===scope.origin&&url.pathname.startsWith(new URL('assets/',self.registration.scope).pathname)&&url.pathname.endsWith('.svg')){
+  if(request.method==='GET'&&url.origin===scope.origin&&(url.pathname===new URL('manifest.webmanifest',self.registration.scope).pathname||(url.pathname.startsWith(new URL('assets/',self.registration.scope).pathname)&&url.pathname.endsWith('.svg')))){
     event.respondWith((async()=>{
       const cached=await caches.match(request);
       if(cached)return cached;
