@@ -379,7 +379,7 @@ header{z-index:50;isolation:isolate}
 <svg class="game-mascot tricera" viewBox="0 0 108 112" aria-hidden="true"><defs><linearGradient id="dinoGreen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c8ead2"/><stop offset="1" stop-color="#87c6a0"/></linearGradient></defs><path d="M18 68 Q3 48 14 30 L34 28 Q48 5 61 21 L77 20 Q101 39 91 72 L89 91 Q74 107 45 102 Q19 96 18 68" fill="url(#dinoGreen)" stroke="#6e8574" stroke-width="2.8"/><path d="M26 33 L13 13 Q24 11 39 28 M72 24 L88 8 Q96 20 87 35" fill="#fff0ca" stroke="#baaa85" stroke-width="2"/><path d="M47 48 L55 22 L63 49" fill="#fff0ca" stroke="#baaa85" stroke-width="2"/><circle cx="39" cy="61" r="3.2" fill="#243833"/><circle cx="73" cy="61" r="3.2" fill="#243833"/><path d="M46 72 Q55 61 68 72 L64 83 Q56 87 47 83 Z" fill="#f0e5c8" stroke="#baa989" stroke-width="2"/></svg>
 <svg class="game-mascot bird" viewBox="0 0 70 70" aria-hidden="true"><ellipse cx="34" cy="39" rx="29" ry="25" fill="#fffefb" stroke="#9eaaa7" stroke-width="2"/><path d="M5 38 Q5 11 22 14 L34 28 Q48 10 62 26 L64 44" fill="#e7e6e4"/><circle cx="25" cy="37" r="3" fill="#303333"/><circle cx="45" cy="37" r="3" fill="#303333"/><path d="M32 44 L37 43 L34 47 Z" fill="#d3ad7b"/></svg>
 </div>
-<div class="game-dialogue" aria-live="polite"><strong id="gameSpeaker">たこ</strong><span id="gameDialogueText">「まずは、ひとつ片付けてみましょう！」</span><span aria-hidden="true"> ✨</span></div><p class="game-season-note" id="gameSeasonNote"></p>
+<div class="game-dialogue" aria-live="polite"><strong id="gameSpeaker">たこ</strong><span id="gameDialogueText">「まずはひとつ、一緒に片付けていきましょう。」</span><span aria-hidden="true"> ✨</span></div><p class="game-season-note" id="gameSeasonNote"></p>
 </div><div class="game-dashboard-title"><span>YOUR MISSIONS</span><span>今日のメニュー</span></div><div class="emergency-home-entry"><p id="homeOfflineNotice" class="home-offline-notice hidden" role="status" aria-live="polite"></p><button class="emergency-shortcut" type="button" onclick="show('emergency')" aria-label="災害時モードを開く"><span aria-hidden="true">🛡️</span><strong>災害時モード</strong><span aria-hidden="true">↗</span></button></div><div class="home-quick-links" aria-label="よく使う機能"><button type="button" onclick="show('tidy')">⌂ お片付け</button><button type="button" onclick="show('evacuation')">♧ 避難計画</button><button type="button" onclick="show('supplies')">▣ 備蓄管理</button></div><div class="card home-banner home-banner-minimal"><h2>まず、ととのえる。それから、そなえる。</h2><p>🐙 お片付けを進め、暮らしと備蓄の場所を整えましょう。</p></div><div class="card" id="tidyJourneyCard" aria-live="polite"><h2>① ととのえる → ② そなえる</h2><p id="tidyJourneyStatus" class="notice">片付けの進捗を確認中です。</p><p id="tidyStepsSummary" class="notice" aria-live="polite"></p><div class="progressbar" role="progressbar" aria-label="お片付けの進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="tidyJourneyProgress" style="width:0%"></div></div><p id="tidyStageGuide" class="notice" aria-live="polite">片付けの進捗に合わせて次の作業をご案内します。</p><p class="notice">命を守る安全対策・最低限の備蓄は進捗率に関係なく最優先です。</p><div class="homeactions"><button class="secondary" id="tidyStageAction" type="button" onclick="show('tidy')">お片付けを進める ↗</button><button class="secondary" type="button" onclick="show('evacuation')">避難計画を確認</button><button class="secondary" type="button" onclick="show('supplies')">最低限の備蓄を確認</button></div></div><div class="card" id="criticalSafetyCard" aria-live="polite"><h2>🛡️ 命を守る安全チェック</h2><p id="criticalSafetyStatus" class="notice">安全対策を確認しています。</p><button class="secondary" type="button" onclick="show('homeSafety')">寝る場所・避難経路を確認する ↗</button></div><div class="card mission-card"><h2>今日やること</h2><p id="homeMissionSource" class="homehint" aria-live="polite"></p><p id="taskProgress" class="homehint" aria-live="polite"></p><div class="progressbar" role="progressbar" aria-label="今日やることの進捗" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><div id="taskProgressBar"></div></div><div id="homeSafetyPriority" aria-live="polite"></div><div id="homeTasks"></div></div><details class="home-group home-learn-fold" data-home-group="learn"><summary><span><strong>3つのステップ</strong><small>整理・整頓・備蓄を学ぶ</small></span><span class="home-group-arrow" aria-hidden="true">⌄</span></summary><div class="home-group-content"><div class="card journey-card"><div class="journey-grid"><button class="journey-tile" onclick="show('select')" aria-label="Select 整理について学ぶ"><span><strong>Select</strong><small>整理</small></span><span class="arrow" aria-hidden="true">↗</span></button><button class="journey-tile" onclick="show('set')" aria-label="Set 整頓について学ぶ"><span><strong>Set</strong><small>整頓</small></span><span class="arrow" aria-hidden="true">↗</span></button><button class="journey-tile" onclick="show('stock')" aria-label="Stock 備蓄について学ぶ"><span><strong>Stock</strong><small>備蓄</small></span><span class="arrow" aria-hidden="true">↗</span></button></div></div></div></details><details class="home-group" data-home-group="stock"><summary><span><strong>備蓄の管理・点検</strong><small id="homeStockMiniStatus">期限・補充・持ち歩き</small></span><span class="home-group-arrow" aria-hidden="true">⌄</span></summary><div class="home-group-content"><div class="card"><h2>備蓄の期限チェック</h2><div id="homeExpiryAlerts" aria-live="polite"></div><button class="secondary" type="button" onclick="showExpirySupplies()">期限切れの備蓄を見る ↗</button></div><div class="card"><h2>補充が必要な備蓄</h2><div id="homeRefillAlerts" aria-live="polite"></div><button class="secondary" type="button" onclick="showRefillSupplies()">補充リストを見る ↗</button></div><div class="card" id="homeInspectionCard"><h2>防災用品の点検予定</h2><div id="homeInspectionAlerts" aria-live="polite"></div><button class="secondary" type="button" onclick="showInspectionSupplies()">点検する備蓄を見る ↗</button></div><div class="card"><h2>防災ポーチ（0次持ち出し）</h2><p id="homePouchSummary" class="notice" aria-live="polite"></p><p id="homePouchDue" class="notice" aria-live="polite"></p><button class="secondary" type="button" onclick="show('pouch')">持ち歩きの備えを確認する ↗</button></div></div></details><details class="home-group" data-home-group="safety"><summary><span><strong>避難・住まいの安全</strong><small>避難計画・季節・安全点検</small></span><span class="home-group-arrow" aria-hidden="true">⌄</span></summary><div class="home-group-content"><div class="card"><h2>避難計画の見直し予定</h2><div id="homeEvacuationReview" aria-live="polite"></div><button class="secondary" type="button" onclick="show('evacuation')">避難計画を見直す ↗</button></div><div class="card"><h2>住まいの安全点検</h2><p id="homeSafetyAlert" class="notice" aria-live="polite"></p><button class="secondary" onclick="show('homeSafety')">家具・避難経路を点検する ↗</button></div><div class="card"><h2>季節別の防災点検</h2><p class="notice" id="homeSeasonalSummary" aria-live="polite"></p><button class="secondary" type="button" onclick="show('seasonalCheck')">点検項目を確認する ↗</button></div></div></details><details class="home-group" data-home-group="tidy"><summary><span><strong>暮らしを整える</strong><small>お片付けの記録・次にやること</small></span><span class="home-group-arrow" aria-hidden="true">⌄</span></summary><div class="home-group-content"><div class="card"><h2>お片付けノート</h2><p id="homeTidySummary" class="notice" aria-live="polite"></p><button class="secondary" type="button" onclick="show('tidy')">お片付けノートを開く ↗</button></div></div></details></section>
 <section id="learn" class="hidden"><div class="card"><h2>お片付けノート</h2><p>部屋ごとに整理の前後を記録できます。</p><button class="secondary" type="button" onclick="show('tidy')">お片付けを記録する ↗</button></div><div class="card"><h2>防災 × お片付けの3ステップ</h2><button class="step" onclick="show('select')"><span class="step-arrow" aria-hidden="true">↗</span><b>Select（整理）</b><p>持ち物を見直し、必要な物を選ぶ。</p></button><button class="step" onclick="show('set')"><span class="step-arrow" aria-hidden="true">↗</span><b>Set（整頓）</b><p>必要な物を使いやすく、安全に整える。</p></button><button class="step" onclick="show('stock')"><span class="step-arrow" aria-hidden="true">↗</span><b>Stock（備蓄）</b><p>家庭に合った防災用品を備える。</p></button></div><div class="card"><h2>お片付けの4ステップ</h2><p>① 整理 → ② 整頓 → ③ 収納 → ④ 掃除</p><p class="notice">アプリ全体の3ステップとは区別して扱います。</p></div></section>
 
@@ -475,54 +475,54 @@ function goBackPage(){show(previousPage!==activePage&&validPage(previousPage)?pr
 function updatePageNavigation(id){const bar=document.getElementById('pageNavigation'),title=document.getElementById('pageCurrentTitle'),back=document.getElementById('pageBackButton');if(bar)bar.classList.toggle('hidden',id==='home');if(title)title.textContent=pageNames[id]||'ととのえ防災';if(back)back.textContent='‹ '+(pageNames[previousPage]||'ホーム')+'へ戻る'}
 
 const pageMascotGuides={
- learn:['tidy','まずは整理から。暮らしを整えながら防災も学びましょう。'],
- select:['tidy','いまの暮らしに必要な物を選んでいきましょう。'],
- set:['tidy','物の定位置を決めると、いざというときにも役立ちます。'],
- stock:['stock','普段使う物と非常時の備えを、一緒に見直しましょう。'],
- supplies:['stock','食料・水・トイレなどの不足と期限を確認しましょう。'],
- reviews:['stock','買い足す前に、本当に必要かを確認しましょう。'],
- diagnosis:['safety','住まいに合った対策を、優先順位から確認しましょう。'],
+ learn:['tidy','まずは整理の基本から見ていきましょう。気になるところからで大丈夫ですよ。'],
+ select:['tidy','今の暮らしに必要な物から、一緒に見直していきましょう。'],
+ set:['tidy','よく使う物から、戻す場所を決めていきましょう。'],
+ stock:['stock','まずは家にある物を確認しましょう。足りない物は、そのあとで大丈夫ですよ。'],
+ supplies:['stock','水・食料・トイレの備えから、順番に確認していきましょう。'],
+ reviews:['stock','買う前に、実際に使った人の感想も参考にしてみましょう。'],
+ diagnosis:['safety','住まいに合った対策を、一緒に優先順位から見ていきましょう。'],
  emergency:['urgent','身の安全を最優先に。最新の避難情報を確認してください。'],
- evacuation:['safety','避難先だけでなく、経路と連絡方法も確かめましょう。'],
- homeSafety:['safety','まず寝る場所と避難経路の安全を確認しましょう。'],
- pouch:['stock','持ち歩く備えは、必要な物を無理のない量で。'],
- tidy:['tidy','一度に全部しなくても大丈夫。できるところから進めましょう。'],
- seasonalCheck:['safety','季節の変わり目に、必要な備えを点検しましょう。'],
- more:['safety','今必要な防災メニューから、ひとつずつ進めましょう。']
+ evacuation:['safety','まず避難先を確認しましょう。次に経路と連絡方法を見ていきます。'],
+ homeSafety:['safety','最初は寝る場所と避難経路から確認しましょう。ここは大切なところです。'],
+ pouch:['stock','普段の外出を思い浮かべながら、必要な物を一緒に選びましょう。'],
+ tidy:['tidy','一度に全部やる必要はありません。今日はひとつから始めましょう。'],
+ seasonalCheck:['safety','季節が変わるタイミングで、必要な備えを確認していきましょう。'],
+ more:['safety','どこから始めても大丈夫ですよ。今必要なメニューをご案内します。']
 };
 function contextualMascotAdvice(id,fallback){
  const today=todayLocalDate();
  if(id==='tidy'||id==='learn'||id==='select'||id==='set'){
   const items=readTidyPlaces(),steps=tidyStepTotals(),remaining=items.filter(x=>x.done!==true);
-  if(steps.total&&steps.complete===steps.total)return 'お片付けのチェックはすべて完了しています。必要な備えと安全対策も見直しましょう。';
-  if(remaining.length)return '小さな作業は'+steps.complete+' / '+steps.total+'項目完了。次は「'+remaining[0].place+'」から確認しましょう。';
+  if(steps.total&&steps.complete===steps.total)return 'お片付けのチェックがすべて終わりましたね。次は備えと安全対策を確認しましょう。';
+  if(remaining.length)return '小さな作業は'+steps.complete+' / '+steps.total+'項目まで進んでいます。次は「'+remaining[0].place+'」を一緒に確認しましょう。';
   return fallback;
  }
  if(id==='supplies'||id==='stock'){
   const items=Array.isArray(supplies)?supplies:[];
-  if(!items.length)return '備蓄はまだ未登録です。まずは家にある物から登録しましょう。';
+  if(!items.length)return '最初は家にある備蓄から登録してみましょう。ひとつずつで大丈夫ですよ。';
   const expired=items.filter(x=>x.exp&&x.exp<today).length;
   const missing=items.filter(x=>String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.qty)<Number(x.target)).length;
-  if(expired)return '期限を過ぎた備蓄が'+expired+'件あります。使える状態か確認し、必要に応じて入れ替えましょう。';
-  if(missing)return '目標数量に届いていない備蓄が'+missing+'種類あります。優先順位を決めて補充しましょう。';
-  return '備蓄を'+items.length+'種類登録済みです。数量と期限を定期的に確認しましょう。';
+  if(expired)return '期限を過ぎた備蓄が'+expired+'件あります。まず状態を確認して、必要なら入れ替えましょう。';
+  if(missing)return '目標より少ない備蓄が'+missing+'種類あります。必要度の高い物から補充していきましょう。';
+  return '備蓄は'+items.length+'種類登録できていますね。次は数量と期限を確認しましょう。';
  }
  if(id==='evacuation'){
   const plan=readEvacuationPlan();
   const important=[['evPlace','避難先'],['evTiming','避難するタイミング'],['evContacts','連絡方法']];
   const missing=important.filter(([key])=>typeof plan[key]!=='string'||!plan[key].trim());
-  return missing.length?'重要項目のうち「'+missing[0][1]+'」など'+missing.length+'件が未設定です。平常時に確認しましょう。':'避難先・避難するタイミング・連絡方法を記入済みです。定期的に見直しましょう。';
+  return missing.length?'「'+missing[0][1]+'」など'+missing.length+'件が未設定です。平常時に、ひとつずつ決めていきましょう。':'避難先・タイミング・連絡方法は記入できていますね。時々見直しておきましょう。';
  }
  if(id==='pouch'){
   const items=readPouchItems();
-  if(!items.length)return '防災ポーチは任意です。普段の外出で必要な物から考えましょう。';
+  if(!items.length)return '防災ポーチは必須ではありません。普段の外出に必要な物から考えてみましょう。';
   const due=items.filter(x=>x.nextCheck&&x.nextCheck<=today).length;
-  if(due)return '点検予定日を迎えた持ち物が'+due+'件あります。状態を確認しましょう。';
-  return '防災ポーチに'+items.length+'件登録しています。持ち歩く物を見直しましょう。';
+  if(due)return '点検予定の持ち物が'+due+'件あります。まず状態をひとつずつ確認しましょう。';
+  return '防災ポーチには'+items.length+'件登録できていますね。持ち歩く物を確認しましょう。';
  }
  if(id==='homeSafety'){
   const state=criticalSafetyState();
-  return state.remaining.length?'優先する安全点検が'+state.remaining.length+'項目残っています。寝る場所と避難経路から確認しましょう。':'優先安全対策はすべて自己確認済みです。環境が変わったら見直しましょう。';
+  return state.remaining.length?'優先する安全点検が'+state.remaining.length+'項目あります。まず寝る場所と避難経路から確認しましょう。':'優先安全対策はすべて確認できていますね。家具の配置などが変わったら見直しましょう。';
  }
  return fallback;
 }
@@ -830,8 +830,8 @@ function renderGameHomeDialogue(){
  const safety=criticalSafetyState(),steps=tidyStepTotals(),rate=tidyJourneyProgress();
  let name='たこ',line='まずは、ひとつ片付けてみましょう！';
  if(safety.remaining.length){name='トリケラさん';line='寝る場所と避難経路から見ていこうな。無理せず1つずつでええんやで。'}
- else if(steps.total&&steps.complete===steps.total){name='たこ';line='お片付けがひと区切りです。備えも見直しましょう！'}
- else if(steps.complete>0){name='たこ';line='小さな作業も、もう'+steps.complete+'個完了しました。'}
+ else if(steps.total&&steps.complete===steps.total){name='たこ';line='お片付けがひと区切りつきましたね。次は備えを確認しましょう。'}
+ else if(steps.complete>0){name='たこ';line='小さな作業が'+steps.complete+'個進んでいますね。この調子でひとつずつ確認しましょう。'}
  else if(rate>=50){name='トリケラさん';line='備蓄の置き場所も決めておこうな。1つずつでええんやで。'}
  speaker.textContent=name;message.textContent='「'+line+'」';
  if(season){
