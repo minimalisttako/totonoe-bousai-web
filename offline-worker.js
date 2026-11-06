@@ -1,5 +1,5 @@
-/* ととのえ防災：v7 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
-const CACHE='totonoe-offline-shell-v7';
+/* ととのえ防災：v8 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
+const CACHE='totonoe-offline-shell-v8';
 const ROOT=new URL('./',self.registration.scope).href;
 const PATHS=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
 const URLS=PATHS.map(p=>new URL(p,ROOT).href);
@@ -35,7 +35,8 @@ self.addEventListener('fetch',event=>{
    try{
     const response=await fetch(request,{signal:controller.signal,cache:'no-store'});
     if(!usable(response,true))throw Error('Invalid app response');
-    try{const cache=await caches.open(CACHE);await cache.put(ROOT,response.clone());}catch(_){}
+    // オンラインの新しいHTMLだけを保存済みの旧オフライン一式に混ぜない。
+    // 必須ファイル一式は次のService Workerインストール時にまとめて更新する。
     return response;
    }catch(_){return await (await caches.open(CACHE)).match(ROOT)||new Response('オフライン用データがありません。通信を回復してアプリを開いてください。',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}});}
    finally{clearTimeout(timer);}
