@@ -619,6 +619,8 @@ function tidySafetyLinkedStatus(place){
  return {ids,pending};
 }
 let activeTidyChecklistId=null;
+const tidyPlaceOrder=['玄関','リビング','寝室','キッチン','洗面・トイレ','浴室','廊下','収納'];
+function tidyPlaceSort(a,b){const ai=tidyPlaceOrder.indexOf(a.place),bi=tidyPlaceOrder.indexOf(b.place);return (ai<0?999:ai)-(bi<0?999:bi)||String(a.createdAt||'').localeCompare(String(b.createdAt||''))}
 function toggleTidyStep(id,index,value){
  const items=readTidyPlaces(),item=items.find(x=>x.id===id),status=document.getElementById('tidyActionStatus');if(!item)return;
  const checks=Array.isArray(item.stepChecks)?[...item.stepChecks]:item.done?[true,true,true,true]:[false,false,false,false];
@@ -635,17 +637,17 @@ function renderTidy(){
  renderTidyJourney();box.replaceChildren();
  const filter=document.getElementById('tidyFilter')?.value||'all';
  const query=(document.getElementById('tidySearch')?.value||'').trim().toLocaleLowerCase('ja-JP');
- const shown=items.filter(x=>(filter==='all'||(filter==='done'?x.done===true:x.done!==true))&&(!query||[x.place,x.before,x.after,x.nextAction].some(v=>String(v||'').toLocaleLowerCase('ja-JP').includes(query)))).sort((a,b)=>Number(a.done===true)-Number(b.done===true));
+ const shown=items.filter(x=>(filter==='all'||(filter==='done'?x.done===true:x.done!==true))&&(!query||[x.place,x.before,x.after,x.nextAction].some(v=>String(v||'').toLocaleLowerCase('ja-JP').includes(query)))).sort(tidyPlaceSort);
  if(!shown.length){const p=document.createElement('p');p.className='notice';p.textContent=items.length?'該当する場所はありません。':'場所を追加して始めましょう。';box.append(p)}
  shown.forEach(item=>{
   const steps=tidyStepsFor(item.place),checks=Array.isArray(item.stepChecks)?item.stepChecks:item.done?[true,true,true,true]:[false,false,false,false];
   const checked=steps.filter((_,i)=>checks[i]===true).length;
   const row=document.createElement('section');row.className='item tidy-place';
   const checklist=document.createElement('details');checklist.className='tidy-checklist';
-  const heading=document.createElement('summary');heading.textContent=item.place+'　'+checked+'/'+steps.length+' 完了';
+  const heading=document.createElement('summary');heading.textContent=item.place+'　'+checked+'/'+steps.length+' 完了'+(checked===steps.length?' ✓':'');heading.setAttribute('aria-label',item.place+'：'+checked+'/'+steps.length+'項目完了。タップして作業を表示');
   const firstPending=shown.find(x=>!x.done);
   checklist.open=activeTidyChecklistId!==null?activeTidyChecklistId===item.id:!!firstPending&&firstPending.id===item.id;
-  checklist.addEventListener('toggle',()=>{if(checklist.open)activeTidyChecklistId=item.id;else if(activeTidyChecklistId===item.id)activeTidyChecklistId=''});
+  checklist.addEventListener('toggle',()=>{if(!checklist.isConnected)return;if(checklist.open)activeTidyChecklistId=item.id;else if(activeTidyChecklistId===item.id)activeTidyChecklistId=''});
   checklist.append(heading);row.append(checklist);
   const instructions=document.createElement('div');instructions.className='tidy-step-list';instructions.style.display='grid';instructions.style.gap='12px';
   steps.forEach((step,i)=>{
@@ -654,6 +656,10 @@ function renderTidy(){
    const text=document.createElement('span');text.textContent=step;label.append(input,text);instructions.append(label);
   });
   checklist.append(instructions);
+  if(checked<steps.length){
+   const nextIndex=checks.findIndex((v,i)=>v!==true&&i<steps.length);
+   const hint=document.createElement('p');hint.className='notice';hint.textContent='次は「'+steps[nextIndex>=0?nextIndex:0]+'」を進めましょう。';checklist.append(hint);
+  }
   const linked=tidySafetyLinkedStatus(item.place);
   if(linked.ids.length){
    const panel=document.createElement('div');panel.className='notice';panel.style.marginTop='12px';
