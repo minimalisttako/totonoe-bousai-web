@@ -387,6 +387,17 @@ header{z-index:50;isolation:isolate}
 .page-mascot-help.tidy-tone .guide-support{color:#7b6263}
 @media(max-width:390px){.page-mascot-help{gap:8px;padding:10px}.page-mascot-friends{flex:0 0 75px;width:75px}.page-mascot-friends .octo{width:59px;height:65px}.page-mascot-friends .tricera{width:49px;height:52px}.page-mascot-friends .bird{width:39px;height:39px}}
 @media(prefers-reduced-motion:reduce){#home .home-quick-links button{transition:none}}
+
+/* Home status: concise, factual, separate from the mascots' advice. */
+#home .game-progress-snapshot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0 0}
+#home .game-progress-snapshot .game-snapshot-item{min-width:0;background:#ffffffd9;border:1px solid #d2e4eb;border-radius:12px;padding:9px 7px;display:flex;flex-direction:column;gap:3px}
+#home .game-snapshot-item .game-snapshot-label{color:#567482;font-size:10px;font-weight:700}
+#home .game-snapshot-item .game-snapshot-value{font-size:12px;font-weight:800;color:#2e5969;overflow-wrap:anywhere}
+#home .game-snapshot-item[data-attention="true"]{border-color:#edcfc6;background:#fff8f4}
+#home .game-support-comments{border-top:1px solid #d6e6eb;padding-top:9px;margin-top:10px}
+@media(max-width:365px){#home .game-progress-snapshot{gap:5px}#home .game-snapshot-item .game-snapshot-value{font-size:11px}}
+/* A safe artwork-slot: installed character images replace SVG previews without moving the layout. */
+.game-mascot-scene img.game-mascot,.page-mascot-friends img.game-mascot{object-fit:contain}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -397,7 +408,7 @@ header{z-index:50;isolation:isolate}
 <svg class="game-mascot tricera" viewBox="0 0 108 112" aria-hidden="true"><defs><linearGradient id="dinoGreen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c8ead2"/><stop offset="1" stop-color="#87c6a0"/></linearGradient></defs><path d="M18 68 Q3 48 14 30 L34 28 Q48 5 61 21 L77 20 Q101 39 91 72 L89 91 Q74 107 45 102 Q19 96 18 68" fill="url(#dinoGreen)" stroke="#6e8574" stroke-width="2.8"/><path d="M26 33 L13 13 Q24 11 39 28 M72 24 L88 8 Q96 20 87 35" fill="#fff0ca" stroke="#baaa85" stroke-width="2"/><path d="M47 48 L55 22 L63 49" fill="#fff0ca" stroke="#baaa85" stroke-width="2"/><circle cx="39" cy="61" r="3.2" fill="#243833"/><circle cx="73" cy="61" r="3.2" fill="#243833"/><path d="M46 72 Q55 61 68 72 L64 83 Q56 87 47 83 Z" fill="#f0e5c8" stroke="#baa989" stroke-width="2"/></svg>
 <svg class="game-mascot bird" viewBox="0 0 70 70" aria-hidden="true"><ellipse cx="34" cy="39" rx="29" ry="25" fill="#fffefb" stroke="#9eaaa7" stroke-width="2"/><path d="M5 38 Q5 11 22 14 L34 28 Q48 10 62 26 L64 44" fill="#e7e6e4"/><circle cx="25" cy="37" r="3" fill="#303333"/><circle cx="45" cy="37" r="3" fill="#303333"/><path d="M32 44 L37 43 L34 47 Z" fill="#d3ad7b"/></svg>
 </div>
-<div class="game-dialogue" aria-live="polite"><strong id="gameSpeaker">たこ</strong><span id="gameDialogueText">「まずはひとつ、一緒に片付けていこうね。」</span></div><div class="game-support-comments"><p id="gameTriceraNote"></p><p class="game-season-note" id="gameSeasonNote"></p></div><button type="button" id="gameNextAction" class="game-next-action" onclick="show('homeSafety')">次の一歩を確認する ↗</button>
+<div class="game-dialogue" aria-live="polite"><strong id="gameSpeaker">たこ</strong><span id="gameDialogueText">「まずはひとつ、一緒に片付けていこうね。」</span></div><div class="game-support-comments"><p id="gameTriceraNote"></p><p class="game-season-note" id="gameSeasonNote"></p></div><div class="game-progress-snapshot" aria-label="現在の備えの概要"><div class="game-snapshot-item" id="gameSafetySnapshot"><span class="game-snapshot-label">住まいの安全</span><strong class="game-snapshot-value" id="gameSafetyValue">確認中</strong></div><div class="game-snapshot-item" id="gameTidySnapshot"><span class="game-snapshot-label">お片付け</span><strong class="game-snapshot-value" id="gameTidyValue">確認中</strong></div><div class="game-snapshot-item" id="gameStockSnapshot"><span class="game-snapshot-label">備蓄</span><strong class="game-snapshot-value" id="gameStockValue">確認中</strong></div></div><button type="button" id="gameNextAction" class="game-next-action" onclick="show('homeSafety')">次の一歩を確認する ↗</button>
 </div><div class="game-dashboard-title"><span>YOUR MISSIONS</span><span>今日のメニュー</span></div><div class="emergency-home-entry"><p id="homeOfflineNotice" class="home-offline-notice hidden" role="status" aria-live="polite"></p><button class="emergency-shortcut" type="button" onclick="show('emergency')" aria-label="災害時モードを開く"><span aria-hidden="true">🛡️</span><strong>災害時モード</strong><span aria-hidden="true">↗</span></button></div><div class="home-quick-links" aria-label="よく使う機能"><button type="button" onclick="show('tidy')">⌂ お片付け</button><button type="button" onclick="show('evacuation')">♧ 避難計画</button><button type="button" onclick="show('supplies')">▣ 備蓄管理</button></div><div class="card home-banner home-banner-minimal"><h2>まず、ととのえる。それから、そなえる。</h2><p>🐙 お片付けを進め、暮らしと備蓄の場所を整えましょう。</p></div><div class="card" id="tidyJourneyCard" aria-live="polite"><h2>① ととのえる → ② そなえる</h2><p id="tidyJourneyStatus" class="notice">片付けの進捗を確認中です。</p><p id="tidyStepsSummary" class="notice" aria-live="polite"></p><div class="progressbar" role="progressbar" aria-label="お片付けの進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="tidyJourneyProgress" style="width:0%"></div></div><p id="tidyStageGuide" class="notice" aria-live="polite">片付けの進捗に合わせて次の作業をご案内します。</p><p class="notice">命を守る安全対策・最低限の備蓄は進捗率に関係なく最優先です。</p><div class="homeactions"><button class="secondary" id="tidyStageAction" type="button" onclick="show('tidy')">お片付けを進める ↗</button><button class="secondary" type="button" onclick="show('evacuation')">避難計画を確認</button><button class="secondary" type="button" onclick="show('supplies')">最低限の備蓄を確認</button></div></div><div class="card" id="criticalSafetyCard" aria-live="polite"><h2>🛡️ 命を守る安全チェック</h2><p id="criticalSafetyStatus" class="notice">安全対策を確認しています。</p><button class="secondary" type="button" onclick="show('homeSafety')">寝る場所・避難経路を確認する ↗</button></div><div class="card mission-card"><h2>今日やること</h2><p id="homeMissionSource" class="homehint" aria-live="polite"></p><p id="taskProgress" class="homehint" aria-live="polite"></p><div class="progressbar" role="progressbar" aria-label="今日やることの進捗" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><div id="taskProgressBar"></div></div><div id="homeSafetyPriority" aria-live="polite"></div><div id="homeTasks"></div></div><details class="home-group home-learn-fold" data-home-group="learn"><summary><span><strong>3つのステップ</strong><small>整理・整頓・備蓄を学ぶ</small></span><span class="home-group-arrow" aria-hidden="true">⌄</span></summary><div class="home-group-content"><div class="card journey-card"><div class="journey-grid"><button class="journey-tile" onclick="show('select')" aria-label="Select 整理について学ぶ"><span><strong>Select</strong><small>整理</small></span><span class="arrow" aria-hidden="true">↗</span></button><button class="journey-tile" onclick="show('set')" aria-label="Set 整頓について学ぶ"><span><strong>Set</strong><small>整頓</small></span><span class="arrow" aria-hidden="true">↗</span></button><button class="journey-tile" onclick="show('stock')" aria-label="Stock 備蓄について学ぶ"><span><strong>Stock</strong><small>備蓄</small></span><span class="arrow" aria-hidden="true">↗</span></button></div></div></div></details><details class="home-group" data-home-group="stock"><summary><span><strong>備蓄の管理・点検</strong><small id="homeStockMiniStatus">期限・補充・持ち歩き</small></span><span class="home-group-arrow" aria-hidden="true">⌄</span></summary><div class="home-group-content"><div class="card"><h2>備蓄の期限チェック</h2><div id="homeExpiryAlerts" aria-live="polite"></div><button class="secondary" type="button" onclick="showExpirySupplies()">期限切れの備蓄を見る ↗</button></div><div class="card"><h2>補充が必要な備蓄</h2><div id="homeRefillAlerts" aria-live="polite"></div><button class="secondary" type="button" onclick="showRefillSupplies()">補充リストを見る ↗</button></div><div class="card" id="homeInspectionCard"><h2>防災用品の点検予定</h2><div id="homeInspectionAlerts" aria-live="polite"></div><button class="secondary" type="button" onclick="showInspectionSupplies()">点検する備蓄を見る ↗</button></div><div class="card"><h2>防災ポーチ（0次持ち出し）</h2><p id="homePouchSummary" class="notice" aria-live="polite"></p><p id="homePouchDue" class="notice" aria-live="polite"></p><button class="secondary" type="button" onclick="show('pouch')">持ち歩きの備えを確認する ↗</button></div></div></details><details class="home-group" data-home-group="safety"><summary><span><strong>避難・住まいの安全</strong><small>避難計画・季節・安全点検</small></span><span class="home-group-arrow" aria-hidden="true">⌄</span></summary><div class="home-group-content"><div class="card"><h2>避難計画の見直し予定</h2><div id="homeEvacuationReview" aria-live="polite"></div><button class="secondary" type="button" onclick="show('evacuation')">避難計画を見直す ↗</button></div><div class="card"><h2>住まいの安全点検</h2><p id="homeSafetyAlert" class="notice" aria-live="polite"></p><button class="secondary" onclick="show('homeSafety')">家具・避難経路を点検する ↗</button></div><div class="card"><h2>季節別の防災点検</h2><p class="notice" id="homeSeasonalSummary" aria-live="polite"></p><button class="secondary" type="button" onclick="show('seasonalCheck')">点検項目を確認する ↗</button></div></div></details><details class="home-group" data-home-group="tidy"><summary><span><strong>暮らしを整える</strong><small>お片付けの記録・次にやること</small></span><span class="home-group-arrow" aria-hidden="true">⌄</span></summary><div class="home-group-content"><div class="card"><h2>お片付けノート</h2><p id="homeTidySummary" class="notice" aria-live="polite"></p><button class="secondary" type="button" onclick="show('tidy')">お片付けノートを開く ↗</button></div></div></details></section>
 <section id="learn" class="hidden"><div class="card"><h2>お片付けノート</h2><p>部屋ごとに整理の前後を記録できます。</p><button class="secondary" type="button" onclick="show('tidy')">お片付けを記録する ↗</button></div><div class="card"><h2>防災 × お片付けの3ステップ</h2><button class="step" onclick="show('select')"><span class="step-arrow" aria-hidden="true">↗</span><b>Select（整理）</b><p>持ち物を見直し、必要な物を選ぶ。</p></button><button class="step" onclick="show('set')"><span class="step-arrow" aria-hidden="true">↗</span><b>Set（整頓）</b><p>必要な物を使いやすく、安全に整える。</p></button><button class="step" onclick="show('stock')"><span class="step-arrow" aria-hidden="true">↗</span><b>Stock（備蓄）</b><p>家庭に合った防災用品を備える。</p></button></div><div class="card"><h2>お片付けの4ステップ</h2><p>① 整理 → ② 整頓 → ③ 収納 → ④ 掃除</p><p class="notice">アプリ全体の3ステップとは区別して扱います。</p></div></section>
 
@@ -878,6 +889,21 @@ function tidyStageGuidance(rate,hasCriticalPending){
  return {message:'片付け75%到達。備蓄を7日分へ充実させる目安です。家族に必要な量を確認し、無理なく補充しましょう。',action:'備蓄を整える',page:'supplies'};
 }
 function renderTidyJourney(){const status=document.getElementById('tidyJourneyStatus'),bar=document.getElementById('tidyJourneyProgress');if(!status||!bar)return;const c=tidyCounts(),rate=tidyJourneyProgress();const total=c.all;bar.style.width=rate+'%';bar.parentElement.setAttribute('aria-valuenow',String(rate));status.textContent='お片付け '+rate+'%（'+c.done+'/'+total+'か所完了）';const steps=tidyStepTotals(),stepsLabel=document.getElementById('tidyStepsSummary');if(stepsLabel)stepsLabel.textContent='小さな作業：'+steps.complete+'/'+steps.total+'項目完了';const guide=tidyStageGuidance(rate,criticalSafetyState().remaining.length>0);const message=document.getElementById('tidyStageGuide');if(message)message.textContent=guide.message;const button=document.getElementById('tidyStageAction');if(button){button.textContent=guide.action+' ↗';button.onclick=()=>show(guide.page)}renderGameHomeDialogue()}
+function renderGameProgressSnapshot(){
+ const safe=criticalSafetyState(),tidy=tidyCounts(),stock=Array.isArray(supplies)?supplies:[];
+ const shortage=stock.filter(x=>String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.qty)<Number(x.target)).length;
+ const expired=stock.filter(x=>x.exp&&x.exp<todayLocalDate()).length;
+ const values=[
+  ['gameSafetySnapshot','gameSafetyValue',safe.remaining.length?'要確認 '+safe.remaining.length+'件':'確認済み',safe.remaining.length>0],
+  ['gameTidySnapshot','gameTidyValue',tidy.done+'/'+tidy.all+'か所',false],
+  ['gameStockSnapshot','gameStockValue',!stock.length?'未登録':expired?'期限超過 '+expired+'件':shortage?'不足 '+shortage+'種類':'登録 '+stock.length+'種類',expired>0||shortage>0]
+ ];
+ values.forEach(([parentId,valueId,label,attention])=>{
+  const parent=document.getElementById(parentId),value=document.getElementById(valueId);
+  if(parent)parent.dataset.attention=String(attention);
+  if(value)value.textContent=label;
+ });
+}
 function renderGameHomeDialogue(){
  const speaker=document.getElementById('gameSpeaker'),message=document.getElementById('gameDialogueText'),
        tricera=document.getElementById('gameTriceraNote'),season=document.getElementById('gameSeasonNote');
@@ -890,6 +916,7 @@ function renderGameHomeDialogue(){
  else if(rate>=50)line='今の片付け状況に合わせて、備蓄の置き場所も確認しようね。';
  speaker.textContent='たこ';
  message.textContent='「'+line+'」';
+ renderGameProgressSnapshot();
  const action=document.getElementById('gameNextAction');
  if(action){
   if(safety.remaining.length){
@@ -1063,6 +1090,24 @@ renderHomeSafetyAlert();renderHomeSafetyChecks();renderPouch();renderHomeStockMi
  });
 }
 stabilizeMascotImages();
+/* Real, transparent original character PNGs can be installed into assets/
+   without altering the layout or deleting the offline SVG previews. */
+function useOfficialMascotAssets(){
+ const files={octo:'./assets/tako.png',tricera:'./assets/tricera.png',bird:'./assets/shimaenaga.png'};
+ Object.entries(files).forEach(([kind,path])=>{
+  const test=new Image();
+  test.onload=()=>{
+   document.querySelectorAll('img.game-mascot.'+kind+',img.emergency-mascot-image').forEach(node=>{
+    if(kind==='octo'||!node.classList.contains('emergency-mascot-image')){
+     if(node.classList.contains(kind)||kind==='octo'&&node.classList.contains('emergency-mascot-image'))node.src=path;
+    }
+   });
+  };
+  test.onerror=()=>{};
+  test.src=path;
+ });
+}
+useOfficialMascotAssets();
 show(savedPage());
 
 
