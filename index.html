@@ -497,6 +497,10 @@ header{z-index:50;isolation:isolate}
 #releaseQaFold .release-qa-row span{display:grid;gap:4px;min-width:0}
 #releaseQaFold .release-qa-row strong{font-size:14px}
 #releaseQaFold .release-qa-row small{color:#60777b;font-size:12px;line-height:1.5}
+#releaseQaNextCard{margin:12px 0;padding:13px;border:1px solid #dce8e8;border-radius:12px}
+#releaseQaNextCard .qa-next-row{display:grid;gap:6px;padding:11px 0;border-bottom:1px solid #e1ebeb}
+#releaseQaNextCard .qa-next-row small{font-size:12px;color:#5a7377;line-height:1.5}
+#releaseQaNextCard .qa-next-row button{min-height:44px;width:100%}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -680,7 +684,8 @@ header{z-index:50;isolation:isolate}
 <details class="more-fold" id="releaseQaFold"><summary>リリース前の実機検証表 <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
 <p class="notice">実際に「未確認・OK・要修正」を実際の検証結果に合わせて選んでください。判定はこの端末内に保存され、別の端末は自動でOKになりません。</p>
 <p id="releaseQaStatus" class="notice" role="status" aria-live="polite"></p>
-<div id="releaseQaItems"></div><button class="secondary" type="button" style="width:100%;min-height:48px;margin:8px 0" onclick="runAppIntegrityAudit()">画面・保存・リンクの自動整合性チェック</button><div id="appIntegrityAuditResults" class="notice" role="status" aria-live="polite"></div>
+<div id="releaseQaItems"></div>
+<div class="card" id="releaseQaNextCard"><h3>次に行う実機検証</h3><p id="releaseQaNextStatus" class="notice" aria-live="polite"></p><div id="releaseQaNextItems"></div></div>
 <details class="more-fold" style="margin:12px 0"><summary>アプリの自動整合性チェック <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
 <p class="notice">画面・移動先・入力欄・保存データの読み取り・オフライン準備をまとめて検査します。記録の削除・復元や画面移動は行いません。</p>
 <button class="secondary" type="button" style="width:100%;min-height:48px" onclick="runAppIntegrityAudit()">自動整合性チェックを実行</button>
@@ -981,6 +986,28 @@ function renderReleaseQa(){
   };
   label.append(content,input);box.append(label);
  }
+ renderReleaseQaNext();
+}
+function renderReleaseQaNext(){
+ const host=document.getElementById('releaseQaNextItems'),status=document.getElementById('releaseQaNextStatus');
+ if(!host||!status)return;
+ host.replaceChildren();
+ const state=readReleaseQa();
+ const missing=releaseQaItems.filter(([id])=>releaseQaState(state[id])!=='ok');
+ if(!missing.length){status.textContent='現在のリリース候補版について、全項目が実機確認済みです。正式リリース判断は別途必要です。';return}
+ const errors=missing.filter(([id])=>releaseQaState(state[id])==='problem').length;
+ status.textContent='確認待ち '+missing.length+'件（要修正 '+errors+'件）。未確認・要修正の項目を優先して表示しています。';
+ const destinations={ios:'home',save:'supplies',offline:'emergency',backup:'supplies',restore:'supplies',android:'home',a11y:'home'};
+ for(const [id,title,detail] of missing.slice(0,4)){
+  const wrap=document.createElement('div');wrap.className='qa-next-row';
+  const name=document.createElement('strong');name.textContent=(releaseQaState(state[id])==='problem'?'⚠️ 要修正：':'□ 未確認：')+title;
+  const desc=document.createElement('small');desc.textContent=detail;
+  const btn=document.createElement('button');btn.type='button';btn.className='secondary';
+  btn.textContent=(id==='android'?'主要画面を開く ↗':id==='ios'||id==='a11y'?'ホームを開く ↗':id==='offline'?'災害時モードを開く ↗':'関連画面を開く ↗');
+  btn.onclick=()=>{if(id==='backup'||id==='restore')openFullBackupFromReadiness();else show(destinations[id])};
+  wrap.append(name,desc,btn);host.append(wrap);
+ }
+ if(missing.length>4){const note=document.createElement('p');note.className='notice';note.textContent='ほかに'+(missing.length-4)+'件あります。上の検証表で確認できます。';host.append(note);}
 }
 async function runAppIntegrityAudit(){
  const target=document.getElementById('appIntegrityAuditResults');if(!target)return;
