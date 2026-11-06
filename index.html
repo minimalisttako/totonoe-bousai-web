@@ -478,6 +478,12 @@ header{z-index:50;isolation:isolate}
 #outage #outageResult p{overflow-wrap:anywhere}
 #outage input,#outage select{min-height:46px}
 #outage .homeactions button{min-height:48px}
+#family .family-record{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #e0e9e8;padding:12px 0}
+#family .family-record-description{min-width:0;display:grid;gap:4px;overflow-wrap:anywhere}
+#family .family-record-description small{color:#667780}
+#family .family-record button{min-height:44px;min-width:68px}
+#family .card>.secondary{min-height:48px;width:100%;margin:7px 0}
+#family #familyChecklist h3{font-size:15px;margin:13px 0 5px}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -551,6 +557,28 @@ header{z-index:50;isolation:isolate}
 <div class="card"><h2>確認する項目</h2><p class="notice">実際に確認した項目だけ「確認済み」にしてください。該当しない物は「対象外」を選べます。</p><label class="seasonal-only-pending"><input type="checkbox" id="seasonalPendingOnly" onchange="renderSeasonalCheck()"> 未確認だけ表示</label><p id="seasonalEmpty" class="notice" role="status"></p><div id="seasonalItems"></div></div>
 <div class="card"><button class="secondary" type="button" onclick="show('home')">ホームへ戻る</button></div>
 </section>
+<section id="family" class="hidden">
+<div class="card">
+<h2>家族・ペットの防災カルテ</h2>
+<p class="notice">家族やペットに必要な持ち物を整理します。名前や住所、病名、薬剤情報などの個人情報は入力不要です。記録はこの端末内に保存されます。</p>
+<form id="familyEntryForm" onsubmit="addFamilyProfile(event)">
+<label class="supply-label" for="familyType">対象</label><select id="familyType" class="field" onchange="renderFamilySuggestedItems()"><option value="adult">大人</option><option value="child">子ども</option><option value="senior">高齢の方</option><option value="pet">ペット</option></select>
+<label class="supply-label" for="familyLabel">表示名（任意・個人情報を避ける）</label><input id="familyLabel" class="field" maxlength="30" placeholder="例：家族A、犬A">
+<label class="supply-label" for="familyCount">人数・頭数</label><input id="familyCount" class="field" type="number" min="1" max="30" step="1" value="1" inputmode="numeric">
+<p id="familySuggestedItems" class="notice"></p>
+<button class="primary" type="submit" style="width:100%;min-height:48px">カルテに追加する</button>
+</form>
+<p id="familyStatus" role="status" class="notice" aria-live="polite"></p>
+</div>
+<div class="card"><h2>登録した家族・ペット</h2><p id="familyTotals" class="notice" aria-live="polite"></p><div id="familyRecords" aria-live="polite"></div>
+<button class="secondary" type="button" onclick="applyFamilyCountToStock()">人数を備蓄計算に反映する ↗</button>
+<button class="secondary" type="button" onclick="applyFamilyCountToOutage()">人数を停電・断水の計算に反映する ↗</button>
+</div>
+<div class="card"><h2>必要な備えの確認</h2>
+<p class="notice">家族構成に応じた一般的な点検項目です。持ち物の購入を強制するものではありません。ペットの飲料水や食料は人間の計算に含めず別に確認してください。</p>
+<div id="familyChecklist" aria-live="polite"></div></div>
+<div class="card"><button class="secondary" type="button" onclick="show('more')">その他のメニューへ戻る</button></div>
+</section>
 <section id="outage" class="hidden">
 <div class="card"><h2>停電・断水シミュレーター</h2>
 <p class="notice">断水や停電が続く想定で、家庭に必要な備えを確認します。水の計算は1人1日3Lの飲料・調理用の目安です。生活用水は含みません。</p>
@@ -583,6 +611,7 @@ header{z-index:50;isolation:isolate}
 <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
 <p class="notice" id="backupIntegrityResult" role="status" aria-live="polite">実データの復元は行わず、バックアップの生成と読み取りを確認します。</p>
 </div>
+<div class="card more-important"><h2>家族に合わせた備え</h2><button class="more-menu-button" type="button" onclick="show('family')"><strong>家族・ペットの防災カルテ</strong><span>必要な備え・人数・ペット用品を確認 ↗</span></button></div>
 <div class="card more-important"><h2>防災シミュレーション</h2>
 <button class="more-menu-button" type="button" onclick="show('outage')"><strong>停電・断水シミュレーター</strong><span>水・非常用トイレ・停電時の備えを確認 ↗</span></button></div>
 <div class="card more-important"><h2>避難・安全を確認する</h2>
@@ -616,6 +645,77 @@ function savedPage(){try{const id=localStorage.getItem(lastPageKey);return valid
 const moreGroupKey='toto-more-groups-v1';
 function initMoreGroups(){let settings={};try{const value=JSON.parse(localStorage.getItem(moreGroupKey)||'{}');if(value&&typeof value==='object'&&!Array.isArray(value))settings=value}catch(e){}document.querySelectorAll('#more details[data-more-group]').forEach(el=>{const group=el.dataset.moreGroup;el.open=typeof settings[group]==='boolean'?settings[group]:false;el.addEventListener('toggle',()=>{try{const current=JSON.parse(localStorage.getItem(moreGroupKey)||'{}');const next=current&&typeof current==='object'&&!Array.isArray(current)?current:{};next[group]=el.open;localStorage.setItem(moreGroupKey,JSON.stringify(next))}catch(e){}})})}
 const homeGroupKey='toto-home-groups-v1';
+const familyKinds={
+ adult:{name:'大人',list:['水・食料・携帯トイレ','履き慣れた靴・着替え','必要な衛生用品']},
+ child:{name:'子ども',list:['年齢に合った飲食物','サイズの合う衣類・衛生用品','安心できる小さな持ち物']},
+ senior:{name:'高齢の方',list:['移動を助ける用品','使い慣れた生活用品','連絡方法・必要な支援の確認']},
+ pet:{name:'ペット',list:['ペット用の水・食料','キャリー・リード・排泄用品','同行避難先の条件・受け入れ可否の確認']}
+};
+function loadFamilyProfiles(){
+ try{
+  const v=JSON.parse(localStorage.getItem(familyProfileKey)||'[]');
+  if(!Array.isArray(v))return [];
+  return v.filter(x=>x&&typeof x.id==='string'&&typeof x.label==='string'&&familyKinds[x.type]&&Number.isInteger(x.count)&&x.count>=1&&x.count<=30).slice(0,30);
+ }catch(e){return []}
+}
+function renderFamilySuggestedItems(){
+ const type=document.getElementById('familyType')?.value;
+ const el=document.getElementById('familySuggestedItems');if(!el)return;
+ el.textContent='確認する備え：'+(familyKinds[type]?.list||[]).join(' ／ ');
+}
+function addFamilyProfile(event){
+ event.preventDefault();
+ const status=document.getElementById('familyStatus'),type=document.getElementById('familyType').value;
+ const count=Number(document.getElementById('familyCount').value),label=document.getElementById('familyLabel').value.trim();
+ const records=loadFamilyProfiles();
+ if(!familyKinds[type]||!Number.isInteger(count)||count<1||count>30||label.length>30){status.textContent='対象と人数・頭数を確認してください（1〜30）。';return}
+ if(records.length>=30){status.textContent='登録できるのは30件までです。';return}
+ const id='family-'+Date.now()+'-'+Math.random().toString(36).slice(2,9);
+ records.push({id,type,count,label});
+ try{localStorage.setItem(familyProfileKey,JSON.stringify(records));document.getElementById('familyLabel').value='';renderFamilyProfiles();status.textContent='カルテに追加しました。'}catch(e){status.textContent='保存できませんでした。端末の保存領域をご確認ください。'}
+}
+let pendingFamilyDelete=null;
+function removeFamilyProfile(id){
+ const status=document.getElementById('familyStatus');
+ if(pendingFamilyDelete!==id){pendingFamilyDelete=id;status.textContent='削除する場合は、同じ「削除」ボタンをもう一度押してください。';return}
+ pendingFamilyDelete=null;
+ const next=loadFamilyProfiles().filter(x=>x.id!==id);
+ try{localStorage.setItem(familyProfileKey,JSON.stringify(next));renderFamilyProfiles();status.textContent='カルテを削除しました。'}catch(e){status.textContent='削除を保存できませんでした。'}
+}
+function familyHumanCount(){
+ return loadFamilyProfiles().filter(x=>x.type!=='pet').reduce((n,x)=>n+x.count,0);
+}
+function renderFamilyProfiles(){
+ const records=loadFamilyProfiles(),host=document.getElementById('familyRecords'),totals=document.getElementById('familyTotals'),check=document.getElementById('familyChecklist');if(!host||!totals||!check)return;
+ host.replaceChildren();check.replaceChildren();
+ const humans=familyHumanCount(),pets=records.filter(x=>x.type==='pet').reduce((n,x)=>n+x.count,0);
+ totals.textContent=records.length?'人：'+humans+'人 ／ ペット：'+pets+'頭（'+records.length+'件のカルテ）':'まだ登録がありません。必要な対象だけ追加してください。';
+ if(!records.length){host.textContent='登録した家族・ペットがここに表示されます。';check.textContent='カルテを追加すると、対象に応じた備えを表示します。';return}
+ records.forEach(x=>{
+  const row=document.createElement('div');row.className='family-record';
+  const desc=document.createElement('div');desc.className='family-record-description';
+  const title=document.createElement('strong');title.textContent=x.label||familyKinds[x.type].name;
+  const small=document.createElement('small');small.textContent=familyKinds[x.type].name+' ／ '+x.count+(x.type==='pet'?'頭':'人');
+  const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent='削除';button.setAttribute('aria-label',(x.label||familyKinds[x.type].name)+'のカルテを削除（2回押して確定）');button.onclick=()=>removeFamilyProfile(x.id);
+  desc.append(title,small);row.append(desc,button);host.append(row);
+ });
+ const types=[...new Set(records.map(x=>x.type))];
+ types.forEach(type=>{
+  const title=document.createElement('h3');title.textContent=familyKinds[type].name+'の備え';check.append(title);
+  const ul=document.createElement('ul');ul.className='lesson-list';familyKinds[type].list.forEach(item=>{const li=document.createElement('li');li.textContent=item;ul.append(li)});check.append(ul);
+ });
+}
+function applyFamilyCountToStock(){
+ const count=familyHumanCount(),status=document.getElementById('familyStatus');
+ if(!count||count>30){status.textContent='人のカルテを合計1〜30人で登録してください（ペットは含みません）。';return}
+ show('supplies');document.getElementById('calcPeople').value=String(count);renderStockCalculator();
+ document.getElementById('stockCalculator')?.scrollIntoView({block:'start',behavior:'smooth'});
+}
+function applyFamilyCountToOutage(){
+ const count=familyHumanCount(),status=document.getElementById('familyStatus');
+ if(!count||count>30){status.textContent='人のカルテを合計1〜30人で登録してください（ペットは含みません）。';return}
+ document.getElementById('outagePeople').value=String(count);renderOutageSimulation();show('outage');
+}
 function initOutageSimulation(){
  try{
   const saved=JSON.parse(localStorage.getItem(outageScenarioKey)||'null');
@@ -703,7 +803,7 @@ function renderHomeNextThree(){
 }
 function renderHomeStockMiniStatus(){const el=document.getElementById('homeStockMiniStatus');if(!el)return;const today=todayLocalDate(),future=dateAfterDays(30);const expires=supplies.filter(x=>x.exp&&x.exp<=future).length,missing=supplies.filter(x=>String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.qty)<Number(x.target)).length,inspection=supplies.filter(x=>x.nextCheck&&x.nextCheck<=today).length,pouchDue=readPouchItems().filter(x=>x.nextCheck&&x.nextCheck<=today).length;const n=expires+missing+inspection+pouchDue;el.textContent=n?'要確認 '+n+'件（期限・不足・点検の合計）':'期限・不足・点検を確認'}
 function initHomeGroups(){let settings={};try{const stored=JSON.parse(localStorage.getItem(homeGroupKey)||'{}');if(stored&&typeof stored==='object'&&!Array.isArray(stored))settings=stored}catch(e){}document.querySelectorAll('#home details[data-home-group]').forEach(el=>{const id=el.getAttribute('data-home-group');el.open=typeof settings[id]==='boolean'?settings[id]:false;el.addEventListener('toggle',()=>{try{const current=JSON.parse(localStorage.getItem(homeGroupKey)||'{}');const next=current&&typeof current==='object'&&!Array.isArray(current)?current:{};next[id]=el.open;localStorage.setItem(homeGroupKey,JSON.stringify(next))}catch(e){}})})}
-const pageNames={home:'ホーム',learn:'学ぶ',select:'整理を学ぶ',set:'整頓を学ぶ',stock:'備蓄を学ぶ',supplies:'備蓄管理',tidy:'お片付けノート',more:'その他',emergency:'災害時モード',evacuation:'マイ避難計画',homeSafety:'住まいの安全点検',pouch:'防災ポーチ',seasonalCheck:'季節別点検',diagnosis:'防災弱点診断',reviews:'防災用品レビュー',outage:'停電・断水シミュレーター'};let activePage='home',previousPage='home';
+const pageNames={home:'ホーム',learn:'学ぶ',select:'整理を学ぶ',set:'整頓を学ぶ',stock:'備蓄を学ぶ',supplies:'備蓄管理',tidy:'お片付けノート',more:'その他',emergency:'災害時モード',evacuation:'マイ避難計画',homeSafety:'住まいの安全点検',pouch:'防災ポーチ',seasonalCheck:'季節別点検',diagnosis:'防災弱点診断',reviews:'防災用品レビュー',outage:'停電・断水シミュレーター',family:'家族・ペットの防災カルテ'};let activePage='home',previousPage='home';
 function goBackPage(){show(previousPage!==activePage&&validPage(previousPage)?previousPage:'home')}
 function updatePageNavigation(id){const bar=document.getElementById('pageNavigation'),title=document.getElementById('pageCurrentTitle'),back=document.getElementById('pageBackButton');if(bar)bar.classList.toggle('hidden',id==='home');if(title)title.textContent=pageNames[id]||'ととのえ防災';if(back)back.textContent='‹ '+(pageNames[previousPage]||'ホーム')+'へ戻る'}
 
@@ -835,7 +935,7 @@ function renderPageMascotGuide(id){
  const sub=mascotSupportingLine(id,guide[0]);
  banner.querySelector('.guide-support').textContent=sub;
 }
-function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
+function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family')renderFamilyProfiles();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
 function priorityTitlesFromAnswers(){try{const v=JSON.parse(localStorage.getItem(diagnosisKey)||'null');if(!v||!['apartment','house','other'].includes(v.dResidence))return null;const p=[];const add=(n,title)=>p.push({n,title});if(v.dFurniture!=='ready')add(0,'まず命を守る：家具の転倒・落下を防ぐ');if(v.dResidence==='house')add(1,'戸建ての立地と避難先を確認する');add(1,'地域の災害リスクと避難先を確認する');if(v.dResidence==='apartment')add(2,'集合住宅の設備・避難方法を確認する');if(v.dFurniture==='ready')add(2,'命を守るための安全確認を続ける');if(v.dWater!=='ready')add(v.dWater==='none'?3:4,'飲料水を確認する');if(v.dFood!=='ready')add(v.dFood==='none'?3:4,'食料を確認する');if(v.dToilet!=='ready')add(v.dToilet==='none'?3:4,'非常用トイレを確認する');if(v.dPeople==='5')add(4,'世帯人数に合う備蓄量を再計算する');if(!p.some(x=>x.n<3))add(5,'備えの維持と定期点検');return p.sort((a,b)=>a.n-b.n).map(x=>x.title)}catch(e){return null}}
 function homeMissionItems(){try{let titles=activePriorityTitles;if(!Array.isArray(titles)||!titles.length){titles=JSON.parse(localStorage.getItem(priorityKey)||'null')}if(!Array.isArray(titles)||!titles.length)titles=priorityTitlesFromAnswers();if(!Array.isArray(titles)||!titles.length)return null;const items=[];titles.forEach(title=>{if(typeof title==='string'&&Object.prototype.hasOwnProperty.call(missionTemplates,title))missionTemplates[title].forEach((label,i)=>items.push({key:title+'::'+i,label}))});if(!items.length)return null;const state=getMissionState();const incomplete=items.filter(item=>state[item.key]!==true);return {items:incomplete.slice(0,3),total:items.length,completed:items.length-incomplete.length,remaining:incomplete.length}}catch(e){return null}}
 function syncDiagnosisMissionUI(){const state=getMissionState();document.querySelectorAll('.diagnosis-mission input[data-mission-key]').forEach(input=>input.checked=state[input.dataset.missionKey]===true);document.querySelectorAll('.diagnosis-result-item').forEach(card=>{const checks=[...card.querySelectorAll('.diagnosis-mission input')],p=card.querySelector('.mission-progress');if(p&&checks.length){const n=checks.filter(x=>x.checked).length;p.textContent='ミッション '+n+' / '+checks.length+' 完了'+(n===checks.length?' ✅':'')}})}
@@ -898,7 +998,7 @@ if(v.dPeople==='5')add(4,'世帯人数に合う備蓄量を再計算する','5�
 if(furniture==='ready')add(2,'命を守るための安全確認を続ける','家具の固定状態と寝室・避難経路の安全を定期的に点検しましょう。');if(!suggestions.some(x=>x.priority<3))add(5,'備えの維持と定期点検','今の備えを継続し、期限や家族構成の変化に合わせて見直しましょう。');
 suggestions.sort((a,b)=>a.priority-b.priority);activePriorityTitles=suggestions.map(x=>x.title);let prioritySaved=false;try{localStorage.setItem(priorityKey,JSON.stringify(activePriorityTitles));prioritySaved=true}catch(e){}renderTasks();status.textContent=prioritySaved?'診断結果を保存し、ホームの「今日やること」に反映しました。':'診断結果はホームに反映しましたが、再読み込み後の保存には失敗しました。';const out=document.getElementById('diagnosisResult');out.replaceChildren();out.classList.remove('hidden');const h=document.createElement('h2');h.textContent='あなたの家庭で優先したい対策';out.append(h);const p=document.createElement('p');p.className='notice';p.textContent='命を守る対策（家具の転倒・落下防止、地域の災害リスクと避難方法）を先に、飲料水・食料・トイレなどの生活維持をその後に表示しています。災害の種類や地域によって緊急度は変わります。';out.append(p);suggestions.forEach((item,i)=>{const card=document.createElement('div');card.className='diagnosis-result-item';const title=document.createElement('strong');title.textContent=(i+1)+'．'+item.title;const desc=document.createElement('p');desc.textContent=item.detail;card.append(title,desc);buildMissionChecklist(item,card);out.append(card)});const btn=document.createElement('button');btn.className='secondary';btn.textContent='備蓄必要量を計算する ↗';btn.onclick=()=>openStockCalculator();const homeButton=document.createElement('button');homeButton.className='primary';homeButton.textContent='ホームの優先ミッションを見る ↗';homeButton.style.marginRight='9px';homeButton.style.marginBottom='9px';homeButton.onclick=()=>{show('home');document.querySelector('.mission-card').scrollIntoView({behavior:'smooth',block:'start'})};out.append(homeButton,btn);out.scrollIntoView({behavior:'smooth',block:'start'})}
 const evacuationKey='toto-evacuation-plan-v1',evacuationDrillKey='toto-evacuation-drills-v1';
-const emergencyChecklistKey='toto-emergency-checklist-v1',evacuationReviewKey='toto-evacuation-review-v1';const homeSafetyKey='toto-home-safety-v1';const pouchKey='toto-pouch-v1';const tidyKey='toto-tidy-v1';const tidyTargetKey='toto-tidy-target-v1';const tidyDefaultsMigratedKey='toto-tidy-defaults-v2';const purchaseKey='toto-purchase-check-v1';const seasonalKey='toto-seasonal-check-v1';const supplyHistoryKey='toto-supply-transactions-v1';const outageScenarioKey='toto-outage-scenario-v1';const allBackupKeys=[key,taskKey,diagnosisKey,priorityKey,missionKey,missionHistoryKey,stockDaysKey,toiletFrequencyKey,evacuationKey,evacuationDrillKey,emergencyChecklistKey,evacuationReviewKey,homeSafetyKey,pouchKey,tidyKey,tidyTargetKey,tidyDefaultsMigratedKey,purchaseKey,seasonalKey,supplyHistoryKey,outageScenarioKey];
+const emergencyChecklistKey='toto-emergency-checklist-v1',evacuationReviewKey='toto-evacuation-review-v1';const homeSafetyKey='toto-home-safety-v1';const pouchKey='toto-pouch-v1';const tidyKey='toto-tidy-v1';const tidyTargetKey='toto-tidy-target-v1';const tidyDefaultsMigratedKey='toto-tidy-defaults-v2';const purchaseKey='toto-purchase-check-v1';const seasonalKey='toto-seasonal-check-v1';const supplyHistoryKey='toto-supply-transactions-v1';const outageScenarioKey='toto-outage-scenario-v1';const familyProfileKey='toto-family-profiles-v1';const allBackupKeys=[key,taskKey,diagnosisKey,priorityKey,missionKey,missionHistoryKey,stockDaysKey,toiletFrequencyKey,evacuationKey,evacuationDrillKey,emergencyChecklistKey,evacuationReviewKey,homeSafetyKey,pouchKey,tidyKey,tidyTargetKey,tidyDefaultsMigratedKey,purchaseKey,seasonalKey,supplyHistoryKey,outageScenarioKey,familyProfileKey];
 function buildFullBackup(){const data={};allBackupKeys.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)data[k]=v});if(!Object.keys(data).length)throw Error('no saved data');return JSON.stringify({format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data},null,2)}
 function validateFullBackupObject(obj){
 if(!obj||obj.format!=='toto-full-backup-v1'||!obj.data||typeof obj.data!=='object'||Array.isArray(obj.data)||Object.getPrototypeOf(obj.data)!==Object.prototype)throw Error('format');
@@ -908,6 +1008,7 @@ for(const k of keys){
 const v=JSON.parse(data[k]);
 if(k===key&&(!Array.isArray(v)||v.length>1000||!v.every(x=>x&&typeof x.name==='string'&&x.name.length>0&&x.name.length<=60&&Number.isInteger(Number(x.qty))&&Number(x.qty)>=0&&Number(x.qty)<=99999)))throw Error('supplies');
 if([taskKey,priorityKey,missionHistoryKey,evacuationDrillKey,pouchKey,tidyKey,purchaseKey,supplyHistoryKey].includes(k)&&!Array.isArray(v))throw Error('array');
+if(k===familyProfileKey&&(!Array.isArray(v)||v.length>30||!v.every(x=>x&&typeof x.id==='string'&&x.id.length<=80&&['adult','child','senior','pet'].includes(x.type)&&typeof x.label==='string'&&x.label.length<=30&&Number.isInteger(x.count)&&x.count>=1&&x.count<=30)))throw Error('family profiles');
 if([diagnosisKey,missionKey,stockDaysKey,evacuationKey,homeSafetyKey,emergencyChecklistKey,evacuationReviewKey,seasonalKey,outageScenarioKey].includes(k)&&(!v||typeof v!=='object'||Array.isArray(v)))throw Error('object');
 if(k===toiletFrequencyKey&&!(Number(v)>=1&&Number(v)<=50))throw Error('frequency');
 }
