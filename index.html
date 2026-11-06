@@ -943,19 +943,30 @@ function openReleaseQa(){
  const fold=document.getElementById('releaseQaFold');if(!fold)return;
  fold.open=true;renderReleaseQa();fold.scrollIntoView({block:'start',behavior:'smooth'});
 }
-function releaseQaState(value){return value===true||value==='ok'?'ok':value==='problem'?'problem':'pending'}
+function releaseQaState(value){
+ if(value&&typeof value==='object'){
+  if(value.state==='problem')return 'problem';
+  if(value.state==='ok'&&value.build===releaseQaBuild)return 'ok';
+  return 'pending';
+ }
+ return value==='problem'?'problem':'pending';
+}
+function releaseQaWasOld(value){
+ return value===true||value==='ok'||!!(value&&typeof value==='object'&&value.state==='ok'&&value.build!==releaseQaBuild);
+}
 function renderReleaseQa(){
  const box=document.getElementById('releaseQaItems'),status=document.getElementById('releaseQaStatus');if(!box||!status)return;
  const data=readReleaseQa();box.replaceChildren();
  const done=releaseQaItems.filter(([id])=>releaseQaState(data[id])==='ok').length;
  const problems=releaseQaItems.filter(([id])=>releaseQaState(data[id])==='problem').length;
  const pending=releaseQaItems.length-done-problems;
- status.textContent='実機検証：OK '+done+'件 ／ 要修正 '+problems+'件 ／ 未確認 '+pending+'件。'+(problems?' 要修正の項目を解消するまでリリース判断は保留してください。':pending?' 未確認の項目を実機で確認してください。':'全項目の確認記録があります。最終的なリリース判断は別途必要です。');
+ const old=releaseQaItems.filter(([id])=>releaseQaWasOld(data[id])).length;
+ status.textContent='最新版の実機検証：OK '+done+'件 ／ 要修正 '+problems+'件 ／ 未確認 '+pending+'件'+(old?'（旧版の確認 '+old+'件を含む）':'')+'。'+(problems?' 要修正の項目を解消するまでリリース判断は保留してください。':pending?' 未確認の項目を実機で確認してください。':'全項目の確認記録があります。最終的なリリース判断は別途必要です。');
  for(const [id,title,details] of releaseQaItems){
   const label=document.createElement('label');label.className='release-qa-row';
   const content=document.createElement('span');
   const strong=document.createElement('strong');strong.textContent=title;
-  const small=document.createElement('small');small.textContent=details;
+  const small=document.createElement('small');small.textContent=details+(releaseQaWasOld(data[id])?' ／ 旧版で確認：最新版では再確認が必要':'');
   content.append(strong,small);
   const input=document.createElement('select');input.className='release-qa-select';
   input.setAttribute('aria-label',title+'の実機検証結果');
@@ -964,7 +975,7 @@ function renderReleaseQa(){
   }
   input.value=releaseQaState(data[id]);
   input.onchange=()=>{
-   const next=readReleaseQa();next[id]=input.value;
+   const next=readReleaseQa();next[id]=input.value==='pending'?false:{state:input.value,build:releaseQaBuild,checkedAt:new Date().toISOString()};
    try{localStorage.setItem(releaseQaKey,JSON.stringify(next));armedReleaseQaReset=false;renderReleaseQa()}
    catch(e){input.value=releaseQaState(data[id]);document.getElementById('releaseQaActionStatus').textContent='検証結果を保存できませんでした。'}
   };
@@ -1037,10 +1048,16 @@ async function runReleaseSmokeTests(){
 }
 async function copyReleaseQaReport(){
  const data=readReleaseQa(),name={ok:'✅ OK',problem:'⚠️ 要修正',pending:'□ 未確認'};
- const body=['ととのえ防災｜リリース前の実機検証','記録日：'+todayLocalDate(),...releaseQaItems.map(([id,title])=>name[releaseQaState(data[id])]+'：'+title),'','※端末上で記録された確認結果です。未確認・要修正項目は解消を確認するまで完了とみなしません。'].join('\n');
- const status=document.getElementById('releaseQaActionStatus');
+ const body=['ととのえ防災｜リリース前の実機検証','アプリ版：'+releaseQaBuild,'記録日：'+todayLocalDate(),
+ ...releaseQaItems.map(([id,title])=>(releaseQaWasOld(data[id])?'↻ 旧版確認':name[releaseQaState(data[id])])+'：'+title),
+ '','※旧版の確認は最新版の検証に含みません。'].join('\n');
+ const status=document.getElementById('releaseQaActionStatus'),field=document.getElementById('releaseQaExportText');
+ if(field)field.value=body;
  try{if(!navigator.clipboard?.writeText)throw Error('unsupported');await navigator.clipboard.writeText(body);status.textContent='検証結果をコピーしました。'}
- catch(e){status.textContent='自動コピーできませんでした。結果は端末に保存されています。'}
+ catch(e){
+  if(field){let parent=field.parentElement;while(parent&&parent!==document.body){if(parent.tagName==='DETAILS')parent.open=true;parent=parent.parentElement}field.focus();field.select()}
+  status.textContent='自動コピーできません。開いたテキスト欄を長押ししてコピーしてください。';
+ }
 }
 function resetReleaseQa(){
  const status=document.getElementById('releaseQaActionStatus');
@@ -1975,6 +1992,11 @@ async function checkReleaseReadiness(){
  const summary=document.createElement('p');
  summary.style.fontWeight='700';
  summary.textContent='自動確認：'+rows.filter(r=>r.ok).length+'/'+rows.length+'項目';
+ const qa=readReleaseQa(),qaDone=releaseQaItems.filter(([id])=>releaseQaState(qa[id])==='ok').length;
+ const qaProblem=releaseQaItems.filter(([id])=>releaseQaState(qa[id])==='problem').length;
+ const qaSummary=document.createElement('p');qaSummary.className='notice';
+ qaSummary.textContent='最新版の実機検証：OK '+qaDone+'/'+releaseQaItems.length+' ／ 要修正 '+qaProblem+'件。自動診断だけでは正式リリース準備完了にはなりません。';
+ output.append(qaSummary);
  output.append(summary);
  for(const row of rows){
   const p=document.createElement('p');p.className='notice';
