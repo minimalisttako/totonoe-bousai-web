@@ -1016,6 +1016,10 @@ async function runAppIntegrityAudit(){
  const pages=['home','learn','select','set','stock','supplies','tidy','more','homeSafety','evacuation','emergency','diagnosis','pouch','seasonalCheck','outage','family','readiness'];
  const missing=pages.filter(id=>!validPage(id));
  add('主要画面',missing.length===0,missing.length?'不足：'+missing.join('、'):pages.length+'画面を確認');
+ const ids=Array.from(document.querySelectorAll('[id]')).map(el=>el.id);
+ const repeated=Array.from(new Set(ids.filter((id,i)=>ids.indexOf(id)!==i)));
+ add('画面要素IDの重複',repeated.length===0,repeated.length?'重複：'+repeated.join('、'):'ID重複なし（'+ids.length+'件）');
+
  const active=Array.from(document.querySelectorAll('main>section:not(.hidden)'));
  add('表示画面の一意性',active.length===1,active.length+'画面が表示中');
  const routes=Array.from(document.querySelectorAll('button[onclick]')).map(x=>x.getAttribute('onclick')||'').map(x=>x.match(/\bshow\(['"]([^'"]+)['"]\)/)).filter(Boolean).map(m=>m[1]);
@@ -1024,6 +1028,9 @@ async function runAppIntegrityAudit(){
  const inputs=['allBackupText','calcPeople','calcDays','evPlace','outagePeople','familyCount'];
  const absent=inputs.filter(id=>!document.getElementById(id));
  add('重要な入力欄',absent.length===0,absent.length?'不足：'+absent.join('、'):inputs.length+'項目を確認');
+ const missingLabelTargets=Array.from(new Set(Array.from(document.querySelectorAll('label[for]')).map(el=>el.htmlFor).filter(id=>!document.getElementById(id))));
+ add('入力ラベルの接続',missingLabelTargets.length===0,missingLabelTargets.length?'未接続：'+missingLabelTargets.join('、'):'ラベルの参照先を確認');
+
  try{
   const data={};
   for(const k of allBackupKeys){const v=localStorage.getItem(k);if(v!==null)data[k]=v}
