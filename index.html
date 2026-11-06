@@ -1415,7 +1415,27 @@ return {data,keys}
 function dataPreviewStats(data){let kinds=Object.keys(data||{}).length,count=0;for(const k of [key,pouchKey,tidyKey,purchaseKey]){if(typeof data[k]==='string'){try{const v=JSON.parse(data[k]);if(Array.isArray(v))count+=v.length}catch(e){}}}return '保存データ：'+kinds+'種類 ／ 備蓄・ポーチ・片付け・旧版の記録 合計'+count+'件'}
 function downloadFullBackup(){const status=document.getElementById('allBackupStatus');try{const json=buildFullBackup();document.getElementById('allBackupText').value=json;invalidateFullRestorePreview();if(typeof Blob!=='function'||!URL.createObjectURL)throw Error('file unavailable');const blob=new Blob([json],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='toto-backup-'+todayLocalDate()+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);status.textContent='ファイル保存を開始しました。保存先を確認してください。保存できない場合は「コピーする」をご利用ください。'}catch(e){status.textContent='このプレビューではファイル保存が使えない可能性があります。「コピーする」でメモなどに保管してください。'}}
 async function copyFullBackup(){const status=document.getElementById('allBackupStatus'),field=document.getElementById('allBackupText');try{field.value=buildFullBackup();invalidateFullRestorePreview();if(!navigator.clipboard?.writeText)throw Error('not supported');await navigator.clipboard.writeText(field.value);status.textContent='バックアップをコピーしました。iPhoneのメモなどに貼り付けて保管してください。'}catch(e){field.focus();field.select();status.textContent=field.value?'自動コピーできません。文字列を長押ししてコピーしてください。':'バックアップを作成できません。保存領域をご確認ください。'}}
-async function loadFullBackupFile(input){const status=document.getElementById('fullBackupFileStatus'),preview=document.getElementById('fullBackupPreview');pendingFullRestore=null;verifiedFullRestoreSignature=null;verifiedFullRestoreOriginalSnapshot=null;preview.textContent='';const file=input.files?.[0];if(!file)return;if(file.size>2000000){status.textContent='ファイルが大きすぎます（上限2MB）。';input.value='';return}try{const content=await file.text();const parsed=JSON.parse(content);validateFullBackupObject(parsed);document.getElementById('allBackupText').value=content;status.textContent='バックアップファイルを読み込みました。下の「復元する内容を確認」を押してください。';previewFullBackup()}catch(e){status.textContent='正しいバックアップファイルを読み込めませんでした。';input.value=''}}
+async function loadFullBackupFile(input){
+ const status=document.getElementById('fullBackupFileStatus'),field=document.getElementById('allBackupText'),preview=document.getElementById('fullBackupPreview');
+ pendingFullRestore=null;verifiedFullRestoreSignature=null;verifiedFullRestoreOriginalSnapshot=null;
+ const file=input.files?.[0];if(!file)return;
+ // Clear the previous imported content before validating any new file.
+ field.value='';preview.textContent='';
+ const diff=document.getElementById('fullBackupDiff');if(diff)diff.replaceChildren();
+ if(file.size>2000000){status.textContent='ファイルが大きすぎます（上限2MB）。元のバックアップ内容はクリアしました。';input.value='';return}
+ try{
+  const content=await file.text();
+  const parsed=JSON.parse(content);
+  validateFullBackupObject(parsed);
+  field.value=content;
+  status.textContent='バックアップファイルを読み込みました。変更内容を確認してから復元してください。';
+  previewFullBackup();
+ }catch(e){
+  field.value='';preview.textContent='バックアップの形式を確認できません。復元は実行できません。';
+  status.textContent='正しいバックアップファイルを読み込めませんでした。以前の入力内容はクリアしました。';
+  input.value='';
+ }
+}
 function invalidateFullRestorePreview(){pendingFullRestore=null;verifiedFullRestoreSignature=null;verifiedFullRestoreOriginalSnapshot=null;const diff=document.getElementById('fullBackupDiff');if(diff)diff.replaceChildren();const preview=document.getElementById('fullBackupPreview');if(preview)preview.textContent='バックアップ内容を変更しました。復元する場合はもう一度内容を確認してください。';}
 function compareCurrentBackupSafely(){
  const field=document.getElementById('allBackupText'),status=document.getElementById('allBackupStatus');
