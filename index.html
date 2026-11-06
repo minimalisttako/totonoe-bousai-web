@@ -575,6 +575,11 @@ header{z-index:50;isolation:isolate}
 <h2>次に確認すること</h2>
 <p class="notice">命を守る安全対策を優先し、必要な備えを少しずつ進めてください。</p>
 <div id="readinessNextActions"></div>
+<details class="emergency-option-fold" style="margin-top:12px"><summary>点検内容をテキストで控える <span aria-hidden="true">⌄</span></summary>
+<div class="emergency-option-body"><p class="notice">氏名・住所などは含めず、備えの確認状況だけをコピーできます。共有時には内容をご確認ください。</p>
+<button type="button" class="secondary" onclick="prepareReadinessExport()">点検内容を表示</button>
+<textarea id="readinessExportText" class="field" readonly rows="8" placeholder="ボタンを押すと点検内容を表示します。"></textarea>
+<button type="button" class="secondary" onclick="copyReadinessExport()">表示内容をコピー</button><p id="readinessExportStatus" class="notice" role="status" aria-live="polite"></p></div></details>
 </div>
 <div class="card"><button class="secondary" type="button" onclick="show('home')">ホームへ戻る</button></div>
 </section>
@@ -631,6 +636,11 @@ header{z-index:50;isolation:isolate}
 <button type="button" class="secondary" style="width:100%;margin-top:10px" onclick="openFullBackupFromReadiness()">全データのバックアップへ ↗</button>
 <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
 <p class="notice" id="backupIntegrityResult" role="status" aria-live="polite">実データの復元は行わず、バックアップの生成と読み取りを確認します。</p>
+<details class="more-fold"><summary>保存データの総合点検 <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
+<p class="notice">登録済みデータの読み取り・形式・バックアップ適合性をこの端末内で検査します。削除・復元・外部送信は行いません。</p>
+<button class="secondary" type="button" style="width:100%;min-height:48px" onclick="runDataHealthAudit()">保存データを安全に点検する</button>
+<div id="dataHealthAudit" role="status" aria-live="polite"></div>
+</div></details>
 </div>
 <div class="card more-important"><h2>備えをまとめて確認</h2><button class="more-menu-button" type="button" onclick="show('readiness')"><strong>わが家の防災準備状況</strong><span>安全・避難計画・備蓄・家族の備え ↗</span></button></div>
 <div class="card more-important"><h2>家族に合わせた備え</h2><button class="more-menu-button" type="button" onclick="show('family')"><strong>家族・ペットの防災カルテ</strong><span>必要な備え・人数・ペット用品を確認 ↗</span></button></div>
@@ -820,6 +830,62 @@ function getReadinessOverview(){
   add('飲料水の計算',people+'人・'+days+'日：目安 '+fmt(total)+'L ／ 容量が分かる登録済み '+fmt(liters)+'L ／ 不足目安 '+fmt(Math.max(0,total-liters))+'L'+(unknown?'（未集計の水あり）':''),'outage',liters<total);
  }catch(e){add('飲料水の計算','シミュレーターで人数・日数を設定してください','outage',false)}
  return result;
+}
+function readinessExportText(){
+ const items=getReadinessOverview();
+ const stamp=todayLocalDate();
+ return ['ととのえ防災｜わが家の防災準備状況','確認日：'+stamp,'※登録内容に基づく確認用メモです。災害時の安全や備蓄の十分性を保証するものではありません。','',...items.map(x=>'【'+x.name+'】\n'+x.detail),'','安全対策を優先し、自治体等の最新情報も確認してください。'].join('\n');
+}
+function prepareReadinessExport(){
+ const field=document.getElementById('readinessExportText'),status=document.getElementById('readinessExportStatus');
+ if(!field||!status)return;
+ field.value=readinessExportText();status.textContent='登録状況から確認用メモを作成しました。内容を確認してからコピーしてください。';
+}
+async function copyReadinessExport(){
+ const field=document.getElementById('readinessExportText'),status=document.getElementById('readinessExportStatus');
+ if(!field||!status)return;
+ field.value=readinessExportText();
+ try{
+  if(!navigator.clipboard?.writeText)throw Error('unsupported');
+  await navigator.clipboard.writeText(field.value);
+  status.textContent='確認用メモをコピーしました。';
+ }catch(e){
+  field.focus();field.select();status.textContent='自動コピーできません。テキスト欄を長押ししてコピーしてください。';
+ }
+}
+function runDataHealthAudit(){
+ const box=document.getElementById('dataHealthAudit');if(!box)return;
+ box.replaceChildren();
+ const results=[],snapshot={};
+ for(const k of allBackupKeys){
+  let value;
+  try{value=localStorage.getItem(k)}catch(e){results.push({key:k,type:'保存領域',message:'読み取りできません'});continue}
+  if(value===null)continue;
+  snapshot[k]=value;
+  try{
+   const parsed=JSON.parse(value);
+   if(k===toiletFrequencyKey&&(!Number.isInteger(Number(parsed))||Number(parsed)<1||Number(parsed)>50))throw Error('frequency');
+   if(k===familyProfileKey&&(!Array.isArray(parsed)||parsed.length>30||!parsed.every(x=>x&&typeof x.id==='string'&&typeof x.label==='string'&&['adult','child','senior','pet'].includes(x.type)&&Number.isInteger(x.count)&&x.count>=1&&x.count<=30)))throw Error('profiles');
+  }catch(e){results.push({key:k,type:'保存形式',message:'読み取りまたは値の形式を確認してください'})}
+ }
+ const count=Object.keys(snapshot).length;
+ if(count&&!results.length){
+  try{
+   const backup={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:snapshot};
+   validateFullBackupObject(JSON.parse(JSON.stringify(backup)));
+  }catch(e){results.push({key:'backup',type:'バックアップ適合性',message:'現時点の記録を全データ復元形式として検証できません'})}
+ }
+ const intro=document.createElement('p');intro.className='notice';
+ intro.textContent=results.length?'⚠️ 保存データに確認が必要な箇所が '+results.length+'件あります。':'✅ 登録データ '+count+'種類について、読み取り'+(count?'・バックアップ形式の点検':'')+'が完了しました。';
+ box.append(intro);
+ for(const issue of results){
+  const p=document.createElement('p');p.className='notice';
+  p.textContent='⚠️ '+issue.type+'（'+issue.key+'）：'+issue.message;
+  p.style.overflowWrap='anywhere';box.append(p);
+ }
+ const note=document.createElement('p');note.className='notice';
+ note.textContent='この点検は保存データを変更しません。復元の成功や端末障害への耐性を保証するものではありません。不具合がある場合は削除・復元せず、まず現在のバックアップを控えてください。';
+ box.append(note);
 }
 function renderReadinessOverview(){
  const box=document.getElementById('readinessItems'),next=document.getElementById('readinessNextActions'),summary=document.getElementById('readinessSummary');
