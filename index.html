@@ -342,6 +342,17 @@ header .page-navigation strong{font-size:13px;color:#49685a;white-space:nowrap;o
 #home .game-mascot.bird{right:7px;top:0}
 .page-mascot-words .guide-support{font-size:11px;line-height:1.5;color:#567568;margin-top:4px}
 @media(max-width:390px){#home .game-mascot-scene{position:relative;top:auto;right:auto;bottom:auto;height:125px;flex-basis:125px}#home .game-dialogue{margin-top:7px}}
+
+/* Keep decorative scene and speech below the sticky header during Safari scroll. */
+header{z-index:50;isolation:isolate}
+#home .game-home-stage{isolation:isolate;z-index:0}
+#home .game-dialogue{z-index:1}
+#home .game-mascot-scene{z-index:0;isolation:isolate;overflow:hidden}
+.page-mascot-help{position:relative;isolation:isolate;z-index:0}
+.page-mascot-friends{isolation:isolate;overflow:hidden}
+#emergency .emergency-tako-message{display:flex;align-items:center;gap:10px;background:#f5faf7;border:1px solid #dce9e0;border-radius:13px;padding:9px 11px;margin:10px 0 14px;min-height:62px}
+#emergency .emergency-tako-message svg{display:block;position:static;flex:0 0 44px;width:44px;height:48px;filter:none}
+#emergency .emergency-tako-message p{font-size:14px;line-height:1.6;font-weight:750;margin:0;color:#2d5b47}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -466,6 +477,20 @@ const pageMascotGuides={
 function renderPageMascotGuide(id){
  const section=document.getElementById(id),guide=pageMascotGuides[id];
  if(!section||!guide)return;
+ if(id==='emergency'){
+  section.querySelector(':scope > .page-mascot-help')?.remove();
+  const card=section.querySelector('.emergency-card');
+  if(card&&!card.querySelector('.emergency-tako-message')){
+   const row=document.createElement('div');row.className='emergency-tako-message';
+   row.setAttribute('aria-label','たこからのメッセージ');
+   const mascot=document.querySelector('#home .game-mascot-scene .game-mascot.octo');
+   if(mascot){const art=mascot.cloneNode(true);art.removeAttribute('class');art.setAttribute('aria-hidden','true');row.append(art)}
+   const p=document.createElement('p');p.textContent='まずは、ご自身の安全を。できることを、一つずつ。';
+   row.append(p);
+   const heading=card.querySelector('h2');if(heading)heading.after(row);else card.prepend(row);
+  }
+  return;
+ }
  let banner=section.querySelector(':scope > .page-mascot-help');
  if(!banner){
   banner=document.createElement('aside');
@@ -486,7 +511,7 @@ function renderPageMascotGuide(id){
  const role=guide[0]==='stock'?'たこ ＆ シマエナガさん':'たこ ＆ トリケラさん';
  banner.querySelector('strong').textContent=role;
  banner.querySelector('p').textContent='たこ：'+guide[1];
- const sub=guide[0]==='stock'?'シマエナガさん：使った分の補充も忘れずに。':guide[0]==='tidy'?'トリケラさん：無理なく、一つずつで大丈夫です。':guide[0]==='urgent'?'トリケラさん：危険が迫っている場合は安全確保を優先してください。':'トリケラさん：家族や住まいに合わせて確認しましょう。';
+ const sub=guide[0]==='stock'?'シマエナガさん：備蓄は数量だけでなく、期限や使い方も確認してください。':guide[0]==='tidy'?'トリケラさん：焦らんでええで。できるところから一つずつやろうな。':guide[0]==='urgent'?'':'トリケラさん：まず安全を確かめような。無理はせんでええで。';
  banner.querySelector('.guide-support').textContent=sub;
 }
 function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===(['select','set','stock'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency'].includes(id)?'more':id)));if(id!=='home')renderPageMascotGuide(id);if(id==='home'){updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness()}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
@@ -752,14 +777,14 @@ function renderGameHomeDialogue(){
  if(!speaker||!message)return;
  const safety=criticalSafetyState(),steps=tidyStepTotals(),rate=tidyJourneyProgress();
  let name='たこ',line='まずは、ひとつ片付けてみましょう！';
- if(safety.remaining.length){name='トリケラさん';line='寝る場所や避難経路の安全を先に確認しましょう。'}
+ if(safety.remaining.length){name='トリケラさん';line='寝る場所や避難経路の安全を先に確かめような。'}
  else if(steps.total&&steps.complete===steps.total){name='たこ';line='お片付けがひと区切りです。備えも見直しましょう！'}
  else if(steps.complete>0){name='たこ';line='小さな作業も、もう'+steps.complete+'個完了しました。'}
- else if(rate>=50){name='トリケラさん';line='備蓄する場所を決めて、必要な物を確かめましょう。'}
+ else if(rate>=50){name='トリケラさん';line='備蓄の場所を決めて、必要な物を確かめていこうな。'}
  speaker.textContent=name;message.textContent='「'+line+'」';
  if(season){
   const month=new Date().getMonth()+1;
-  season.textContent=month>=12||month<=2?'シマエナガさんのヒント：寒さへの備えも点検しましょう。':month>=6&&month<=8?'シマエナガさんのヒント：水と暑さへの備えも見直しましょう。':month>=9&&month<=11?'シマエナガさんのヒント：季節の変わり目に備蓄を点検しましょう。':'シマエナガさんのヒント：暮らしの安全を少しずつ整えましょう。';
+  season.textContent=month>=12||month<=2?'シマエナガさん：寒さへの備えと暖房器具の安全を確認してください。':month>=6&&month<=8?'シマエナガさん：飲料水と暑さへの対策を確認してください。':month>=9&&month<=11?'シマエナガさん：季節の変わり目には備蓄の期限を点検してください。':'シマエナガさん：家具の固定や避難経路を定期的に確認してください。';
  }
 }
 function renderHomeTidySummary(){const el=document.getElementById('homeTidySummary');if(!el)return;const c=tidyCounts(),steps=tidyStepTotals();el.textContent=c.all?'場所：'+c.done+'/'+c.all+'か所完了 ／ 小さな作業：'+steps.complete+'/'+steps.total+'項目完了':'まだ記録がありません。気になる場所から始めましょう。'}
