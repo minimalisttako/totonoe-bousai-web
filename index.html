@@ -639,7 +639,7 @@ header{z-index:50;isolation:isolate}
 <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
 <p class="notice" id="backupIntegrityResult" role="status" aria-live="polite">実データの復元は行わず、バックアップの生成と読み取りを確認します。</p>
 <button class="secondary" type="button" style="width:100%;min-height:48px;margin:8px 0" onclick="simulateFullRestore()">復元リハーサルを実行（記録は変更しません）</button>
-<p id="restoreRehearsalStatus" class="notice" role="status" aria-live="polite">テスト用データを使って、復元形式の確認・上書き・失敗時の保護をメモリ上で検証します。</p>
+<p id="restoreRehearsalStatus" class="notice" role="status" aria-live="polite">テスト用データを使って、復元形式の確認・上書き・失敗時の保護をメモリ上で検証します。</p><button class="secondary" type="button" style="width:100%;min-height:48px;margin:8px 0" onclick="testActualStorageRoundTrip()">端末保存領域の書き戻しテスト</button><p id="actualStorageTestStatus" class="notice" role="status" aria-live="polite">専用の一時テストキーだけで保存・変更・書き戻し・削除を検証します。備蓄や避難計画は変更しません。</p>
 <details class="more-fold"><summary>保存データの総合点検 <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
 <p class="notice">登録済みデータの読み取り・形式・バックアップ適合性をこの端末内で検査します。削除・復元・外部送信は行いません。</p>
 <button class="secondary" type="button" style="width:100%;min-height:48px" onclick="runDataHealthAudit()">保存データを安全に点検する</button>
@@ -1580,6 +1580,30 @@ async function initOfflineStartup(){
   const count=readyFiles.filter(Boolean).length;
   set(count===necessary.length?'必須ファイル9件の保存を確認しました。機内モードでの起動もお試しください。':'オフライン用ファイル：'+count+'/9件。通信できる状態でアプリを開き直してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
+}
+function testActualStorageRoundTrip(){
+ const status=document.getElementById('actualStorageTestStatus');if(!status)return;
+ const probe='toto-storage-test-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+ let touched=false,cleanupFailed=false;
+ try{
+  if(localStorage.getItem(probe)!==null)throw Error('collision');
+  const original=null;
+  const sample=JSON.stringify({version:1,values:['備え','点検']});
+  localStorage.setItem(probe,sample);touched=true;
+  if(localStorage.getItem(probe)!==sample)throw Error('save');
+  const updated=JSON.stringify({version:2,values:['変更確認']});
+  localStorage.setItem(probe,updated);
+  if(localStorage.getItem(probe)!==updated)throw Error('update');
+  localStorage.setItem(probe,sample);
+  if(localStorage.getItem(probe)!==sample)throw Error('rollback');
+  localStorage.removeItem(probe);touched=false;
+  if(localStorage.getItem(probe)!==original)throw Error('remove');
+  status.textContent='✅ 端末の一時テストデータの保存・読み取り・変更・書き戻し・削除を確認しました。既存の記録は変更していません。';
+ }catch(e){status.textContent='⚠️ 端末保存領域のテストを正常に完了できませんでした。既存の記録は変更していません。';}
+ finally{
+  if(touched){try{localStorage.removeItem(probe);if(localStorage.getItem(probe)!==null)cleanupFailed=true}catch(e){cleanupFailed=true}}
+  if(cleanupFailed)status.textContent+=' 一時テストデータの削除に失敗した可能性があります。';
+ }
 }
 function simulateFullRestore(){
  const status=document.getElementById('restoreRehearsalStatus');if(!status)return;
