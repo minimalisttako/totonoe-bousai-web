@@ -375,6 +375,18 @@ header{z-index:50;isolation:isolate}
 #home .game-dialogue{margin-top:8px}
 #home .game-next-action{display:block;position:relative;z-index:1;margin:11px 0 0;width:100%;min-height:45px;padding:10px 13px;border-radius:12px;border:1px solid #b8d7df;background:#eef8fb;color:#285d74;font-weight:800;font-size:13px;text-align:left;line-height:1.5}
 #home .game-next-action:focus-visible{outline:3px solid #448cb3;outline-offset:2px}
+
+/* Readable, compact character guidance with informative progress. */
+.page-mascot-help{align-items:center;gap:10px;padding:11px 12px;min-height:85px;box-shadow:0 2px 9px #1c536010}
+.page-mascot-words strong{display:block;font-size:12px;color:#386177;margin:0 0 4px;line-height:1.4}
+.page-mascot-words .page-guide-stat{display:inline-block;margin:0 0 5px;border-radius:999px;border:1px solid #dae6e8;background:#ffffffd9;color:#486875;padding:2px 8px;font-size:10px;font-weight:700}
+.page-mascot-words .page-guide-stat[hidden]{display:none}
+.page-mascot-words p{font-size:12px;line-height:1.65;color:#36596c}
+.page-mascot-words .guide-support{border-top:1px solid #d9e5e4;margin-top:7px;padding-top:6px;font-size:11px;line-height:1.55;color:#4b6f68}
+.page-mascot-help.stock-tone .guide-support{color:#4a7361}
+.page-mascot-help.tidy-tone .guide-support{color:#7b6263}
+@media(max-width:390px){.page-mascot-help{gap:8px;padding:10px}.page-mascot-friends{flex:0 0 75px;width:75px}.page-mascot-friends .octo{width:59px;height:65px}.page-mascot-friends .tricera{width:49px;height:52px}.page-mascot-friends .bird{width:39px;height:39px}}
+@media(prefers-reduced-motion:reduce){#home .home-quick-links button{transition:none}}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -586,14 +598,24 @@ function renderPageMascotGuide(id){
    if(svg)friends.append(svg.cloneNode(true));
   }
   const words=document.createElement('div');words.className='page-mascot-words';
-  const title=document.createElement('strong'),line=document.createElement('p'),support=document.createElement('p');support.className='guide-support';
-  words.append(title,line,support);banner.append(friends,words);section.prepend(banner);
+  const title=document.createElement('strong'),line=document.createElement('p'),support=document.createElement('p'),status=document.createElement('span');
+  support.className='guide-support';status.className='page-guide-stat';status.hidden=true;
+  words.append(title,status,line,support);banner.append(friends,words);section.prepend(banner);
  }
  banner.classList.toggle('tidy-tone',guide[0]==='tidy');
  banner.classList.toggle('stock-tone',guide[0]==='stock');
  banner.classList.toggle('urgent-tone',guide[0]==='urgent');
  const role=guide[0]==='stock'?'たこ ＆ シマエナガさん':'たこ ＆ トリケラさん';
  banner.querySelector('strong').textContent=role;
+ const stat=banner.querySelector('.page-guide-stat');
+ if(stat){
+  let info='';
+  if(['tidy','learn','select','set'].includes(id)){const n=tidyStepTotals();info='お片付け '+n.complete+'/'+n.total+'項目'}
+  else if(['stock','supplies'].includes(id)){info='登録済み '+supplies.length+'種類'}
+  else if(id==='pouch'){info='持ち物 '+readPouchItems().length+'件'}
+  else if(id==='homeSafety'){info='安全点検 残り'+criticalSafetyState().remaining.length+'項目'}
+  stat.textContent=info;stat.hidden=!info;
+ }
  banner.querySelector('p').textContent='たこ：'+contextualMascotAdvice(id,guide[1]);
  const sub=mascotSupportingLine(id,guide[0]);
  banner.querySelector('.guide-support').textContent=sub;
