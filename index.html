@@ -353,6 +353,15 @@ header{z-index:50;isolation:isolate}
 #emergency .emergency-tako-message{display:flex;align-items:center;gap:10px;background:#f5faf7;border:1px solid #dce9e0;border-radius:13px;padding:9px 11px;margin:10px 0 14px;min-height:62px}
 #emergency .emergency-tako-message svg{display:block;position:static;flex:0 0 44px;width:44px;height:48px;filter:none}
 #emergency .emergency-tako-message p{font-size:14px;line-height:1.6;font-weight:750;margin:0;color:#2d5b47}
+/* Safari scroll: keep illustrated panels in their layout and clip paint to their cards. */
+#home .game-home-stage{contain:layout paint;overflow:hidden}
+#home .game-mascot-scene{contain:layout paint;transform:none!important}
+#home .game-mascot-scene .game-mascot{transform:none!important}
+#home .game-dialogue{contain:layout paint;transform:none!important}
+.page-mascot-help{contain:layout paint;overflow:hidden;transform:none!important}
+.page-mascot-friends{position:relative;contain:layout paint}
+.page-mascot-friends .game-mascot{transform:none!important}
+#emergency .emergency-tako-message{contain:layout paint;overflow:hidden}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
