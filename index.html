@@ -760,7 +760,7 @@ header{z-index:50;isolation:isolate}
  }
 }
 
-/* v58: compact weather occupies the approved upper-right home space. */
+/* v59: compact weather occupies the approved upper-right home space. */
 #home .home-weather-intro{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:10px;align-items:start;margin-top:5px}
 #home .home-weather-intro h2{max-width:100%;font-size:clamp(17px,4.8vw,22px)}
 #home .home-weather-intro .game-home-lead{max-width:100%}
@@ -769,13 +769,13 @@ header{z-index:50;isolation:isolate}
 #home .home-weather-widget strong{display:block;font-size:14px;margin:4px 0;overflow-wrap:anywhere}
 @media(max-width:340px){#home .home-weather-intro{gap:6px;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}#home .home-weather-intro h2{font-size:16px}}
 
-/* v58: reduce introductory whitespace and prioritize today's actions. */
+/* v59: reduce introductory whitespace and prioritize today's actions. */
 #home .home-weather-intro{margin-top:2px;align-items:center}
 #home .home-weather-intro h2{margin:5px 0}
 #home .home-weather-widget{margin-top:3px;padding:7px 8px}
 #home .game-mascot-scene{margin-top:0!important}
 
-/* v58: emergency entry beside the approved home illustration. */
+/* v59: emergency entry beside the approved home illustration. */
 #home .home-scene-actions{display:grid;grid-template-columns:minmax(76px,1fr) minmax(0,2.2fr);align-items:center;gap:12px;margin:5px 0 0;min-width:0}
 #home .home-scene-actions .game-mascot-scene{width:100%!important;max-width:226px!important;margin:0 0 0 auto!important;min-height:0!important}
 #home .home-hazard-button{display:block;width:100%;max-width:112px;padding:5px;border:1px solid #202020;border-radius:14px;background:repeating-linear-gradient(135deg,#f9d849 0,#f9d849 8px,#242424 8px,#242424 16px);color:#202020;box-shadow:0 3px 9px #34362018;text-align:center}
@@ -786,7 +786,7 @@ header{z-index:50;isolation:isolate}
 #home .home-hazard-button:focus-visible{outline:3px solid #247db5;outline-offset:3px}
 @media(max-width:350px){#home .home-scene-actions{gap:8px;grid-template-columns:minmax(70px,1fr) minmax(0,2fr)}#home .home-hazard-face strong{font-size:14px}}
 
-/* v58: agreed Select red / Set blue / Stock green, including supply controls. */
+/* v59: agreed Select red / Set blue / Stock green, including supply controls. */
 .journey-tile:nth-child(2),.step-detail.set{border-color:#cbdaf0}
 .journey-tile:nth-child(3),.step-detail.stock{border-color:#c9dfd0}
 #supplies .quantity-control,#supplies .backup-button,#supplies .replenishment-item{border-color:#b9d4c2}
@@ -960,9 +960,9 @@ header{z-index:50;isolation:isolate}
 <div class="card"><h2>通信がなくても使うには</h2><p>通信できる状態で一度アプリを開き、「その他」のオフライン準備を完了させてください。その後、機内モードで開き直せるか確認します。</p><p>保存済みの備蓄・避難計画、例題の本文などはオフライン利用の対象です。天気の新規取得、動画、イベント検索、出典リンクの閲覧には通信が必要です。</p><button class="secondary" onclick="openHelpOfflineCheck()">オフライン準備を確認する</button></div>
 <div class="card"><h2>保存できない・記録が見つからないとき</h2><ul><li>前回と同じ端末・ブラウザ・URLで開いているか確認する。</li><li>保存結果のメッセージを確認し、保存に失敗した場合は入力内容を別に控える。</li><li>データ削除や初期化の前に、現在の記録をバックアップする。</li><li>保存データ診断で形式を確認する。診断だけで実機の復元成功を保証するものではありません。</li></ul><button class="secondary" onclick="openHelpDataCheck()">保存データ診断を開く</button></div>
 <div class="card"><h2>公開準備の状況</h2><p>現在は試作版です。天気は気象庁データを加工して表示します。警報・注意報の詳細は公式画面、避難情報は自治体からの最新情報を確認してください。</p><p>イベントは外部検索への案内です。例題は基礎5問のオリジナル問題で、公式過去問ではありません。</p><p class="notice">Android実機・端末間の復元・拡大表示や読み上げの確認などが、正式リリース前の残作業です。</p></div>
-<button class="secondary" onclick="show('more')">その他へ戻る</button></section><section id="cleanPractice" class="hidden"><div class="card"><h2>掃除の実践</h2><p>整理・整頓・収納で使いやすくした場所を、掃除して気持ちよく保ちましょう。</p><p class="notice">今回の掃除が終わった項目にチェックしてください。完了日時はこの端末に保存します。家具固定や避難判断など、命を守る対策は別に優先してください。</p><form onsubmit="event.preventDefault();saveCleanSchedule()"><label class="supply-label" for="cleanResetDays">掃除した日の何日後に解除する？</label><select class="field" id="cleanResetDays"><option value="1">翌日</option><option value="2">翌々日（初期設定）</option><option value="3">3日後</option><option value="7">7日後</option><option value="14">14日後</option><option value="30">30日後</option></select><label class="supply-label" for="cleanResetTime">チェックを解除する時刻</label><input class="field" id="cleanResetTime" type="time" required><button class="secondary" type="submit">間隔・時刻を保存</button><p class="notice" id="cleanScheduleStatus" role="status">端末の時刻を使います。閉じている間に時刻を過ぎた場合も、次に開くと未完了に戻ります。</p></form><p id="cleanProgress" role="status" aria-live="polite"></p><div id="cleanPracticeItems"></div><p id="cleanSaveStatus" class="notice" role="status" aria-live="polite"></p></div><div class="card"><h2>無理なく続けるコツ</h2><p class="notice">安全点検・登録した片付け・診断ミッション・避難計画を終え、水・食料・トイレの登録と備蓄の期限・不足・点検に未対応項目がない場合、ホームの「今日やること」は定期的な掃除に切り替わります。備えに未対応項目が出ると、そちらを優先します。登録だけで実際の備蓄量が十分だと保証するものではありません。</p><p>一度に全部ではなく、今日は一か所でも大丈夫です。洗剤や掃除用品は製品の表示に従い、混ぜて使わないでください。</p><p class="notice">各項目を掃除した日から、設定した日数後の時刻にチェックが外れます。初期設定は翌々日の朝5時です。実施日時は残します。設定を変えると新しい間隔で判定し直します。</p><button class="secondary" onclick="show('tidy')">お片付けの記録へ</button></div><button class="secondary" onclick="show('learn')">学ぶメニューへ戻る</button></section><section id="more" class="hidden">
+<button class="secondary" onclick="show('more')">その他へ戻る</button></section><section id="cleanPractice" class="hidden"><div class="card"><h2>掃除の実践</h2><p>整理・整頓・収納で使いやすくした場所を、掃除して気持ちよく保ちましょう。</p><p class="notice">今回の掃除が終わった項目にチェックしてください。完了日時はこの端末に保存します。家具固定や避難判断など、命を守る対策は別に優先してください。</p><form id="cleanScheduleForm" oninput="this.dataset.editing='true'" onsubmit="event.preventDefault();saveCleanSchedule()"><label class="supply-label" for="cleanResetDays">掃除した日の何日後に解除する？</label><select class="field" id="cleanResetDays"><option value="1">翌日</option><option value="2">翌々日（初期設定）</option><option value="3">3日後</option><option value="7">7日後</option><option value="14">14日後</option><option value="30">30日後</option></select><label class="supply-label" for="cleanResetTime">チェックを解除する時刻</label><input class="field" id="cleanResetTime" type="time" required><button class="secondary" type="submit">間隔・時刻を保存</button><p class="notice" id="cleanScheduleStatus" role="status">端末の時刻を使います。閉じている間に時刻を過ぎた場合も、次に開くと未完了に戻ります。</p></form><p id="cleanProgress" role="status" aria-live="polite"></p><div id="cleanPracticeItems"></div><p id="cleanSaveStatus" class="notice" role="status" aria-live="polite"></p></div><div class="card"><h2>無理なく続けるコツ</h2><p class="notice">安全点検・登録した片付け・診断ミッション・避難計画を終え、水・食料・トイレの登録と備蓄の期限・不足・点検に未対応項目がない場合、ホームの「今日やること」は定期的な掃除に切り替わります。備えに未対応項目が出ると、そちらを優先します。登録だけで実際の備蓄量が十分だと保証するものではありません。</p><p>一度に全部ではなく、今日は一か所でも大丈夫です。洗剤や掃除用品は製品の表示に従い、混ぜて使わないでください。</p><p class="notice">各項目を掃除した日から、設定した日数後の時刻にチェックが外れます。初期設定は翌々日の朝5時です。実施日時は残します。設定を変えると新しい間隔で判定し直します。</p><button class="secondary" onclick="show('tidy')">お片付けの記録へ</button></div><button class="secondary" onclick="show('learn')">学ぶメニューへ戻る</button></section><section id="more" class="hidden">
 <div class="card more-intro"><h2>その他の防災メニュー</h2><button class="more-menu-button" onclick="show('helpGuide')"><strong>使い方・データ保護ガイド</strong><span>はじめての準備・機種変更・オフライン・困ったとき ↗</span></button><p class="notice">必要な備えを、目的から選べます。</p><button class="more-menu-button" onclick="show('events')"><strong>防災イベントを探す</strong><span>地域・開催月・体験や訓練から検索 ↗</span></button></div><div class="card"><h2>防災士試験対策・無料学習</h2><p class="notice">例題動画・音声学習への入口と、学習の進め方をまとめました。</p><button class="secondary" type="button" onclick="show('examStudy')">学習メニューを開く ↗</button></div>
-<div class="card"><h2>v58 の更新と公開前の残作業</h2><p class="notice">v37の実機確認4/4項目は利用者確認済み。キャラクター表示・まばたきは完成版で固定しています。</p><ul><li>今回更新：初めての準備・バックアップ・機種変更・オフライン利用・トラブル対処のガイドを追加。</li><li>機能開発：市区町村別の警報・注意報詳細、イベント情報の自動収集、公開レビュー、例題数の拡充。</li><li>公開前の検証：Android実機、別端末への復元、拡大表示・読み上げ、機内モードでの再起動。</li></ul><p class="notice">自動診断の合格と実機確認は別に記録します。正式公開の準備は継続中です。</p><button class="secondary" onclick="openReleaseQa()">実機検証表を開く</button></div><div class="card"><h2>地域の天気</h2><p class="notice">気象庁の今日・明日の予報と時間帯別の降水確率。</p><button class="secondary" onclick="show('weather')">天気予報を確認する ↗</button></div><div class="card" id="releaseCandidatePanel">
+<div class="card"><h2>v59 の更新と公開前の残作業</h2><p class="notice">v37の実機確認4/4項目は利用者確認済み。キャラクター表示・まばたきは完成版で固定しています。</p><ul><li>今回更新：初めての準備・バックアップ・機種変更・オフライン利用・トラブル対処のガイドを追加。</li><li>機能開発：市区町村別の警報・注意報詳細、イベント情報の自動収集、公開レビュー、例題数の拡充。</li><li>公開前の検証：Android実機、別端末への復元、拡大表示・読み上げ、機内モードでの再起動。</li></ul><p class="notice">自動診断の合格と実機確認は別に記録します。正式公開の準備は継続中です。</p><button class="secondary" onclick="openReleaseQa()">実機検証表を開く</button></div><div class="card"><h2>地域の天気</h2><p class="notice">気象庁の今日・明日の予報と時間帯別の降水確率。</p><button class="secondary" onclick="show('weather')">天気予報を確認する ↗</button></div><div class="card" id="releaseCandidatePanel">
 <h2>リリース候補版の総合診断</h2>
 <p class="notice">安全・避難・備蓄・記録・データ保護などの主要機能を、自動検査します。登録済みの記録は書き換えません。</p>
 <button class="primary" type="button" style="width:100%;min-height:48px" onclick="checkReleaseCandidate()">主要機能をまとめて診断する</button>
@@ -1306,7 +1306,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v58';
+const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v59';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1425,7 +1425,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v58');
+  const c=await caches.open('totonoe-offline-shell-v59');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1451,8 +1451,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v58')){
-   const cache=await caches.open('totonoe-offline-shell-v58');
+  if(registration&&names.includes('totonoe-offline-shell-v59')){
+   const cache=await caches.open('totonoe-offline-shell-v59');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2071,7 +2071,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v58'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v59'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2411,7 +2411,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v58');
+  const cache=await caches.open('totonoe-offline-shell-v59');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -2430,12 +2430,12 @@ async function initOfflineStartup(){
   let readyTimer;const ready=await Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>{readyTimer=setTimeout(()=>reject(new Error('activation timeout')),12000)})]).finally(()=>clearTimeout(readyTimer));
   if(ready.scope!==registration.scope)throw Error('scope mismatch');
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v58')?await caches.open('totonoe-offline-shell-v58'):null;
+  const cache=names.includes('totonoe-offline-shell-v59')?await caches.open('totonoe-offline-shell-v59'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v58'?'必須ファイル10件の保存とv58の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v58の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v59'?'必須ファイル10件の保存とv59の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v59の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -2556,7 +2556,7 @@ function openFullBackupFromReadiness(){
  const status=document.getElementById('allBackupStatus');if(status)status.textContent='復元前に、必ず最新の全データをバックアップして保存してください。';
 }
 // Inspects existing user-owned keys in read-only mode; never deletes or modifies records.
-// v58: read-only per-record schema audit. No stored values are edited or removed.
+// v59: read-only per-record schema audit. No stored values are edited or removed.
 function checkStoredDataIntegrity(){
  const host=document.getElementById('dataIntegrityResults');if(!host)return;
  host.replaceChildren();
@@ -2573,7 +2573,7 @@ function checkStoredDataIntegrity(){
    validateFullBackupObject(obj);
    valid++;
   }catch(e){
-   const label=k===key?'備蓄記録':k===evacuationKey?'避難計画':k===familyProfileKey?'家族・ペットのカルテ':'記録番号 '+(index+1);
+   const label=({'toto-weather-location-v1':'天気の地域設定','toto-event-search-v1':'イベント検索条件','toto-practice-result-v1':'例題の学習結果','toto-clean-practice-v1':'掃除の実施記録','toto-clean-schedule-v1':'掃除の解除設定'})[k]||(k===key?'備蓄記録':k===evacuationKey?'避難計画':k===familyProfileKey?'家族・ペットのカルテ':'記録番号 '+(index+1));
    issues.push(label+' の形式を確認してください。');
   }
  }
@@ -2628,7 +2628,28 @@ function checkReleaseCandidate(){
   const raw=localStorage.getItem(weatherLocationKey);
   return raw===null||readWeatherLocation()!==null;
  },'天気の地域設定を読み取れません。天気画面で地域を選び直してください');
- add('画面遷移',()=>['home','supplies','tidy','evacuation','emergency','homeSafety','family','outage','readiness'].every(validPage),'必要な画面を確認できません');
+
+ add('追加機能のバックアップ形式',()=>{
+  const now=new Date().toISOString();
+  const fixtures={
+   'toto-weather-location-v1':{office:'130000',area:'130010',station:'44132'},
+   'toto-event-search-v1':{pref:'東京都',city:'千代田区',kind:'防災 イベント',month:'2026-11'},
+   'toto-practice-result-v1':{version:1,total:5,score:4,wrong:[0],completedAt:now},
+   'toto-clean-practice-v1':{floor:{done:true,at:now}},
+   'toto-clean-schedule-v1':{resetTime:'05:00',resetDays:2}
+  };
+  for(const [key,value] of Object.entries(fixtures)){
+   const data={[key]:JSON.stringify(value)};
+   if(!validateFullBackupObject(JSON.parse(JSON.stringify({format:'toto-full-backup-v1',data}))).keys.includes(key))return false;
+   let rejected=false;try{validateFullBackupObject({format:'toto-full-backup-v1',data:{[key]:'null'}})}catch(e){rejected=true}
+   if(!rejected)return false;
+  }return true;
+ },'天気・イベント・学習・掃除のバックアップ形式を確認してください');
+ add('掃除の翌々日解除',()=>{
+  const settings={resetTime:'05:00',resetDays:2};
+  return cleanResetDue(new Date(2026,0,31,20).toISOString(),settings)===new Date(2026,1,2,5).getTime();
+ },'掃除の解除日計算を確認してください');
+ add('画面遷移',()=>['home','supplies','tidy','evacuation','emergency','homeSafety','family','outage','readiness','examStudy','practiceQuiz','events','cleanPractice','helpGuide','weather'].every(validPage),'必要な画面を確認できません');
  add('住まいの安全と優先チェック',()=>Array.isArray(criticalSafetyIds)&&criticalSafetyIds.length>0&&typeof renderHomeNextThree==='function'&&!!document.getElementById('homeNextThreeActions'),'優先対策の画面を確認してください');
  add('備蓄の保存形式',()=>Array.isArray(supplies)&&supplies.every(x=>x&&typeof x==='object'&&typeof x.name==='string'),'登録済み備蓄の形式を確認してください');
  add('避難計画と災害時モード',()=>!!document.getElementById('emergencyPlan')&&Array.isArray(evacuationFields)&&evacuationFields.length>=3&&typeof readEvacuationPlan()==='object','避難計画の保存形式を確認してください');
@@ -2665,7 +2686,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v58';
+ const cacheName='totonoe-offline-shell-v59';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -2727,7 +2748,7 @@ async function repairOfflinePreparation(){
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v58有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v59有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/10件。Service Worker：'+state+'。';
@@ -2767,13 +2788,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v58';
+   const current='totonoe-offline-shell-v59';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v58有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v59有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
@@ -2813,7 +2834,7 @@ async function checkReleaseReadiness(){
 }
 initOfflineStartup();
 window.addEventListener('pageshow',initOfflineStartup);
-// v58: live JMA forecast only; never retain stale weather as a current forecast.
+// v59: live JMA forecast only; never retain stale weather as a current forecast.
 
 function jstWeatherDay(value){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value))}
 function weatherDailyRows(data,areaCode,now=Date.now()){
@@ -3108,7 +3129,7 @@ function setCleanPractice(id,done){
  try{const raw=JSON.stringify(v);localStorage.setItem('toto-clean-practice-v1',raw);if(localStorage.getItem('toto-clean-practice-v1')!==raw)throw Error('verify');renderCleanPractice();renderTasks();renderHomeNextThree();document.getElementById('cleanSaveStatus').textContent='掃除の記録を保存しました。'}catch(e){renderCleanPractice();document.getElementById('cleanSaveStatus').textContent='保存できませんでした。入力内容を別に控えてください。'}
 }
 function renderCleanPractice(){
- const host=document.getElementById('cleanPracticeItems');if(!host)return;document.getElementById('cleanResetTime').value=readCleanSchedule().resetTime;document.getElementById('cleanResetDays').value=String(readCleanSchedule().resetDays);host.replaceChildren();const v=readCleanPractice(),items=cleanPracticeDefinitions();document.getElementById('cleanProgress').textContent='今回の完了：'+items.filter(([id])=>v[id]?.done).length+'／'+items.length+'項目';
+ const host=document.getElementById('cleanPracticeItems');if(!host)return;if(!document.getElementById('cleanScheduleForm')?.dataset.editing){document.getElementById('cleanResetTime').value=readCleanSchedule().resetTime;document.getElementById('cleanResetDays').value=String(readCleanSchedule().resetDays);}host.replaceChildren();const v=readCleanPractice(),items=cleanPracticeDefinitions();document.getElementById('cleanProgress').textContent='今回の完了：'+items.filter(([id])=>v[id]?.done).length+'／'+items.length+'項目';
  for(const [id,title] of items){const row=document.createElement('div');row.className='item';const label=document.createElement('label');label.className='task';const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=!!v[id]?.done;checkbox.onchange=()=>setCleanPractice(id,checkbox.checked);label.append(checkbox,document.createTextNode(title));row.append(label);
  if(v[id]){const date=document.createElement('p');date.className='notice';date.textContent=(v[id].done?'完了：':'前回の記録：')+new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date(v[id].at));if(v[id].done)date.textContent+=' ／ 次の解除：'+new Intl.DateTimeFormat('ja-JP',{timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone,dateStyle:'short',timeStyle:'short'}).format(new Date(cleanResetDue(v[id].at,readCleanSchedule())));row.append(date)}
  if(v[id]?.done){const repeat=document.createElement('button');repeat.className='secondary';repeat.textContent='今回も完了';repeat.onclick=()=>setCleanPractice(id,true);row.append(repeat)}host.append(row);
@@ -3120,7 +3141,7 @@ function readCleanSchedule(){try{const v=JSON.parse(localStorage.getItem('toto-c
 function cleanResetDue(completedAt,schedule){const date=new Date(completedAt),[h,m]=schedule.resetTime.split(':').map(Number);date.setDate(date.getDate()+(schedule.resetDays??2));date.setHours(h,m,0,0);return date.getTime()}
 function saveCleanSchedule(){
  const value={resetTime:document.getElementById('cleanResetTime').value,resetDays:Number(document.getElementById('cleanResetDays').value)},host=document.getElementById('cleanScheduleStatus');if(!validCleanSchedule(value)){host.textContent='解除時刻を選んでください。';return}
- try{const raw=JSON.stringify(value);localStorage.setItem('toto-clean-schedule-v1',raw);if(localStorage.getItem('toto-clean-schedule-v1')!==raw)throw Error('verify');renderCleanPractice();renderTasks();renderHomeNextThree();host.textContent='掃除した日の'+value.resetDays+'日後、'+value.resetTime+'にチェックを解除します（端末の時刻）。'}catch(e){host.textContent='時刻を保存できませんでした。'}
+ try{const raw=JSON.stringify(value);localStorage.setItem('toto-clean-schedule-v1',raw);if(localStorage.getItem('toto-clean-schedule-v1')!==raw)throw Error('verify');delete document.getElementById('cleanScheduleForm').dataset.editing;renderCleanPractice();renderTasks();renderHomeNextThree();host.textContent='掃除した日の'+value.resetDays+'日後、'+value.resetTime+'にチェックを解除します（端末の時刻）。'}catch(e){host.textContent='時刻を保存できませんでした。'}
 }
 function cleanHomeReady(){
  try{
