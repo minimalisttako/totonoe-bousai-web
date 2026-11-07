@@ -760,7 +760,7 @@ header{z-index:50;isolation:isolate}
  }
 }
 
-/* v94: compact weather occupies the approved upper-right home space. */
+/* v95: compact weather occupies the approved upper-right home space. */
 #home .home-weather-intro{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:10px;align-items:start;margin-top:5px}
 #home .home-weather-intro h2{max-width:100%;font-size:clamp(17px,4.8vw,22px)}
 #home .home-weather-intro .game-home-lead{max-width:100%}
@@ -769,13 +769,13 @@ header{z-index:50;isolation:isolate}
 #home .home-weather-widget strong{display:block;font-size:14px;margin:4px 0;overflow-wrap:anywhere}
 @media(max-width:340px){#home .home-weather-intro{gap:6px;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}#home .home-weather-intro h2{font-size:16px}}
 
-/* v94: reduce introductory whitespace and prioritize today's actions. */
+/* v95: reduce introductory whitespace and prioritize today's actions. */
 #home .home-weather-intro{margin-top:2px;align-items:center}
 #home .home-weather-intro h2{margin:5px 0}
 #home .home-weather-widget{margin-top:3px;padding:7px 8px}
 #home .game-mascot-scene{margin-top:0!important}
 
-/* v94: emergency entry beside the approved home illustration. */
+/* v95: emergency entry beside the approved home illustration. */
 #home .home-scene-actions{display:grid;grid-template-columns:minmax(76px,1fr) minmax(0,2.2fr);align-items:center;gap:12px;margin:5px 0 0;min-width:0}
 #home .home-scene-actions .game-mascot-scene{width:100%!important;max-width:226px!important;margin:0 0 0 auto!important;min-height:0!important}
 #home .home-hazard-button{display:block;width:100%;max-width:112px;padding:5px;border:1px solid #202020;border-radius:14px;background:repeating-linear-gradient(135deg,#f9d849 0,#f9d849 8px,#242424 8px,#242424 16px);color:#202020;box-shadow:0 3px 9px #34362018;text-align:center}
@@ -786,7 +786,7 @@ header{z-index:50;isolation:isolate}
 #home .home-hazard-button:focus-visible{outline:3px solid #247db5;outline-offset:3px}
 @media(max-width:350px){#home .home-scene-actions{gap:8px;grid-template-columns:minmax(70px,1fr) minmax(0,2fr)}#home .home-hazard-face strong{font-size:14px}}
 
-/* v94: agreed Select red / Set blue / Stock green, including supply controls. */
+/* v95: agreed Select red / Set blue / Stock green, including supply controls. */
 .journey-tile:nth-child(2),.step-detail.set{border-color:#cbdaf0}
 .journey-tile:nth-child(3),.step-detail.stock{border-color:#c9dfd0}
 #supplies .quantity-control,#supplies .backup-button,#supplies .replenishment-item{border-color:#b9d4c2}
@@ -799,13 +799,13 @@ header{z-index:50;isolation:isolate}
 #learn .step:nth-of-type(2){background:var(--set-bg);color:var(--set-ink)}
 #learn .step:nth-of-type(3){background:var(--stock-bg);color:var(--stock-ink)}
 
-/* v94: visible keyboard focus and a bypass link for repeated navigation. */
+/* v95: visible keyboard focus and a bypass link for repeated navigation. */
 .skip-content{position:fixed;left:12px;top:8px;transform:translateY(-160%);z-index:1000;padding:12px 18px;background:#fff;color:#174c3e;border:3px solid #268c6a;border-radius:10px;font-weight:700}
 .skip-content:focus{transform:none}
 main h2[tabindex="-1"]:focus,main h3[tabindex="-1"]:focus,#practiceQuizContent p[tabindex="-1"]:focus{outline:3px solid #268c6a;outline-offset:5px;border-radius:4px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .tidy-photo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}.tidy-photo-grid img{display:block;width:100%;height:auto;max-height:280px;object-fit:contain;border-radius:10px}.tidy-photo-grid figcaption{font-weight:700;font-size:14px}.tidy-photo-grid input{font-size:13px}\n.tidy-photo-open{display:block;width:100%;border:0;background:transparent;padding:0;border-radius:10px}.tidy-photo-dialog{width:min(94vw,780px);max-height:90vh;border:1px solid #bad3c3;border-radius:16px;padding:18px}.tidy-photo-dialog::backdrop{background:#0009}.tidy-photo-dialog img{display:block;max-width:100%;max-height:65vh;object-fit:contain;margin:0 auto 15px}\n.rest-note{padding:10px 12px;border:1px solid #d4e4df;border-radius:12px;background:#ffffffc9;margin:8px 0}.rest-note p{font-size:13px;line-height:1.6;margin:0 0 5px}.rest-note button{font-size:13px;min-height:44px}\n
-/* v94: shared three-column grid; top 2+1, warning band full-width, bottom 1+2. */
+/* v95: shared three-column grid; top 2+1, warning band full-width, bottom 1+2. */
 #home .home-weather-intro,#home .home-scene-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch;margin:8px 0 0}
 #home .home-weather-intro>div:first-child{grid-column:1/3;display:flex;align-items:center;min-width:0}
 #home .home-weather-intro h2{margin:0;font-size:clamp(18px,5vw,23px);line-height:1.4;max-width:100%}
@@ -1348,7 +1348,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v94';
+const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v95';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1467,7 +1467,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v94');
+  const c=await caches.open('totonoe-offline-shell-v95');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1493,8 +1493,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v94')){
-   const cache=await caches.open('totonoe-offline-shell-v94');
+  if(registration&&names.includes('totonoe-offline-shell-v95')){
+   const cache=await caches.open('totonoe-offline-shell-v95');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2172,7 +2172,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v94'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v95'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2550,7 +2550,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v94');
+  const cache=await caches.open('totonoe-offline-shell-v95');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -2571,17 +2571,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v94')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v95')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v94')?await caches.open('totonoe-offline-shell-v94'):null;
+  const cache=names.includes('totonoe-offline-shell-v95')?await caches.open('totonoe-offline-shell-v95'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v94'?'必須ファイル10件の保存とv94の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v94の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v95'?'必須ファイル10件の保存とv95の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v95の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -2702,7 +2702,7 @@ function openFullBackupFromReadiness(){
  const status=document.getElementById('allBackupStatus');if(status)status.textContent='復元前に、必ず最新の全データをバックアップして保存してください。';
 }
 // Inspects existing user-owned keys in read-only mode; never deletes or modifies records.
-// v94: read-only per-record schema audit. No stored values are edited or removed.
+// v95: read-only per-record schema audit. No stored values are edited or removed.
 function checkStoredDataIntegrity(){
  const host=document.getElementById('dataIntegrityResults');if(!host)return;
  host.replaceChildren();
@@ -2832,7 +2832,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v94';
+ const cacheName='totonoe-offline-shell-v95';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -2895,7 +2895,7 @@ async function repairOfflinePreparation(){
   }
   await inspect();
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v94有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v95有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/10件。Service Worker：'+state+'。';
@@ -2935,13 +2935,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v94';
+   const current='totonoe-offline-shell-v95';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v94有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v95有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
@@ -2983,7 +2983,7 @@ async function checkReleaseReadiness(){
 }
 initOfflineStartup();
 window.addEventListener('pageshow',initOfflineStartup);
-// v94: live JMA forecast only; never retain stale weather as a current forecast.
+// v95: live JMA forecast only; never retain stale weather as a current forecast.
 
 function jstWeatherDay(value){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value))}
 function weatherDailyRows(data,areaCode,now=Date.now()){
@@ -3175,18 +3175,27 @@ restoreWeatherLocation();renderHomeWeather();refreshHomeWeather(true);
 
 var municipalityWarningData=null,municipalityWarningRequest=0,municipalityWarningLoadedAt=0;
 function warningRowsForCity(reports,city){
- if(!Array.isArray(reports))throw Error('format');
- const rows=[];
+ if(!Array.isArray(reports)||!reports.length)throw Error('format');
+ const latest=new Map(),clearAt=new Map();let found=false;
  for(const report of reports){
-  if(!Number.isFinite(Date.parse(report.reportDatetime)))throw Error('date');
-  const item=report.warning?.class20Items?.find(x=>x.areaCode===city);if(!item)continue;
-  if(!Array.isArray(item.kinds))throw Error('kinds');
+  const at=Date.parse(report.reportDatetime);if(!Number.isFinite(at))throw Error('date');
+  const matching=report.warning?.class20Items?.filter(x=>x.areaCode===city)||[];if(matching.length>1)throw Error('duplicate city');const item=matching[0];if(!item)continue;found=true;
+  if(!Array.isArray(item.kinds)||!item.kinds.length)throw Error('kinds');
+  const group=String(report.dataTypeCode||'legacy'),none=item.kinds.filter(k=>k?.status==='発表警報・注意報はなし');
+  if(none.length&&none.length!==item.kinds.length)throw Error('conflicting state');
+  if(none.length)clearAt.set(group,Math.max(clearAt.get(group)??-Infinity,at));
   for(const kind of item.kinds){
-   if(kind.status==='解除'||kind.status==='発表警報・注意報はなし')continue;
-   if(typeof kind.status!=='string'||typeof kind.code!=='string')throw Error('kind');
-   rows.push({code:kind.code,status:kind.status,at:report.reportDatetime,office:report.publishingOffice||'気象庁'});
+   if(!kind||typeof kind.status!=='string'||!kind.status.trim())throw Error('kind');
+   if(kind.status==='発表警報・注意報はなし')continue;
+   if(typeof kind.code!=='string'||!kind.code.trim())throw Error('kind code');
+   const key=group+'|'+kind.code,previous=latest.get(key);
+   if(previous&&previous.time===at&&previous.status!==kind.status)throw Error('conflicting time');
+   if(!previous||at>previous.time)latest.set(key,{code:kind.code,status:kind.status,at:report.reportDatetime,office:report.publishingOffice||'気象庁',time:at,group});
   }
- }return rows.sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));
+ }
+ if(!found)throw Error('missing city');
+ if([...latest.values()].some(row=>row.status!=='解除'&&row.time===clearAt.get(row.group)))throw Error('conflicting clear');
+ return [...latest.values()].filter(row=>row.status!=='解除'&&row.time>(clearAt.get(row.group)??-Infinity)).sort((a,b)=>b.time-a.time).map(({time,group,...row})=>row);
 }
 function renderMunicipalityWarnings(){
  const host=document.getElementById('warningCityResults');host.replaceChildren();if(!municipalityWarningData)return;
@@ -3196,7 +3205,7 @@ function renderMunicipalityWarnings(){
   const {reports,office}=municipalityWarningData;if(document.getElementById('weatherOffice').value!==office)throw Error('changed');
   const rows=warningRowsForCity(reports,city);
   const title=document.createElement('h3');title.textContent=document.getElementById('warningCity').selectedOptions[0].textContent;host.append(title);
-  if(!rows.length){const p=document.createElement('p');p.textContent='取得した発表情報には、この地域の継続・発表中の項目が見つかりません。警報・注意報が現在ないことや安全を保証する表示ではありません。公式画面も確認してください。';host.append(p)}
+  if(!rows.length){const p=document.createElement('p'),model=homeWarningModel(municipalityWarningData,{office,warningCity:city,warningCityName:document.getElementById('warningCity').selectedOptions[0]?.textContent||''},municipalityWarningLoadedAt,Date.now(),navigator.onLine);p.textContent=model.state==='clear'?'取得した情報では、この地域の警報・注意報はありません。最新の状況と自治体の避難情報も確認してください。':'この地域の警報・注意報を確認できません。情報の不足・古い発表などがあるため「なし」とは表示しません。気象庁の公式画面で最新情報を確認してください。';host.append(p)}
   for(const row of rows){const p=document.createElement('p');p.textContent=(names[row.code]||'名称未対応の情報（種別コード '+row.code+'）')+' ／ '+row.status+' ／ '+row.office+' 発表：'+new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date(row.at))+'（日本時間）'+(Date.now()-Date.parse(row.at)>86400000?' ※発表から24時間以上経過。公式の最新情報を確認してください。':'');host.append(p)}
   const saved=readWeatherLocation();if(saved?.office===office){saved.warningCity=city;saved.warningCityName=document.getElementById('warningCity').selectedOptions[0]?.textContent||'';try{localStorage.setItem(weatherLocationKey,JSON.stringify(saved))}catch(e){}}renderHomeWarningBanner();
  }catch(e){host.textContent='地域の情報を確認できませんでした。気象庁の公式画面で最新の警報・注意報を確認してください。'}
@@ -3388,7 +3397,7 @@ function pickPracticeQuestions(random=Math.random){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v94','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v95','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -3397,8 +3406,8 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v94';
-   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v94有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v95';
+   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v95有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
     const checks=await Promise.all(paths.map(async p=>{const res=await cache.match(new URL(p,scope).href);return !!res?.ok}));
@@ -3522,13 +3531,13 @@ function homeWarningModel(data,saved,loadedAt,now,online){
  if(!saved?.warningCity)return {state:'unknown',text:'登録地域の注意報・警報：市区町村を設定してください',note:'タップして地域を登録'};
  if(!online)return {state:'unknown',text:'登録地域の注意報・警報：通信できず未確認',note:'前回の情報を「なし」とは判定しません'};
  if(!data||data.office!==saved.office)return {state:'unknown',text:'登録地域の注意報・警報：取得中または未確認',note:'タップして再取得・詳細確認'};
- if(!Number.isFinite(loadedAt)||now-loadedAt>300000)return {state:'unknown',text:'登録地域の注意報・警報：更新が必要',note:'タップして最新情報を確認'};
+ if(!Number.isFinite(loadedAt)||loadedAt>now+60000||now-loadedAt>300000)return {state:'unknown',text:'登録地域の注意報・警報：更新が必要',note:'タップして最新情報を確認'};
  try{
   const reports=data.reports;
   if(!Array.isArray(reports)||!reports.length||!reports.some(r=>r.warning?.class20Items?.some(x=>x.areaCode===saved.warningCity)))throw Error('missing city');
   if(reports.some(r=>!Number.isFinite(Date.parse(r.reportDatetime))||Date.parse(r.reportDatetime)>now+3600000)||now-Math.max(...reports.map(r=>Date.parse(r.reportDatetime)))>86400000)throw Error('date');
   if(reports.some(r=>r.warning?.class20Items?.some(x=>x.areaCode===saved.warningCity&&(!Array.isArray(x.kinds)||!x.kinds.length))))throw Error('empty kinds');
-  const rows=warningRowsForCity(reports,saved.warningCity),names={'02':'暴風雪警報','05':'暴風警報','06':'大雪警報','07':'波浪警報','12':'大雪注意報','13':'風雪注意報','14':'雷注意報','15':'強風注意報','16':'波浪注意報','17':'融雪注意報','20':'濃霧注意報','21':'乾燥注意報','22':'なだれ注意報','23':'低温注意報','24':'霜注意報','25':'着氷注意報','26':'着雪注意報'};
+  const rows=warningRowsForCity(reports,saved.warningCity);if(!rows.length&&(reports.some(r=>!r.warning?.class20Items?.some(x=>x.areaCode===saved.warningCity))||reports.some(r=>now-Date.parse(r.reportDatetime)>86400000)))throw Error('incomplete clear');const names={'02':'暴風雪警報','05':'暴風警報','06':'大雪警報','07':'波浪警報','12':'大雪注意報','13':'風雪注意報','14':'雷注意報','15':'強風注意報','16':'波浪注意報','17':'融雪注意報','20':'濃霧注意報','21':'乾燥注意報','22':'なだれ注意報','23':'低温注意報','24':'霜注意報','25':'着氷注意報','26':'着雪注意報'};
   if(rows.some(r=>now-Date.parse(r.at)>86400000))return {state:'unknown',text:'登録地域の注意報・警報：発表日時の確認が必要',note:'古い発表を含みます。タップして公式情報を確認'};
   const labels=[...new Set(rows.map(r=>names[r.code]||'名称未対応の発表情報'))];
   return {state:rows.length?'active':'clear',text:rows.length?'登録地域：'+labels.join('・'):'登録地域の注意報・警報なし（取得した情報）',note:(saved.warningCityName||'登録市区町村')+' ／ '+new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit'}).format(new Date(loadedAt))+'取得・気象庁／詳細 ↗'};
