@@ -1490,8 +1490,16 @@ function renderHouseholdReadinessBridge(){
   const litersText=Number(liters.toFixed(3)).toLocaleString('ja-JP');
   entry('登録済みの飲料水',valid.length?litersText+'L（容量を設定した有効な '+valid.length+'種類）'+(excluded?'／未集計 '+excluded+'種類':''):'容量と数量を確認できる飲料水が未登録です。','supplies',!valid.length||excluded>0);
   const food=supplies.filter(x=>x.category==='food');
-  const foodExpired=food.filter(x=>x.exp&&x.exp<today).length;
-  entry('食料の備蓄',food.length?'食料に分類済み '+food.length+'種類'+(foodExpired?'／期限切れ '+foodExpired+'種類':''):'食料に分類された品目はありません。既存の食品は備蓄の編集で分類できます。','supplies',!food.length||foodExpired>0);
+  const toilet=supplies.filter(x=>x.category==='toilet');
+  const stockState=list=>{
+   const expired=list.filter(x=>x.exp&&x.exp<today).length;
+   const zero=list.filter(x=>Number.isFinite(Number(x.qty))&&Number(x.qty)===0).length;
+   const unchecked=list.filter(x=>!x.exp).length;
+   return {expired,zero,unchecked};
+  };
+  const foodState=stockState(food),toiletState=stockState(toilet);
+  entry('食料の備蓄',food.length?'食料 '+food.length+'種類／期限切れ '+foodState.expired+'種類／数量0 '+foodState.zero+'種類／期限未設定 '+foodState.unchecked+'種類':'食料に分類された品目はありません。既存の食品は備蓄の編集で分類できます。','supplies',!food.length||foodState.expired>0||foodState.zero>0);
+  entry('非常用トイレの備蓄',toilet.length?'トイレ用品 '+toilet.length+'種類／期限切れ '+toiletState.expired+'種類／数量0 '+toiletState.zero+'種類':'非常用トイレに分類された品目はありません。備蓄登録または編集から分類できます。','supplies',!toilet.length||toiletState.expired>0||toiletState.zero>0);
   const toilets=supplies.filter(x=>x.category==='toilet');
   const toiletExpired=toilets.filter(x=>x.exp&&x.exp<today).length;
   const toiletUnknown=toilets.filter(x=>!x.exp).length;
@@ -1504,7 +1512,7 @@ function renderHouseholdReadinessBridge(){
    entry('家族人数と備蓄の計算','人 '+people+'人。必要量は「備蓄管理」で日数を選んで計算できます（自動変更なし）。','supplies');
   }
   const note=document.createElement('p');note.className='notice';
-  note.textContent='飲料水の目安は別の備蓄計算で人数・日数を指定してください。家族カルテ未登録を「備蓄0人分」とは判定しません。';
+  note.textContent='食料・非常用トイレは種類数と点検対象のみを表示します。必要量との比較はしていません。飲料水の目安は備蓄計算で人数・日数を指定してください。';
   host.append(note);
  }catch(e){
   const message=document.createElement('p');message.className='notice';
@@ -2482,35 +2490,36 @@ function openFullBackupFromReadiness(){
  const status=document.getElementById('allBackupStatus');if(status)status.textContent='復元前に、必ず最新の全データをバックアップして保存してください。';
 }
 // Inspects existing user-owned keys in read-only mode; never deletes or modifies records.
+// v37: read-only per-record schema audit. No stored values are edited or removed.
 function checkStoredDataIntegrity(){
  const host=document.getElementById('dataIntegrityResults');if(!host)return;
  host.replaceChildren();
- const source={};const issues=[];
- let present=0;
- for(const k of allBackupKeys){
+ const issues=[];let present=0,valid=0;
+ for(const [index,k] of allBackupKeys.entries()){
+  let raw;
+  try{raw=localStorage.getItem(k)}catch(e){
+   issues.push('記録番号 '+(index+1)+' を読み取れませんでした（保存領域のアクセスに失敗）。');continue;
+  }
+  if(raw===null)continue;
+  present++;
   try{
-   const raw=localStorage.getItem(k);
-   if(raw===null)continue;
-   present++;
-   JSON.parse(raw);
-   source[k]=raw;
-  }catch(e){issues.push('記録の読み取りまたはJSON形式に問題があります（項目 '+(allBackupKeys.indexOf(k)+1)+'）')}
+   const obj={format:'toto-full-backup-v1',data:{[k]:raw}};
+   validateFullBackupObject(obj);
+   valid++;
+  }catch(e){
+   const label=k===key?'備蓄記録':k===evacuationKey?'避難計画':k===familyProfileKey?'家族・ペットのカルテ':'記録番号 '+(index+1);
+   issues.push(label+' の形式を確認してください。');
+  }
  }
- if(present===0){
-  host.textContent='保存記録はまだありません。新規利用時は正常です。備蓄などを保存後に再診断してください。';
-  return;
- }
- if(Object.keys(source).length===present){
-  try{
-   validateFullBackupObject({format:'toto-full-backup-v1',data:source});
-  }catch(e){issues.push('バックアップ形式の整合性を確認できません。バックアップ内容の点検が必要です。')}
+ if(!present&&!issues.length){
+  host.textContent='保存記録はまだありません。新規利用時は正常です。記録保存後に再診断してください。';return;
  }
  const summary=document.createElement('p');
- summary.textContent='保存記録 '+present+'種類を点検 ／ '+(issues.length?'要確認 '+issues.length+'件':'形式上の問題は検出されませんでした');
+ summary.textContent='保存記録 '+present+'種類／形式確認 '+valid+'種類／要確認 '+issues.length+'件';
  host.append(summary);
- for(const issue of issues){const line=document.createElement('p');line.textContent='⚠️ '+issue;host.append(line)}
+ for(const issue of issues){const p=document.createElement('p');p.textContent='⚠️ '+issue;host.append(p)}
  const caution=document.createElement('p');
- caution.textContent=issues.length?'⚠️ 記録を削除せず、既存のバックアップを保管してください。':'✅ 読み取り専用の形式点検を完了。復元や端末移行の成功を保証するものではありません。';
+ caution.textContent=issues.length?'⚠️ この診断ではデータを変更していません。削除や復元の前にバックアップを別に保管してください。':'✅ 記録ごとの形式点検に問題はありません。実機での復元や端末移行の成功は別途確認してください。';
  host.append(caution);
 }
 // Visual-only test: fetches the six already-cached individual assets, never changes user records.
