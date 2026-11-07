@@ -34,3 +34,18 @@ const malicious=JSON.parse(exported);const tidy=JSON.parse(malicious.data['toto-
 const oversized=JSON.parse(exported);oversized.data['toto-tidy-v1']='x'.repeat(2100000);assert.throws(()=>validate(oversized));
 validate({format:'toto-full-backup-v1',data:{'toto-supplies-v1':'[]'}});
 console.log('PASS: 10 data types roundtrip including photo strings, household notes and warning city; unrelated data preserved; quota and silent-write rollback; read failure performs no writes; invalid photo/oversize rejected; legacy backup accepted.');
+
+const movingData={'toto-moving-v1':JSON.stringify({risk:true,route:false,backup:true})};
+const movingValidated=validate({format:'toto-full-backup-v1',data:movingData});
+const movingDest=new Map();assert(ctx.applyValidatedRestoreToStorage(movingValidated.data,movingValidated.keys,storage(movingDest)).ok);
+assert.equal(movingDest.get('toto-moving-v1'),movingData['toto-moving-v1']);
+for(const invalid of ['null','[]','{"risk":"yes"}','{"unknown":true}'])assert.throws(()=>validate({format:'toto-full-backup-v1',data:{'toto-moving-v1':invalid}}));
+vm.runInContext(['movingChecklistGroups','readMovingChecklist','setMovingCheck'].map(extract).join('\n'),ctx);
+ctx.localStorage=storage(movingDest);const movingStatus={};ctx.document={getElementById:()=>movingStatus};ctx.renderMovingChecklist=()=>{};
+ctx.verifiedSaveJson=(k,v)=>{movingDest.set(k,JSON.stringify(v));return true};
+ctx.setMovingCheck('route',true);assert.equal(JSON.parse(movingDest.get('toto-moving-v1')).route,true);
+vm.runInContext('readMovingChecklist()',ctx);assert.equal(ctx.readMovingChecklist().risk,true);
+ctx.setMovingCheck('route',false);assert.equal(ctx.readMovingChecklist().route,false);
+movingDest.set('toto-moving-v1','{broken');ctx.setMovingCheck('risk',true);assert.equal(movingDest.get('toto-moving-v1'),'{broken');
+assert.equal(ctx.movingChecklistGroups().flat().length,12);
+console.log('PASS: moving checklist 12 tasks; save/reopen/uncheck; full-backup restoration; invalid state rejected and protected');
