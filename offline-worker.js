@@ -1,12 +1,12 @@
-/* ととのえ防災：v17 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
-const CACHE='totonoe-offline-shell-v17';
+/* ととのえ防災：v18 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
+const CACHE='totonoe-offline-shell-v18';
 const ROOT=new URL('./',self.registration.scope).href;
 const PATHS=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
 const URLS=PATHS.map(p=>new URL(p,ROOT).href);
 const ASSETROOT=new URL('./assets/',ROOT).pathname;
 const HOME=new URL('./',ROOT).pathname;
 const INDEX=new URL('./index.html',ROOT).pathname;
-function usable(response,html=false){return !!(response&&response.ok&&!response.redirected&&(!html||(response.headers.get('content-type')||'').includes('text/html')))}
+function usable(response,html=false){return !!(response&&response.ok&&(!html||(response.headers.get('content-type')||'').includes('text/html')))}
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const cache=await caches.open(CACHE);
  try{
@@ -16,7 +16,7 @@ self.addEventListener('install',event=>event.waitUntil((async()=>{
    await cache.put(url,response);
   }
   await self.skipWaiting();
- }catch(error){await caches.delete(CACHE);throw error;}
+ }catch(error){throw error;}
 })()));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
  const cache=await caches.open(CACHE);
@@ -51,4 +51,10 @@ self.addEventListener('fetch',event=>{
    catch(_){return new Response('Offline asset unavailable',{status:503});}
   })());
  }
+});
+
+// Expose the active cache version for a reliable client-side readiness check.
+self.addEventListener('message',event=>{
+ if(event.data?.type!=='TOTONOE_CACHE_VERSION')return;
+ if(event.ports?.[0])event.ports[0].postMessage({cache:CACHE});
 });
