@@ -2,7 +2,7 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),asse
 const source=fs.readFileSync(process.argv[2]||path.join(__dirname,'..','index.html'),'utf8');
 function extract(name){const start=source.indexOf('function '+name+'(');assert(start>=0,name);const tail=source.slice(start),end=/\n(?:async )?function /.exec(tail);assert(end,name);return tail.slice(0,end.index);}
 const c={Date,console};vm.createContext(c);
-vm.runInContext(['cleanResetDue','readCleanPractice','cleanHomeReady','positionCriticalSafetyCard','pickPracticeQuestions'].map(extract).join('\n'),c);
+vm.runInContext(['cleanResetDue','readCleanPractice','cleanHomeReady','positionCriticalSafetyCard','practiceTopicCatalog','practiceTopicIds','pickPracticeQuestions'].map(extract).join('\n'),c);
 function due(date,schedule={resetTime:'05:00',resetDays:2}){return new Date(c.cleanResetDue(date,schedule));}
 for(const [completed,expected] of [['2026-11-07T23:59:00','2026-11-09T05:00:00'],['2026-11-07T01:00:00','2026-11-09T05:00:00'],['2026-12-31T22:00:00','2027-01-02T05:00:00'],['2028-02-28T22:00:00','2028-03-01T05:00:00']])assert.equal(due(completed).getTime(),new Date(expected).getTime());
 assert.equal(due('2026-11-07T23:00:00',{resetTime:'18:30',resetDays:7}).getTime(),new Date('2026-11-14T18:30:00').getTime());

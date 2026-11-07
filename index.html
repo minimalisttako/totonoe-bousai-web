@@ -979,7 +979,7 @@ main h2[tabindex="-1"]:focus,main h3[tabindex="-1"]:focus,#practiceQuizContent p
 <p class="notice">屋内で発電機や炭火などを使用しないでください。一酸化炭素中毒のおそれがあります。</p></div>
 <div class="card"><button class="secondary" type="button" onclick="show('more')">その他へ戻る</button></div>
 </section>
-<section id="examStudy" class="hidden"><div class="card"><h2>アプリ内で例題を解く</h2><p class="notice">教本の講目に沿った30種類の例題から毎回ランダムに5問。公的資料を基にしたオリジナル例題で、公式過去問や試験範囲全体を網羅する模擬試験ではありません。最後まで解いた成績と間違えた問題をこの端末に保存します。途中の回答は再起動で消え、無料学習メニューに戻ります。</p><p class="notice">出題の可能性は、公開されている教本の講目との対応を基に判断しています。出題頻度の分析ではありません。受験年度の教本・教材も併せて確認してください。<a href="https://bousaisi.jp/license/" target="_blank" rel="noopener noreferrer">公式の履修講目を確認 ↗</a></p><button class="primary" onclick="startPracticeQuiz()">5問を始める</button><div id="savedPracticeResults" aria-live="polite"></div></div><div class="card"><details><summary>全30問の解説を読む・検索する</summary><p class="notice">問題を解かずに、正解・理由・出典を確認できます。本文はオフラインでも読めます。出典先を開くには通信が必要です。</p><label class="supply-label" for="practiceGuideSearch">問題・正解・解説から検索</label><input class="field" id="practiceGuideSearch" maxlength="100" placeholder="例：家具、トイレ、避難" oninput="renderPracticeGuide()"><button class="secondary" type="button" onclick="resetPracticeGuide()">検索を解除</button><p id="practiceGuideStatus" class="notice" role="status" aria-live="polite"></p><div id="practiceGuideResults"></div></details></div>
+<section id="examStudy" class="hidden"><div class="card"><h2>アプリ内で例題を解く</h2><p class="notice">教本の講目に沿った30種類の例題から、分野を選んで最大5問。公的資料を基にしたオリジナル例題で、公式過去問や試験範囲全体を網羅する模擬試験ではありません。最後まで解いた成績と間違えた問題をこの端末に保存します。途中の回答は再起動で消え、無料学習メニューに戻ります。</p><p class="notice">出題の可能性は、公開されている教本の講目との対応を基に判断しています。出題頻度の分析ではありません。受験年度の教本・教材も併せて確認してください。<a href="https://bousaisi.jp/license/" target="_blank" rel="noopener noreferrer">公式の履修講目を確認 ↗</a></p><label class="supply-label" for="practiceTopic">学習する分野</label><select id="practiceTopic" class="field" onchange="renderPracticeTopic()"><option value="all">全分野（30問）</option><option value="earthquake">地震・津波・火災への備え（10問）</option><option value="weather">気象・風水害・土砂・火山（8問）</option><option value="stock">家庭の備蓄（3問）</option><option value="evacuation">避難場所・避難所・ハザードマップ（4問）</option><option value="community">地域防災・防災士・ボランティア（3問）</option><option value="systems">被災者支援・事業継続（2問）</option></select><p id="practiceTopicStatus" class="notice" role="status" aria-live="polite"></p><p class="notice">分野は学習しやすくするための分類です。試験の出題割合を示しません。5問未満の分野では、その分野の全問を出題します。解説一覧も同じ分野に絞り込みます。</p><button class="primary" id="practiceStartButton" onclick="startPracticeQuiz()">全分野から5問を始める</button><div id="savedPracticeResults" aria-live="polite"></div></div><div class="card"><details><summary>全30問の解説を読む・検索する</summary><p class="notice">問題を解かずに、正解・理由・出典を確認できます。本文はオフラインでも読めます。出典先を開くには通信が必要です。</p><label class="supply-label" for="practiceGuideSearch">問題・正解・解説から検索</label><input class="field" id="practiceGuideSearch" maxlength="100" placeholder="例：家具、トイレ、避難" oninput="renderPracticeGuide()"><button class="secondary" type="button" onclick="resetPracticeGuide()">分野・検索を解除</button><p id="practiceGuideStatus" class="notice" role="status" aria-live="polite"></p><div id="practiceGuideResults"></div></details></div>
 <div class="card"><h2>防災士試験対策・無料学習</h2><p>教本で理解し、例題で確かめ、音声で復習しましょう。</p><p class="notice">防災ミニマリストたこのオリジナル学習コンテンツです。公式過去問ではありません。受講年度の教本・研修案内と合わせてご利用ください。</p></div>
 <div class="card"><h2>動画で学ぶ</h2><p class="notice">下のリンクから、それぞれの学習動画を直接開けます。動画の視聴には通信が必要です。</p><p><a class="secondary" style="display:block" href="https://youtu.be/geDmUCQCzh8" target="_blank" rel="noopener noreferrer">防災士試験過去問風例題動画を見る ↗</a></p><p><a class="secondary" style="display:block" href="https://youtu.be/gtvUq2pDUmE" target="_blank" rel="noopener noreferrer">音声学習動画を見る ↗</a></p></div>
 <div class="card"><h2>学習の進め方</h2><ol><li>受講年度の教本を読み、分からない言葉を確認する。</li><li>例題を解き、間違えた理由を教本で確認する。</li><li>音声で復習し、苦手な分野の例題をもう一度解く。</li></ol><p class="notice">この案内はオフラインでも読めます。動画・外部サイトはオフラインでは利用できません。</p></div>
@@ -998,7 +998,7 @@ main h2[tabindex="-1"]:focus,main h3[tabindex="-1"]:focus,#practiceQuizContent p
 <div class="card"><h2>機種変更・復元の順番</h2><ol><li>元の端末で全データバックアップを作り、ファイルを保存する。</li><li>新しい端末で同じアプリを開き、バックアップ画面からファイルを読み込む。</li><li>復元前の確認・予行比較で、読み込む内容を確認する。</li><li>復元後に備蓄・避難計画・地域設定などを確認する。</li></ol><p class="notice">復元先にも記録がある場合は、先にその端末のバックアップを別に保管してください。元の端末とバックアップは、移行後の確認が終わるまで残してください。</p></div>
 <div class="card"><h2>通信がなくても使うには</h2><p>通信できる状態で一度アプリを開き、「その他」のオフライン準備を完了させてください。その後、機内モードで開き直せるか確認します。</p><p>保存済みの備蓄・避難計画、例題の本文などはオフライン利用の対象です。天気の新規取得、動画、イベント検索、出典リンクの閲覧には通信が必要です。</p><button class="secondary" onclick="openHelpOfflineCheck()">オフライン準備を確認する</button></div>
 <div class="card"><h2>保存できない・記録が見つからないとき</h2><ul><li>前回と同じ端末・ブラウザ・URLで開いているか確認する。</li><li>保存結果のメッセージを確認し、保存に失敗した場合は入力内容を別に控える。</li><li>データ削除や初期化の前に、現在の記録をバックアップする。</li><li>保存データ診断で形式を確認する。診断だけで実機の復元成功を保証するものではありません。</li></ul><button class="secondary" onclick="openHelpDataCheck()">保存データ診断を開く</button></div>
-<div class="card"><h2>公開準備の状況</h2><p>現在は試作版です。天気は気象庁データを加工して表示します。警報・注意報の詳細は公式画面、避難情報は自治体からの最新情報を確認してください。</p><p>イベントは外部検索への案内です。例題は30種類から1回5問のオリジナル問題で、公式過去問ではありません。</p><p class="notice">Android実機・端末間の復元・拡大表示や読み上げの確認などが、正式リリース前の残作業です。</p></div>
+<div class="card"><h2>公開準備の状況</h2><p>現在は試作版です。天気は気象庁データを加工して表示します。警報・注意報の詳細は公式画面、避難情報は自治体からの最新情報を確認してください。</p><p>イベントは外部検索への案内です。例題は30種類から1回最大5問のオリジナル問題で、公式過去問ではありません。</p><p class="notice">Android実機・端末間の復元・拡大表示や読み上げの確認などが、正式リリース前の残作業です。</p></div>
 <button class="secondary" onclick="show('more')">その他へ戻る</button></section><section id="cleanPractice" class="hidden"><div class="card"><h2>掃除の実践</h2><p>整理・整頓・収納で使いやすくした場所を、掃除して気持ちよく保ちましょう。</p><p class="notice">今回の掃除が終わった項目にチェックしてください。完了日時はこの端末に保存します。家具固定や避難判断など、命を守る対策は別に優先してください。</p><form id="cleanScheduleForm" oninput="this.dataset.editing='true'" onsubmit="event.preventDefault();saveCleanSchedule()"><label class="supply-label" for="cleanResetDays">掃除した日の何日後に解除する？</label><select class="field" id="cleanResetDays"><option value="1">翌日</option><option value="2">翌々日（初期設定）</option><option value="3">3日後</option><option value="7">7日後</option><option value="14">14日後</option><option value="30">30日後</option></select><label class="supply-label" for="cleanResetTime">チェックを解除する時刻</label><input class="field" id="cleanResetTime" type="time" required><button class="secondary" type="submit">間隔・時刻を保存</button><p class="notice" id="cleanScheduleStatus" role="status">端末の時刻を使います。閉じている間に時刻を過ぎた場合も、次に開くと未完了に戻ります。</p></form><p id="cleanProgress" role="status" aria-live="polite"></p><div id="cleanPracticeItems"></div><p id="cleanSaveStatus" class="notice" role="status" aria-live="polite"></p></div><div class="card"><h2>無理なく続けるコツ</h2><p class="notice">安全点検・登録した片付け・診断ミッション・避難計画を終え、水・食料・トイレの登録と備蓄の期限・不足・点検に未対応項目がない場合、ホームの「今日やること」は定期的な掃除に切り替わります。備えに未対応項目が出ると、そちらを優先します。登録だけで実際の備蓄量が十分だと保証するものではありません。</p><p>一度に全部ではなく、今日は一か所でも大丈夫です。洗剤や掃除用品は製品の表示に従い、混ぜて使わないでください。</p><p class="notice">各項目を掃除した日から、設定した日数後の時刻にチェックが外れます。初期設定は翌々日の朝5時です。実施日時は残します。設定を変えると新しい間隔で判定し直します。</p><button class="secondary" onclick="show('tidy')">お片付けの記録へ</button></div><button class="secondary" onclick="show('learn')">学ぶメニューへ戻る</button></section><section id="tidyAlbum" class="hidden"><div class="card"><h2>成長アルバム</h2><p>過去の自分と、今の暮らしを見比べましょう。物の少なさを競うものではありません。</p><p class="notice">各場所に保存した最新のBefore／Afterを表示します。写真を差し替えると、この表示も変わります。過去の写真を世代ごとに保管する機能ではありません。</p><label class="supply-label" for="tidyAlbumFilter">表示する写真</label><select id="tidyAlbumFilter" class="field" onchange="renderTidyAlbum()"><option value="all">写真があるすべての場所</option><option value="pair">Before／Afterがそろった場所</option></select><p id="tidyAlbumStatus" role="status" class="notice"></p></div><div id="tidyAlbumRecords"></div><button class="secondary" onclick="show('tidy')">片付けの記録へ戻る</button></section><section id="more" class="hidden"><div class="card more-intro"><h2>その他の防災メニュー</h2><label class="supply-label" for="featureSearch">使いたい機能を探す</label><input id="featureSearch" class="field" type="search" maxlength="80" autocomplete="off" placeholder="例：掃除、地域、補充、バックアップ" oninput="renderFeatureSearch()" aria-controls="featureSearchResults"><button class="secondary" type="button" onclick="clearFeatureSearch()">検索をクリア</button><p id="featureSearchStatus" class="notice" role="status" aria-live="polite"></p><div id="featureSearchResults"></div><button class="more-menu-button" onclick="show('helpGuide')"><strong>使い方・データ保護ガイド</strong><span>はじめての準備・機種変更・オフライン・困ったとき ↗</span></button><p class="notice">必要な備えを、目的から選べます。</p><button class="more-menu-button" onclick="show('events')"><strong>防災イベントを探す</strong><span>地域・開催月・体験や訓練から検索 ↗</span></button></div>
 <div class="card more-important"><h2>備えをまとめて確認</h2><button class="more-menu-button" type="button" onclick="show('readiness')"><strong>わが家の防災準備状況</strong><span>安全・避難計画・備蓄・家族の備え ↗</span></button></div>
 <div class="card more-important"><h2>避難・安全を確認する</h2>
@@ -1093,7 +1093,7 @@ main h2[tabindex="-1"]:focus,main h3[tabindex="-1"]:focus,#practiceQuizContent p
 </div></details><div class="card"><h2>初回Web版の公開準備：100%</h2><p class="notice">主要9工程とv97のiPhone最終確認を完了しました。2026年11月8日に利用者が一括確認5点すべてOKと報告した、確認済みの範囲での公開Web版です。10工程を等しく数えた進捗です。</p><progress max="10" value="10" aria-label="初回Web版の開発工程：10工程中10工程完了" style="width:100%"></progress><ul><li>実装済み：安全・避難・片付けと写真・備蓄と補充・家族とポーチ・掃除と季節点検・訓練と引越し・学習・地域情報・データ保護。</li><li>自動検証：画面移動、保存・復元、失敗時の保護、日付による切り替え、警報判定、内容量入力を更新時にまとめて確認します。</li><li>最終確認済み：v97のiPhoneで、ホームの案内・備蓄の保存と再表示・検索・文字拡大・ファイル保存・機内モード起動を一括確認しました（利用者報告）。</li></ul><p class="notice">v97の最終一括確認5点を利用者確認済みです。Android実機・別端末への実復元・読み上げは未確認です。</p><p class="notice">公開レビュー、イベント自動収集、河川情報の追加連携、月替わりイラスト全月分は未完了です。100%は初回Web版の10工程についての進捗で、全構想や全端末の確認完了を意味しません。キャラクター表示・まばたきは完成版で固定しています。</p><button class="secondary" onclick="openReleaseQa()">最終確認の記録を開く</button></div><details class="more-fold" id="releaseScopeFold"><summary>初回リリースの対象と今後の機能 <span aria-hidden="true">⌄</span></summary>
 <div class="more-fold-body">
 <p class="notice"><strong>初回リリース候補：</strong>住まいの安全点検、家庭の防災診断、避難計画、備蓄・防災ポーチ管理、お片付けの記録、家族・ペットカルテ、停電・断水シミュレーター、バックアップ、災害時モード。</p>
-<p class="notice"><strong>今後の開発候補：</strong>公開レビューの投稿・閲覧、気象情報の拡充、防災イベント情報の自動収集。現在利用できる例題演習（30種類から5問）・動画学習・地域別イベント検索は実装済みです。</p>
+<p class="notice"><strong>今後の開発候補：</strong>公開レビューの投稿・閲覧、気象情報の拡充、防災イベント情報の自動収集。現在利用できる例題演習（30種類・1回最大5問）・動画学習・地域別イベント検索は実装済みです。</p>
 <p class="notice">試作版のため、正式リリース前にはiPhone・Androidの実機操作、復元、機内モードでの起動を別途確認します。</p>
 </div></details><details class="more-fold" data-more-group="trial"><summary>試作中の機能 <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
 <button class="more-menu-button" type="button" onclick="show('reviews')"><strong>防災用品レビュー（試作）</strong><span>現在はサンプルのみ ↗</span></button>
@@ -1350,7 +1350,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='next-2026-11-08-exam-bank-v102';
+const releaseQaBuild='next-2026-11-08-topic-study-v103';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1469,7 +1469,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v102');
+  const c=await caches.open('totonoe-offline-shell-v103');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1495,8 +1495,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v102')){
-   const cache=await caches.open('totonoe-offline-shell-v102');
+  if(registration&&names.includes('totonoe-offline-shell-v103')){
+   const cache=await caches.open('totonoe-offline-shell-v103');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2225,7 +2225,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v102'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v103'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2603,7 +2603,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v102');
+  const cache=await caches.open('totonoe-offline-shell-v103');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -2624,17 +2624,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v102')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v103')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v102')?await caches.open('totonoe-offline-shell-v102'):null;
+  const cache=names.includes('totonoe-offline-shell-v103')?await caches.open('totonoe-offline-shell-v103'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v102'?'必須ファイル10件の保存とv102の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v102の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v103'?'必須ファイル10件の保存とv103の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v103の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -2885,7 +2885,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v102';
+ const cacheName='totonoe-offline-shell-v103';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -2948,7 +2948,7 @@ async function repairOfflinePreparation(){
   }
   await inspect();
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v102有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v103有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/10件。Service Worker：'+state+'。';
@@ -2988,13 +2988,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v102';
+   const current='totonoe-offline-shell-v103';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v102有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v103有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
@@ -3296,20 +3296,41 @@ function buildEventSearch(){
 }
 
 const practiceQuestions=[{"q":"海岸付近で、弱くても長く続く揺れを感じた場合は？","a":["津波警報が出るまで待つ","警報を待たず、高台など安全な場所へ避難する","海の様子を見に行く"],"correct":1,"why":"長くゆっくりした揺れでも津波のおそれがあります。海岸付近では、警報の発表を待たず避難を始めることが大切です。","url":"https://www.jma.go.jp/jma/kishou/know/faq/faq7.html"},{"q":"飲料水の一般的な備蓄量を計算する際、1人1日あたりの目安は？","a":["約3リットル","約300ミリリットル","必ず10リットル"],"correct":0,"why":"一般的な目安は1人1日3リットルです。必要量は家族の状況や環境にも合わせて考えましょう。","url":"https://www.bousai.go.jp/kyoiku/hokenkyousai/check.html"},{"q":"家庭で備える水・食料の日数の目安として適切なのは？","a":["1食分だけ","1日分だけ","最低3日間、できれば1週間"],"correct":2,"why":"各家庭で最低3日間、できれば1週間を過ごせる備えが示されています。","url":"https://www.bousai.go.jp/kyoiku/hokenkyousai/check.html"},{"q":"地震の揺れを感じたとき、まず優先する行動は？","a":["家具のそばで荷物をまとめる","頭を守り、落下・転倒物から身を守る","揺れている間に窓ガラスへ近づく"],"correct":1,"why":"まず身の安全を確保します。頭を保護し、大きな家具や落下物から離れるなど、周囲の状況に合った行動が必要です。","url":"https://www.jma.go.jp/jma/kishou/know/faq/faq7.html"},{"q":"津波の第一波が引いたように見えても、津波警報が続いている間は？","a":["海岸へ戻ってよい","海の写真を撮りに行く","海岸へ戻らず避難を続ける"],"correct":2,"why":"津波は繰り返し襲来します。警報が出ている間は戻ってはいけません。","url":"https://www.jma.go.jp/jma/kishou/know/jishin/tsunami_bosai/index.html"},{"q":"津波は必ず引き波から始まる？","a":["必ず潮が引いてから来る","引き波なしで押し寄せる場合もある","昼だけ引き波から始まる"],"correct":1,"why":"最初に潮が引くとは限りません。海の様子を見てから避難を判断しないでください。","url":"https://www.jma.go.jp/jma/kishou/know/jishin/tsunami/generation.html"},{"q":"津波到達予想時刻は、同じ予報区内すべての場所への到達時刻を示す？","a":["すべての場所で同時に到達する","予想時刻が過ぎれば安全","予報区内で最も早い到達を予想した時刻"],"correct":2,"why":"同じ予報区でも、別の場所には遅れて到達することがあります。時刻を過ぎても避難を続けます。","url":"https://www.jma.go.jp/jma/kishou/know/jishin/joho/tsunamiinfo.html"},{"q":"降水確率が高いほど、必ず雨量も多くなる？","a":["雨量の多さを示す値ではない","必ず雨量も多くなる","降水確率は雨の強さそのもの"],"correct":0,"why":"降水確率は雨の降る可能性を示します。降水量の多さの予報ではありません。","url":"https://www.jma.go.jp/jma/kishou/know/kurashi/yoho.html"},{"q":"降水確率0％なら、雨や雪が絶対に降らない？","a":["絶対に降らない","必ず晴れる","降らない保証ではない"],"correct":2,"why":"降水確率は1mm以上の降水が対象で、0％は5％未満を表します。少量の雨などが降る場合もあります。","url":"https://www.jma.go.jp/jma/kishou/know/yougo_hp/yoho.html"},{"q":"天気予報の「一時雨」の説明として適切なのは？","a":["雨が断続的に、期間の半分以上降る","雨が連続して降り、その時間が予報期間の4分の1未満","必ず1時間だけ雨が降る"],"correct":1,"why":"「一時」は連続する現象の時間が、予報期間の4分の1未満である場合に使います。","url":"https://www.jma.go.jp/jma/kishou/know/kurashi/yoho.html"},{"q":"噴火警戒レベル1のキーワードは？","a":["活火山であることに留意","火山活動は完全に停止","自由に火口へ入ってよい"],"correct":0,"why":"レベル1でも活火山であることに留意します。現地の規制や情報を確認してください。","url":"https://www.jma.go.jp/bosai/volcano/"},{"q":"噴火警戒レベル3のキーワードは？","a":["避難","高齢者等避難","入山規制"],"correct":2,"why":"噴火警戒レベル3は「入山規制」です。火山ごとの警戒範囲や規制を確認します。","url":"https://www.jma.go.jp/bosai/volcano/"},{"q":"噴火警戒レベル5のキーワードは？","a":["火口周辺規制","避難","入山規制"],"correct":1,"why":"噴火警戒レベル5は「避難」です。危険な居住地域からの避難等が必要な状態です。","url":"https://www.jma.go.jp/jma/kishou/know/kazan/kazanyougo/joho.html"},{"q":"家具の転倒対策として、配置でも確認すべきことは？","a":["倒れた家具が寝る場所や出入口をふさがないか","出入口の前に背の高い家具を集める","固定さえすれば配置は考えなくてよい"],"correct":0,"why":"適切な固定に加え、倒れたときに人へ直撃したり、出入口をふさいだりしない配置が大切です。","url":"https://www.bousai.go.jp/kohou/kouhoubousai/h23/66/special_01.html"},{"q":"日常備蓄（ローリングストック）の考え方として適切なのは？","a":["使わない食品だけを大量に保管する","日頃使う物を少し多めに備え、普段から消費・補充する","備蓄品は期限を確認しなくてよい"],"correct":1,"why":"普段使う食品や生活必需品を少し多めに備え、消費・補充します。期限も確認してください。","url":"https://www.gov-online.go.jp/tokusyu/bousai/preparation.html"},{"q":"震度とマグニチュードの説明として正しい組合せは？","a":["震度は地震そのものの規模、マグニチュードは各地点の揺れの強さ","震度は各地点の揺れの強さ、マグニチュードは地震そのものの規模","どちらも、観測した場所の揺れの強さだけを示す"],"correct":1,"why":"震度は場所ごとの揺れの強さ、マグニチュードは地震の規模を示します。同じ地震でも、観測地点によって震度は異なります。","url":"https://www.jma.go.jp/jma/kishou/know/faq/faq27.html","lesson":"第1講 地震・津波による災害","checkedAt":"2026-11-08"},{"q":"気象庁の震度階級は、全部で何階級に分かれている？","a":["0から7までの8階級","1から7までの7階級","5弱・5強、6弱・6強を含む10階級"],"correct":2,"why":"震度は0、1、2、3、4、5弱、5強、6弱、6強、7の10階級です。震度5と6がそれぞれ弱・強に分かれます。","url":"https://www.jma.go.jp/jma/kishou/know/shindo/","lesson":"第1講 地震・津波による災害","checkedAt":"2026-11-08"},{"q":"地震による液状化が一般に生じやすい地盤は？","a":["地下水で満たされた、ゆるい砂質地盤","地下水のない、硬い岩盤","水を含まない地盤なら、種類にかかわらず同じように生じやすい"],"correct":0,"why":"水で飽和したゆるい砂質地盤が強く揺れると、土粒子が支え合う力が低下し、液体のようにふるまうことがあります。これが液状化です。","url":"https://www.ktr.mlit.go.jp/arajo/arajo00216.html","lesson":"第1講 地震・津波による災害","checkedAt":"2026-11-08"},{"q":"土砂災害の代表的な3種類の組合せは？","a":["土石流・高潮・地すべり","土石流・がけ崩れ・地すべり","がけ崩れ・液状化・高潮"],"correct":1,"why":"代表的な土砂災害は、土石流、がけ崩れ、地すべりです。発生のしくみや地形の特徴を区別して学習します。","url":"https://www.cgr.mlit.go.jp/ootagawa/sand/west/page1/page1_02.html","lesson":"第3講 土砂災害","checkedAt":"2026-11-08"},{"q":"都市に降った雨が河川などへ排水しきれず、街にたまる浸水は何と呼ばれる？","a":["津波","外水氾濫","内水氾濫"],"correct":2,"why":"降った雨を河川などへ排水できずに起こる浸水を内水氾濫といいます。河川から水があふれて生じる外水氾濫とは区別します。","url":"https://www.mlit.go.jp/mizukokudo/sewerage/crd_sewerage_tk_000117.html","lesson":"第2講 気象災害・風水害","checkedAt":"2026-11-08"},{"q":"指定緊急避難場所の指定について正しいのは？","a":["洪水・津波など、災害の種類ごとに指定される","一度指定されると、すべての災害に適することを意味する","一定期間の宿泊を主な目的として指定される"],"correct":0,"why":"指定緊急避難場所は、命を守るため緊急に逃れる場所です。災害の種類ごとに指定されるため、起こりうる災害に対応しているか確認します。","url":"https://www.bousai.go.jp/taisaku/hinanbasyo.html","lesson":"第6講 被害想定・ハザードマップ","checkedAt":"2026-11-08"},{"q":"指定避難所の主な役割として正しいのは？","a":["すべての災害の危険を必ず回避できる場所であること","避難した被災者などが一定期間滞在するための施設であること","救助隊だけが活動する拠点であること"],"correct":1,"why":"指定避難所は被災者などが一定期間滞在する施設です。緊急に危険を避ける指定緊急避難場所とは目的が異なり、両方を兼ねる施設もあります。","url":"https://www.bousai.go.jp/taisaku/hinanbasyo.html","lesson":"第18講 避難所の設置と運営協力","checkedAt":"2026-11-08"},{"q":"水害ハザードマップで、自宅の場所に色が付いていない場合の理解として適切なのは？","a":["今後どのような雨でも浸水しない","内水氾濫を含め、すべての浸水リスクが否定される","想定条件を超える雨などで浸水する可能性は残る"],"correct":2,"why":"ハザードマップの想定には条件があります。色が付いていない場所にも浸水する可能性があるため、地形や他の災害リスク、最新の情報も確認します。","url":"https://www.kkr.mlit.go.jp/toyooka/kids/disasterprevention.html","lesson":"第6講 被害想定・ハザードマップ","checkedAt":"2026-11-08"},{"q":"事業継続計画（BCP）が重視することは？","a":["重要業務を継続し、中断しても目標とする期間内に復旧すること","すべての業務を同じ優先順位で復旧すること","建物の修理が完了するまで、業務再開の検討をしないこと"],"correct":0,"why":"BCPでは継続・早期復旧する重要業務を定め、目標復旧時間や必要な資源を検討します。施設を守る対策だけでなく、事業を続ける視点が重要です。","url":"https://www.bousai.go.jp/kyoiku/kigyou/keizoku/hajimete.html","lesson":"第14講 企業・団体の事業継続","checkedAt":"2026-11-08"},{"q":"地区防災計画の主体となる「地区居住者等」とは？","a":["国の行政機関だけ","その地区に住む住民や、事業所を持つ事業者","市町村の防災担当職員だけ"],"correct":1,"why":"地区防災計画は、地区の住民や事業者などの自発的な防災活動に関する計画です。地域の特性に合わせて話し合い、市町村とも連携します。","url":"https://www.bousai.go.jp/kyoiku/chikubousai/index.html","lesson":"第17講 自主防災活動と地区防災計画","checkedAt":"2026-11-08"},{"q":"罹災証明書について、住家の被害との関係を正しく説明しているのは？","a":["保険会社が、その住宅の地震保険加入を証明する書類","消防署が、その住宅に再入居してよいと保証する書類","市町村長が、災害による住家の被害の程度を証明する書類"],"correct":2,"why":"罹災証明書は災害による住家の被害程度を証明し、支援制度の適用判断などに使われます。住宅に立ち入ってよいことを保証する書類とは異なります。","url":"https://www.bousai.go.jp/about/shien/shien.html","lesson":"第11講 復旧・復興と被災者支援","checkedAt":"2026-11-08"},{"q":"防災における「自助・共助」の組合せとして適切なのは？","a":["自助は自分や家族を守る備え、共助は地域や職場での助け合い","自助は自治体の救助活動、共助は国の支援活動","自助は地域全体の助け合い、共助は自分だけで行う備え"],"correct":0,"why":"自助は自分自身や家族を守る備えや行動、共助は地域・職場などでの助け合いです。行政などの公助とも連携して防災力を高めます。","url":"https://bousaisi.jp/aboutus/","lesson":"第21講 防災士に期待される活動","checkedAt":"2026-11-08"},{"q":"避難所の運営体制やルール作りで重視すべきことは？","a":["効率を優先し、一つの立場の人だけで決めること","女性や障害のある人、子育て世帯など、多様な立場の声を反映すること","必要な配慮は全員同じとし、個別のニーズを聞かないこと"],"correct":1,"why":"避難生活で必要な配慮は人によって異なります。多様な立場の人が運営に参画し、困りごとやニーズを把握して反映することが大切です。","url":"https://www.bousai.go.jp/updates/r60101notojishin/pdf/tsuuchi_r6021901_ishikawa.pdf","lesson":"第19講 地域防災と多様性への配慮","checkedAt":"2026-11-08"},{"q":"災害ボランティアへの参加を考えたとき、現地へ向かう前の行動として適切なのは？","a":["受け入れ状況を調べず、とにかく現地へ向かう","現地に着いてから、食料や宿泊先を被災者に用意してもらう","災害ボランティアセンターなどの募集条件・受付方法を確認し、必要な準備をする"],"correct":2,"why":"募集の有無、事前登録や受付方法は地域・時期で異なります。発信される最新情報を確認し、食料・移動・宿泊や装備を準備して、現地に負担をかけないようにします。","url":"https://www.bousai.go.jp/updates/r60101notojishin/volunteer.html","lesson":"第20講 災害ボランティア活動","checkedAt":"2026-11-08"},{"q":"地震で停電した後、自宅から避難する際の通電火災対策として適切なのは？","a":["避難を遅らせず安全に操作できる場合は、ブレーカーを切る","停電中は復電後も電気が流れないので、何もしなくてよい","復電に備え、電気ストーブなどのスイッチを入れておく"],"correct":0,"why":"停電から復電したとき、電気機器や配線から火災が起きることがあります。安全に操作できる場合は避難時にブレーカーを切り、危険な場所へ戻ったり避難を遅らせたりしないでください。","url":"https://nrifd.fdma.go.jp/news/20110311/index.html","lesson":"第15講 地震・津波への備え","checkedAt":"2026-11-08"}];
-let practiceQueue=[],practiceIndex=0,practiceWrong=[],practiceScore=0,practiceAnswered=false,practiceAnswers=[];
-function startPracticeQuiz(onlyWrong=false){
- practiceQueue=onlyWrong?practiceWrong.slice():pickPracticeQuestions();
+let practiceQueue=[],practiceIndex=0,practiceWrong=[],practiceScore=0,practiceAnswered=false,practiceAnswers=[],practiceSessionTopic='all';
+function practiceTopicCatalog(){
+ return [
+ {id:'earthquake',label:'地震・津波・火災への備え',questions:[0,3,4,5,6,13,15,16,17,29]},
+ {id:'weather',label:'気象・風水害・土砂・火山',questions:[7,8,9,10,11,12,18,19]},
+ {id:'stock',label:'家庭の備蓄',questions:[1,2,14]},
+ {id:'evacuation',label:'避難場所・避難所・ハザードマップ',questions:[20,21,22,27]},
+ {id:'community',label:'地域防災・防災士・ボランティア',questions:[24,26,28]},
+ {id:'systems',label:'被災者支援・事業継続',questions:[23,25]}
+ ];
+}
+function normalizePracticeTopic(topic){return practiceTopicCatalog().some(x=>x.id===topic)?topic:'all';}
+function practiceTopicIds(topic){const group=practiceTopicCatalog().find(x=>x.id===topic);return group?group.questions.slice():practiceQuestions.map((_,i)=>i);}
+function practiceTopicLabel(topic){return topic==='review'?'間違えた問題':practiceTopicCatalog().find(x=>x.id===topic)?.label||'全分野';}
+function selectedPracticeTopic(){return normalizePracticeTopic(document.getElementById('practiceTopic')?.value);}
+function renderPracticeTopic(){
+ const topic=selectedPracticeTopic(),n=practiceTopicIds(topic).length,button=document.getElementById('practiceStartButton'),status=document.getElementById('practiceTopicStatus');
+ if(button)button.textContent=topic==='all'?'全分野から5問を始める':practiceTopicLabel(topic)+'を'+Math.min(5,n)+'問解く';
+ if(status)status.textContent=practiceTopicLabel(topic)+'：'+n+'問を収録。今回は'+Math.min(5,n)+'問を出題します。';
+ renderPracticeGuide();
+}
+function startPracticeQuiz(onlyWrong=false,topicOverride=null){
+ const topic=topicOverride===null?selectedPracticeTopic():normalizePracticeTopic(topicOverride);
+ practiceQueue=onlyWrong?practiceWrong.slice():pickPracticeQuestions(Math.random,topic);practiceSessionTopic=onlyWrong?'review':topic;
  if(!practiceQueue.length)return;
  practiceIndex=0;practiceWrong=[];practiceScore=0;practiceAnswers=[];show('practiceQuiz');renderPracticeQuiz();
 }
 function renderPracticeQuiz(){
  const box=document.getElementById('practiceQuizContent');box.replaceChildren();practiceAnswered=false;
- const progress=document.createElement('progress');progress.max=practiceQueue.length;progress.value=Math.min(practiceIndex,practiceQueue.length);progress.style.width='100%';progress.setAttribute('aria-label','回答済みの問題数');box.append(progress);
+ const progress=document.createElement('progress');progress.max=practiceQueue.length;progress.value=Math.min(practiceIndex,practiceQueue.length);progress.style.width='100%';progress.setAttribute('aria-label','回答済みの問題数');box.append(progress);const topicNote=document.createElement('p');topicNote.className='notice';topicNote.textContent='出題分野：'+practiceTopicLabel(practiceSessionTopic);box.append(topicNote);
  if(practiceIndex>=practiceQueue.length){
   const saved=savePracticeResult();
   const p=document.createElement('p');p.textContent=practiceQueue.length+'問中'+practiceScore+'問正解。合否の判定ではありません。';box.append(p);const notice=document.createElement('p');notice.className='notice';notice.textContent=saved?'今回の成績を保存しました。次回も間違えた問題から復習できます。':'成績を保存できませんでした。今回の解き直しは利用できます。';box.append(notice);
   if(practiceWrong.length){const review=document.createElement('h3');review.textContent='間違えた問題の解説';box.append(review);for(const index of practiceWrong)box.append(createPracticeExplanation(index,practiceAnswers[index]));}
-  const button=document.createElement('button');button.className='primary';button.textContent=practiceWrong.length?'間違えた問題を解き直す':'もう一度5問を解く';button.onclick=()=>startPracticeQuiz(practiceWrong.length>0);box.append(button);p.tabIndex=-1;requestAnimationFrame(()=>p.focus({preventScroll:true}));return;
+  const button=document.createElement('button');button.className='primary';button.textContent=practiceWrong.length?'間違えた問題を解き直す':practiceSessionTopic==='review'?'全分野から5問を解く':'同じ分野でもう一度解く';button.onclick=()=>startPracticeQuiz(practiceWrong.length>0,practiceSessionTopic==='review'?'all':practiceSessionTopic);box.append(button);p.tabIndex=-1;requestAnimationFrame(()=>p.focus({preventScroll:true}));return;
  }
  const q=practiceQuestions[practiceQueue[practiceIndex]],heading=document.createElement('h3');heading.textContent='第'+(practiceIndex+1)+'問／'+practiceQueue.length+'問：'+q.q;box.append(heading);heading.tabIndex=-1;requestAnimationFrame(()=>heading.focus({preventScroll:true}));
  q.a.forEach((answer,i)=>{const button=document.createElement('button');button.className='secondary';button.style.cssText='display:block;width:100%;text-align:left;margin:9px 0';button.textContent=answer;button.setAttribute('aria-pressed','false');button.onclick=()=>{
@@ -3363,20 +3384,21 @@ function createPracticeExplanation(index,selected){
  const link=document.createElement('a');link.href=q.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='解説の出典を確認 ↗';
  details.append(correct,why,link);return details;
 }
-function findPracticeExplanations(query){
+function findPracticeExplanations(query,topic='all'){
  const tokens=String(query||'').normalize('NFKC').toLocaleLowerCase('ja-JP').trim().slice(0,100).split(/\s+/).filter(Boolean);
- return practiceQuestions.map((q,index)=>({q,index})).filter(({q})=>{const text=(q.q+' '+q.a[q.correct]+' '+q.why+' '+(q.lesson||'')).normalize('NFKC').toLocaleLowerCase('ja-JP');return tokens.every(token=>text.includes(token))}).map(({index})=>index);
+ const allowed=new Set(practiceTopicIds(topic));
+ return practiceQuestions.map((q,index)=>({q,index})).filter(({q,index})=>allowed.has(index)).filter(({q})=>{const text=(q.q+' '+q.a[q.correct]+' '+q.why+' '+(q.lesson||'')).normalize('NFKC').toLocaleLowerCase('ja-JP');return tokens.every(token=>text.includes(token))}).map(({index})=>index);
 }
 function renderPracticeGuide(){
  const host=document.getElementById('practiceGuideResults'),status=document.getElementById('practiceGuideStatus');if(!host||!status)return;
- const matches=findPracticeExplanations(document.getElementById('practiceGuideSearch')?.value||'');host.replaceChildren();
- status.textContent='解説：'+matches.length+'問／全'+practiceQuestions.length+'問';
- if(!matches.length){const p=document.createElement('p');p.className='notice';p.textContent='一致する解説はありません。検索語を変えるか、検索を解除してください。';host.append(p);const reset=document.createElement('button');reset.type='button';reset.className='secondary';reset.textContent='すべての解説を表示';reset.onclick=resetPracticeGuide;host.append(reset);return}
+ const topic=selectedPracticeTopic(),matches=findPracticeExplanations(document.getElementById('practiceGuideSearch')?.value||'',topic);host.replaceChildren();
+ status.textContent='解説：'+matches.length+'問／全'+practiceQuestions.length+'問'+(topic==='all'?'':'（選択分野：'+practiceTopicLabel(topic)+'・'+practiceTopicIds(topic).length+'問）');
+ if(!matches.length){const p=document.createElement('p');p.className='notice';p.textContent='一致する解説はありません。検索語を変えるか、検索を解除してください。';host.append(p);const reset=document.createElement('button');reset.type='button';reset.className='secondary';reset.textContent='分野・検索を解除して全解説を表示';reset.onclick=resetPracticeGuide;host.append(reset);return}
  for(const index of matches)host.append(createPracticeExplanation(index));
 }
-function resetPracticeGuide(){const input=document.getElementById('practiceGuideSearch');if(input)input.value='';renderPracticeGuide();input?.focus();}
+function resetPracticeGuide(){const input=document.getElementById('practiceGuideSearch');if(input)input.value='';const topic=document.getElementById('practiceTopic');if(topic)topic.value='all';renderPracticeTopic();input?.focus();}
 function renderSavedPractice(){
- renderPracticeGuide();
+ renderPracticeTopic();
  const host=document.getElementById('savedPracticeResults');if(!host)return;host.replaceChildren();
  const v=readPracticeResult();if(!v)return;
  const p=document.createElement('p');p.className='notice';p.textContent='前回：'+v.total+'問中'+v.score+'問正解（'+new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short'}).format(new Date(v.completedAt))+'）。試験の合否判定ではありません。';host.append(p);
@@ -3468,14 +3490,14 @@ function focusActivePage(id){
  heading.tabIndex=-1;heading.focus({preventScroll:true});
 }
 
-function pickPracticeQuestions(random=Math.random){
- const ids=practiceQuestions.map((_,i)=>i);
+function pickPracticeQuestions(random=Math.random,topic='all'){
+ const ids=practiceTopicIds(topic);
  for(let i=ids.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}
  return ids.slice(0,5);
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v102','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v103','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -3484,8 +3506,8 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v102';
-   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v102有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v103';
+   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v103有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
     const checks=await Promise.all(paths.map(async p=>{const res=await cache.match(new URL(p,scope).href);return !!res?.ok}));
