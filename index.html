@@ -652,6 +652,15 @@ header{z-index:50;isolation:isolate}
 .page-mascot-friends>.game-mascot{flex:0 0 45px!important;width:45px!important;height:58px!important;max-width:45px!important}
 .page-mascot-friends>.game-mascot img{max-width:100%;max-height:100%}
 @media(max-width:365px){.page-mascot-friends{flex-basis:77px!important;width:77px!important;height:61px!important;min-height:61px!important;gap:2px!important}.page-mascot-friends>.game-mascot{flex-basis:37px!important;width:37px!important;height:49px!important}}
+
+/* v33: explicit open/blink asset preview for real-device release QA. */
+.mascot-test-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}
+.mascot-test-frame{min-width:0;margin:0;padding:7px 5px;border:1px solid #d7e7ed;background:#f8fcff;border-radius:12px;text-align:center}
+.mascot-test-frame img{display:block;width:min(100%,100px);height:100px;object-fit:contain;margin:auto}
+.mascot-test-frame figcaption{font-size:12px;line-height:1.5;overflow-wrap:anywhere;color:#42616f}
+.mascot-test-frame.failed{border-color:#bb644f}
+.mascot-test-frame.loaded{border-color:#9bcdb2}
+@media(max-width:360px){.mascot-test-frame img{height:82px}}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -811,7 +820,15 @@ header{z-index:50;isolation:isolate}
 <h2>✅ リリース前チェック</h2>
 <p class="notice">保存・通信・オフライン起動の準備・バックアップ機能をまとめて確認します。既存の記録データは変更しません。</p>
 <button class="primary" id="releaseReadinessRun" type="button" onclick="checkReleaseReadiness()" style="width:100%;min-height:48px">5項目を診断する</button>
-<div id="releaseReadinessResults" role="status" aria-live="polite"></div><button class="secondary" type="button" id="offlineRepairRun" onclick="repairOfflinePreparation()" style="width:100%;min-height:48px;margin-top:8px">オフライン保存を再確認・修復する</button><p id="offlineRepairStatus" class="notice" role="status" aria-live="polite">0/10件などの場合は通信できる状態で実行してください。既存の記録は削除しません。</p><button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="openReleaseQa()">実機検証表を開く ↗</button>
+<div id="releaseReadinessResults" role="status" aria-live="polite"></div><details class="more-fold mascot-test-fold" style="margin-top:10px">
+<summary>🐙 キャラクター6枚とまばたきの確認 <span aria-hidden="true">⌄</span></summary>
+<div class="more-fold-body">
+<p class="notice">通常・まばたきの画像をそれぞれ読み込みます。実際のアニメーションはホーム画面で確認してください。</p>
+<button class="secondary" type="button" onclick="testIndividualMascotFrames()" style="width:100%;min-height:48px">6枚の画像を読み込み・表示する</button>
+<p id="mascotFramesTestStatus" class="notice" role="status" aria-live="polite"></p>
+<div id="mascotFramesTestPreview" class="mascot-test-grid" aria-label="3匹の通常画像とまばたき画像"></div>
+<button class="secondary" type="button" onclick="show('home')" style="width:100%;min-height:46px;margin-top:8px">ホームで実際のまばたきを見る ↗</button>
+</div></details><button class="secondary" type="button" id="offlineRepairRun" onclick="repairOfflinePreparation()" style="width:100%;min-height:48px;margin-top:8px">オフライン保存を再確認・修復する</button><p id="offlineRepairStatus" class="notice" role="status" aria-live="polite">0/10件などの場合は通信できる状態で実行してください。既存の記録は削除しません。</p><button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="openReleaseQa()">実機検証表を開く ↗</button>
 <button type="button" class="secondary" style="width:100%;margin-top:10px" onclick="openFullBackupFromReadiness()">全データのバックアップへ ↗</button>
 <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
 <p class="notice" id="backupIntegrityResult" role="status" aria-live="polite">実データの復元は行わず、バックアップの生成と読み取りを確認します。</p>
@@ -2388,6 +2405,34 @@ function checkStoredDataIntegrity(){
  const caution=document.createElement('p');
  caution.textContent=issues.length?'⚠️ 記録を削除せず、既存のバックアップを保管してください。':'✅ 読み取り専用の形式点検を完了。復元や端末移行の成功を保証するものではありません。';
  host.append(caution);
+}
+// Visual-only test: fetches the six already-cached individual assets, never changes user records.
+async function testIndividualMascotFrames(){
+ const status=document.getElementById('mascotFramesTestStatus');
+ const preview=document.getElementById('mascotFramesTestPreview');
+ if(!status||!preview)return;
+ status.textContent='6枚の画像を読み込み中です。';
+ preview.replaceChildren();
+ const kinds=[['たこ','tako'],['トリケラさん','tricera'],['シマエナガさん','shimaenaga']];
+ let ready=0;const failed=[];
+ for(const [name,kind] of kinds){
+  for(const [state,label] of [['open','通常'],['blink','まばたき']]){
+   const card=document.createElement('figure');card.className='mascot-test-frame';
+   const pic=document.createElement('img');pic.alt=name+'：'+label;pic.width=90;pic.height=90;
+   pic.loading='eager';pic.decoding='async';
+   const caption=document.createElement('figcaption');caption.textContent=name+'・'+label;
+   card.append(pic,caption);preview.append(card);
+   const src='./assets/mascot-'+kind+'-'+state+'-v30.svg';
+   try{
+    pic.src=src;
+    if(typeof pic.decode==='function')await pic.decode();
+    else if(!pic.complete||pic.naturalWidth===0)await new Promise((resolve,reject)=>{pic.onload=resolve;pic.onerror=reject});
+    if(pic.naturalWidth>0&&pic.naturalHeight>0){ready++;card.classList.add('loaded')}
+    else throw Error('empty image');
+   }catch(e){failed.push(name+'・'+label);card.classList.add('failed')}
+  }
+ }
+ status.textContent=ready===6?'✅ 6/6枚の画像を表示できました。まばたきの切り替わりはホーム画面でご確認ください。':'⚠️ '+ready+'/6枚表示。確認が必要：'+failed.join('、')+'。通信状態とオフライン保存をご確認ください。';
 }
 function checkReleaseCandidate(){
  const box=document.getElementById('releaseCandidateResults');if(!box)return;
