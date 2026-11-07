@@ -760,7 +760,7 @@ header{z-index:50;isolation:isolate}
  }
 }
 
-/* v64: compact weather occupies the approved upper-right home space. */
+/* v65: compact weather occupies the approved upper-right home space. */
 #home .home-weather-intro{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:10px;align-items:start;margin-top:5px}
 #home .home-weather-intro h2{max-width:100%;font-size:clamp(17px,4.8vw,22px)}
 #home .home-weather-intro .game-home-lead{max-width:100%}
@@ -769,13 +769,13 @@ header{z-index:50;isolation:isolate}
 #home .home-weather-widget strong{display:block;font-size:14px;margin:4px 0;overflow-wrap:anywhere}
 @media(max-width:340px){#home .home-weather-intro{gap:6px;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}#home .home-weather-intro h2{font-size:16px}}
 
-/* v64: reduce introductory whitespace and prioritize today's actions. */
+/* v65: reduce introductory whitespace and prioritize today's actions. */
 #home .home-weather-intro{margin-top:2px;align-items:center}
 #home .home-weather-intro h2{margin:5px 0}
 #home .home-weather-widget{margin-top:3px;padding:7px 8px}
 #home .game-mascot-scene{margin-top:0!important}
 
-/* v64: emergency entry beside the approved home illustration. */
+/* v65: emergency entry beside the approved home illustration. */
 #home .home-scene-actions{display:grid;grid-template-columns:minmax(76px,1fr) minmax(0,2.2fr);align-items:center;gap:12px;margin:5px 0 0;min-width:0}
 #home .home-scene-actions .game-mascot-scene{width:100%!important;max-width:226px!important;margin:0 0 0 auto!important;min-height:0!important}
 #home .home-hazard-button{display:block;width:100%;max-width:112px;padding:5px;border:1px solid #202020;border-radius:14px;background:repeating-linear-gradient(135deg,#f9d849 0,#f9d849 8px,#242424 8px,#242424 16px);color:#202020;box-shadow:0 3px 9px #34362018;text-align:center}
@@ -786,7 +786,7 @@ header{z-index:50;isolation:isolate}
 #home .home-hazard-button:focus-visible{outline:3px solid #247db5;outline-offset:3px}
 @media(max-width:350px){#home .home-scene-actions{gap:8px;grid-template-columns:minmax(70px,1fr) minmax(0,2fr)}#home .home-hazard-face strong{font-size:14px}}
 
-/* v64: agreed Select red / Set blue / Stock green, including supply controls. */
+/* v65: agreed Select red / Set blue / Stock green, including supply controls. */
 .journey-tile:nth-child(2),.step-detail.set{border-color:#cbdaf0}
 .journey-tile:nth-child(3),.step-detail.stock{border-color:#c9dfd0}
 #supplies .quantity-control,#supplies .backup-button,#supplies .replenishment-item{border-color:#b9d4c2}
@@ -845,7 +845,7 @@ header{z-index:50;isolation:isolate}
 <label class="supply-label" for="dToilet">非常用トイレの備え</label><select id="dToilet" class="field"><option value="none">ほとんどない・未確認</option><option value="partial">一部用意している</option><option value="ready">必要量を確認して用意している</option></select>
 <label class="supply-label" for="dFurniture">家具の転倒・落下対策</label><select id="dFurniture" class="field"><option value="none">まだ・未確認</option><option value="partial">一部実施</option><option value="ready">主な場所で確認済み</option></select>
 <button class="primary" type="submit">優先する対策を確認する</button></form><p id="diagnosisStatus" class="notice" role="status"></p></div><div id="diagnosisResult" class="card hidden" aria-live="polite"></div><div class="card"><h2>防災ミッションの完了履歴</h2><p class="notice">この版から完了したミッションの日時を記録します。以前の完了分は日時不明のため、推測して追加しません。</p><div id="missionHistory" aria-live="polite"></div></div><div class="card"><button class="secondary" onclick="show('home')">ホームへ戻る</button></div></section>
-<section id="emergency" class="hidden"><div class="card emergency-card"><h2>災害時の確認画面</h2><div class="emergency-check-area"><h3>自分の緊急時チェックリスト</h3><p class="notice">まず身の安全を確保し、必要な行動を確認してください。</p><div id="emergencyChecklist" aria-live="polite"></div></div><div class="offline-readiness" id="emergencyOfflineReadiness" aria-live="polite"></div><p class="notice">緊急時はまず身の安全を確保し、自治体や気象庁等の最新の情報に従ってください。ここは事前に保存した計画の表示です。</p><div id="emergencyPlan" aria-live="polite"></div><div id="emergencyFamily" aria-live="polite"></div><button type="button" class="secondary" style="width:100%;min-height:48px;margin:10px 0" onclick="openEmergencyCopyShortcut()">保存した避難計画を控える ↗</button><details class="emergency-option-fold"><summary>通信が使えない場合の事前確認 <span aria-hidden="true">⌄</span></summary><div class="emergency-option-body"><p class="notice" id="offlineStartupStatus" role="status" aria-live="polite">オフライン起動の準備状況を確認しています。</p><p class="notice">平常時に、オンラインでアプリを開いて準備完了を確認してから、機内モードで開き直してみてください。端末の保存領域が消去された場合は、再びオンラインでの準備が必要です。Kodoやローカルファイルではオフライン起動の準備に対応しない場合があります。</p><p class="notice">避難先と連絡方法は紙にも控え、災害時は自治体などの最新情報を優先してください。</p></div></details><details class="emergency-option-fold"><summary>避難計画をコピーする <span aria-hidden="true">⌄</span></summary><div class="emergency-option-body"><div class="emergency-export"><h3>避難計画をメモに控える</h3><p class="notice">事前に保存した計画を文字にします。必要に応じて手動コピーし、紙にも控えてください。</p><button class="secondary" type="button" onclick="showEmergencyText()">コピー用テキストを表示</button><textarea class="field" id="emergencyCopyText" rows="8" readonly placeholder="ボタンを押すと保存した計画を表示します。"></textarea><button class="secondary" type="button" onclick="copyEmergencyText()">テキストをコピー</button><p id="emergencyCopyStatus" class="notice" role="status"></p></div></div></details><details class="emergency-option-fold"><summary>チェック項目を編集（平常時） <span aria-hidden="true">⌄</span></summary><div class="emergency-option-body"><label class="supply-label" for="emergencyChecklistEdit">項目を編集（1行につき1項目）</label><textarea id="emergencyChecklistEdit" class="field" rows="4" maxlength="1500" oninput="markEmergencyChecklistDraft()"></textarea><p id="emergencyDraftStatus" class="notice" aria-live="polite"></p><button class="secondary" type="button" onclick="saveEmergencyChecklist()">チェック項目を保存</button><button class="secondary" type="button" onclick="resetEmergencyChecklistDraft()">変更を取り消す</button><p id="emergencyChecklistStatus" class="notice" role="status"></p></div></details><button class="secondary" type="button" onclick="show('evacuation')">マイ避難計画を編集する</button><button class="secondary" type="button" onclick="show('home')">ホームへ戻る</button></div></section>
+<section id="emergency" class="hidden"><div class="card emergency-card"><h2>災害時の確認画面</h2><div class="emergency-check-area"><h3>自分の緊急時チェックリスト</h3><p class="notice">まず身の安全を確保し、必要な行動を確認してください。</p><div id="emergencyChecklist" aria-live="polite"></div></div><div class="offline-readiness" id="emergencyOfflineReadiness" aria-live="polite"></div><p class="notice">緊急時はまず身の安全を確保し、自治体や気象庁等の最新の情報に従ってください。ここは事前に保存した計画の表示です。</p><div id="emergencyPlan" aria-live="polite"></div><div id="emergencyFamily" aria-live="polite"></div><button type="button" class="secondary" style="width:100%;min-height:48px;margin:10px 0" onclick="openEmergencyCopyShortcut()">緊急時情報をまとめて控える（平常時） ↗</button><details class="emergency-option-fold"><summary>通信が使えない場合の事前確認 <span aria-hidden="true">⌄</span></summary><div class="emergency-option-body"><p class="notice" id="offlineStartupStatus" role="status" aria-live="polite">オフライン起動の準備状況を確認しています。</p><p class="notice">平常時に、オンラインでアプリを開いて準備完了を確認してから、機内モードで開き直してみてください。端末の保存領域が消去された場合は、再びオンラインでの準備が必要です。Kodoやローカルファイルではオフライン起動の準備に対応しない場合があります。</p><p class="notice">避難先と連絡方法は紙にも控え、災害時は自治体などの最新情報を優先してください。</p></div></details><details class="emergency-option-fold"><summary>緊急時情報をコピーする <span aria-hidden="true">⌄</span></summary><div class="emergency-option-body"><div class="emergency-export"><h3>緊急時情報をメモに控える</h3><p class="notice">チェック項目と避難計画をまとめます。家族の情報を含めるかは選択できます。コピーする前に内容を確認してください。</p><label class="task"><input type="checkbox" id="emergencyCopyFamily" onchange="showEmergencyText()">家族・ペットの個別の備えも含める</label><p class="notice">必要な情報を外部のメモなどへ手動で控えるための機能です。コピー先や共有相手に、個別の情報を含めてよいか確認してください。</p><button class="secondary" type="button" onclick="showEmergencyText()">コピー用テキストを表示</button><textarea class="field" id="emergencyCopyText" rows="8" readonly placeholder="ボタンを押すと保存した計画を表示します。"></textarea><button class="secondary" type="button" onclick="copyEmergencyText()">テキストをコピー</button><p id="emergencyCopyStatus" class="notice" role="status"></p></div></div></details><details class="emergency-option-fold"><summary>チェック項目を編集（平常時） <span aria-hidden="true">⌄</span></summary><div class="emergency-option-body"><label class="supply-label" for="emergencyChecklistEdit">項目を編集（1行につき1項目）</label><textarea id="emergencyChecklistEdit" class="field" rows="4" maxlength="1500" oninput="markEmergencyChecklistDraft()"></textarea><p id="emergencyDraftStatus" class="notice" aria-live="polite"></p><button class="secondary" type="button" onclick="saveEmergencyChecklist()">チェック項目を保存</button><button class="secondary" type="button" onclick="resetEmergencyChecklistDraft()">変更を取り消す</button><p id="emergencyChecklistStatus" class="notice" role="status"></p></div></details><button class="secondary" type="button" onclick="show('evacuation')">マイ避難計画を編集する</button><button class="secondary" type="button" onclick="show('home')">ホームへ戻る</button></div></section>
 <section id="evacuation" class="hidden"><div class="card"><h2>保存した避難計画</h2><div id="evacuationCompleteness" class="notice" role="status" aria-live="polite"></div><button class="secondary" type="button" onclick="openEvacuationEdit()">✎ 計画を登録・編集</button><div id="evacuationSummary" aria-live="polite"></div><p class="notice">表示内容は事前に自分で記録したものです。最新の自治体の避難情報を必ず優先してください。通信・電源が使えない場合に備えて紙にも控えてください。</p></div>
 <details id="evacuationEditFold" class="evacuation-fold"><summary>✎ 避難計画を登録・編集する <span aria-hidden="true">⌄</span></summary><div class="evacuation-fold-body"><div class="card"><h2>マイ避難計画</h2>
 <p class="notice">災害ごとに安全な行動は異なります。自治体のハザードマップと避難情報を確認して記入してください。</p>
@@ -962,7 +962,7 @@ header{z-index:50;isolation:isolate}
 <div class="card"><h2>公開準備の状況</h2><p>現在は試作版です。天気は気象庁データを加工して表示します。警報・注意報の詳細は公式画面、避難情報は自治体からの最新情報を確認してください。</p><p>イベントは外部検索への案内です。例題は基礎5問のオリジナル問題で、公式過去問ではありません。</p><p class="notice">Android実機・端末間の復元・拡大表示や読み上げの確認などが、正式リリース前の残作業です。</p></div>
 <button class="secondary" onclick="show('more')">その他へ戻る</button></section><section id="cleanPractice" class="hidden"><div class="card"><h2>掃除の実践</h2><p>整理・整頓・収納で使いやすくした場所を、掃除して気持ちよく保ちましょう。</p><p class="notice">今回の掃除が終わった項目にチェックしてください。完了日時はこの端末に保存します。家具固定や避難判断など、命を守る対策は別に優先してください。</p><form id="cleanScheduleForm" oninput="this.dataset.editing='true'" onsubmit="event.preventDefault();saveCleanSchedule()"><label class="supply-label" for="cleanResetDays">掃除した日の何日後に解除する？</label><select class="field" id="cleanResetDays"><option value="1">翌日</option><option value="2">翌々日（初期設定）</option><option value="3">3日後</option><option value="7">7日後</option><option value="14">14日後</option><option value="30">30日後</option></select><label class="supply-label" for="cleanResetTime">チェックを解除する時刻</label><input class="field" id="cleanResetTime" type="time" required><button class="secondary" type="submit">間隔・時刻を保存</button><p class="notice" id="cleanScheduleStatus" role="status">端末の時刻を使います。閉じている間に時刻を過ぎた場合も、次に開くと未完了に戻ります。</p></form><p id="cleanProgress" role="status" aria-live="polite"></p><div id="cleanPracticeItems"></div><p id="cleanSaveStatus" class="notice" role="status" aria-live="polite"></p></div><div class="card"><h2>無理なく続けるコツ</h2><p class="notice">安全点検・登録した片付け・診断ミッション・避難計画を終え、水・食料・トイレの登録と備蓄の期限・不足・点検に未対応項目がない場合、ホームの「今日やること」は定期的な掃除に切り替わります。備えに未対応項目が出ると、そちらを優先します。登録だけで実際の備蓄量が十分だと保証するものではありません。</p><p>一度に全部ではなく、今日は一か所でも大丈夫です。洗剤や掃除用品は製品の表示に従い、混ぜて使わないでください。</p><p class="notice">各項目を掃除した日から、設定した日数後の時刻にチェックが外れます。初期設定は翌々日の朝5時です。実施日時は残します。設定を変えると新しい間隔で判定し直します。</p><button class="secondary" onclick="show('tidy')">お片付けの記録へ</button></div><button class="secondary" onclick="show('learn')">学ぶメニューへ戻る</button></section><section id="more" class="hidden">
 <div class="card more-intro"><h2>その他の防災メニュー</h2><button class="more-menu-button" onclick="show('helpGuide')"><strong>使い方・データ保護ガイド</strong><span>はじめての準備・機種変更・オフライン・困ったとき ↗</span></button><p class="notice">必要な備えを、目的から選べます。</p><button class="more-menu-button" onclick="show('events')"><strong>防災イベントを探す</strong><span>地域・開催月・体験や訓練から検索 ↗</span></button></div><div class="card"><h2>防災士試験対策・無料学習</h2><p class="notice">例題動画・音声学習への入口と、学習の進め方をまとめました。</p><button class="secondary" type="button" onclick="show('examStudy')">学習メニューを開く ↗</button></div>
-<div class="card"><h2>v64 の更新と公開前の残作業</h2><p class="notice">v37の実機確認4/4項目は利用者確認済み。キャラクター表示・まばたきは完成版で固定しています。</p><ul><li>今回更新：初めての準備・バックアップ・機種変更・オフライン利用・トラブル対処のガイドを追加。</li><li>機能開発：市区町村別の警報・注意報詳細、イベント情報の自動収集、公開レビュー、例題数の拡充。</li><li>公開前の検証：Android実機、別端末への復元、拡大表示・読み上げ、機内モードでの再起動。</li></ul><p class="notice">自動診断の合格と実機確認は別に記録します。正式公開の準備は継続中です。</p><button class="secondary" onclick="openReleaseQa()">実機検証表を開く</button></div><div class="card"><h2>地域の天気</h2><p class="notice">気象庁の今日・明日の予報と時間帯別の降水確率。</p><button class="secondary" onclick="show('weather')">天気予報を確認する ↗</button></div><div class="card" id="releaseCandidatePanel">
+<div class="card"><h2>v65 の更新と公開前の残作業</h2><p class="notice">v37の実機確認4/4項目は利用者確認済み。キャラクター表示・まばたきは完成版で固定しています。</p><ul><li>今回更新：初めての準備・バックアップ・機種変更・オフライン利用・トラブル対処のガイドを追加。</li><li>機能開発：市区町村別の警報・注意報詳細、イベント情報の自動収集、公開レビュー、例題数の拡充。</li><li>公開前の検証：Android実機、別端末への復元、拡大表示・読み上げ、機内モードでの再起動。</li></ul><p class="notice">自動診断の合格と実機確認は別に記録します。正式公開の準備は継続中です。</p><button class="secondary" onclick="openReleaseQa()">実機検証表を開く</button></div><div class="card"><h2>地域の天気</h2><p class="notice">気象庁の今日・明日の予報と時間帯別の降水確率。</p><button class="secondary" onclick="show('weather')">天気予報を確認する ↗</button></div><div class="card" id="releaseCandidatePanel">
 <h2>リリース候補版の総合診断</h2>
 <p class="notice">安全・避難・備蓄・記録・データ保護などの主要機能を、自動検査します。登録済みの記録は書き換えません。</p>
 <button class="primary" type="button" style="width:100%;min-height:48px" onclick="checkReleaseCandidate()">主要機能をまとめて診断する</button>
@@ -1308,7 +1308,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v64';
+const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v65';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1427,7 +1427,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v64');
+  const c=await caches.open('totonoe-offline-shell-v65');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1453,8 +1453,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v64')){
-   const cache=await caches.open('totonoe-offline-shell-v64');
+  if(registration&&names.includes('totonoe-offline-shell-v65')){
+   const cache=await caches.open('totonoe-offline-shell-v65');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2075,7 +2075,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v64'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v65'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2097,7 +2097,31 @@ function renderEmergencyPlan(){const box=document.getElementById('emergencyPlan'
 function readEvacuationDrills(){try{const x=JSON.parse(localStorage.getItem(evacuationDrillKey)||'[]');return Array.isArray(x)?x.filter(v=>v&&typeof v.date==='string'&&typeof v.type==='string').slice(-200):[]}catch(e){return []}}
 function saveEvacuationDrill(event){event.preventDefault();const date=document.getElementById('drillDate').value,type=document.getElementById('drillType').value,note=document.getElementById('drillNote').value.trim(),status=document.getElementById('drillStatus');if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!type){status.textContent='実施日と内容を確認してください。';return}const next=[...readEvacuationDrills(),{date,type,note}].slice(-200);try{localStorage.setItem(evacuationDrillKey,JSON.stringify(next));document.getElementById('drillNote').value='';status.textContent='実施記録を保存しました。';renderEvacuationDrills()}catch(e){status.textContent='保存できませんでした。'}}
 function renderEvacuationDrills(){const el=document.getElementById('drillHistory');if(!el)return;el.replaceChildren();const history=readEvacuationDrills().reverse();if(!history.length){el.textContent='訓練・確認の記録はまだありません。';return}const label=document.createElement('p');label.className='notice';label.textContent='記録：'+history.length+'件（最新20件を表示）';el.append(label);history.slice(0,20).forEach(x=>{const row=document.createElement('div');row.className='calc-row';const title=document.createElement('strong');title.textContent=x.date+'｜'+x.type;row.append(title);if(x.note){const p=document.createElement('p');p.textContent=x.note;row.append(p)}el.append(row)})}
-function emergencyTextData(){const plan=readEvacuationPlan();const lines=['【ととのえ防災／保存済みの避難計画】','※最新の避難情報ではありません。',''];evacuationFields.forEach(([id,label])=>{lines.push('■ '+label,typeof plan[id]==='string'&&plan[id].trim()?plan[id]:'未設定','')});return lines.join('\n')}
+function emergencyTextData(){
+ const includeFamily=document.getElementById('emergencyCopyFamily')?.checked===true;
+ const lines=['【ととのえ防災／保存済みの緊急時情報】','※最新の避難情報ではありません。','作成：'+new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）','','■ 緊急時チェックリスト','※チェック状態は引き継がず、行動項目だけを控えます。'];
+ const checklist=readOfflineRecord(emergencyChecklistKey,isEmergencyChecklistData);
+ if(checklist.state==='invalid')lines.push('保存したチェックリストを読み取れません。別の控えを確認してください。');
+ else for(const item of (checklist.state==='saved'?checklist.value.items:defaultEmergencyChecklist))lines.push('□ '+item);
+ lines.push('','■ 保存済みの避難計画');
+ const record=readOfflineRecord(evacuationKey,p=>p&&typeof p==='object'&&!Array.isArray(p)&&evacuationFields.every(([id])=>p[id]===undefined||typeof p[id]==='string'));
+ if(record.state==='invalid')lines.push('保存した避難計画を読み取れません。別の控えを確認してください。');
+ else {const plan=record.state==='saved'?record.value:{};evacuationFields.forEach(([id,label])=>lines.push('【'+label+'】',plan[id]?.trim()||'未設定',''))}
+ if(includeFamily){
+  lines.push('■ 家族・ペットの個別の備え');
+  try{
+   const raw=localStorage.getItem(familyProfileKey);
+   if(raw===null)lines.push('未登録');
+   else{
+    validateFullBackupObject({format:'toto-full-backup-v1',data:{[familyProfileKey]:raw}});
+    const profiles=JSON.parse(raw);
+    if(!profiles.length)lines.push('未登録');
+    for(const x of profiles){lines.push('【'+(x.label||familyKinds[x.type].name)+'】 '+x.count+(x.type==='pet'?'頭':'人'));for(const [key,label] of [['suppliesNote','必要な用品'],['foodNote','食事について'],['supportNote','避難時の支援']])lines.push(label+'：'+(x[key]?.trim()||'未記入'));lines.push('')}
+   }
+  }catch(e){lines.push('保存したカルテを読み取れません。別の控えを確認してください。')}
+ }
+ return lines.join('\n');
+}
 function openEmergencyCopyShortcut(){
  const field=document.getElementById('emergencyCopyText');
  if(!field)return;
@@ -2415,7 +2439,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v64');
+  const cache=await caches.open('totonoe-offline-shell-v65');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -2436,17 +2460,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v64')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v65')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v64')?await caches.open('totonoe-offline-shell-v64'):null;
+  const cache=names.includes('totonoe-offline-shell-v65')?await caches.open('totonoe-offline-shell-v65'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v64'?'必須ファイル10件の保存とv64の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v64の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v65'?'必須ファイル10件の保存とv65の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v65の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -2567,7 +2591,7 @@ function openFullBackupFromReadiness(){
  const status=document.getElementById('allBackupStatus');if(status)status.textContent='復元前に、必ず最新の全データをバックアップして保存してください。';
 }
 // Inspects existing user-owned keys in read-only mode; never deletes or modifies records.
-// v64: read-only per-record schema audit. No stored values are edited or removed.
+// v65: read-only per-record schema audit. No stored values are edited or removed.
 function checkStoredDataIntegrity(){
  const host=document.getElementById('dataIntegrityResults');if(!host)return;
  host.replaceChildren();
@@ -2697,7 +2721,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v64';
+ const cacheName='totonoe-offline-shell-v65';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -2760,7 +2784,7 @@ async function repairOfflinePreparation(){
   }
   await inspect();
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v64有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v65有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/10件。Service Worker：'+state+'。';
@@ -2800,13 +2824,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v64';
+   const current='totonoe-offline-shell-v65';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v64有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v65有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
@@ -2848,7 +2872,7 @@ async function checkReleaseReadiness(){
 }
 initOfflineStartup();
 window.addEventListener('pageshow',initOfflineStartup);
-// v64: live JMA forecast only; never retain stale weather as a current forecast.
+// v65: live JMA forecast only; never retain stale weather as a current forecast.
 
 function jstWeatherDay(value){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value))}
 function weatherDailyRows(data,areaCode,now=Date.now()){
