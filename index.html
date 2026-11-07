@@ -1311,7 +1311,7 @@ function renderHouseholdReadinessBridge(){
   entry('登録済みの飲料水',valid.length?litersText+'L（容量を設定した有効な '+valid.length+'種類）'+(excluded?'／未集計 '+excluded+'種類':''):'容量と数量を確認できる飲料水が未登録です。','supplies',!valid.length||excluded>0);
   const food=supplies.filter(x=>x.category==='food');
   const foodExpired=food.filter(x=>x.exp&&x.exp<today).length;
-  entry('食料の備蓄',food.length?'登録 '+food.length+'種類'+(foodExpired?'／期限切れ '+foodExpired+'種類':''):'食料の備蓄は未登録です。','supplies',!food.length||foodExpired>0);
+  entry('食料の備蓄',food.length?'食料に分類済み '+food.length+'種類'+(foodExpired?'／期限切れ '+foodExpired+'種類':''):'食料に分類された品目はありません。既存の食品は備蓄の編集で分類できます。','supplies',!food.length||foodExpired>0);
   if(pets>0){
    entry('ペットの避難準備','ペット '+pets+'頭。同行避難先の受入条件、水・食料・キャリー等を個別に確認してください。','family',true);
   }
