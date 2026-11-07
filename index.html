@@ -1986,11 +1986,13 @@ async function initOfflineStartup(){
   const registration=await navigator.serviceWorker.register('./offline-worker.js',{scope:'./',updateViaCache:'none'});
   let readyTimer;const ready=await Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>{readyTimer=setTimeout(()=>reject(new Error('activation timeout')),12000)})]).finally(()=>clearTimeout(readyTimer));
   if(ready.scope!==registration.scope)throw Error('scope mismatch');
-  const cache=await caches.open('totonoe-offline-shell-v18');
+  const names=await caches.keys();
+  const cache=names.includes('totonoe-offline-shell-v18')?await caches.open('totonoe-offline-shell-v18'):null;
   const necessary=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
-  const readyFiles=await Promise.all(necessary.map(async p=>{const res=await cache.match(new URL(p,registration.scope).href);return !!(res&&res.ok)}));
+  const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
-  set(count===necessary.length?'必須ファイル9件の保存を確認しました。機内モードでの起動もお試しください。':'オフライン用ファイル：'+count+'/9件。通信できる状態でアプリを開き直してください。');
+  const workerCache=await getActiveOfflineWorkerCache(registration);
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v18'?'必須ファイル9件の保存とv18の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/9件。'+(workerCache?'旧版が動作している可能性があります。':'v18の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -2138,6 +2140,16 @@ function checkReleaseCandidate(){
  const note=document.createElement('p');note.className='notice';note.textContent='この診断は画面・関数・データ形式の自動検査です。実機での復元、オフライン起動、端末間移行、避難情報の正確性を保証しません。';box.append(note);
 }
 // Diagnostic and safe repair: never delete user records or existing offline caches.
+async function getActiveOfflineWorkerCache(reg){
+ if(!reg?.active||typeof MessageChannel!=='function')return '';
+ return await new Promise(resolve=>{
+  const channel=new MessageChannel();
+  const timer=setTimeout(()=>resolve(''),1200);
+  channel.port1.onmessage=event=>{clearTimeout(timer);resolve(event.data?.cache||'')};
+  try{reg.active.postMessage({type:'TOTONOE_CACHE_VERSION'},[channel.port2])}
+  catch(e){clearTimeout(timer);resolve('')}
+ });
+}
 async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
@@ -2201,11 +2213,12 @@ async function repairOfflinePreparation(){
    if(active)break;
    await new Promise(resolve=>setTimeout(resolve,650));
   }
-  let state=active?'有効':'未有効';
+  const workerCache=await getActiveOfflineWorkerCache(reg);
+  let state=!active?'未有効':workerCache===cacheName?'v18有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/9件。Service Worker：'+state+'。';
-  if(count===9&&active){
+  if(count===9&&active&&workerCache===cacheName){
    await finish('✅ '+statusText+' 実際の機内モード起動も確認してください。');
   }else{
    await finish('⚠️ '+statusText+(failures.length?' 取得失敗：'+failures.join('、')+'。':' ファイル取得はできていますが、オフライン処理の有効化が未完了です。')+' SafariでURLを直接開き直してください。記録の削除は不要です。');
@@ -2246,7 +2259,8 @@ async function checkReleaseReadiness(){
    const paths=['./','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
-   add('オフライン用ファイル',!!reg?.active&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(reg?.active?'':'・有効なオフライン設定がありません'));
+   const activeCache=await getActiveOfflineWorkerCache(reg);
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v18有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
