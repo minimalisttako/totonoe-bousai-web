@@ -937,7 +937,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='rc-2026-11-07-first-launch-v14';
+const releaseQaBuild='rc-2026-11-07-readiness-v15';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1056,7 +1056,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v14');
+  const c=await caches.open('totonoe-offline-shell-v15');
   const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tricera.svg','./assets/shimaenaga.svg','./assets/app-icon.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1082,8 +1082,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v14')){
-   const cache=await caches.open('totonoe-offline-shell-v14');
+  if(registration&&names.includes('totonoe-offline-shell-v15')){
+   const cache=await caches.open('totonoe-offline-shell-v15');
    const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -1628,7 +1628,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v14'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v15'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -1968,7 +1968,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v14');
+  const cache=await caches.open('totonoe-offline-shell-v15');
   const urls=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -1986,7 +1986,7 @@ async function initOfflineStartup(){
   const registration=await navigator.serviceWorker.register('./offline-worker.js',{scope:'./',updateViaCache:'none'});
   let readyTimer;const ready=await Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>{readyTimer=setTimeout(()=>reject(new Error('activation timeout')),12000)})]).finally(()=>clearTimeout(readyTimer));
   if(ready.scope!==registration.scope)throw Error('scope mismatch');
-  const cache=await caches.open('totonoe-offline-shell-v14');
+  const cache=await caches.open('totonoe-offline-shell-v15');
   const necessary=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=await cache.match(new URL(p,registration.scope).href);return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
@@ -2138,65 +2138,70 @@ function checkReleaseCandidate(){
 async function checkReleaseReadiness(){
  const output=document.getElementById('releaseReadinessResults');
  const button=document.getElementById('releaseReadinessRun');
- if(!output)return;
- button.disabled=true;output.replaceChildren();
+ if(!output||!button)return;
+ button.disabled=true;
+ output.replaceChildren();
  const rows=[];
  const add=(name,ok,detail)=>rows.push({name,ok,detail});
- const probeKey='toto-release-probe-'+Date.now()+'-'+Math.random().toString(36).slice(2);
- try {
-  if(localStorage.getItem(probeKey)!==null)throw Error('probe collision');
-  localStorage.setItem(probeKey,'test');
-  const passed=localStorage.getItem(probeKey)==='test';
-  localStorage.removeItem(probeKey);
-  add('データ保存',passed,passed?'正常に保存と読み取りができます':'この端末の保存機能を確認できません');
- }catch(e){add('データ保存',false,'保存領域を利用できません')}
- finally{try{localStorage.removeItem(probeKey)}catch(e){}}
+ // Probe uses a unique temporary key, never one of the user's records.
+ const probe='toto-release-probe-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+ let probeOk=false,probeCleanup=true;
+ try{
+  if(localStorage.getItem(probe)!==null)throw Error('collision');
+  localStorage.setItem(probe,'保存確認');
+  probeOk=localStorage.getItem(probe)==='保存確認';
+ }catch(e){probeOk=false}
+ finally{
+  try{localStorage.removeItem(probe);probeCleanup=localStorage.getItem(probe)===null}
+  catch(e){probeCleanup=false}
+ }
+ add('データ保存',probeOk&&probeCleanup,probeOk&&probeCleanup?'一時データの保存・読み取り・削除を確認':'一時データの保存または削除を確認できません');
  const secure=location.protocol==='https:'&&window.isSecureContext;
  add('通信の安全性',secure,secure?'HTTPS接続です':'HTTPSで開いてください');
  if('serviceWorker' in navigator&&'caches' in window){
-  try {
+  try{
    const reg=await navigator.serviceWorker.getRegistration('./');
-   const cache=await caches.open('totonoe-offline-shell-v14');
+   const names=await caches.keys();
+   const current='totonoe-offline-shell-v15';
+   const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./manifest.webmanifest'];
-   const found=await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)}));
+   const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
-   add('オフライン用ファイル',!!reg&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(reg?'':'・初期設定未完了'));
+   add('オフライン用ファイル',!!reg?.active&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(reg?.active?'':'・有効なオフライン設定がありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
  add('バックアップ機能',backup,backup?'バックアップ画面が利用できます':'バックアップ画面が見つかりません');
  try{
-  let source;
   const snapshot={};
   for(const k of allBackupKeys){const value=localStorage.getItem(k);if(value!==null)snapshot[k]=value}
-  if(Object.keys(snapshot).length){
-   source={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:snapshot};
-  }else{
-   source={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:{[key]:'[]'}};
-  }
-  // Use the same pretty-printed JSON and byte ceiling as the real downloadable backup.
-  const backupText=JSON.stringify(source,null,2);
-  if(backupUtf8ByteLength(backupText)>2000000)throw Error('backup-size');
-  const decoded=validateFullBackupObject(JSON.parse(backupText));
-  add('記録のバックアップ形式',decoded.keys.length>0,Object.keys(snapshot).length?'保存データ'+decoded.keys.length+'種類の形式と容量を確認':'初期状態のテスト形式を確認（記録未登録）');
- }catch(e){add('記録のバックアップ形式',false,e.message==='backup-size'?'2MBを超えており、バックアップファイルを生成できません':'形式を確認できません。保存データを点検してください')}
+  // A fresh installation has no real records. Use a valid in-memory sample only.
+  const empty=Object.keys(snapshot).length===0;
+  const testData=empty?{[key]:'[]'}:snapshot;
+  const source={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:testData};
+  const decoded=validateFullBackupObject(JSON.parse(JSON.stringify(source)));
+  const accurate=decoded.keys.length===Object.keys(testData).length&&decoded.keys.every(k=>decoded.data[k]===testData[k]);
+  add('記録のバックアップ形式',accurate,empty?'テストデータで形式を確認（実記録は未登録）':'保存データ'+decoded.keys.length+'種類の形式を照合');
+ }catch(e){add('記録のバックアップ形式',false,'形式を確認できません。保存データを点検してください')}
  const summary=document.createElement('p');
  summary.style.fontWeight='700';
  summary.textContent='自動確認：'+rows.filter(r=>r.ok).length+'/'+rows.length+'項目';
- const qa=readReleaseQa(),qaDone=releaseQaItems.filter(([id])=>releaseQaState(qa[id])==='ok').length;
- const qaProblem=releaseQaItems.filter(([id])=>releaseQaState(qa[id])==='problem').length;
- const qaSummary=document.createElement('p');qaSummary.className='notice';
- qaSummary.textContent='最新版の実機検証：OK '+qaDone+'/'+releaseQaItems.length+' ／ 要修正 '+qaProblem+'件。自動診断だけでは正式リリース準備完了にはなりません。';
- output.append(qaSummary);
  output.append(summary);
+ try{
+  const qa=readReleaseQa(),qaDone=releaseQaItems.filter(([id])=>releaseQaState(qa[id])==='ok').length;
+  const qaProblem=releaseQaItems.filter(([id])=>releaseQaState(qa[id])==='problem').length;
+  const qaSummary=document.createElement('p');qaSummary.className='notice';
+  qaSummary.textContent='最新版の実機検証：OK '+qaDone+'/'+releaseQaItems.length+' ／ 要修正 '+qaProblem+'件。';
+  output.append(qaSummary);
+ }catch(e){const notice=document.createElement('p');notice.className='notice';notice.textContent='実機検証表の状態を読み取れません。';output.append(notice)}
  for(const row of rows){
   const p=document.createElement('p');p.className='notice';
-  p.textContent=(row.ok?'✅ ':'⚠️ ')+row.name+'：'+row.detail;
-  p.style.margin='8px 0';output.append(p);
+  p.style.margin='8px 0';p.textContent=(row.ok?'✅ ':'⚠️ ')+row.name+'：'+row.detail;output.append(p);
  }
  const note=document.createElement('p');note.className='notice';
- note.textContent='機内モードでの実際の起動と、バックアップからの復元は別途確認してください。';
- output.append(note);button.disabled=false;
+ note.textContent='自動診断は実際の災害時の動作を保証しません。機内モードでの起動、JSONファイルの端末への保存、復元は別途実機で確認してください。';
+ output.append(note);
+ button.disabled=false;
 }
 initOfflineStartup();
 window.addEventListener('pageshow',initOfflineStartup);
