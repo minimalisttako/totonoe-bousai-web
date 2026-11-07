@@ -1,5 +1,5 @@
-/* ととのえ防災：v11 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
-const CACHE='totonoe-offline-shell-v11';
+/* ととのえ防災：v12 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
+const CACHE='totonoe-offline-shell-v12';
 const ROOT=new URL('./',self.registration.scope).href;
 const PATHS=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
 const URLS=PATHS.map(p=>new URL(p,ROOT).href);
