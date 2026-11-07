@@ -1,5 +1,5 @@
-/* ととのえ防災：v61 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
-const CACHE='totonoe-offline-shell-v61';
+/* ととのえ防災：v62 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
+const CACHE='totonoe-offline-shell-v62';
 const ROOT=new URL('./',self.registration.scope).href;
 const PATHS=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
 const URLS=PATHS.map(p=>new URL(p,ROOT).href);
@@ -7,16 +7,31 @@ const ASSETROOT=new URL('./assets/',ROOT).pathname;
 const HOME=new URL('./',ROOT).pathname;
 const INDEX=new URL('./index.html',ROOT).pathname;
 function usable(response,html=false){return !!(response&&response.ok&&(!html||(response.headers.get('content-type')||'').includes('text/html')))}
+async function offlineFetch(url,html){
+ let last;
+ for(let attempt=0;attempt<3;attempt++){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+  try{
+   const response=await fetch(new Request(url,{cache:'reload',signal:controller.signal}));
+   if(!usable(response,html))throw Error('Invalid offline file');
+   if(html&&!(await response.clone().text()).includes(CACHE))throw Error('App and worker versions differ');
+   return response;
+  }catch(e){last=e}finally{clearTimeout(timer)}
+ }throw last;
+}
 self.addEventListener('install',event=>event.waitUntil((async()=>{
- const cache=await caches.open(CACHE);
- try{
-  for(const [i,url] of URLS.entries()){
-   const response=await fetch(new Request(url,{cache:'reload'}));
-   if(!usable(response,i===0))throw Error('Required offline file unavailable: '+PATHS[i]);
-   await cache.put(url,response);
+ const cache=await caches.open(CACHE),previous=(await caches.keys()).filter(n=>n.startsWith('totonoe-offline-shell-')&&n!==CACHE);
+ for(const [i,url] of URLS.entries()){
+  // SVG assets have immutable versioned paths; reuse already saved copies.
+  let response=null;
+  if(PATHS[i].startsWith('./assets/')){
+   for(const name of previous){const old=await caches.open(name),candidate=await old.match(url);if(usable(candidate)){response=candidate;break}}
   }
-  await self.skipWaiting();
- }catch(error){throw error;}
+  if(!response)response=await offlineFetch(url,i===0);
+  await cache.put(url,response);
+ }
+ for(const url of URLS){if(!usable(await cache.match(url)))throw Error('Incomplete offline cache')}
+ await self.skipWaiting();
 })()));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
  const cache=await caches.open(CACHE);
