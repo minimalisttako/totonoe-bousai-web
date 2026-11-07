@@ -760,7 +760,7 @@ header{z-index:50;isolation:isolate}
  }
 }
 
-/* v87: compact weather occupies the approved upper-right home space. */
+/* v88: compact weather occupies the approved upper-right home space. */
 #home .home-weather-intro{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:10px;align-items:start;margin-top:5px}
 #home .home-weather-intro h2{max-width:100%;font-size:clamp(17px,4.8vw,22px)}
 #home .home-weather-intro .game-home-lead{max-width:100%}
@@ -769,13 +769,13 @@ header{z-index:50;isolation:isolate}
 #home .home-weather-widget strong{display:block;font-size:14px;margin:4px 0;overflow-wrap:anywhere}
 @media(max-width:340px){#home .home-weather-intro{gap:6px;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}#home .home-weather-intro h2{font-size:16px}}
 
-/* v87: reduce introductory whitespace and prioritize today's actions. */
+/* v88: reduce introductory whitespace and prioritize today's actions. */
 #home .home-weather-intro{margin-top:2px;align-items:center}
 #home .home-weather-intro h2{margin:5px 0}
 #home .home-weather-widget{margin-top:3px;padding:7px 8px}
 #home .game-mascot-scene{margin-top:0!important}
 
-/* v87: emergency entry beside the approved home illustration. */
+/* v88: emergency entry beside the approved home illustration. */
 #home .home-scene-actions{display:grid;grid-template-columns:minmax(76px,1fr) minmax(0,2.2fr);align-items:center;gap:12px;margin:5px 0 0;min-width:0}
 #home .home-scene-actions .game-mascot-scene{width:100%!important;max-width:226px!important;margin:0 0 0 auto!important;min-height:0!important}
 #home .home-hazard-button{display:block;width:100%;max-width:112px;padding:5px;border:1px solid #202020;border-radius:14px;background:repeating-linear-gradient(135deg,#f9d849 0,#f9d849 8px,#242424 8px,#242424 16px);color:#202020;box-shadow:0 3px 9px #34362018;text-align:center}
@@ -786,7 +786,7 @@ header{z-index:50;isolation:isolate}
 #home .home-hazard-button:focus-visible{outline:3px solid #247db5;outline-offset:3px}
 @media(max-width:350px){#home .home-scene-actions{gap:8px;grid-template-columns:minmax(70px,1fr) minmax(0,2fr)}#home .home-hazard-face strong{font-size:14px}}
 
-/* v87: agreed Select red / Set blue / Stock green, including supply controls. */
+/* v88: agreed Select red / Set blue / Stock green, including supply controls. */
 .journey-tile:nth-child(2),.step-detail.set{border-color:#cbdaf0}
 .journey-tile:nth-child(3),.step-detail.stock{border-color:#c9dfd0}
 #supplies .quantity-control,#supplies .backup-button,#supplies .replenishment-item{border-color:#b9d4c2}
@@ -799,13 +799,13 @@ header{z-index:50;isolation:isolate}
 #learn .step:nth-of-type(2){background:var(--set-bg);color:var(--set-ink)}
 #learn .step:nth-of-type(3){background:var(--stock-bg);color:var(--stock-ink)}
 
-/* v87: visible keyboard focus and a bypass link for repeated navigation. */
+/* v88: visible keyboard focus and a bypass link for repeated navigation. */
 .skip-content{position:fixed;left:12px;top:8px;transform:translateY(-160%);z-index:1000;padding:12px 18px;background:#fff;color:#174c3e;border:3px solid #268c6a;border-radius:10px;font-weight:700}
 .skip-content:focus{transform:none}
 main h2[tabindex="-1"]:focus,main h3[tabindex="-1"]:focus,#practiceQuizContent p[tabindex="-1"]:focus{outline:3px solid #268c6a;outline-offset:5px;border-radius:4px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .tidy-photo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}.tidy-photo-grid img{display:block;width:100%;height:auto;max-height:280px;object-fit:contain;border-radius:10px}.tidy-photo-grid figcaption{font-weight:700;font-size:14px}.tidy-photo-grid input{font-size:13px}\n.tidy-photo-open{display:block;width:100%;border:0;background:transparent;padding:0;border-radius:10px}.tidy-photo-dialog{width:min(94vw,780px);max-height:90vh;border:1px solid #bad3c3;border-radius:16px;padding:18px}.tidy-photo-dialog::backdrop{background:#0009}.tidy-photo-dialog img{display:block;max-width:100%;max-height:65vh;object-fit:contain;margin:0 auto 15px}\n.rest-note{padding:10px 12px;border:1px solid #d4e4df;border-radius:12px;background:#ffffffc9;margin:8px 0}.rest-note p{font-size:13px;line-height:1.6;margin:0 0 5px}.rest-note button{font-size:13px;min-height:44px}\n
-/* v87: shared three-column grid; top 2+1, warning band full-width, bottom 1+2. */
+/* v88: shared three-column grid; top 2+1, warning band full-width, bottom 1+2. */
 #home .home-weather-intro,#home .home-scene-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch;margin:8px 0 0}
 #home .home-weather-intro>div:first-child{grid-column:1/3;display:flex;align-items:center;min-width:0}
 #home .home-weather-intro h2{margin:0;font-size:clamp(18px,5vw,23px);line-height:1.4;max-width:100%}
@@ -949,6 +949,13 @@ main h2[tabindex="-1"]:focus,main h3[tabindex="-1"]:focus,#practiceQuizContent p
 <div id="familyChecklist" aria-live="polite"></div></div>
 <div class="card"><button class="secondary" type="button" onclick="show('more')">その他のメニューへ戻る</button></div>
 </section>
+<section id="moving" class="hidden" aria-labelledby="movingTitle">
+<div class="card"><h2 id="movingTitle">引越し防災サポート</h2><p>転居前の確認から入居後の見直しまで、終わった項目にチェックを付けます。住所の入力は不要です。</p><p id="movingProgress" class="notice" role="status" aria-live="polite"></p><p id="movingSaveStatus" class="notice" role="status" aria-live="polite"></p></div>
+<div class="card"><h3>1．転居先を決める前・転居前</h3><div id="movingStage0"></div><a class="link" href="https://disaportal.gsi.go.jp/" target="_blank" rel="noopener noreferrer">国土地理院・国土交通省のハザードマップを開く ↗</a><p class="notice">「重ねるハザードマップ」と自治体のハザードマップで確認します。地図の閲覧には通信が必要です。表示がないことだけで安全とは判断せず、地域の最新情報も確認してください。</p></div>
+<div class="card"><h3>2．荷造り・持ち物の見直し</h3><div id="movingStage1"></div><div class="lesson-actions"><button class="secondary" type="button" onclick="show('tidy')">片付けの記録を開く ↗</button><button class="secondary" type="button" onclick="show('supplies')">備蓄と保管場所を確認 ↗</button></div></div>
+<div class="card"><h3>3．入居直後に命を守る</h3><p class="notice">荷解きの完了を待たず、寝る場所と避難経路の安全確保を優先します。</p><div id="movingStage2"></div><button class="secondary" type="button" onclick="show('homeSafety')">住まいの安全点検を開く ↗</button></div>
+<div class="card"><h3>4．新しい地域での備え</h3><div id="movingStage3"></div><div class="lesson-actions"><button class="secondary" type="button" onclick="show('weather')">登録地域を更新 ↗</button><button class="secondary" type="button" onclick="show('evacuation')">避難計画を見直す ↗</button><button class="secondary" type="button" onclick="show('supplies')">備蓄一覧を更新 ↗</button><button class="secondary" type="button" onclick="openFullBackupFromReadiness()">バックアップを保存 ↗</button></div></div>
+<div class="card"><p class="notice">チェックの本文と保存済みの状態はオフラインで確認できます。チェックは住まいの安全点検や地域設定を自動で書き換えません。それぞれの画面で確認・更新してください。次の引越しに使うときは、チェックを外して見直せます。</p><button class="secondary" type="button" onclick="show('more')">その他へ戻る</button></div></section>
 <section id="outage" class="hidden">
 <div class="card"><h2>停電・断水シミュレーター</h2>
 <p class="notice">断水や停電が続く想定で、家庭に必要な備えを確認します。水の計算は1人1日3Lの飲料・調理用の目安です。生活用水は含みません。</p>
@@ -997,7 +1004,7 @@ main h2[tabindex="-1"]:focus,main h3[tabindex="-1"]:focus,#practiceQuizContent p
 <button class="more-menu-button" type="button" onclick="show('homeSafety')"><strong>住まいの安全点検</strong><span>家具・避難経路を確認 ↗</span></button>
 <button class="more-menu-button" type="button" onclick="show('pouch')"><strong>防災ポーチ</strong><span>持ち歩く備えを確認 ↗</span></button>
 </div>
-<div class="card more-important"><h2>家族に合わせた備え</h2><button class="more-menu-button" type="button" onclick="show('family')"><strong>家族・ペットの防災カルテ</strong><span>必要な備え・人数・ペット用品を確認 ↗</span></button></div>
+<div class="card more-important"><h2>引越しの備え</h2><button class="more-menu-button" type="button" onclick="show('moving')"><strong>引越し防災サポート</strong><span>転居前から入居後までの準備をチェック ↗</span></button></div><div class="card more-important"><h2>家族に合わせた備え</h2><button class="more-menu-button" type="button" onclick="show('family')"><strong>家族・ペットの防災カルテ</strong><span>必要な備え・人数・ペット用品を確認 ↗</span></button></div>
 <div class="card"><h2>地域の天気</h2><p class="notice">気象庁の今日・明日の予報と時間帯別の降水確率。</p><button class="secondary" onclick="show('weather')">天気予報を確認する ↗</button></div>
 <div class="card more-important"><h2>防災シミュレーション</h2>
 <button class="more-menu-button" type="button" onclick="show('outage')"><strong>停電・断水シミュレーター</strong><span>水・非常用トイレ・停電時の備えを確認 ↗</span></button></div>
@@ -1340,7 +1347,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v87';
+const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v88';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1459,7 +1466,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v87');
+  const c=await caches.open('totonoe-offline-shell-v88');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1485,8 +1492,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v87')){
-   const cache=await caches.open('totonoe-offline-shell-v87');
+  if(registration&&names.includes('totonoe-offline-shell-v88')){
+   const cache=await caches.open('totonoe-offline-shell-v88');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -1675,7 +1682,7 @@ function renderHomeNextThree(){
 }
 function renderHomeStockMiniStatus(){const el=document.getElementById('homeStockMiniStatus');if(!el)return;const today=todayLocalDate(),future=dateAfterDays(30);const expires=supplies.filter(x=>x.exp&&x.exp<=future).length,missing=supplies.filter(x=>String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.qty)<Number(x.target)).length,inspection=supplies.filter(x=>x.nextCheck&&x.nextCheck<=today).length,pouchDue=readPouchItems().filter(x=>x.nextCheck&&x.nextCheck<=today).length;const n=expires+missing+inspection+pouchDue;el.textContent=n?'要確認 '+n+'件（期限・不足・点検の合計）':'期限・不足・点検を確認'}
 function initHomeGroups(){let settings={};try{const stored=JSON.parse(localStorage.getItem(homeGroupKey)||'{}');if(stored&&typeof stored==='object'&&!Array.isArray(stored))settings=stored}catch(e){}document.querySelectorAll('#home details[data-home-group]').forEach(el=>{const id=el.getAttribute('data-home-group');el.open=typeof settings[id]==='boolean'?settings[id]:false;el.addEventListener('toggle',()=>{try{const current=JSON.parse(localStorage.getItem(homeGroupKey)||'{}');const next=current&&typeof current==='object'&&!Array.isArray(current)?current:{};next[id]=el.open;localStorage.setItem(homeGroupKey,JSON.stringify(next))}catch(e){}})})}
-const pageNames={minimalistGuide:'ミニマリストのススメ',tidyAlbum:'成長アルバム',weather:'地域の天気',events:'防災イベント検索',examStudy:'防災士試験対策・無料学習',practiceQuiz:'基礎例題',cleanPractice:'掃除の実践',helpGuide:'使い方・データ保護ガイド',home:'ホーム',learn:'学ぶ',select:'整理を学ぶ',set:'整頓を学ぶ',stock:'備蓄を学ぶ',supplies:'備蓄管理',tidy:'お片付けノート',more:'その他',emergency:'災害時モード',evacuation:'マイ避難計画',homeSafety:'住まいの安全点検',pouch:'防災ポーチ',seasonalCheck:'季節別点検',diagnosis:'防災弱点診断',reviews:'防災用品レビュー',outage:'停電・断水シミュレーター',family:'家族・ペットの防災カルテ',readiness:'わが家の防災準備状況'};let activePage='home',previousPage='home';
+const pageNames={moving:'引越し防災サポート',minimalistGuide:'ミニマリストのススメ',tidyAlbum:'成長アルバム',weather:'地域の天気',events:'防災イベント検索',examStudy:'防災士試験対策・無料学習',practiceQuiz:'基礎例題',cleanPractice:'掃除の実践',helpGuide:'使い方・データ保護ガイド',home:'ホーム',learn:'学ぶ',select:'整理を学ぶ',set:'整頓を学ぶ',stock:'備蓄を学ぶ',supplies:'備蓄管理',tidy:'お片付けノート',more:'その他',emergency:'災害時モード',evacuation:'マイ避難計画',homeSafety:'住まいの安全点検',pouch:'防災ポーチ',seasonalCheck:'季節別点検',diagnosis:'防災弱点診断',reviews:'防災用品レビュー',outage:'停電・断水シミュレーター',family:'家族・ペットの防災カルテ',readiness:'わが家の防災準備状況'};let activePage='home',previousPage='home';
 function goBackPage(){show(previousPage!==activePage&&validPage(previousPage)?previousPage:'home')}
 function updatePageNavigation(id){document.title=id==='home'?'ととのえ防災｜試作版':(pageNames[id]||'ととのえ防災')+'｜ととのえ防災';const bar=document.getElementById('pageNavigation'),title=document.getElementById('pageCurrentTitle'),back=document.getElementById('pageBackButton');if(bar)bar.classList.toggle('hidden',id==='home');if(title)title.textContent=pageNames[id]||'ととのえ防災';if(back)back.textContent='‹ '+(pageNames[previousPage]||'ホーム')+'へ戻る'}
 
@@ -1808,7 +1815,7 @@ function renderPageMascotGuide(id){
  banner.querySelector('.guide-support').textContent=sub;
 }
 let weatherForecast=null,weatherRequest=0,weatherController=null;
-function show(id){if(!validPage(id))id='home';const pageChanged=id!==activePage;if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock','examStudy','practiceQuiz','cleanPractice','minimalistGuide'].includes(id)?'learn':id==='tidyAlbum'?'tidy':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family','readiness','weather','events','helpGuide'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyFamily();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='tidyAlbum')renderTidyAlbum();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family'){renderFamilySuggestedItems();renderFamilyProfiles()}if(id==='readiness')renderReadinessOverview();if(id==='weather'){if(weatherForecast)renderWeatherForecast();ensureSavedMunicipalityWarnings();}if(id==='home')ensureSavedMunicipalityWarnings();if(id==='cleanPractice')renderCleanPractice();if(id==='examStudy')renderSavedPractice();if(id==='events')restoreEventSearchSettings();if(id==='more'){renderReleaseQa();renderRestSettings()}renderRestMessage();window.scrollTo(0,0);if(pageChanged)requestAnimationFrame(()=>focusActivePage(id))}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
+function show(id){if(!validPage(id))id='home';const pageChanged=id!==activePage;if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock','examStudy','practiceQuiz','cleanPractice','minimalistGuide'].includes(id)?'learn':id==='tidyAlbum'?'tidy':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family','readiness','weather','events','helpGuide','moving'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='moving')renderMovingChecklist();if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyFamily();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='tidyAlbum')renderTidyAlbum();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family'){renderFamilySuggestedItems();renderFamilyProfiles()}if(id==='readiness')renderReadinessOverview();if(id==='weather'){if(weatherForecast)renderWeatherForecast();ensureSavedMunicipalityWarnings();}if(id==='home')ensureSavedMunicipalityWarnings();if(id==='cleanPractice')renderCleanPractice();if(id==='examStudy')renderSavedPractice();if(id==='events')restoreEventSearchSettings();if(id==='more'){renderReleaseQa();renderRestSettings()}renderRestMessage();window.scrollTo(0,0);if(pageChanged)requestAnimationFrame(()=>focusActivePage(id))}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
 function priorityTitlesFromAnswers(){try{const v=JSON.parse(localStorage.getItem(diagnosisKey)||'null');if(!v||!['apartment','house','other'].includes(v.dResidence))return null;const p=[];const add=(n,title)=>p.push({n,title});if(v.dFurniture!=='ready')add(0,'まず命を守る：家具の転倒・落下を防ぐ');if(v.dResidence==='house')add(1,'戸建ての立地と避難先を確認する');add(1,'地域の災害リスクと避難先を確認する');if(v.dResidence==='apartment')add(2,'集合住宅の設備・避難方法を確認する');if(v.dFurniture==='ready')add(2,'命を守るための安全確認を続ける');if(v.dWater!=='ready')add(v.dWater==='none'?3:4,'飲料水を確認する');if(v.dFood!=='ready')add(v.dFood==='none'?3:4,'食料を確認する');if(v.dToilet!=='ready')add(v.dToilet==='none'?3:4,'非常用トイレを確認する');if(v.dPeople==='5')add(4,'世帯人数に合う備蓄量を再計算する');if(!p.some(x=>x.n<3))add(5,'備えの維持と定期点検');return p.sort((a,b)=>a.n-b.n).map(x=>x.title)}catch(e){return null}}
 function homeMissionItems(){try{let titles=activePriorityTitles;if(!Array.isArray(titles)||!titles.length){titles=JSON.parse(localStorage.getItem(priorityKey)||'null')}if(!Array.isArray(titles)||!titles.length)titles=priorityTitlesFromAnswers();if(!Array.isArray(titles)||!titles.length)return null;const items=[];titles.forEach(title=>{if(typeof title==='string'&&Object.prototype.hasOwnProperty.call(missionTemplates,title))missionTemplates[title].forEach((label,i)=>items.push({key:title+'::'+i,label}))});if(!items.length)return null;const state=getMissionState();const incomplete=items.filter(item=>state[item.key]!==true);return {items:incomplete.slice(0,3),total:items.length,completed:items.length-incomplete.length,remaining:incomplete.length}}catch(e){return null}}
 function syncDiagnosisMissionUI(){const state=getMissionState();document.querySelectorAll('.diagnosis-mission input[data-mission-key]').forEach(input=>input.checked=state[input.dataset.missionKey]===true);document.querySelectorAll('.diagnosis-result-item').forEach(card=>{const checks=[...card.querySelectorAll('.diagnosis-mission input')],p=card.querySelector('.mission-progress');if(p&&checks.length){const n=checks.filter(x=>x.checked).length;p.textContent='ミッション '+n+' / '+checks.length+' 完了'+(n===checks.length?' ✅':'')}})}
@@ -1877,7 +1884,7 @@ if(v.dPeople==='5')add(4,'世帯人数に合う備蓄量を再計算する','5�
 if(furniture==='ready')add(2,'命を守るための安全確認を続ける','家具の固定状態と寝室・避難経路の安全を定期的に点検しましょう。');if(!suggestions.some(x=>x.priority<3))add(5,'備えの維持と定期点検','今の備えを継続し、期限や家族構成の変化に合わせて見直しましょう。');
 suggestions.sort((a,b)=>a.priority-b.priority);activePriorityTitles=suggestions.map(x=>x.title);let prioritySaved=false;try{localStorage.setItem(priorityKey,JSON.stringify(activePriorityTitles));prioritySaved=true}catch(e){}renderTasks();status.textContent=prioritySaved?'診断結果を保存し、ホームの「今日やること」に反映しました。':'診断結果はホームに反映しましたが、再読み込み後の保存には失敗しました。';const out=document.getElementById('diagnosisResult');out.replaceChildren();out.classList.remove('hidden');const h=document.createElement('h2');h.textContent='あなたの家庭で優先したい対策';out.append(h);const p=document.createElement('p');p.className='notice';p.textContent='命を守る対策（家具の転倒・落下防止、地域の災害リスクと避難方法）を先に、飲料水・食料・トイレなどの生活維持をその後に表示しています。災害の種類や地域によって緊急度は変わります。';out.append(p);suggestions.forEach((item,i)=>{const card=document.createElement('div');card.className='diagnosis-result-item';const title=document.createElement('strong');title.textContent=(i+1)+'．'+item.title;const desc=document.createElement('p');desc.textContent=item.detail;card.append(title,desc);buildMissionChecklist(item,card);out.append(card)});const btn=document.createElement('button');btn.className='secondary';btn.textContent='備蓄必要量を計算する ↗';btn.onclick=()=>openStockCalculator();const homeButton=document.createElement('button');homeButton.className='primary';homeButton.textContent='ホームの優先ミッションを見る ↗';homeButton.style.marginRight='9px';homeButton.style.marginBottom='9px';homeButton.onclick=()=>{show('home');document.querySelector('.mission-card').scrollIntoView({behavior:'smooth',block:'start'})};out.append(homeButton,btn);out.scrollIntoView({behavior:'smooth',block:'start'})}
 const evacuationKey='toto-evacuation-plan-v1',evacuationDrillKey='toto-evacuation-drills-v1';
-const emergencyChecklistKey='toto-emergency-checklist-v1',evacuationReviewKey='toto-evacuation-review-v1';const homeSafetyKey='toto-home-safety-v1';const pouchKey='toto-pouch-v1';const tidyKey='toto-tidy-v1';const tidyTargetKey='toto-tidy-target-v1';const tidyDefaultsMigratedKey='toto-tidy-defaults-v2';const purchaseKey='toto-purchase-check-v1';const seasonalKey='toto-seasonal-check-v1';const supplyHistoryKey='toto-supply-transactions-v1';const outageScenarioKey='toto-outage-scenario-v1';const familyProfileKey='toto-family-profiles-v1';const allBackupKeys=[key,taskKey,diagnosisKey,priorityKey,missionKey,missionHistoryKey,stockDaysKey,toiletFrequencyKey,evacuationKey,evacuationDrillKey,emergencyChecklistKey,evacuationReviewKey,homeSafetyKey,pouchKey,tidyKey,tidyTargetKey,tidyDefaultsMigratedKey,purchaseKey,seasonalKey,supplyHistoryKey,outageScenarioKey,familyProfileKey,'toto-weather-location-v1','toto-event-search-v1','toto-practice-result-v1','toto-clean-practice-v1','toto-clean-schedule-v1','toto-rest-settings-v1'];
+const emergencyChecklistKey='toto-emergency-checklist-v1',evacuationReviewKey='toto-evacuation-review-v1';const homeSafetyKey='toto-home-safety-v1';const pouchKey='toto-pouch-v1';const tidyKey='toto-tidy-v1';const tidyTargetKey='toto-tidy-target-v1';const tidyDefaultsMigratedKey='toto-tidy-defaults-v2';const purchaseKey='toto-purchase-check-v1';const seasonalKey='toto-seasonal-check-v1';const supplyHistoryKey='toto-supply-transactions-v1';const outageScenarioKey='toto-outage-scenario-v1';const familyProfileKey='toto-family-profiles-v1';const allBackupKeys=[key,taskKey,diagnosisKey,priorityKey,missionKey,missionHistoryKey,stockDaysKey,toiletFrequencyKey,evacuationKey,evacuationDrillKey,emergencyChecklistKey,evacuationReviewKey,homeSafetyKey,pouchKey,tidyKey,tidyTargetKey,tidyDefaultsMigratedKey,purchaseKey,seasonalKey,supplyHistoryKey,outageScenarioKey,familyProfileKey,'toto-weather-location-v1','toto-event-search-v1','toto-practice-result-v1','toto-clean-practice-v1','toto-clean-schedule-v1','toto-rest-settings-v1','toto-moving-v1'];
 function backupUtf8ByteLength(value){
  if(typeof TextEncoder==='function')return new TextEncoder().encode(value).length;
  // Fallback for older browsers: UTF-8 length without allocating a large byte array.
@@ -1902,6 +1909,7 @@ const data=obj.data,keys=Object.keys(data);
 if(!keys.length||keys.some(k=>!allBackupKeys.includes(k)||typeof data[k]!=='string'||data[k].length>2000000)||backupUtf8ByteLength(JSON.stringify(obj))>2000000)throw Error('keys');
 for(const k of keys){
 const v=JSON.parse(data[k]);
+if(k==='toto-moving-v1'&&(!v||typeof v!=='object'||Array.isArray(v)||!Object.entries(v).every(([id,done])=>['risk','route','sort','carry','pack','bed','exit','fix','region','plan','stock','backup'].includes(id)&&typeof done==='boolean')))throw Error('moving checklist');
 if(k==='toto-rest-settings-v1'&&(!v||typeof v!=='object'||Array.isArray(v)||typeof v.enabled!=='boolean'))throw Error('rest settings');
 if(k==='toto-clean-schedule-v1'&&!validCleanSchedule(v))throw Error('clean schedule');
 if(k==='toto-clean-practice-v1'&&!validCleanPractice(v))throw Error('clean practice');
@@ -2119,7 +2127,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v87'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v88'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2485,7 +2493,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v87');
+  const cache=await caches.open('totonoe-offline-shell-v88');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -2506,17 +2514,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v87')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v88')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v87')?await caches.open('totonoe-offline-shell-v87'):null;
+  const cache=names.includes('totonoe-offline-shell-v88')?await caches.open('totonoe-offline-shell-v88'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v87'?'必須ファイル10件の保存とv87の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v87の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v88'?'必須ファイル10件の保存とv88の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v88の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -2637,7 +2645,7 @@ function openFullBackupFromReadiness(){
  const status=document.getElementById('allBackupStatus');if(status)status.textContent='復元前に、必ず最新の全データをバックアップして保存してください。';
 }
 // Inspects existing user-owned keys in read-only mode; never deletes or modifies records.
-// v87: read-only per-record schema audit. No stored values are edited or removed.
+// v88: read-only per-record schema audit. No stored values are edited or removed.
 function checkStoredDataIntegrity(){
  const host=document.getElementById('dataIntegrityResults');if(!host)return;
  host.replaceChildren();
@@ -2767,7 +2775,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v87';
+ const cacheName='totonoe-offline-shell-v88';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -2830,7 +2838,7 @@ async function repairOfflinePreparation(){
   }
   await inspect();
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v87有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v88有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/10件。Service Worker：'+state+'。';
@@ -2870,13 +2878,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v87';
+   const current='totonoe-offline-shell-v88';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v87有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v88有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
@@ -2918,7 +2926,7 @@ async function checkReleaseReadiness(){
 }
 initOfflineStartup();
 window.addEventListener('pageshow',initOfflineStartup);
-// v87: live JMA forecast only; never retain stale weather as a current forecast.
+// v88: live JMA forecast only; never retain stale weather as a current forecast.
 
 function jstWeatherDay(value){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value))}
 function weatherDailyRows(data,areaCode,now=Date.now()){
@@ -3323,7 +3331,7 @@ function pickPracticeQuestions(random=Math.random){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v87','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v88','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -3332,8 +3340,8 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v87';
-   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v87有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v88';
+   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v88有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
     const checks=await Promise.all(paths.map(async p=>{const res=await cache.match(new URL(p,scope).href);return !!res?.ok}));
@@ -3520,7 +3528,32 @@ function revealMoreTarget(id){
  target.scrollIntoView({block:'start',behavior:'smooth'});
 }
 
+
+function movingChecklistGroups(){return [
+[['risk','転居先と周辺の災害リスクを公式ハザードマップで確認する'],['route','避難先の候補と経路を確認する']],
+[['sort','新居の広さと暮らしに合わせ、持ち物を見直す'],['carry','必要な備えを、引越し当日も取り出せる場所にまとめる'],['pack','備蓄の数量・期限・新居での保管場所を確認する']],
+[['bed','寝る場所へ家具や家電が倒れ込まない配置にする'],['exit','玄関・出入口・通路を荷物でふさがない'],['fix','新居の家具や家電の転倒・落下対策を確認する']],
+[['region','天気と警報の登録地域を新住所の市区町村へ更新する'],['plan','避難先・避難判断・家族との連絡方法を更新する'],['stock','荷解き後の備蓄の数量・保管場所を一覧へ反映する'],['backup','更新した記録を全データバックアップで保管する']]
+];}
+function readMovingChecklist(){
+ try{const raw=localStorage.getItem('toto-moving-v1');if(raw===null)return {};validateFullBackupObject({format:'toto-full-backup-v1',data:{'toto-moving-v1':raw}});return JSON.parse(raw)}catch(e){return null}
+}
+function setMovingCheck(id,checked){
+ const value=readMovingChecklist(),status=document.getElementById('movingSaveStatus');if(value===null){status.textContent='保存済みのチェックを読み取れないため、元の記録を保持して保存を停止しました。';renderMovingChecklist();return}
+ if(!movingChecklistGroups().flat().some(([key])=>key===id)||typeof checked!=='boolean')return;
+ const next={...value,[id]:checked};
+ if(!verifiedSaveJson('toto-moving-v1',next)){renderMovingChecklist();status.textContent='保存できませんでした。チェックの状態を別に控えてください。';return}
+ renderMovingChecklist();status.textContent='引越しのチェックを保存しました。';
+}
+function renderMovingChecklist(){
+ const groups=movingChecklistGroups(),value=readMovingChecklist(),all=groups.flat();
+ const progress=document.getElementById('movingProgress');if(!progress)return;
+ progress.textContent=value===null?'保存済みのチェックを読み取れません。元の記録を保持しています。':'確認済み '+all.filter(([id])=>value[id]===true).length+'／'+all.length+'項目';
+ groups.forEach((items,index)=>{const host=document.getElementById('movingStage'+index);host.replaceChildren();items.forEach(([id,title])=>{const label=document.createElement('label');label.className='task';const check=document.createElement('input');check.type='checkbox';check.checked=value?.[id]===true;check.disabled=value===null;check.onchange=()=>setMovingCheck(id,check.checked);label.append(check,document.createTextNode(title));host.append(label)})});
+}
+
 function refreshRestoredFeatureState(keys){
+ if(keys.includes('toto-moving-v1'))renderMovingChecklist();
  // A restore is an explicit replacement: discard stale editors and in-memory views.
  if(keys.includes(familyProfileKey)){cancelFamilyEdit();renderFamilyProfiles();renderEmergencyFamily()}
  if(keys.includes('toto-event-search-v1'))restoreEventSearchSettings();
