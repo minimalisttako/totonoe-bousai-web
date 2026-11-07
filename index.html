@@ -2142,8 +2142,8 @@ async function checkReleaseReadiness(){
  button.disabled=true;output.replaceChildren();
  const rows=[];
  const add=(name,ok,detail)=>rows.push({name,ok,detail});
+ const key='toto-release-probe-'+Date.now();
  try {
-  const key='toto-release-probe-'+Date.now();
   localStorage.setItem(key,'test');
   const passed=localStorage.getItem(key)==='test';
   localStorage.removeItem(key);
