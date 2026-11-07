@@ -4,7 +4,7 @@ function extract(name){const start=source.indexOf('function '+name+'(');assert(s
 function node(){return {value:'',textContent:'',style:{},children:[],attrs:{},classList:{toggle(){},add(){}},append(...v){this.children.push(...v)},replaceChildren(...v){this.children=[...v];this.textContent=''},setAttribute(k,v){this.attrs[k]=v},scrollIntoView(){}}}
 const fields={},fold={open:false};const field=id=>fields[id]||(fields[id]=node());field('supplyFilter').value='all';let readable=true,writes=0;
 const c={supplies:[{name:'保存水５００ｍＬ',qty:'2',unit:'本',location:'玄関',target:'5',category:'water'},{name:'保存水2L',qty:'3',unit:'本',location:'台所',category:'water'},{name:'携帯トイレ',qty:'1',location:'玄関',category:'toilet'},{name:'ライト',qty:'1',location:'寝室'}],activePage:'home',document:{getElementById:field,createElement:node,querySelector:()=>fold},supplyStorageReadable:()=>readable,show(){},dateAfterDays:()=> '2026-11-15',validSupplyMeasure:()=>false,localStorage:{setItem(){writes++}},renderReplenishment(){},renderStockCalculator(){},renderHomeInspectionAlerts(){},renderHomeStockAlerts(){}};
-vm.createContext(c);vm.runInContext(['supplyMatchesQuery','renderSupplyCategorySummary','renderSupplyNoMatches','selectSupplyList','showSupplyShortages','resetSupplySearch'].map(extract).join('\n')+'\n'+source.slice(source.indexOf('function renderSupplies(){'),source.indexOf('function setStorageStatus',source.indexOf('function renderSupplies(){'))),c);
+vm.createContext(c);vm.runInContext(['validSupplyDate','supplyNeedsDateReview','supplyMatchesQuery','renderSupplyCategorySummary','renderSupplyNoMatches','selectSupplyList','showSupplyShortages','resetSupplySearch'].map(extract).join('\n')+'\n'+source.slice(source.indexOf('function renderSupplies(){'),source.indexOf('function setStorageStatus',source.indexOf('function renderSupplies(){'))),c);
 for(const q of ['水 玄関','５００ｍｌ　玄関','500ML','  水   玄関  '])assert(c.supplyMatchesQuery(c.supplies[0],q),q);
 assert(!c.supplyMatchesQuery(c.supplies[0],'水 台所'));assert(c.supplyMatchesQuery(c.supplies[0],''));assert(!c.supplyMatchesQuery(c.supplies[0],'<script>'));
 field('supplySearch').value='水 玄関';c.renderSupplies();assert.equal(field('supplyList').children.length,1);assert.match(field('supplySearchStatus').textContent,/表示：1件／登録済み：4件/);
@@ -14,3 +14,11 @@ field('supplySearch').value='ライト';const categories=field('supplyCategorySu
 c.supplies=[];c.renderSupplies();assert.equal(field('supplySearchStatus').textContent,'表示：0件／登録済み：0件');assert.match(field('expirySummary').textContent,/登録すると/);assert(field('supplyCategorySummary').children.every(x=>x.textContent.includes('0種類')));
 readable=false;c.renderSupplies();assert.doesNotMatch(field('supplySearchStatus').textContent,/登録済み：0件/);assert.match(field('expirySummary').textContent,/確認できません/);assert.match(field('supplyCategorySummary').textContent,/確認できません/);assert.equal(field('supplyShortageCount').textContent,'不足品の件数は未確認');assert.equal(writes,0);
 console.log('PASS: NFKC/case/multi-word AND search; original item routes retained; no-result reset; shortage/category shortcuts clear stale query; selected state; zero-record counts and unreadable state; no storage writes');
+
+readable=true;c.supplies=[{name:'存在しない期限',qty:'1',exp:'2026-02-30',nextCheck:'invalid'},{name:'うるう年の期限',qty:'1',exp:'2028-02-29'},{name:'期限未入力',qty:'1'}];
+field('supplySearch').value='';field('supplyFilter').value='dateReview';c.renderSupplies();assert.equal(field('supplyList').children.length,1);assert.match(field('expirySummary').children[0].textContent,/日付を要確認 1件/);
+field('supplyFilter').value='expired';c.renderSupplies();assert.equal(field('supplyList').children[1].textContent,'すべての備蓄に戻る');
+field('supplyFilter').value='noExpiry';c.renderSupplies();assert.equal(field('supplyList').children.length,2);
+field('supplyFilter').value='inspection';c.renderSupplies();assert.equal(field('supplyList').children[1].textContent,'すべての備蓄に戻る');
+assert.equal(c.supplies[0].exp,'2026-02-30');assert.equal(c.supplies[0].nextCheck,'invalid');
+console.log('PASS: invalid dates are visible in review/unset filters, excluded from expired/due counts, and never changed in stored records');
