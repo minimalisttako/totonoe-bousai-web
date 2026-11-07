@@ -581,6 +581,16 @@ header{z-index:50;isolation:isolate}
 @media(prefers-reduced-motion:reduce){
  #home .anime-approved-home-image{animation:none!important;transition:none!important}
 }
+
+/* v23: cross-check three essential planning records without storing derived personal data. */
+.household-readiness-bridge{margin:12px 0;padding:12px;border-radius:14px;background:#f6fafb;border:1px solid #d8e8eb}
+.household-readiness-bridge h3{margin:0 0 8px;font-size:16px;color:#28556a}
+.household-bridge-item{width:100%;display:grid;grid-template-columns:minmax(0,1fr) 22px;gap:3px 9px;align-items:center;min-height:62px;margin:7px 0;padding:10px 12px;border-radius:11px;border:1px solid #d6e5e9;background:white;color:#28566d;text-align:left}
+.household-bridge-item strong{grid-column:1;font-size:14px}
+.household-bridge-item small{grid-column:1;font-size:12px;line-height:1.5;overflow-wrap:anywhere;color:#526e79}
+.household-bridge-item span{grid-column:2;grid-row:1/3;font-size:18px}
+.household-bridge-item.needs-review{border-left:3px solid #d1a060}
+.household-bridge-item:focus-visible{outline:3px solid #3a87a5;outline-offset:2px}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -664,7 +674,7 @@ header{z-index:50;isolation:isolate}
 <div class="card">
 <h2>わが家の防災準備状況</h2>
 <p class="notice">登録済みの記録から、優先して確認する項目をまとめます。防災の安全性を点数化したり、災害への耐性を保証するものではありません。</p>
-<p id="readinessSummary" class="notice" role="status" aria-live="polite"></p>
+<p id="readinessSummary" class="notice" role="status" aria-live="polite"></p><div id="householdReadinessBridge" class="household-readiness-bridge" aria-live="polite"></div>
 <div id="readinessItems" aria-live="polite"></div>
 <button class="secondary" type="button" style="width:100%;min-height:48px" onclick="renderReadinessOverview()">最新の記録で更新する</button>
 </div>
@@ -1269,10 +1279,49 @@ function runDataHealthAudit(){
  note.textContent='この点検は保存データを変更しません。復元の成功や端末障害への耐性を保証するものではありません。不具合がある場合は削除・復元せず、まず現在のバックアップを控えてください。';
  box.append(note);
 }
+// Read-only cross-check. No saved settings are inferred or overwritten.
+function renderHouseholdReadinessBridge(){
+ const host=document.getElementById('householdReadinessBridge');if(!host)return;
+ host.replaceChildren();
+ const title=document.createElement('h3');title.textContent='家族・避難・備蓄のつながり';
+ host.append(title);
+ const entry=(name,detail,page,warning=false)=>{
+  const row=document.createElement('button');row.type='button';row.className='household-bridge-item';
+  if(warning)row.classList.add('needs-review');
+  row.onclick=()=>show(page);
+  const heading=document.createElement('strong');heading.textContent=name;
+  const description=document.createElement('small');description.textContent=detail;
+  const arrow=document.createElement('span');arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');
+  row.append(heading,description,arrow);host.append(row);
+ };
+ try{
+  const family=loadFamilyProfiles();
+  const people=family.filter(x=>x.type!=='pet').reduce((sum,x)=>sum+x.count,0);
+  const pets=family.filter(x=>x.type==='pet').reduce((sum,x)=>sum+x.count,0);
+  entry('家族・ペットの記録',family.length?'登録：人 '+people+'人／ペット '+pets+'頭。人数は計算画面に自動上書きしません。':'未登録。必要な人・ペットだけ記録できます。','family',!family.length);
+  const plan=readEvacuationPlan();
+  const missing=['evPlace','evTiming','evContacts'].filter(k=>typeof plan[k]!=='string'||!plan[k].trim());
+  entry('マイ避難計画',missing.length?'重要3項目のうち未記入 '+missing.length+'項目。':'避難先・判断・連絡方法を記入済み。','evacuation',missing.length>0);
+  const today=todayLocalDate();
+  const water=supplies.filter(x=>x.category==='water');
+  const valid=water.filter(x=>String(x.factor??'').trim()!==''&&Number.isFinite(Number(x.factor))&&Number(x.factor)>0&&Number.isInteger(Number(x.qty))&&Number(x.qty)>=0&&(!x.exp||x.exp>=today));
+  const liters=valid.reduce((sum,x)=>sum+Number(x.factor)*Number(x.qty),0);
+  const excluded=water.length-valid.length;
+  const litersText=Number(liters.toFixed(3)).toLocaleString('ja-JP');
+  entry('登録済みの飲料水',valid.length?litersText+'L（容量を設定した有効な '+valid.length+'種類）'+(excluded?'／未集計 '+excluded+'種類':''):'容量と数量を確認できる飲料水が未登録です。','supplies',!valid.length||excluded>0);
+  const note=document.createElement('p');note.className='notice';
+  note.textContent='飲料水の目安は別の備蓄計算で人数・日数を指定してください。家族カルテ未登録を「備蓄0人分」とは判定しません。';
+  host.append(note);
+ }catch(e){
+  const message=document.createElement('p');message.className='notice';
+  message.textContent='連携情報の表示に失敗しました。各画面の記録を個別に確認してください。保存内容は変更していません。';
+  host.append(message);
+ }
+}
 function renderReadinessOverview(){
  const box=document.getElementById('readinessItems'),next=document.getElementById('readinessNextActions'),summary=document.getElementById('readinessSummary');
  if(!box||!next||!summary)return;
- const items=getReadinessOverview();box.replaceChildren();next.replaceChildren();
+ const items=getReadinessOverview();box.replaceChildren();next.replaceChildren();renderHouseholdReadinessBridge();
  const attention=items.filter(x=>x.attention);
  summary.textContent='確認する項目：'+attention.length+'カテゴリー ／ 表示中：'+items.length+'カテゴリー（登録状況から算出）';
  const makeButton=(item,index)=>{
