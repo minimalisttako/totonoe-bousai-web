@@ -55,3 +55,8 @@ const trainingDest=new Map();assert(ctx.applyValidatedRestoreToStorage(trainingP
 assert.equal(JSON.parse(trainingDest.get('toto-evacuation-drills-v1'))[0].note,'確認した点');
 assert.throws(()=>validate({format:'toto-full-backup-v1',data:{'toto-evacuation-drills-v1':JSON.stringify([{date:'2026-02-30',type:'訓練'}])}}));
 console.log('PASS: training backup preserves notes and rejects nonexistent calendar dates');
+
+const expandedQuiz=validate({format:'toto-full-backup-v1',data:{'toto-practice-result-v1':JSON.stringify({version:1,total:5,score:4,wrong:[29],completedAt:when})}});
+const expandedDest=new Map();assert(ctx.applyValidatedRestoreToStorage(expandedQuiz.data,expandedQuiz.keys,storage(expandedDest)).ok);assert.equal(JSON.parse(expandedDest.get('toto-practice-result-v1')).wrong[0],29);
+assert.throws(()=>validate({format:'toto-full-backup-v1',data:{'toto-practice-result-v1':JSON.stringify({version:1,total:5,score:4,wrong:[30],completedAt:when})}}));
+console.log('PASS: expanded-bank wrong-answer IDs survive backup/restore; out-of-range question IDs rejected');

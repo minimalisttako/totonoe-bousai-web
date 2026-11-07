@@ -19,8 +19,8 @@ let pending=true;const card={dataset:{}},missions={nextElementSibling:null,after
 c.document={getElementById:id=>id==='home'?home:card};c.criticalSafetyState=()=>({remaining:pending?['one']:[]});
 c.positionCriticalSafetyCard();assert.equal(card.dataset.priority,'pending');assert.equal(missions.nextElementSibling,card);pending=false;c.positionCriticalSafetyCard();assert.equal(home.lastElementChild,card);assert.equal(card.dataset.priority,'complete');pending=true;c.positionCriticalSafetyCard();assert.equal(missions.nextElementSibling,card);
 const start=source.indexOf('const practiceQuestions='),end=source.indexOf('\n',start);vm.runInContext(source.slice(start,end),c);
-const total=vm.runInContext('practiceQuestions.length',c);assert.equal(total,15);
+const total=vm.runInContext('practiceQuestions.length',c);assert.equal(total,30);
 vm.runInContext("for(const q of practiceQuestions){if(!q.q||!q.why||q.a.length!==3||!Number.isInteger(q.correct)||q.correct<0||q.correct>2||!q.url.startsWith('https://'))throw Error('Invalid question');}",c);
 let seed=123456;const random=()=>((seed=(1664525*seed+1013904223)>>>0)/4294967296);const seen=new Set();for(let run=0;run<1000;run++){const ids=c.pickPracticeQuestions(random);assert.equal(ids.length,5);assert.equal(new Set(ids).size,5);for(const id of ids){assert(id>=0&&id<total);seen.add(id);}}
-assert.equal(seen.size,15);
+assert.equal(seen.size,30);
 console.log('PASS: cleaning reset boundaries/year/leap-day/custom schedule; higher safety and stock needs override cleaning; safety card moves down and returns; 1000 quiz draws each contain five unique questions');
