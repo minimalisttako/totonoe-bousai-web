@@ -665,7 +665,7 @@ header{z-index:50;isolation:isolate}
 <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
 <p class="notice" id="backupIntegrityResult" role="status" aria-live="polite">実データの復元は行わず、バックアップの生成と読み取りを確認します。</p>
 <button class="secondary" type="button" style="width:100%;min-height:48px;margin:8px 0" onclick="simulateFullRestore()">復元リハーサルを実行（記録は変更しません）</button>
-<p id="restoreRehearsalStatus" class="notice" role="status" aria-live="polite">テスト用データを使って、復元形式の確認・上書き・失敗時の保護をメモリ上で検証します。</p><button class="secondary" type="button" style="width:100%;min-height:48px;margin:8px 0" onclick="testActualStorageRoundTrip()">端末保存領域の書き戻しテスト</button><p id="actualStorageTestStatus" class="notice" role="status" aria-live="polite">専用の一時テストキーだけで保存・変更・書き戻し・削除を検証します。備蓄や避難計画は変更しません。</p>
+<p id="restoreRehearsalStatus" class="notice" role="status" aria-live="polite">テスト用データを使って、復元形式の確認・上書き・失敗時の保護をメモリ上で検証します。</p><button class="secondary" type="button" style="width:100%;min-height:48px;margin:8px 0" onclick="testActualStorageRoundTrip()">端末保存領域の書き戻しテスト</button><p id="actualStorageTestStatus" class="notice" role="status" aria-live="polite">専用の一時テストキーだけで保存・変更・書き戻し・削除を検証します。備蓄や避難計画は変更しません。</p><button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="runIsolatedRestoreTest()">復元処理の実地テスト（専用一時領域のみ）</button><p id="isolatedRestoreStatus" class="notice" role="status" aria-live="polite">本番と同じ復元処理を、専用の一時領域で試験します。既存の防災記録は上書きしません。</p>
 <details class="more-fold"><summary>保存データの総合点検 <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
 <p class="notice">登録済みデータの読み取り・形式・バックアップ適合性をこの端末内で検査します。削除・復元・外部送信は行いません。</p>
 <button class="secondary" type="button" style="width:100%;min-height:48px" onclick="runDataHealthAudit()">保存データを安全に点検する</button>
@@ -1491,7 +1491,23 @@ let pendingFullRestore=null;
 let verifiedFullRestoreSignature=null;
 let verifiedFullRestoreOriginalSnapshot=null;
 function restoreOriginalSnapshot(keys){return JSON.stringify(keys.map(k=>[k,localStorage.getItem(k)]))}
-function restoreAllData(){const status=document.getElementById('allBackupStatus');const raw=document.getElementById('allBackupText').value.trim();if(!raw){pendingFullRestore=null;status.textContent='バックアップが読み込まれていないため、復元していません。まずファイルを読み込み、内容を確認してください。';return}let checked;try{checked=validateFullBackupObject(JSON.parse(raw))}catch(e){pendingFullRestore=null;status.textContent='バックアップ内のデータ形式が正しくありません。復元は行っていません。';return}const {data,keys}=checked;const signature=JSON.stringify(data);if(verifiedFullRestoreSignature!==signature){pendingFullRestore=null;status.textContent='先に「復元する内容を確認」を押してください。確認後にバックアップ内容を変更した場合は再確認が必要です。';return;}if(verifiedFullRestoreOriginalSnapshot!==restoreOriginalSnapshot(keys)){pendingFullRestore=null;verifiedFullRestoreSignature=null;verifiedFullRestoreOriginalSnapshot=null;status.textContent='確認後に端末の保存データが変わりました。変更を上書きしないため復元を中止しました。もう一度「復元する内容を確認」からやり直してください。';return;}if(pendingFullRestore!==signature){pendingFullRestore=signature;status.textContent='確認：'+keys.length+'種類のデータを復元します。現在のデータを別途バックアップしてから、もう一度「全データを復元」を押してください。';return}pendingFullRestore=null;const originals={};try{keys.forEach(k=>{originals[k]=localStorage.getItem(k)});keys.forEach(k=>localStorage.setItem(k,data[k]));if(keys.some(k=>localStorage.getItem(k)!==data[k]))throw Error('verification failed')}catch(e){keys.forEach(k=>{try{if(originals[k]===null)localStorage.removeItem(k);else if(originals[k]!==undefined)localStorage.setItem(k,originals[k])}catch(ignore){}});status.textContent='復元データを検証できませんでした。可能な範囲で元のデータに戻しました。保存領域の状態を確認してください。';return}supplies=readSaved(key,[]);done=readSaved(taskKey,[]);activePriorityTitles=null;document.getElementById('fullBackupPreview').textContent='';loadDiagnosis();loadEvacuationPlan();initStockCalculator();renderSupplies();renderTasks();renderMissionHistory();renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm();renderHomeEvacuationReview();renderEmergencyChecklist();renderPouch();renderTidy();renderSeasonalCheck();renderHomeSeasonalSummary();renderHomeTidySummary();renderHomePouchSummary();renderEmergencyPlan();syncDiagnosisMissionUI();initOutageSimulation();renderFamilyProfiles();renderHomeSafetyChecks();renderHomeSafetyAlert();renderCriticalSafety();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeNextThree();renderReadinessOverview();renderTidyJourney();updateOfflineReadiness();const difference=document.getElementById('fullBackupDiff');if(difference)difference.replaceChildren();verifiedFullRestoreSignature=null;verifiedFullRestoreOriginalSnapshot=null;status.textContent='復元しました（'+keys.length+'種類）。備蓄・診断・避難計画などを確認してください。'}
+function applyValidatedRestoreToStorage(data,keys,storage){
+ const original={};
+ for(const k of keys)original[k]=storage.getItem(k);
+ try{
+  for(const k of keys)storage.setItem(k,data[k]);
+  if(keys.some(k=>storage.getItem(k)!==data[k]))throw Error('verification failed');
+  return {ok:true,restored:keys.length};
+ }catch(error){
+  let rolledBack=true;
+  for(const k of keys){
+   try{if(original[k]===null)storage.removeItem(k);else storage.setItem(k,original[k])}
+   catch(e){rolledBack=false}
+  }
+  return {ok:false,rolledBack};
+ }
+}
+function restoreAllData(){const status=document.getElementById('allBackupStatus');const raw=document.getElementById('allBackupText').value.trim();if(!raw){pendingFullRestore=null;status.textContent='バックアップが読み込まれていないため、復元していません。まずファイルを読み込み、内容を確認してください。';return}let checked;try{checked=validateFullBackupObject(JSON.parse(raw))}catch(e){pendingFullRestore=null;status.textContent='バックアップ内のデータ形式が正しくありません。復元は行っていません。';return}const {data,keys}=checked;const signature=JSON.stringify(data);if(verifiedFullRestoreSignature!==signature){pendingFullRestore=null;status.textContent='先に「復元する内容を確認」を押してください。確認後にバックアップ内容を変更した場合は再確認が必要です。';return;}if(verifiedFullRestoreOriginalSnapshot!==restoreOriginalSnapshot(keys)){pendingFullRestore=null;verifiedFullRestoreSignature=null;verifiedFullRestoreOriginalSnapshot=null;status.textContent='確認後に端末の保存データが変わりました。変更を上書きしないため復元を中止しました。もう一度「復元する内容を確認」からやり直してください。';return;}if(pendingFullRestore!==signature){pendingFullRestore=signature;status.textContent='確認：'+keys.length+'種類のデータを復元します。現在のデータを別途バックアップしてから、もう一度「全データを復元」を押してください。';return}pendingFullRestore=null;const result=applyValidatedRestoreToStorage(data,keys,localStorage);if(!result.ok){status.textContent=result.rolledBack?'復元に失敗したため、対象データを元に戻しました。保存領域の状態を確認してください。':'復元に失敗し、一部のデータを元に戻せませんでした。現在のバックアップを確認し、再操作せず記録の状態を確認してください。';return}supplies=readSaved(key,[]);done=readSaved(taskKey,[]);activePriorityTitles=null;document.getElementById('fullBackupPreview').textContent='';loadDiagnosis();loadEvacuationPlan();initStockCalculator();renderSupplies();renderTasks();renderMissionHistory();renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm();renderHomeEvacuationReview();renderEmergencyChecklist();renderPouch();renderTidy();renderSeasonalCheck();renderHomeSeasonalSummary();renderHomeTidySummary();renderHomePouchSummary();renderEmergencyPlan();syncDiagnosisMissionUI();initOutageSimulation();renderFamilyProfiles();renderHomeSafetyChecks();renderHomeSafetyAlert();renderCriticalSafety();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeNextThree();renderReadinessOverview();renderTidyJourney();updateOfflineReadiness();const difference=document.getElementById('fullBackupDiff');if(difference)difference.replaceChildren();verifiedFullRestoreSignature=null;verifiedFullRestoreOriginalSnapshot=null;status.textContent='復元しました（'+keys.length+'種類）。備蓄・診断・避難計画などを確認してください。'}
 const evacuationFields=[['evHazard','自宅周辺の災害リスク'],['evPlace','避難先・安全な場所'],['evRoute','安全に移動する経路と注意点'],['evTiming','避難を開始する判断・タイミング'],['evContacts','家族・大切な人との連絡方法'],['evMeeting','連絡できない場合の安否確認・集合方法']];
 function readEvacuationPlan(){try{const v=JSON.parse(localStorage.getItem(evacuationKey)||'{}');return v&&typeof v==='object'&&!Array.isArray(v)?v:{}}catch(e){return {}}}
 function loadEvacuationPlan(){const v=readEvacuationPlan();evacuationFields.forEach(([id])=>{const input=document.getElementById(id);if(input)input.value=typeof v[id]==='string'?v[id]:''})}
@@ -1890,6 +1906,40 @@ async function initOfflineStartup(){
   const count=readyFiles.filter(Boolean).length;
   set(count===necessary.length?'必須ファイル9件の保存を確認しました。機内モードでの起動もお試しください。':'オフライン用ファイル：'+count+'/9件。通信できる状態でアプリを開き直してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
+}
+function runIsolatedRestoreTest(){
+ const status=document.getElementById('isolatedRestoreStatus');if(!status)return;
+ const prefix='toto-restore-rehearsal-'+Date.now()+'-'+Math.random().toString(36).slice(2)+'-';
+ const originalKeys=[key,evacuationKey,familyProfileKey];
+ const testKeys=originalKeys.map((_,i)=>prefix+i);
+ const fixture=[JSON.stringify([{name:'復元テスト用品',qty:3}]),JSON.stringify({evPlace:'復元テスト用の避難先'}),JSON.stringify([{id:'test',type:'adult',count:1,label:'試験用'}])];
+ const staged={};
+ testKeys.forEach((k,i)=>staged[k]=fixture[i]);
+ let success=false,rollback=false,clean=true;
+ try{
+  validateFullBackupObject({format:'toto-full-backup-v1',data:Object.fromEntries(originalKeys.map((k,i)=>[k,fixture[i]]))});
+  const init=testKeys.map((k,i)=>JSON.stringify({before:i}));
+  testKeys.forEach((k,i)=>localStorage.setItem(k,init[i]));
+  const good=applyValidatedRestoreToStorage(staged,testKeys,localStorage);
+  success=good.ok&&testKeys.every((k,i)=>localStorage.getItem(k)===fixture[i]);
+  // Use an adapter that simulates one failed write after the first succeeds.
+  const adapter={
+   getItem:k=>localStorage.getItem(k),
+   setItem:(k,v)=>{if(k===testKeys[1]&&v===staged[k])throw Error('simulated failure');localStorage.setItem(k,v)},
+   removeItem:k=>localStorage.removeItem(k)
+  };
+  const before=testKeys.map(k=>localStorage.getItem(k));
+  const failed=applyValidatedRestoreToStorage(Object.fromEntries(testKeys.map((k,i)=>[k,JSON.stringify({changed:i})])),testKeys,{
+   getItem:adapter.getItem,
+   setItem:(k,v)=>{if(k===testKeys[1]&&v===JSON.stringify({changed:1}))throw Error('simulated failure');localStorage.setItem(k,v)},
+   removeItem:adapter.removeItem
+  });
+  rollback=!failed.ok&&failed.rolledBack&&testKeys.every((k,i)=>localStorage.getItem(k)===before[i]);
+ }catch(e){success=false;}
+ finally{
+  for(const k of testKeys){try{localStorage.removeItem(k);if(localStorage.getItem(k)!==null)clean=false}catch(e){clean=false}}
+ }
+ status.textContent=(success&&rollback&&clean?'✅ 復元処理の実地テスト：3/3項目OK（書き込み照合・失敗時の巻き戻し・一時データの削除）。':'⚠️ 復元処理の実地テストに未達項目があります。')+' 専用の一時データのみ使用しました。実際の防災記録の復元成功を保証するものではありません。';
 }
 function testActualStorageRoundTrip(){
  const status=document.getElementById('actualStorageTestStatus');if(!status)return;
