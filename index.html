@@ -1268,14 +1268,16 @@ function renderOutageSimulation(persist=true){
  }
  const needed=people*days*3;
  const today=todayLocalDate();
- const waters=supplies.filter(x=>x.category==='water');
- const measured=waters.filter(x=>Number.isFinite(Number(x.factor))&&Number(x.factor)>0&&Number.isInteger(Number(x.qty))&&Number(x.qty)>=0&&(!x.exp||x.exp>=today));
- const liters=measured.reduce((sum,x)=>sum+Number(x.factor)*Number(x.qty),0);
+ const water=supplyStorageReadable()?readinessWaterSummary(supplies,today):null;
  const whole=n=>Number(n.toFixed(3)).toLocaleString('ja-JP');
  line('飲料水の目安',whole(needed)+'L（'+people+'人 × '+days+'日 × 3L）');
- line('登録済みの飲料水',whole(liters)+'L（容量を設定済み・期限内の '+measured.length+'種類を集計）');
- const short=Math.max(0,needed-liters);
- line('飲料水の不足目安',whole(short)+'L'+(waters.length>measured.length?' ※容量未設定・期限切れ等の水は除外':''),short>0);
+ if(!water){line('登録済みの飲料水','保存内容を読み取れないため、合計・不足量は未確認です。',true)}
+ else if(!water.counted.length){line('登録済みの飲料水','合計を計算できる飲料水が未登録です。使用可能量・不足量は未確定です。',true)}
+ else{
+  line('登録済みの飲料水',whole(water.liters)+'L（登録数量から算出）／未集計 '+water.excluded+'種類・使用期限未設定 '+water.undated+'種類');
+  if(water.excluded||water.undated)line('飲料水の不足目安','期限や容量を確認できない記録があるため、使用可能量・不足量は未確定です。',true);
+  else{const short=Math.max(0,needed-water.liters);line('飲料水の不足目安',whole(short)+'L',short>0)}
+ }
  if(freqRaw===''){line('非常用トイレ','1人1日あたりの回数を入力すると必要回数を計算できます。');return}
  if(!Number.isInteger(freq)||freq<1||freq>50){line('非常用トイレ','1〜50回の整数で入力してください。',true);return}
  const required=people*days*freq;
@@ -1284,48 +1286,62 @@ function renderOutageSimulation(persist=true){
  if(!Number.isInteger(toiletStock)||toiletStock<0||toiletStock>100000){line('トイレの備蓄回数','0〜100000回で入力してください。',true);return}
  line('トイレの不足目安',whole(Math.max(0,required-toiletStock))+'回',required>toiletStock);
 }
+function readinessWaterSummary(items,today){
+ const waters=items.filter(x=>x.category==='water');
+ const counted=waters.filter(x=>String(x.factor??'').trim()!==''&&Number.isFinite(Number(x.factor))&&Number(x.factor)>0&&Number.isInteger(Number(x.qty))&&Number(x.qty)>=0&&(!x.exp||validSupplyDate(x.exp)&&x.exp>=today));
+ return {counted,liters:counted.reduce((sum,x)=>sum+Number(x.factor)*Number(x.qty),0),excluded:waters.length-counted.length,undated:counted.filter(x=>!x.exp).length};
+}
+function openReadinessAction(item){
+ if(item.filter){selectSupplyList(item.filter);return}
+ if(item.action==='calculator'){openStockCalculator();return}
+ show(item.page);
+ if(item.action==='plan'){
+  openEvacuationEdit();const plan=readEvacuationPlan(),id=['evPlace','evTiming','evContacts'].find(k=>typeof plan[k]!=='string'||!plan[k].trim());
+  if(id)requestAnimationFrame(()=>{const field=document.getElementById(id);field?.scrollIntoView({block:'center',behavior:'smooth'});field?.focus({preventScroll:true})});
+ }
+}
 function getReadinessOverview(){
  const result=[];
- const add=(name,detail,page,attention)=>result.push({name,detail,page,attention});
+ const add=(name,detail,page,attention,extra={})=>result.push({name,detail,page,attention,...extra});
  try{
   const safety=readHomeSafety(),open=criticalSafetyIds.filter(id=>safety[id]!=='done'&&safety[id]!=='na').length;
   add('住まいの安全',open?'優先対策の未確認・要対策 '+open+'件':'優先対策は記録上すべて確認済み','homeSafety',open>0);
  }catch(e){add('住まいの安全','記録を確認できません','homeSafety',true)}
  try{
-  const plan=readEvacuationPlan(),fields=['evPlace','evTiming','evContacts'];
-  const missing=fields.filter(id=>typeof plan[id]!=='string'||!plan[id].trim()).length;
-  add('マイ避難計画',missing?'重要3項目のうち未記入 '+missing+'件':'避難先・避難判断・連絡方法を記入済み','evacuation',missing>0);
+  const plan=readEvacuationPlan(),fields=[['evPlace','避難先'],['evTiming','避難判断'],['evContacts','連絡方法']];
+  const missing=fields.filter(([id])=>typeof plan[id]!=='string'||!plan[id].trim());
+  add('マイ避難計画',missing.length?'未記入：'+missing.map(([,name])=>name).join('・'):'避難先・避難判断・連絡方法を記入済み','evacuation',missing.length>0,{action:'plan'});
  }catch(e){add('マイ避難計画','記録を確認できません','evacuation',true)}
  try{
+  if(!supplyStorageReadable())throw Error('unreadable');
   const today=todayLocalDate(),soon=dateAfterDays(30);
   const expired=supplies.filter(x=>validSupplyDate(x.exp)&&x.exp<today).length;
-  const due=supplies.filter(x=>(x.exp&&x.exp>=today&&x.exp<=soon)||(x.nextCheck&&x.nextCheck<=today)).length;
+  const inspection=supplies.filter(x=>validSupplyDate(x.nextCheck)&&x.nextCheck<=today).length;
+  const near=supplies.filter(x=>validSupplyDate(x.exp)&&x.exp>=today&&x.exp<=soon).length;
   const short=supplies.filter(x=>String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.qty)<Number(x.target)).length;
-  const unknown=supplies.filter(x=>!x.exp).length;
-  add('備蓄の期限と不足',!supplies.length?'備蓄登録はまだありません':'期限切れ '+expired+'件 ／ 点検・期限間近 '+due+'件 ／ 目標不足 '+short+'件 ／ 使用期限未設定 '+unknown+'件（期限未設定は安全性を確認できないものとして扱います）','supplies',!supplies.length||expired+due+short>0);
- }catch(e){add('備蓄の期限と不足','記録を確認できません','supplies',true)}
+  const unknown=supplies.filter(x=>!x.exp).length,unknownForReview=supplies.filter(x=>['water','food','toilet'].includes(x.category)&&!x.exp).length,review=supplies.filter(supplyNeedsDateReview).length;
+  const filter=expired?'expired':review?'dateReview':inspection?'inspection':near?'soon':short?'shortage':unknownForReview?'noExpiry':'all';
+  add('備蓄の期限と不足',!supplies.length?'備蓄登録はまだありません':'期限切れ '+expired+'件 ／ 今日までに点検 '+inspection+'件 ／ 期限30日以内 '+near+'件 ／ 目標不足 '+short+'件 ／ 期限未設定 '+unknown+'件 ／ 日付を要確認 '+review+'件（期限の要否は品目ごとに確認）','supplies',!supplies.length||expired+inspection+near+short+unknownForReview+review>0,{filter});
+ }catch(e){add('備蓄の期限と不足','保存内容を読み取れないため、期限・不足を確認できません','supplies',true)}
  try{
-  const humans=loadFamilyProfiles().filter(x=>x.type!=='pet').reduce((n,x)=>n+x.count,0);
-  const pets=loadFamilyProfiles().filter(x=>x.type==='pet').reduce((n,x)=>n+x.count,0);
+  const records=loadFamilyProfiles(),humans=records.filter(x=>x.type!=='pet').reduce((n,x)=>n+x.count,0),pets=records.filter(x=>x.type==='pet').reduce((n,x)=>n+x.count,0);
   add('家族・ペット',humans+pets?'登録：人 '+humans+'人・ペット '+pets+'頭':'未登録（任意の機能です）','family',false);
  }catch(e){add('家族・ペット','記録を確認できません','family',false)}
  try{
+  if(!supplyStorageReadable()){add('飲料水の計算','備蓄の保存内容を読み取れないため、飲料水の合計・不足量は未確認です','supplies',true);return result}
   const people=Number(document.getElementById('outagePeople')?.value),mode=document.getElementById('outageDays')?.value;
   const days=Number(mode==='custom'?document.getElementById('outageCustomDays')?.value:mode);
   if(!Number.isInteger(people)||people<1||people>30||!Number.isInteger(days)||days<1||days>365)throw Error('invalid');
-  const total=people*days*3,today=todayLocalDate();
-  const waters=supplies.filter(x=>x.category==='water');
-  const valid=waters.filter(x=>String(x.factor??'').trim()!==''&&Number.isFinite(Number(x.factor))&&Number(x.factor)>0&&Number.isInteger(Number(x.qty))&&Number(x.qty)>=0&&(!x.exp||x.exp>=today));
-  const liters=valid.reduce((v,x)=>v+Number(x.factor)*Number(x.qty),0);
-  const fmt=v=>Number(v.toFixed(2)).toLocaleString('ja-JP');
-  const unknown=waters.length>valid.length;
-  const record=waters.length?(valid.length?'計測できた飲料水 '+fmt(liters)+'L':'容量が確認できる飲料水は未登録'):'飲料水の登録なし';
-  const difference=valid.length&&!unknown?' ／ 登録済みとの差 '+fmt(Math.max(0,total-liters))+'L（目安）':' ／ 不足量は未確定';
-  const note=unknown?'（期限切れ・容量未設定など未集計の水 '+(waters.length-valid.length)+'種類）':'';
-  add('飲料水の計算',people+'人・'+days+'日：目安 '+fmt(total)+'L ／ '+record+difference+note,'outage',!valid.length||unknown||liters<total);
+  const total=people*days*3,water=readinessWaterSummary(supplies,todayLocalDate()),fmt=v=>Number(v.toFixed(2)).toLocaleString('ja-JP');
+  const unknown=water.excluded>0||water.undated>0;
+  const record=water.counted.length?'登録数量から計算できた飲料水 '+fmt(water.liters)+'L':'合計を計算できる飲料水は未登録';
+  const difference=water.counted.length&&!unknown?' ／ 登録済みとの差 '+fmt(Math.max(0,total-water.liters))+'L（目安）':' ／ 使用可能量・不足量は未確定';
+  const note=' ／ 未集計 '+water.excluded+'種類・使用期限未設定 '+water.undated+'種類';
+  add('飲料水の計算',people+'人・'+days+'日：目安 '+fmt(total)+'L ／ '+record+difference+note,'outage',!water.counted.length||unknown||water.liters<total);
  }catch(e){add('飲料水の計算','シミュレーターで人数・日数を設定してください','outage',false)}
  return result;
 }
+
 function readinessExportText(){
  const items=getReadinessOverview();
  const stamp=todayLocalDate();
@@ -1350,7 +1366,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='next-2026-11-08-topic-study-v103';
+const releaseQaBuild='next-2026-11-08-readiness-links-v104';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1469,7 +1485,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v103');
+  const c=await caches.open('totonoe-offline-shell-v104');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1495,8 +1511,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v103')){
-   const cache=await caches.open('totonoe-offline-shell-v103');
+  if(registration&&names.includes('totonoe-offline-shell-v104')){
+   const cache=await caches.open('totonoe-offline-shell-v104');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -1570,10 +1586,10 @@ function renderHouseholdReadinessBridge(){
  host.replaceChildren();
  const title=document.createElement('h3');title.textContent='家族・避難・備蓄のつながり';
  host.append(title);
- const entry=(name,detail,page,warning=false)=>{
+ const entry=(name,detail,page,warning=false,extra={})=>{
   const row=document.createElement('button');row.type='button';row.className='household-bridge-item';
   if(warning)row.classList.add('needs-review');
-  row.onclick=()=>show(page);
+  row.onclick=()=>openReadinessAction({page,...extra});
   const heading=document.createElement('strong');heading.textContent=name;
   const description=document.createElement('small');description.textContent=detail;
   const arrow=document.createElement('span');arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');
@@ -1583,38 +1599,27 @@ function renderHouseholdReadinessBridge(){
   const family=loadFamilyProfiles();
   const people=family.filter(x=>x.type!=='pet').reduce((sum,x)=>sum+x.count,0);
   const pets=family.filter(x=>x.type==='pet').reduce((sum,x)=>sum+x.count,0);
-  entry('家族・ペットの記録',family.length?'登録：人 '+people+'人／ペット '+pets+'頭。人数は計算画面に自動上書きしません。':'未登録。必要な人・ペットだけ記録できます。','family',!family.length);
+  entry('家族・ペットの記録',family.length?'登録：人 '+people+'人／ペット '+pets+'頭。人数は計算画面に自動上書きしません。':'未登録（任意）。必要な人・ペットだけ記録できます。','family',false);
   const plan=readEvacuationPlan();
   const missing=['evPlace','evTiming','evContacts'].filter(k=>typeof plan[k]!=='string'||!plan[k].trim());
-  entry('マイ避難計画',missing.length?'重要3項目のうち未記入 '+missing.length+'項目。':'避難先・判断・連絡方法を記入済み。','evacuation',missing.length>0);
-  const today=todayLocalDate();
-  const water=supplies.filter(x=>x.category==='water');
-  const valid=water.filter(x=>String(x.factor??'').trim()!==''&&Number.isFinite(Number(x.factor))&&Number(x.factor)>0&&Number.isInteger(Number(x.qty))&&Number(x.qty)>=0&&(!x.exp||x.exp>=today));
-  const liters=valid.reduce((sum,x)=>sum+Number(x.factor)*Number(x.qty),0);
-  const excluded=water.length-valid.length;
-  const litersText=Number(liters.toFixed(3)).toLocaleString('ja-JP');
-  entry('登録済みの飲料水',valid.length?litersText+'L（容量を設定した有効な '+valid.length+'種類）'+(excluded?'／未集計 '+excluded+'種類':''):'容量と数量を確認できる飲料水が未登録です。','supplies',!valid.length||excluded>0);
-  const food=supplies.filter(x=>x.category==='food');
-  const toilet=supplies.filter(x=>x.category==='toilet');
-  const stockState=list=>{
-   const expired=list.filter(x=>x.exp&&x.exp<today).length;
-   const zero=list.filter(x=>Number.isFinite(Number(x.qty))&&Number(x.qty)===0).length;
-   const unchecked=list.filter(x=>!x.exp).length;
-   return {expired,zero,unchecked};
-  };
-  const foodState=stockState(food),toiletState=stockState(toilet);
-  entry('食料の備蓄',food.length?'食料 '+food.length+'種類／期限切れ '+foodState.expired+'種類／数量0 '+foodState.zero+'種類／期限未設定 '+foodState.unchecked+'種類':'食料に分類された品目はありません。既存の食品は備蓄の編集で分類できます。','supplies',!food.length||foodState.expired>0||foodState.zero>0);
-  entry('非常用トイレの備蓄',toilet.length?'トイレ用品 '+toilet.length+'種類／期限切れ '+toiletState.expired+'種類／数量0 '+toiletState.zero+'種類':'非常用トイレに分類された品目はありません。備蓄登録または編集から分類できます。','supplies',!toilet.length||toiletState.expired>0||toiletState.zero>0);
-  const toilets=supplies.filter(x=>x.category==='toilet');
-  const toiletExpired=toilets.filter(x=>x.exp&&x.exp<today).length;
-  const toiletUnknown=toilets.filter(x=>!x.exp).length;
-  entry('非常用トイレの登録',toilets.length?'分類済み '+toilets.length+'種類'+(toiletExpired?'／期限切れ '+toiletExpired+'種類':'')+(toiletUnknown?'／期限未設定 '+toiletUnknown+'種類':''):'非常用トイレに分類された品目はありません。必要に応じて備蓄画面から登録してください。','supplies',!toilets.length||toiletExpired>0);
+  entry('マイ避難計画',missing.length?'重要3項目のうち未記入 '+missing.length+'項目。':'避難先・判断・連絡方法を記入済み。','evacuation',missing.length>0,{action:'plan'});
+  if(!supplyStorageReadable()){
+   entry('備蓄の確認','保存内容を読み取れないため、水・食料・非常用トイレの状況を確認できません。','supplies',true);
+  }else{
+   const today=todayLocalDate(),water=readinessWaterSummary(supplies,today);
+   const litersText=Number(water.liters.toFixed(3)).toLocaleString('ja-JP');
+   entry('登録済みの飲料水',water.counted.length?litersText+'L（登録数量から算出）／未集計 '+water.excluded+'種類・使用期限未設定 '+water.undated+'種類':'容量と数量を確認できる飲料水が未登録です。','supplies',!water.counted.length||water.excluded>0||water.undated>0,{filter:'category-water'});
+   for(const [category,label] of [['food','食料'],['toilet','非常用トイレ']]){
+    const records=supplies.filter(x=>x.category===category),expired=records.filter(x=>validSupplyDate(x.exp)&&x.exp<today).length,zero=records.filter(x=>Number(x.qty)===0).length,undated=records.filter(x=>!x.exp).length,review=records.filter(supplyNeedsDateReview).length;
+    entry(label+'の備蓄',records.length?label+' '+records.length+'種類／期限切れ '+expired+'種類／数量0 '+zero+'種類／期限未設定 '+undated+'種類／日付を要確認 '+review+'種類':label+'に分類された品目はありません。備蓄登録または編集で分類できます。','supplies',!records.length||expired+zero+undated+review>0,{filter:'category-'+category});
+   }
+  }
 
   if(pets>0){
    entry('ペットの避難準備','ペット '+pets+'頭。同行避難先の受入条件、水・食料・キャリー等を個別に確認してください。','family',true);
   }
   if(people>0){
-   entry('家族人数と備蓄の計算','人 '+people+'人。必要量は「備蓄管理」で日数を選んで計算できます（自動変更なし）。','supplies');
+   entry('家族人数と備蓄の計算','人 '+people+'人。必要量は「備蓄管理」で日数を選んで計算できます（自動変更なし）。','supplies',false,{action:'calculator'});
   }
   const note=document.createElement('p');note.className='notice';
   note.textContent='食料・非常用トイレは種類数と点検対象のみを表示します。必要量との比較はしていません。飲料水の目安は備蓄計算で人数・日数を指定してください。';
@@ -1632,7 +1637,7 @@ function renderReadinessOverview(){
  const attention=items.filter(x=>x.attention);
  summary.textContent='確認する項目：'+attention.length+'カテゴリー ／ 表示中：'+items.length+'カテゴリー（登録状況から算出）';
  const makeButton=(item,index)=>{
-  const btn=document.createElement('button');btn.type='button';btn.className='readiness-row';btn.onclick=()=>show(item.page);
+  const btn=document.createElement('button');btn.type='button';btn.className='readiness-row';btn.onclick=()=>openReadinessAction(item);
   const title=document.createElement('strong');title.textContent=(index===null?'':(index+1)+'. ')+item.name;
   const detail=document.createElement('small');detail.textContent=item.detail;
   const arrow=document.createElement('span');arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');
@@ -1938,7 +1943,7 @@ function updateSupplyCompareHint(){
  document.getElementById('smeasureWrap')?.classList.toggle('hidden',!eligible);
  const label=document.getElementById('smeasureLabel');if(label)label.textContent='1'+unit+'あたりの'+(cat==='toilet'?'使用回数':'食数')+'（任意）';
 }
-function renderStockComparison(people,days){const el=document.getElementById('stockComparison');if(!el)return;el.replaceChildren();const now=new Date();const today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');const fmt=n=>Number(n.toFixed(3)).toLocaleString('ja-JP');const water=supplies.filter(x=>x.category==='water');const counted=water.filter(x=>{const v=Number(x.factor),q=Number(x.qty);return String(x.factor??'').trim()!==''&&Number.isFinite(v)&&v>0&&Number.isInteger(q)&&q>=0&&(!x.exp||x.exp>=today)});const groups=new Map();counted.forEach(item=>{const v=Number(item.factor),unit=item.unit||'個',k=String(v)+'|'+unit;const old=groups.get(k)||{volume:v,unit,qty:0};old.qty+=Number(item.qty);groups.set(k,old)});const heading=document.createElement('strong');heading.textContent='登録済みの飲料水';el.append(heading);if(!counted.length){const p=document.createElement('p');p.className='notice';p.textContent='容量を設定した飲料水はまだありません。備蓄品の編集から「飲料水」と容量（L）を設定してください。未登録を0Lとは判定しません。';el.append(p)}else{[...groups.values()].sort((a,b)=>a.volume-b.volume).forEach(g=>{const row=document.createElement('div');row.className='water-breakdown-row';const v=document.createElement('span');v.textContent=(g.volume<1?fmt(g.volume*1000)+'mL':fmt(g.volume)+'L')+' × '+fmt(g.qty)+g.unit;const amount=document.createElement('b');amount.textContent='＝ '+fmt(g.volume*g.qty)+'L';row.append(v,amount);el.append(row)})}const total=counted.reduce((a,x)=>a+Number(x.factor)*Number(x.qty),0);const needed=people*days*3;if(counted.length){const sum=document.createElement('div');sum.className='water-total';const title=document.createElement('strong');title.textContent='飲料水の合計';const amount=document.createElement('b');amount.textContent=fmt(total)+'L';sum.append(title,amount);el.append(sum);const compare=document.createElement('p');compare.className='notice';compare.textContent='必要量の目安 '+fmt(needed)+'L ／ '+(total<needed?'不足目安：あと'+fmt(needed-total)+'L':'必要量の目安を満たしています。');el.append(compare)}const excluded=water.length-counted.length;if(excluded){const p=document.createElement('p');p.className='notice';p.textContent=excluded+'件の飲料水は期限切れ・容量未設定などにより合計から除外しています。';el.append(p)}}
+function renderStockComparison(people,days){const el=document.getElementById('stockComparison');if(!el)return;el.replaceChildren();if(!supplyStorageReadable()){el.textContent='保存内容を読み取れないため、飲料水の合計・不足量は未確認です。';return}const now=new Date();const today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');const fmt=n=>Number(n.toFixed(3)).toLocaleString('ja-JP');const water=supplies.filter(x=>x.category==='water');const waterState=readinessWaterSummary(supplies,today),counted=waterState.counted;const groups=new Map();counted.forEach(item=>{const v=Number(item.factor),unit=item.unit||'個',k=String(v)+'|'+unit;const old=groups.get(k)||{volume:v,unit,qty:0};old.qty+=Number(item.qty);groups.set(k,old)});const heading=document.createElement('strong');heading.textContent='登録済みの飲料水';el.append(heading);if(!counted.length){const p=document.createElement('p');p.className='notice';p.textContent='容量を設定した飲料水はまだありません。備蓄品の編集から「飲料水」と容量（L）を設定してください。未登録を0Lとは判定しません。';el.append(p)}else{[...groups.values()].sort((a,b)=>a.volume-b.volume).forEach(g=>{const row=document.createElement('div');row.className='water-breakdown-row';const v=document.createElement('span');v.textContent=(g.volume<1?fmt(g.volume*1000)+'mL':fmt(g.volume)+'L')+' × '+fmt(g.qty)+g.unit;const amount=document.createElement('b');amount.textContent='＝ '+fmt(g.volume*g.qty)+'L';row.append(v,amount);el.append(row)})}const total=counted.reduce((a,x)=>a+Number(x.factor)*Number(x.qty),0);const needed=people*days*3;if(counted.length){const sum=document.createElement('div');sum.className='water-total';const title=document.createElement('strong');title.textContent='飲料水の合計';const amount=document.createElement('b');amount.textContent=fmt(total)+'L';sum.append(title,amount);el.append(sum);const compare=document.createElement('p');compare.className='notice';compare.textContent='必要量の目安 '+fmt(needed)+'L ／ '+(waterState.excluded||waterState.undated?'期限や容量を確認できない記録があるため、使用可能量・不足量は未確定です。':total<needed?'不足目安：あと'+fmt(needed-total)+'L':'登録された期限・容量の範囲で、必要量の目安を満たしています。');el.append(compare)}if(waterState.undated){const p=document.createElement('p');p.className='notice';p.textContent='使用期限未設定の飲料水 '+waterState.undated+'種類は容量のみ合算しています。使用できるかは別途確認してください。';el.append(p)}const excluded=water.length-counted.length;if(excluded){const p=document.createElement('p');p.className='notice';p.textContent=excluded+'件の飲料水は期限切れ・容量未設定などにより合計から除外しています。';el.append(p)}}
 function renderStockCalculator(persist=true){const input=document.getElementById('calcPeople'),daysSelect=document.getElementById('calcDays'),customInput=document.getElementById('calcCustomDays'),toiletInput=document.getElementById('calcToiletPerDay'),out=document.getElementById('calcResult'),note=document.getElementById('calcNote');if(!input||!out||!toiletInput||!customInput)return;const people=Number(input.value),mode=daysSelect.value,daysText=mode==='custom'?customInput.value.trim():mode,days=Number(daysText);const raw=toiletInput.value.trim(),frequency=Number(raw),validFrequency=raw!==''&&Number.isInteger(frequency)&&frequency>=1&&frequency<=50;out.replaceChildren();if(!Number.isInteger(people)||people<1||people>30){note.textContent='世帯人数は1〜30人の整数で入力してください。';return}if(daysText===''||!Number.isInteger(days)||days<1||days>365){note.textContent='備蓄日数は1〜365日の整数で入力してください。';return}if(persist){try{localStorage.setItem(stockDaysKey,JSON.stringify({mode,customDays:customInput.value.trim(),people}))}catch(e){}}if(raw!==''&&!validFrequency){note.textContent='非常用トイレの使用回数は1〜50回の整数で入力してください。'}else{note.textContent=people+'人・'+days+'日分の計算です。登録済みの飲料水だけを容量（L）で合計しています。'}if(persist&&validFrequency){try{localStorage.setItem(toiletFrequencyKey,String(frequency))}catch(e){}}const entries=[['飲料水',people*days*3+'L','1人1日3Lの目安。生活用水や調理用水は別途確認してください。'],['食料',people*days*3+'食','朝・昼・夕の3食で計算。食品の種類や栄養・食事制限も考慮してください。'],['非常用トイレ',validFrequency?people*days*frequency+'回分':'回数未設定',validFrequency?'設定した1人1日'+frequency+'回で計算。家族で差がある場合は各人の必要量を確認してください。':'ご自身で1日あたりの使用回数を入力すると必要量を計算します。']];entries.forEach(([name,number,description])=>{const div=document.createElement('div');div.className='calc-row';const label=document.createElement('strong');label.textContent=name;const amount=document.createElement('b');amount.textContent=number;const p=document.createElement('p');p.textContent=description;div.append(label,amount,p);out.append(div)});renderStockComparison(people,days)}
 function initStockCalculator(){for(const [id,value] of Object.entries({calcPeople:'1',calcDays:'3',calcCustomDays:'',calcToiletPerDay:''})){const field=document.getElementById(id);if(field)field.value=value}try{const v=JSON.parse(localStorage.getItem(diagnosisKey)||'null');const p=v&&Number(v.dPeople);if(Number.isInteger(p)&&p>=1&&p<=5)document.getElementById('calcPeople').value=String(p)}catch(e){}try{const f=localStorage.getItem(toiletFrequencyKey);if(f!==null&&Number.isInteger(Number(f))&&Number(f)>=1&&Number(f)<=50)document.getElementById('calcToiletPerDay').value=f}catch(e){}try{const v=JSON.parse(localStorage.getItem(stockDaysKey)||'null');if(v&&['3','7','custom'].includes(v.mode)){if(Number.isInteger(v.people)&&v.people>=1&&v.people<=30)document.getElementById('calcPeople').value=String(v.people);document.getElementById('calcDays').value=v.mode;if(typeof v.customDays==='string'&&/^\d{1,3}$/.test(v.customDays))document.getElementById('calcCustomDays').value=v.customDays}}catch(e){}document.getElementById('calcCustomDaysWrap').classList.toggle('hidden',document.getElementById('calcDays').value!=='custom');renderStockCalculator(false)}
 function openStockCalculator(){show('supplies');document.getElementById('supplyCalcFold').open=true;initStockCalculator();document.getElementById('stockCalculator').scrollIntoView({block:'start',behavior:'smooth'})}
@@ -2225,7 +2230,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v103'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v104'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2603,7 +2608,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v103');
+  const cache=await caches.open('totonoe-offline-shell-v104');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -2624,17 +2629,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v103')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v104')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v103')?await caches.open('totonoe-offline-shell-v103'):null;
+  const cache=names.includes('totonoe-offline-shell-v104')?await caches.open('totonoe-offline-shell-v104'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v103'?'必須ファイル10件の保存とv103の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v103の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v104'?'必須ファイル10件の保存とv104の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v104の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -2885,7 +2890,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v103';
+ const cacheName='totonoe-offline-shell-v104';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -2948,7 +2953,7 @@ async function repairOfflinePreparation(){
   }
   await inspect();
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v103有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v104有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/10件。Service Worker：'+state+'。';
@@ -2988,13 +2993,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v103';
+   const current='totonoe-offline-shell-v104';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v103有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v104有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
@@ -3497,7 +3502,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v103','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v104','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -3506,8 +3511,8 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v103';
-   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v103有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v104';
+   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v104有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
     const checks=await Promise.all(paths.map(async p=>{const res=await cache.match(new URL(p,scope).href);return !!res?.ok}));
