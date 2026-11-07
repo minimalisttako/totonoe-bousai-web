@@ -1493,7 +1493,8 @@ let verifiedFullRestoreOriginalSnapshot=null;
 function restoreOriginalSnapshot(keys){return JSON.stringify(keys.map(k=>[k,localStorage.getItem(k)]))}
 function applyValidatedRestoreToStorage(data,keys,storage){
  const original={};
- for(const k of keys)original[k]=storage.getItem(k);
+ try{for(const k of keys)original[k]=storage.getItem(k)}
+ catch(e){return {ok:false,rolledBack:true,readFailed:true}}
  try{
   for(const k of keys)storage.setItem(k,data[k]);
   if(keys.some(k=>storage.getItem(k)!==data[k]))throw Error('verification failed');
@@ -1923,16 +1924,11 @@ function runIsolatedRestoreTest(){
   const good=applyValidatedRestoreToStorage(staged,testKeys,localStorage);
   success=good.ok&&testKeys.every((k,i)=>localStorage.getItem(k)===fixture[i]);
   // Use an adapter that simulates one failed write after the first succeeds.
-  const adapter={
-   getItem:k=>localStorage.getItem(k),
-   setItem:(k,v)=>{if(k===testKeys[1]&&v===staged[k])throw Error('simulated failure');localStorage.setItem(k,v)},
-   removeItem:k=>localStorage.removeItem(k)
-  };
   const before=testKeys.map(k=>localStorage.getItem(k));
   const failed=applyValidatedRestoreToStorage(Object.fromEntries(testKeys.map((k,i)=>[k,JSON.stringify({changed:i})])),testKeys,{
-   getItem:adapter.getItem,
+   getItem:k=>localStorage.getItem(k),
    setItem:(k,v)=>{if(k===testKeys[1]&&v===JSON.stringify({changed:1}))throw Error('simulated failure');localStorage.setItem(k,v)},
-   removeItem:adapter.removeItem
+   removeItem:k=>localStorage.removeItem(k)
   });
   rollback=!failed.ok&&failed.rolledBack&&testKeys.every((k,i)=>localStorage.getItem(k)===before[i]);
  }catch(e){success=false;}
