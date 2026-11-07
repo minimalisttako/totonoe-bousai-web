@@ -660,7 +660,7 @@ header{z-index:50;isolation:isolate}
 <h2>✅ リリース前チェック</h2>
 <p class="notice">保存・通信・オフライン起動の準備・バックアップ機能をまとめて確認します。既存の記録データは変更しません。</p>
 <button class="primary" id="releaseReadinessRun" type="button" onclick="checkReleaseReadiness()" style="width:100%;min-height:48px">5項目を診断する</button>
-<div id="releaseReadinessResults" role="status" aria-live="polite"></div><button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="openReleaseQa()">実機検証表を開く ↗</button>
+<div id="releaseReadinessResults" role="status" aria-live="polite"></div><button class="secondary" type="button" id="offlineRepairRun" onclick="repairOfflinePreparation()" style="width:100%;min-height:48px;margin-top:8px">オフライン保存を再確認・修復する</button><p id="offlineRepairStatus" class="notice" role="status" aria-live="polite">0/9件などの場合は通信できる状態で実行してください。既存の記録は削除しません。</p><button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="openReleaseQa()">実機検証表を開く ↗</button>
 <button type="button" class="secondary" style="width:100%;margin-top:10px" onclick="openFullBackupFromReadiness()">全データのバックアップへ ↗</button>
 <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
 <p class="notice" id="backupIntegrityResult" role="status" aria-live="polite">実データの復元は行わず、バックアップの生成と読み取りを確認します。</p>
@@ -2136,6 +2136,46 @@ function checkReleaseCandidate(){
  summary.textContent='自動診断：'+results.filter(x=>x.ok).length+'/'+results.length+'項目';box.append(summary);
  results.forEach(row=>{const p=document.createElement('p');p.className='notice';p.style.margin='8px 0';p.textContent=(row.ok?'✅ ':'⚠️ ')+row.title+'：'+row.detail;box.append(p)});
  const note=document.createElement('p');note.className='notice';note.textContent='この診断は画面・関数・データ形式の自動検査です。実機での復元、オフライン起動、端末間移行、避難情報の正確性を保証しません。';box.append(note);
+}
+async function repairOfflinePreparation(){
+ const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
+ if(!status||!button)return;
+ button.disabled=true;
+ status.textContent='オフライン用の9ファイルと更新状態を確認しています…';
+ const cacheName='totonoe-offline-shell-v17';
+ const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg'];
+ try{
+  if(!navigator.onLine)throw Error('offline');
+  if(!('serviceWorker' in navigator)||!('caches' in window))throw Error('unsupported');
+  const reg=await navigator.serviceWorker.register('./offline-worker.js',{scope:'./',updateViaCache:'none'});
+  try{await reg.update()}catch(e){status.textContent='更新の取得に失敗しました。通信状態を確認してください。'}
+  // A new worker can still be installing; do not incorrectly report a missing cache as completed.
+  let count=0,active=false;
+  for(let attempt=0;attempt<12;attempt++){
+   const names=await caches.keys();
+   if(names.includes(cacheName)){
+    const cache=await caches.open(cacheName);
+    const matches=await Promise.all(paths.map(async p=>{
+     const res=await cache.match(new URL(p,reg.scope).href);
+     return !!(res&&res.ok);
+    }));
+    count=matches.filter(Boolean).length;
+   }
+   active=!!reg.active;
+   if(count===paths.length&&active)break;
+   if(attempt<11)await new Promise(resolve=>setTimeout(resolve,750));
+  }
+  if(count===paths.length&&active){
+   status.textContent='✅ オフライン用ファイル9/9件の保存を確認しました。機内モードで実際に起動できることも確認してください。';
+  }else{
+   const names=await caches.keys();
+   const older=names.filter(n=>n.startsWith('totonoe-offline-shell-')&&n!==cacheName);
+   status.textContent='⚠️ v17の保存 '+count+'/9件。'+(older.length?'旧版の保存領域が存在します。':'保存領域を確認できません。')+' Safariから通常のブラウザで開き直し、オンライン状態で再実行してください。記録は消さないでください。';
+  }
+  await checkReleaseReadiness();
+ }catch(e){
+  status.textContent=e.message==='offline'?'通信できる状態で再実行してください。機内モードでは修復できません。':e.message==='unsupported'?'このブラウザではオフライン保存機能に対応していません。Safariで開いてください。':'準備状態を確認できませんでした。Safariで開き直してください。';
+ }finally{button.disabled=false;}
 }
 async function checkReleaseReadiness(){
  const output=document.getElementById('releaseReadinessResults');
