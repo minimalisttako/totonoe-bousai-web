@@ -2090,13 +2090,15 @@ function checkBackupIntegrity(){
    if(v!==null){current[k]=v;saved++;}
   }
   if(saved===0){status.textContent='✅ 復元形式の検証は正常です。まだ記録データがないため、実データの確認は省略しました。';return}
-  const sample={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:current};
-  const roundtrip=JSON.parse(JSON.stringify(sample));
+  // Exercise the exact export path including UTF-8 size and complete JSON validation.
+  const exported=buildFullBackup();
+  const roundtrip=JSON.parse(exported);
   const verified=validateFullBackupObject(roundtrip);
   if(verified.keys.length!==saved||verified.keys.some(k=>roundtrip.data[k]!==current[k]))throw Error('roundtrip');
+  if(backupUtf8ByteLength(exported)>2000000)throw Error('backup-size');
   status.textContent='✅ 保存データ'+saved+'種類について、バックアップの生成・読み取り・形式検証が正常です。実際の復元やファイル保存は行っていません。';
  }catch(e){
-  status.textContent='⚠️ バックアップの整合性を確認できませんでした。記録は変更していません。念のため別途保存し、内容を確認してください。';
+  status.textContent=e.message==='backup-size'?'⚠️ '+backupSizeWarning():'⚠️ バックアップの整合性を確認できませんでした。記録は変更していません。念のため別途保存し、内容を確認してください。';
  }
 }
 function openFullBackupFromReadiness(){
