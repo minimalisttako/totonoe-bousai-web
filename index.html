@@ -2206,6 +2206,8 @@ async function repairOfflinePreparation(){
     }catch(e){failures.push(p+'（'+(e.message||e.name||'取得失敗')+'）')}
    }
    await inspect();
+   // Retry installation once after recovering any missing application files.
+   try{await reg.update()}catch(e){failures.push('Service Worker更新（'+(e?.name||'失敗')+'）')}
   }
   for(let i=0;i<8;i++){
    reg=await navigator.serviceWorker.getRegistration(scope)||reg;
