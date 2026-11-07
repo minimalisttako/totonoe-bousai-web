@@ -1,5 +1,5 @@
-/* ととのえ防災：v80 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
-const CACHE='totonoe-offline-shell-v80';
+/* ととのえ防災：v81 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
+const CACHE='totonoe-offline-shell-v81';
 const ROOT=new URL('./',self.registration.scope).href;
 const PATHS=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
 const URLS=PATHS.map(p=>new URL(p,ROOT).href);
@@ -58,7 +58,7 @@ self.addEventListener('fetch',event=>{
   })());
   return;
  }
- if(url.pathname.startsWith(ASSETROOT)&&url.pathname.endsWith('.svg')||url.pathname===new URL('./manifest.webmanifest',ROOT).pathname){
+ if(url.pathname.startsWith(ASSETROOT)&&(url.pathname.endsWith('.svg')||url.pathname.endsWith('.png'))||url.pathname===new URL('./manifest.webmanifest',ROOT).pathname){
   event.respondWith((async()=>{
    const cache=await caches.open(CACHE),cached=await cache.match(request,{ignoreSearch:true});
    if(cached)return cached;
