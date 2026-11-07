@@ -834,7 +834,6 @@ function initOutageSimulation(){
 }
 function renderOutageSimulation(){
  const settings={};for(const id of ['outagePeople','outageDays','outageCustomDays','outageToilet','outageToiletStock'])settings[id]=document.getElementById(id).value;
- try{localStorage.setItem(outageScenarioKey,JSON.stringify(settings))}catch(e){}
  const out=document.getElementById('outageResult');if(!out)return;
  const mode=document.getElementById('outageDays').value,custom=document.getElementById('outageCustomDays');
  document.getElementById('outageCustomWrap').classList.toggle('hidden',mode!=='custom');
@@ -843,6 +842,12 @@ function renderOutageSimulation(){
  out.replaceChildren();
  const line=(label,message,warning=false)=>{const p=document.createElement('p');p.className='notice';p.style.margin='9px 0';if(warning)p.style.color='#8b4b2b';const strong=document.createElement('strong');strong.textContent=label+'：';p.append(strong,document.createTextNode(message));out.append(p);};
  if(!Number.isInteger(people)||people<1||people>30||!Number.isInteger(days)||days<1||days>365){line('入力を確認','世帯人数は1〜30人、日数は1〜365日で入力してください。',true);return;}
+ // Only keep a valid configuration; incomplete or out-of-range text must not replace a previous valid scenario.
+ const toiletValid=/^(?:[1-9]|[1-4][0-9]|50)$/.test(settings.outageToilet);
+ const stockValid=/^\d{1,6}$/.test(settings.outageToiletStock);
+ if(toiletValid&&stockValid){
+  try{localStorage.setItem(outageScenarioKey,JSON.stringify(settings))}catch(e){}
+ }
  const needed=people*days*3;
  const today=todayLocalDate();
  const waters=supplies.filter(x=>x.category==='water');
@@ -1555,7 +1560,27 @@ const evacuationFields=[['evHazard','自宅周辺の災害リスク'],['evPlace'
 function readEvacuationPlan(){try{const v=JSON.parse(localStorage.getItem(evacuationKey)||'{}');return v&&typeof v==='object'&&!Array.isArray(v)?v:{}}catch(e){return {}}}
 function loadEvacuationPlan(){const v=readEvacuationPlan();evacuationFields.forEach(([id])=>{const input=document.getElementById(id);if(input)input.value=typeof v[id]==='string'?v[id]:''})}
 function openEvacuationEdit(){const fold=document.getElementById('evacuationEditFold');if(fold)fold.open=true;document.getElementById('evPlace')?.scrollIntoView({block:'center',behavior:'smooth'})}
-function saveEvacuationPlan(event){event.preventDefault();const next={};evacuationFields.forEach(([id])=>{next[id]=document.getElementById(id).value.trim()});const msg=document.getElementById('evacuationStatus');try{localStorage.setItem(evacuationKey,JSON.stringify(next));msg.textContent='避難計画と連絡方法を保存しました。';renderEvacuationSummary();renderEmergencyPlan();updateOfflineReadiness();renderPageMascotGuide('evacuation');const fold=document.getElementById('evacuationEditFold');if(fold)fold.open=false}catch(e){msg.textContent='保存できませんでした。入力内容を別に控えてください。'}}
+function saveEvacuationPlan(event){
+ event.preventDefault();
+ const next={};
+ evacuationFields.forEach(([id])=>{next[id]=document.getElementById(id).value.trim()});
+ const msg=document.getElementById('evacuationStatus');
+ try{
+  const value=JSON.stringify(next);
+  localStorage.setItem(evacuationKey,value);
+  if(localStorage.getItem(evacuationKey)!==value)throw Error('save verification failed');
+ }catch(e){
+  msg.textContent='避難計画を保存できませんでした。入力内容を別に控えてください。';
+  return;
+ }
+ try{
+  renderEvacuationSummary();renderEmergencyPlan();updateOfflineReadiness();renderPageMascotGuide('evacuation');
+  const fold=document.getElementById('evacuationEditFold');if(fold)fold.open=false;
+  msg.textContent='避難計画と連絡方法を保存しました。';
+ }catch(e){
+  msg.textContent='避難計画は保存できましたが、画面更新で問題が発生しました。開き直して内容をご確認ください。';
+ }
+}
 function renderEvacuationSummary(preview=false){const box=document.getElementById('evacuationSummary');if(!box)return;box.replaceChildren();const data=preview?Object.fromEntries(evacuationFields.map(([id])=>[id,document.getElementById(id).value.trim()])):readEvacuationPlan();if(preview){const warn=document.createElement('p');warn.className='notice';warn.textContent='入力内容の確認用表示です。まだ保存されていません。編集フォームで「計画を保存して確認画面に表示」を押してください。';box.append(warn)}renderEvacuationCompleteness(data);if(!evacuationFields.some(([id])=>typeof data[id]==='string'&&data[id].trim())){const p=document.createElement('p');p.className='notice';p.textContent=preview?'まだ入力されていません。フォームに記入してください。':'避難計画は未登録です。「計画を登録・編集」から入力してください。';box.append(p);return}const important=['evPlace','evTiming','evContacts'];const createRow=([id,label])=>{const row=document.createElement('div');row.className='calc-row evacuation-display-row';const title=document.createElement('strong');title.textContent=label;const value=document.createElement('p');value.className='evacuation-summary-text';value.textContent=typeof data[id]==='string'&&data[id].trim()?data[id]:'未設定';row.append(title,value);return row};evacuationFields.filter(([id])=>important.includes(id)).sort((a,b)=>important.indexOf(a[0])-important.indexOf(b[0])).forEach(f=>box.append(createRow(f)));const more=document.createElement('details');more.className='evacuation-fold evacuation-plan-more';const moreTitle=document.createElement('summary');moreTitle.textContent='災害リスク・経路・集合方法も見る';more.append(moreTitle);const body=document.createElement('div');body.className='evacuation-fold-body';evacuationFields.filter(([id])=>!important.includes(id)).forEach(f=>body.append(createRow(f)));more.append(body);box.append(more)}
 function renderEvacuationCompleteness(data){const box=document.getElementById('evacuationCompleteness');if(!box)return;const v=data||readEvacuationPlan();const missing=evacuationFields.filter(([id])=>!(typeof v[id]==='string'&&v[id].trim()));box.textContent=missing.length?'計画の未記入：'+missing.length+'項目（'+missing.map(x=>x[1]).join('・')+'）。必要な項目を確認して記入してください。':'避難計画の6項目がすべて記入されています。実際の災害ごとの安全性も確認してください。'}
 function isEmergencyChecklistData(v){return !!(v&&Array.isArray(v.items)&&v.items.length>0&&v.items.length<=20&&v.items.every(x=>typeof x==='string'&&x.trim().length>0&&x.length<=120)&&v.checked&&typeof v.checked==='object'&&!Array.isArray(v.checked))}
