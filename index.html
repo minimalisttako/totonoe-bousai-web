@@ -2142,13 +2142,15 @@ async function checkReleaseReadiness(){
  button.disabled=true;output.replaceChildren();
  const rows=[];
  const add=(name,ok,detail)=>rows.push({name,ok,detail});
- const key='toto-release-probe-'+Date.now();
+ const probeKey='toto-release-probe-'+Date.now()+'-'+Math.random().toString(36).slice(2);
  try {
-  localStorage.setItem(key,'test');
-  const passed=localStorage.getItem(key)==='test';
-  localStorage.removeItem(key);
+  if(localStorage.getItem(probeKey)!==null)throw Error('probe collision');
+  localStorage.setItem(probeKey,'test');
+  const passed=localStorage.getItem(probeKey)==='test';
+  localStorage.removeItem(probeKey);
   add('データ保存',passed,passed?'正常に保存と読み取りができます':'この端末の保存機能を確認できません');
  }catch(e){add('データ保存',false,'保存領域を利用できません')}
+ finally{try{localStorage.removeItem(probeKey)}catch(e){}}
  const secure=location.protocol==='https:'&&window.isSecureContext;
  add('通信の安全性',secure,secure?'HTTPS接続です':'HTTPSで開いてください');
  if('serviceWorker' in navigator&&'caches' in window){
@@ -2172,9 +2174,12 @@ async function checkReleaseReadiness(){
   }else{
    source={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:{[key]:'[]'}};
   }
-  const decoded=validateFullBackupObject(JSON.parse(JSON.stringify(source)));
-  add('記録のバックアップ形式',decoded.keys.length>0,Object.keys(snapshot).length?'保存データ'+decoded.keys.length+'種類の形式を確認':'初期状態のテスト形式を確認（記録未登録）');
- }catch(e){add('記録のバックアップ形式',false,'形式を確認できません。保存データを点検してください')}
+  // Use the same pretty-printed JSON and byte ceiling as the real downloadable backup.
+  const backupText=JSON.stringify(source,null,2);
+  if(backupUtf8ByteLength(backupText)>2000000)throw Error('backup-size');
+  const decoded=validateFullBackupObject(JSON.parse(backupText));
+  add('記録のバックアップ形式',decoded.keys.length>0,Object.keys(snapshot).length?'保存データ'+decoded.keys.length+'種類の形式と容量を確認':'初期状態のテスト形式を確認（記録未登録）');
+ }catch(e){add('記録のバックアップ形式',false,e.message==='backup-size'?'2MBを超えており、バックアップファイルを生成できません':'形式を確認できません。保存データを点検してください')}
  const summary=document.createElement('p');
  summary.style.fontWeight='700';
  summary.textContent='自動確認：'+rows.filter(r=>r.ok).length+'/'+rows.length+'項目';
