@@ -908,9 +908,14 @@ header{z-index:50;isolation:isolate}
 <div class="card"><h2>試験の基本情報</h2><p>3択式・30問。24問以上の正解が合格基準です。</p><p class="notice">出典：日本防災士機構「防災士になるには」。2026年11月7日確認。受験時は最新の公式案内をご確認ください。</p><a href="https://bousaisi.jp/license/" target="_blank" rel="noopener noreferrer">公式の資格取得案内を確認 ↗</a></div>
 <div class="card"><h2>家庭の備えにも生かす</h2><div class="lesson-actions"><button class="secondary" onclick="show('homeSafety')">住まいの安全</button><button class="secondary" onclick="show('evacuation')">避難計画</button><button class="secondary" onclick="show('supplies')">備蓄の見直し</button></div></div>
 <button class="secondary" onclick="show('learn')">学ぶメニューへ戻る</button></section>
+<section id="weather" class="hidden">
+<div class="card"><h2>気象庁の天気予報</h2><p class="notice">地域を選び、今日・明日の天気と時間帯別の降水確率を確認できます。予報の取得には通信が必要です。</p><label for="weatherOffice" class="supply-label">都道府県・地方</label><select id="weatherOffice" class="field" onchange="loadWeatherForecast()"><option value="">地域一覧を読み込んでください</option></select><button id="weatherRefresh" class="secondary" onclick="refreshWeather()">地域一覧・予報を更新</button><p id="weatherStatus" class="notice" role="status" aria-live="polite">「地域一覧・予報を更新」を押してください。</p></div>
+<div class="card hidden" id="weatherAreaCard"><label for="weatherArea" class="supply-label">予報の地域</label><select id="weatherArea" class="field" onchange="renderWeatherForecast()"></select><div id="weatherResult" aria-live="polite"></div></div>
+<div class="card"><h2>警報・注意報と詳しい予報</h2><p class="notice">最高・最低気温、警報・注意報は気象庁の公式画面で確認してください。アプリ内の自動表示は今後対応します。</p><p><a id="weatherOfficial" href="https://www.jma.go.jp/bosai/#pattern=forecast" target="_blank" rel="noopener noreferrer">気象庁で詳しい予報を確認 ↗</a></p><p><a href="https://www.jma.go.jp/bosai/warning/" target="_blank" rel="noopener noreferrer">気象庁の警報・注意報を確認 ↗</a></p><p class="notice">情報源：気象庁。取得した予報を加工して表示します。警報の自動通知機能はありません。避難の判断には自治体からの情報も確認してください。</p></div>
+<button class="secondary" onclick="show('more')">その他へ戻る</button></section>
 <section id="more" class="hidden">
 <div class="card more-intro"><h2>その他の防災メニュー</h2><p class="notice">必要な備えを、目的から選べます。</p></div><div class="card"><h2>防災士試験対策・無料学習</h2><p class="notice">例題動画・音声学習への入口と、学習の進め方をまとめました。</p><button class="secondary" type="button" onclick="show('examStudy')">学習メニューを開く ↗</button></div>
-<div class="card"><h2>v38 の更新と公開前の残作業</h2><p class="notice">v37の実機確認4/4項目は利用者確認済み。キャラクター表示・まばたきは完成版で固定しています。</p><ul><li>今回追加：無料学習メニュー、例題・音声動画への入口、学習手順。</li><li>機能開発：気象庁の天気、地域別の防災イベント、公開レビュー、アプリ内の例題演習。</li><li>公開前の検証：Android実機、別端末への復元、拡大表示・読み上げ、機内モードでの再起動。</li></ul><p class="notice">自動診断の合格と実機確認は別に記録します。正式公開の準備は継続中です。</p><button class="secondary" onclick="openReleaseQa()">実機検証表を開く</button></div><div class="card" id="releaseCandidatePanel">
+<div class="card"><h2>v39 の更新と公開前の残作業</h2><p class="notice">v37の実機確認4/4項目は利用者確認済み。キャラクター表示・まばたきは完成版で固定しています。</p><ul><li>今回追加：全国の地域選択、今日・明日の天気予報、時間帯別の降水確率、気象庁の発表日時。</li><li>機能開発：最高・最低気温と警報・注意報のアプリ内表示、地域別の防災イベント、公開レビュー、アプリ内の例題演習。</li><li>公開前の検証：Android実機、別端末への復元、拡大表示・読み上げ、機内モードでの再起動。</li></ul><p class="notice">自動診断の合格と実機確認は別に記録します。正式公開の準備は継続中です。</p><button class="secondary" onclick="openReleaseQa()">実機検証表を開く</button></div><div class="card"><h2>地域の天気</h2><p class="notice">気象庁の今日・明日の予報と時間帯別の降水確率。</p><button class="secondary" onclick="show('weather')">天気予報を確認する ↗</button></div><div class="card" id="releaseCandidatePanel">
 <h2>リリース候補版の総合診断</h2>
 <p class="notice">安全・避難・備蓄・記録・データ保護などの主要機能を、自動検査します。登録済みの記録は書き換えません。</p>
 <button class="primary" type="button" style="width:100%;min-height:48px" onclick="checkReleaseCandidate()">主要機能をまとめて診断する</button>
@@ -918,7 +923,7 @@ header{z-index:50;isolation:isolate}
 <details class="more-fold" style="margin-top:9px"><summary>今回のリリース対象と今後の機能 <span aria-hidden="true">⌄</span></summary>
 <div class="more-fold-body">
 <p class="notice">現在のリリース候補：無料学習メニュー・お片付け・住まいの安全・備蓄管理・避難計画・災害時モード・家族とペットのカルテ・停電断水シミュレーター・バックアップ・オフライン利用。</p>
-<p class="notice">今後の開発対象：ユーザー投稿型の防災用品レビュー、気象庁データを用いた天気、全国の防災イベント、アプリ内の例題演習など。利用できない機能を完成済みとは表示しません。</p>
+<p class="notice">今後の開発対象：ユーザー投稿型の防災用品レビュー、気象情報の拡充、全国の防災イベント、アプリ内の例題演習など。利用できない機能を完成済みとは表示しません。</p>
 </div></details>
 </div>
 <div class="card" id="releaseReadinessPanel">
@@ -980,7 +985,7 @@ header{z-index:50;isolation:isolate}
 <details class="more-fold" id="releaseScopeFold"><summary>初回リリースの対象と今後の機能 <span aria-hidden="true">⌄</span></summary>
 <div class="more-fold-body">
 <p class="notice"><strong>初回リリース候補：</strong>住まいの安全点検、家庭の防災診断、避難計画、備蓄・防災ポーチ管理、お片付けの記録、家族・ペットカルテ、停電・断水シミュレーター、バックアップ、災害時モード。</p>
-<p class="notice"><strong>今後の開発候補：</strong>公開レビューの投稿・閲覧、気象庁データに基づく天気、全国の防災イベント、アプリ内の例題演習。現時点では正式な提供機能として案内しません。</p>
+<p class="notice"><strong>今後の開発候補：</strong>公開レビューの投稿・閲覧、気象情報の拡充、全国の防災イベント、アプリ内の例題演習。現時点では正式な提供機能として案内しません。</p>
 <p class="notice">試作版のため、正式リリース前にはiPhone・Androidの実機操作、復元、機内モードでの起動を別途確認します。</p>
 </div></details>
 <div class="card more-important"><h2>備えをまとめて確認</h2><button class="more-menu-button" type="button" onclick="show('readiness')"><strong>わが家の防災準備状況</strong><span>安全・避難計画・備蓄・家族の備え ↗</span></button></div>
@@ -1254,7 +1259,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v38';
+const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v39';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1373,7 +1378,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v38');
+  const c=await caches.open('totonoe-offline-shell-v39');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1399,8 +1404,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v38')){
-   const cache=await caches.open('totonoe-offline-shell-v38');
+  if(registration&&names.includes('totonoe-offline-shell-v39')){
+   const cache=await caches.open('totonoe-offline-shell-v39');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -1718,7 +1723,8 @@ function renderPageMascotGuide(id){
  const sub=mascotSupportingLine(id,guide[0]);
  banner.querySelector('.guide-support').textContent=sub;
 }
-function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock','examStudy'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family','readiness'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family'){renderFamilySuggestedItems();renderFamilyProfiles()}if(id==='readiness')renderReadinessOverview();if(id==='more')renderReleaseQa();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
+let weatherForecast=null,weatherRequest=0,weatherController=null;
+function show(id){if(!validPage(id))id='home';if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);try{localStorage.setItem(lastPageKey,id)}catch(e){}document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock','examStudy'].includes(id)?'learn':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family','readiness','weather'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderCriticalSafety();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();renderCriticalSafety()}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family'){renderFamilySuggestedItems();renderFamilyProfiles()}if(id==='readiness')renderReadinessOverview();if(id==='weather'&&weatherForecast)renderWeatherForecast();if(id==='more')renderReleaseQa();window.scrollTo(0,0)}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
 function priorityTitlesFromAnswers(){try{const v=JSON.parse(localStorage.getItem(diagnosisKey)||'null');if(!v||!['apartment','house','other'].includes(v.dResidence))return null;const p=[];const add=(n,title)=>p.push({n,title});if(v.dFurniture!=='ready')add(0,'まず命を守る：家具の転倒・落下を防ぐ');if(v.dResidence==='house')add(1,'戸建ての立地と避難先を確認する');add(1,'地域の災害リスクと避難先を確認する');if(v.dResidence==='apartment')add(2,'集合住宅の設備・避難方法を確認する');if(v.dFurniture==='ready')add(2,'命を守るための安全確認を続ける');if(v.dWater!=='ready')add(v.dWater==='none'?3:4,'飲料水を確認する');if(v.dFood!=='ready')add(v.dFood==='none'?3:4,'食料を確認する');if(v.dToilet!=='ready')add(v.dToilet==='none'?3:4,'非常用トイレを確認する');if(v.dPeople==='5')add(4,'世帯人数に合う備蓄量を再計算する');if(!p.some(x=>x.n<3))add(5,'備えの維持と定期点検');return p.sort((a,b)=>a.n-b.n).map(x=>x.title)}catch(e){return null}}
 function homeMissionItems(){try{let titles=activePriorityTitles;if(!Array.isArray(titles)||!titles.length){titles=JSON.parse(localStorage.getItem(priorityKey)||'null')}if(!Array.isArray(titles)||!titles.length)titles=priorityTitlesFromAnswers();if(!Array.isArray(titles)||!titles.length)return null;const items=[];titles.forEach(title=>{if(typeof title==='string'&&Object.prototype.hasOwnProperty.call(missionTemplates,title))missionTemplates[title].forEach((label,i)=>items.push({key:title+'::'+i,label}))});if(!items.length)return null;const state=getMissionState();const incomplete=items.filter(item=>state[item.key]!==true);return {items:incomplete.slice(0,3),total:items.length,completed:items.length-incomplete.length,remaining:incomplete.length}}catch(e){return null}}
 function syncDiagnosisMissionUI(){const state=getMissionState();document.querySelectorAll('.diagnosis-mission input[data-mission-key]').forEach(input=>input.checked=state[input.dataset.missionKey]===true);document.querySelectorAll('.diagnosis-result-item').forEach(card=>{const checks=[...card.querySelectorAll('.diagnosis-mission input')],p=card.querySelector('.mission-progress');if(p&&checks.length){const n=checks.filter(x=>x.checked).length;p.textContent='ミッション '+n+' / '+checks.length+' 完了'+(n===checks.length?' ✅':'')}})}
@@ -2012,7 +2018,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v38'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v39'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2352,7 +2358,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v38');
+  const cache=await caches.open('totonoe-offline-shell-v39');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -2371,12 +2377,12 @@ async function initOfflineStartup(){
   let readyTimer;const ready=await Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>{readyTimer=setTimeout(()=>reject(new Error('activation timeout')),12000)})]).finally(()=>clearTimeout(readyTimer));
   if(ready.scope!==registration.scope)throw Error('scope mismatch');
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v38')?await caches.open('totonoe-offline-shell-v38'):null;
+  const cache=names.includes('totonoe-offline-shell-v39')?await caches.open('totonoe-offline-shell-v39'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v38'?'必須ファイル10件の保存とv38の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v38の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v39'?'必須ファイル10件の保存とv39の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v39の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -2497,7 +2503,7 @@ function openFullBackupFromReadiness(){
  const status=document.getElementById('allBackupStatus');if(status)status.textContent='復元前に、必ず最新の全データをバックアップして保存してください。';
 }
 // Inspects existing user-owned keys in read-only mode; never deletes or modifies records.
-// v38: read-only per-record schema audit. No stored values are edited or removed.
+// v39: read-only per-record schema audit. No stored values are edited or removed.
 function checkStoredDataIntegrity(){
  const host=document.getElementById('dataIntegrityResults');if(!host)return;
  host.replaceChildren();
@@ -2600,7 +2606,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v38';
+ const cacheName='totonoe-offline-shell-v39';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -2662,7 +2668,7 @@ async function repairOfflinePreparation(){
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v38有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v39有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/10件。Service Worker：'+state+'。';
@@ -2702,13 +2708,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v38';
+   const current='totonoe-offline-shell-v39';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v38有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v39有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
@@ -2748,6 +2754,83 @@ async function checkReleaseReadiness(){
 }
 initOfflineStartup();
 window.addEventListener('pageshow',initOfflineStartup);
+// v39: live JMA forecast only; never retain stale weather as a current forecast.
+
+function jstWeatherDay(value){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value))}
+function weatherDailyRows(data,areaCode,now=Date.now()){
+ const series=data?.[0]?.timeSeries;
+ if(!Array.isArray(series))throw Error('予報形式を読み取れません');
+ const sky=series.find(s=>s.areas?.some(a=>a.area?.code===areaCode&&Array.isArray(a.weathers)));
+ const region=sky?.areas.find(a=>a.area?.code===areaCode);
+ if(!region)throw Error('地域の予報が見つかりません');
+ const today=jstWeatherDay(now),tomorrow=jstWeatherDay(now+86400000);
+ return [today,tomorrow].map((day,index)=>{
+  const position=sky.timeDefines.findIndex(t=>jstWeatherDay(t)===day);
+  const pops=[];
+  for(const group of series){const area=group.areas?.find(a=>a.area?.code===areaCode&&Array.isArray(a.pops));if(!area)continue;
+   group.timeDefines.forEach((time,i)=>{if(jstWeatherDay(time)!==day)return;const value=area.pops[i];if(typeof value!=='string'||!/^\d{1,3}$/.test(value)||Number(value)>100)return;
+    const start=new Date(time),end=new Date(start.getTime()+6*3600000);
+    const hour=date=>new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',hour:'2-digit',hourCycle:'h23'}).format(date);
+    pops.push(hour(start)+'〜'+(jstWeatherDay(end)!==day?'24時':hour(end))+'：'+value+'%');
+   });
+  }
+  return {day,label:index===0?'今日':'明日',weather:position>=0?region.weathers[position]||'予報なし':'予報なし',pops};
+ });
+}
+async function fetchJmaJson(path,signal){
+ const response=await fetch('https://www.jma.go.jp/bosai/'+path,{cache:'no-store',signal});
+ if(!response.ok)throw Error('HTTP '+response.status);
+ return await response.json();
+}
+async function refreshWeather(){
+ const status=document.getElementById('weatherStatus'),button=document.getElementById('weatherRefresh'),select=document.getElementById('weatherOffice');
+ button.disabled=true;status.textContent='気象庁の地域一覧を取得しています。';
+ const control=new AbortController(),timer=setTimeout(()=>control.abort(),12000);
+ try{
+  const data=await fetchJmaJson('common/const/area.json',control.signal);
+  const offices=Object.entries(data.offices||{}).filter(([code,item])=>/^\d{6}$/.test(code)&&typeof item.name==='string');
+  if(!offices.length)throw Error('地域一覧が空です');
+  const previous=select.value;select.replaceChildren(new Option('地域を選んでください',''));
+  offices.forEach(([code,item])=>select.add(new Option(item.name,code)));
+  if(offices.some(([code])=>code===previous))select.value=previous;
+  status.textContent='地域を選んでください。';
+  if(select.value)await loadWeatherForecast();
+ }catch(e){status.textContent='⚠️ 地域一覧を取得できませんでした。通信を確認して再試行するか、下の気象庁リンクをご利用ください。'}
+ finally{clearTimeout(timer);button.disabled=false}
+}
+async function loadWeatherForecast(){
+ const serial=++weatherRequest,code=document.getElementById('weatherOffice').value,status=document.getElementById('weatherStatus');
+ weatherController?.abort();weatherForecast=null;document.getElementById('weatherResult').replaceChildren();document.getElementById('weatherAreaCard').classList.add('hidden');
+ const official=document.getElementById('weatherOfficial');official.href='https://www.jma.go.jp/bosai/#pattern=forecast'+(/^\d{6}$/.test(code)?'&area_type=offices&area_code='+code:'');
+ if(!/^\d{6}$/.test(code)){status.textContent='地域を選んでください。';return}
+ status.textContent='気象庁の予報を取得しています。';
+ const controller=new AbortController();weatherController=controller;const timer=setTimeout(()=>controller.abort(),12000);
+ try{
+  const data=await fetchJmaJson('forecast/data/forecast/'+code+'.json',controller.signal);
+  if(serial!==weatherRequest)return;
+  const report=data?.[0],age=Date.now()-Date.parse(report?.reportDatetime);
+  if(!Number.isFinite(age)||age>24*3600000||age< -3600000)throw Error('発表日時を確認できません');
+  const sky=report.timeSeries?.find(s=>s.areas?.some(a=>Array.isArray(a.weathers)));
+  if(!sky?.areas?.length)throw Error('予報がありません');
+  weatherForecast={data,office:document.getElementById('weatherOffice').selectedOptions[0].textContent};
+  const select=document.getElementById('weatherArea');select.replaceChildren();
+  sky.areas.filter(a=>Array.isArray(a.weathers)&&a.area?.code).forEach(a=>select.add(new Option(a.area.name,a.area.code)));
+  document.getElementById('weatherAreaCard').classList.remove('hidden');renderWeatherForecast();
+ }catch(e){if(serial!==weatherRequest)return;status.textContent='⚠️ 予報を取得できませんでした。通信または発表データを確認できないため、天気は表示していません。気象庁の公式画面をご確認ください。'}
+ finally{clearTimeout(timer)}
+}
+function renderWeatherForecast(){
+ const host=document.getElementById('weatherResult'),status=document.getElementById('weatherStatus');host.replaceChildren();if(!weatherForecast)return;
+ const {data,office}=weatherForecast,report=data[0],age=Date.now()-Date.parse(report.reportDatetime);
+ if(age>24*3600000){status.textContent='⚠️ 発表から24時間以上経過しました。更新して最新の予報をご確認ください。';return}
+ try{
+  const rows=weatherDailyRows(data,document.getElementById('weatherArea').value);
+  status.textContent=office+'／'+report.publishingOffice+' 発表：'+new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date(report.reportDatetime))+'（日本時間）。表示中も自動更新はしません。';
+  for(const row of rows){const section=document.createElement('div');section.className='item';const heading=document.createElement('h3');heading.textContent=row.label+'（'+row.day+'）';const sky=document.createElement('p');sky.textContent=row.weather;section.append(heading,sky);const pops=document.createElement('p');pops.className='notice';pops.textContent=row.pops.length?'降水確率（時間帯別） '+row.pops.join(' ／ '):'この日の降水確率は、取得した予報にはありません。';section.append(pops);host.append(section)}
+ }catch(e){status.textContent='⚠️ 地域の予報を読み取れませんでした。再取得してください。'}
+}
+window.addEventListener('pageshow',()=>{if(weatherForecast)renderWeatherForecast()});
+
 </script></body></html>
 
 
