@@ -760,7 +760,7 @@ header{z-index:50;isolation:isolate}
  }
 }
 
-/* v92: compact weather occupies the approved upper-right home space. */
+/* v93: compact weather occupies the approved upper-right home space. */
 #home .home-weather-intro{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:10px;align-items:start;margin-top:5px}
 #home .home-weather-intro h2{max-width:100%;font-size:clamp(17px,4.8vw,22px)}
 #home .home-weather-intro .game-home-lead{max-width:100%}
@@ -769,13 +769,13 @@ header{z-index:50;isolation:isolate}
 #home .home-weather-widget strong{display:block;font-size:14px;margin:4px 0;overflow-wrap:anywhere}
 @media(max-width:340px){#home .home-weather-intro{gap:6px;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}#home .home-weather-intro h2{font-size:16px}}
 
-/* v92: reduce introductory whitespace and prioritize today's actions. */
+/* v93: reduce introductory whitespace and prioritize today's actions. */
 #home .home-weather-intro{margin-top:2px;align-items:center}
 #home .home-weather-intro h2{margin:5px 0}
 #home .home-weather-widget{margin-top:3px;padding:7px 8px}
 #home .game-mascot-scene{margin-top:0!important}
 
-/* v92: emergency entry beside the approved home illustration. */
+/* v93: emergency entry beside the approved home illustration. */
 #home .home-scene-actions{display:grid;grid-template-columns:minmax(76px,1fr) minmax(0,2.2fr);align-items:center;gap:12px;margin:5px 0 0;min-width:0}
 #home .home-scene-actions .game-mascot-scene{width:100%!important;max-width:226px!important;margin:0 0 0 auto!important;min-height:0!important}
 #home .home-hazard-button{display:block;width:100%;max-width:112px;padding:5px;border:1px solid #202020;border-radius:14px;background:repeating-linear-gradient(135deg,#f9d849 0,#f9d849 8px,#242424 8px,#242424 16px);color:#202020;box-shadow:0 3px 9px #34362018;text-align:center}
@@ -786,7 +786,7 @@ header{z-index:50;isolation:isolate}
 #home .home-hazard-button:focus-visible{outline:3px solid #247db5;outline-offset:3px}
 @media(max-width:350px){#home .home-scene-actions{gap:8px;grid-template-columns:minmax(70px,1fr) minmax(0,2fr)}#home .home-hazard-face strong{font-size:14px}}
 
-/* v92: agreed Select red / Set blue / Stock green, including supply controls. */
+/* v93: agreed Select red / Set blue / Stock green, including supply controls. */
 .journey-tile:nth-child(2),.step-detail.set{border-color:#cbdaf0}
 .journey-tile:nth-child(3),.step-detail.stock{border-color:#c9dfd0}
 #supplies .quantity-control,#supplies .backup-button,#supplies .replenishment-item{border-color:#b9d4c2}
@@ -799,13 +799,13 @@ header{z-index:50;isolation:isolate}
 #learn .step:nth-of-type(2){background:var(--set-bg);color:var(--set-ink)}
 #learn .step:nth-of-type(3){background:var(--stock-bg);color:var(--stock-ink)}
 
-/* v92: visible keyboard focus and a bypass link for repeated navigation. */
+/* v93: visible keyboard focus and a bypass link for repeated navigation. */
 .skip-content{position:fixed;left:12px;top:8px;transform:translateY(-160%);z-index:1000;padding:12px 18px;background:#fff;color:#174c3e;border:3px solid #268c6a;border-radius:10px;font-weight:700}
 .skip-content:focus{transform:none}
 main h2[tabindex="-1"]:focus,main h3[tabindex="-1"]:focus,#practiceQuizContent p[tabindex="-1"]:focus{outline:3px solid #268c6a;outline-offset:5px;border-radius:4px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .tidy-photo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}.tidy-photo-grid img{display:block;width:100%;height:auto;max-height:280px;object-fit:contain;border-radius:10px}.tidy-photo-grid figcaption{font-weight:700;font-size:14px}.tidy-photo-grid input{font-size:13px}\n.tidy-photo-open{display:block;width:100%;border:0;background:transparent;padding:0;border-radius:10px}.tidy-photo-dialog{width:min(94vw,780px);max-height:90vh;border:1px solid #bad3c3;border-radius:16px;padding:18px}.tidy-photo-dialog::backdrop{background:#0009}.tidy-photo-dialog img{display:block;max-width:100%;max-height:65vh;object-fit:contain;margin:0 auto 15px}\n.rest-note{padding:10px 12px;border:1px solid #d4e4df;border-radius:12px;background:#ffffffc9;margin:8px 0}.rest-note p{font-size:13px;line-height:1.6;margin:0 0 5px}.rest-note button{font-size:13px;min-height:44px}\n
-/* v92: shared three-column grid; top 2+1, warning band full-width, bottom 1+2. */
+/* v93: shared three-column grid; top 2+1, warning band full-width, bottom 1+2. */
 #home .home-weather-intro,#home .home-scene-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch;margin:8px 0 0}
 #home .home-weather-intro>div:first-child{grid-column:1/3;display:flex;align-items:center;min-width:0}
 #home .home-weather-intro h2{margin:0;font-size:clamp(18px,5vw,23px);line-height:1.4;max-width:100%}
@@ -1347,7 +1347,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v92';
+const releaseQaBuild='rc-2026-11-07-readiness-accuracy-v93';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1466,7 +1466,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v92');
+  const c=await caches.open('totonoe-offline-shell-v93');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1492,8 +1492,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v92')){
-   const cache=await caches.open('totonoe-offline-shell-v92');
+  if(registration&&names.includes('totonoe-offline-shell-v93')){
+   const cache=await caches.open('totonoe-offline-shell-v93');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -1639,36 +1639,32 @@ function renderReadinessOverview(){
  const sorted=attention.length?attention:items.filter(x=>x.page==='homeSafety'||x.page==='evacuation'||x.page==='supplies');
  sorted.slice(0,3).forEach((item,index)=>next.append(makeButton(item,index)));
 }
-function renderHomeNextThree(){
- const box=document.getElementById('homeNextThreeActions');
- const intro=document.getElementById('homeNextThreeIntro');
- if(!box||!intro)return;
- const items=[];
- const add=(label,page,description)=>{if(!items.some(x=>x.page===page))items.push({label,page,description})};
+function homePriorityActions(){
+ const items=[],add=(label,page,description)=>{if(!items.some(x=>x.page===page))items.push({label,page,description})};
+ try{const state=readHomeSafety(),missing=criticalSafetyIds.filter(id=>state[id]!=='done'&&state[id]!=='na').length;if(missing)add('住まいの安全を確認','homeSafety','命を守る対策：未確認 '+missing+'項目')}catch(e){add('住まいの安全を確認','homeSafety','家具の固定や避難経路を確認')}
+ try{const plan=readEvacuationPlan(),missing=['evPlace','evTiming','evContacts'].filter(id=>typeof plan[id]!=='string'||!plan[id].trim()).length;if(missing)add('マイ避難計画を確認','evacuation','避難先・判断・連絡：未記入 '+missing+'項目')}catch(e){add('マイ避難計画を確認','evacuation','避難先と連絡方法を確認')}
+ try{const c=tidyCounts();if(!c.all||c.done<c.all)add('お片付けを進める','tidy','通路と収納・備蓄の置き場所を整える')}catch(e){add('お片付けを確認','tidy','整理・整頓の記録を確認')}
  try{
-  const safety=readHomeSafety();
-  const missing=criticalSafetyIds.filter(id=>safety[id]!=='done'&&safety[id]!=='na').length;
-  if(missing)add('住まいの安全を確認','homeSafety','命を守る対策：未確認 '+missing+'項目');
- }catch(e){add('住まいの安全を確認','homeSafety','家具の固定や避難経路を確認')}
- try{
-  const plan=readEvacuationPlan();
-  const missing=['evPlace','evTiming','evContacts'].filter(id=>typeof plan[id]!=='string'||!plan[id].trim()).length;
-  if(missing)add('マイ避難計画を確認','evacuation','避難先・判断・連絡：未記入 '+missing+'項目');
- }catch(e){add('マイ避難計画を確認','evacuation','避難先と連絡方法を確認')}
- try{
-  const today=todayLocalDate(),soon=dateAfterDays(30);
-  const alerts=supplies.filter(x=>(x.exp&&x.exp<=soon)||(x.nextCheck&&x.nextCheck<=today)||(String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.qty)<Number(x.target))).length;
-  if(alerts)add('備蓄の期限・不足を確認','supplies','期限・点検・不足：対象 '+alerts+'種類');
-  else if(!supplies.length)add('必要な備蓄を確認','supplies','まだ備蓄登録がありません');
+  if(!supplyStorageReadable())add('備蓄の保存状態を確認','supplies','保存記録を読み取れません。元の記録を保護しています');
+  else{
+   const today=todayLocalDate(),soon=dateAfterDays(30),names={water:'飲料水',food:'食料',toilet:'非常用トイレ'};
+   const missing=Object.keys(names).filter(cat=>!supplies.some(x=>x.category===cat&&Number(x.qty)>0&&(!x.exp||x.exp>=today)));
+   const alerts=supplies.filter(x=>Number(x.qty)<=0||(x.exp&&x.exp<=soon)||(x.nextCheck&&x.nextCheck<=today)||(Number(x.target)>0&&Number(x.qty)<Number(x.target))).length;
+   if(missing.length)add('必要な備蓄を確認','supplies','未登録・数量0・期限切れの分類：'+missing.map(k=>names[k]).join('・'));
+   else if(alerts)add('備蓄の期限・不足を確認','supplies','期限・点検・不足：対象 '+alerts+'種類');
+  }
  }catch(e){add('備蓄を確認','supplies','飲料水・食料・トイレを確認')}
- if(items.length<3){
-  const c=tidyCounts();
-  if(!c.all||c.done<c.all)add('お片付けを進める','tidy','通路を確保し、使いやすく整える');
- }
- if(items.length<3&&cleanHomeReady()&&cleanPracticeDefinitions().some(([id])=>!readCleanPractice()[id]?.done))add('今日の掃除','cleanPractice','毎日の習慣：未完了の掃除を進める');
- if(items.length<3)add('季節の防災点検','seasonalCheck','季節に合った備えを確認');
- const selected=items.slice(0,3);
- intro.textContent=selected.length?'上から順に、必要なことをひとつずつ確認しましょう。':'現在の優先項目は確認済みです。定期的に見直しましょう。';
+ if(items.length<4&&!items.some(x=>x.page==='homeSafety')){const safety=homeSafetyCounts();if(safety.unknown)add('住まいの安全点検を仕上げる','homeSafety','未確認・要対策：残り '+safety.unknown+'項目')}
+ if(items.length<4){const mission=homeMissionItems();if(mission?.remaining>0)add('優先ミッションを進める','diagnosis','未完了 '+mission.remaining+'項目');else if(!mission&&tasks.some((_,i)=>!done.includes(i)))add('今日やることを確認','home','共通ミッションを確認して進める')}
+ if(items.length<4&&cleanHomeReady()&&cleanPracticeDefinitions().some(([id])=>!readCleanPractice()[id]?.done))add('今日の掃除','cleanPractice','設定した間隔で繰り返す掃除を進める');
+ if(items.length<4){const type=homeSeasonalType(),counts=seasonCounts(type);if(counts.unchecked+counts.review>0)add('季節の防災点検','seasonalCheck',seasonalTemplates[type].name+'：未確認・再点検 '+(counts.unchecked+counts.review)+'件')}
+ return items.slice(0,4);
+}
+function openHomePriorityAction(item){if(item.page==='home'){const tasks=document.getElementById('homeTasks');if(tasks){tasks.setAttribute('tabindex','-1');tasks.scrollIntoView({block:'center',behavior:'smooth'});tasks.focus({preventScroll:true})}}else show(item.page);}
+function renderHomeNextThree(){
+ const box=document.getElementById('homeNextThreeActions'),intro=document.getElementById('homeNextThreeIntro');if(!box||!intro)return;
+ const selected=homePriorityActions();
+ intro.textContent=selected.length?'上から順に確認しましょう。命を守る対策と最低限の水・食料・トイレは、片付けの完了を待たずに確保します。':'現在の優先項目は確認済みです。定期的に見直しましょう。';
  box.replaceChildren();
  selected.forEach((item,index)=>{
   const row=document.createElement('button');
@@ -1677,7 +1673,7 @@ function renderHomeNextThree(){
   const title=document.createElement('strong');title.textContent=(index+1)+'. '+item.label;
   const detail=document.createElement('small');detail.textContent=item.description;
   const arrow=document.createElement('span');arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');
-  row.append(title,detail,arrow);row.onclick=()=>show(item.page);box.append(row);
+  row.append(title,detail,arrow);row.onclick=()=>openHomePriorityAction(item);box.append(row);
  });
 }
 function renderHomeStockMiniStatus(){const el=document.getElementById('homeStockMiniStatus');if(!el)return;const today=todayLocalDate(),future=dateAfterDays(30);const expires=supplies.filter(x=>x.exp&&x.exp<=future).length,missing=supplies.filter(x=>String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.qty)<Number(x.target)).length,inspection=supplies.filter(x=>x.nextCheck&&x.nextCheck<=today).length,pouchDue=readPouchItems().filter(x=>x.nextCheck&&x.nextCheck<=today).length;const n=expires+missing+inspection+pouchDue;el.textContent=n?'要確認 '+n+'件（期限・不足・点検の合計）':'期限・不足・点検を確認'}
@@ -1820,7 +1816,13 @@ function priorityTitlesFromAnswers(){try{const v=JSON.parse(localStorage.getItem
 function homeMissionItems(){try{let titles=activePriorityTitles;if(!Array.isArray(titles)||!titles.length){titles=JSON.parse(localStorage.getItem(priorityKey)||'null')}if(!Array.isArray(titles)||!titles.length)titles=priorityTitlesFromAnswers();if(!Array.isArray(titles)||!titles.length)return null;const items=[];titles.forEach(title=>{if(typeof title==='string'&&Object.prototype.hasOwnProperty.call(missionTemplates,title))missionTemplates[title].forEach((label,i)=>items.push({key:title+'::'+i,label}))});if(!items.length)return null;const state=getMissionState();const incomplete=items.filter(item=>state[item.key]!==true);return {items:incomplete.slice(0,3),total:items.length,completed:items.length-incomplete.length,remaining:incomplete.length}}catch(e){return null}}
 function syncDiagnosisMissionUI(){const state=getMissionState();document.querySelectorAll('.diagnosis-mission input[data-mission-key]').forEach(input=>input.checked=state[input.dataset.missionKey]===true);document.querySelectorAll('.diagnosis-result-item').forEach(card=>{const checks=[...card.querySelectorAll('.diagnosis-mission input')],p=card.querySelector('.mission-progress');if(p&&checks.length){const n=checks.filter(x=>x.checked).length;p.textContent='ミッション '+n+' / '+checks.length+' 完了'+(n===checks.length?' ✅':'')}})}
 function updateTaskProgress(){const data=homeMissionItems();const label=document.getElementById('taskProgress'),bar=document.getElementById('taskProgressBar'),progress=document.querySelector('.progressbar');if(data){label.textContent=data.remaining===0?'すべての優先ミッションを完了しました！':data.completed+' / '+data.total+' 完了。残り'+data.remaining+'件の対策から、できることを進めましょう。';bar.style.width=data.total?data.completed/data.total*100+'%':'0%';progress.setAttribute('aria-valuemax',String(data.total));progress.setAttribute('aria-valuenow',String(data.completed));return}const n=tasks.filter((_,i)=>done.includes(i)).length;label.textContent=n===tasks.length?'今日の3つのミッションを達成しました！':n+' / '+tasks.length+' 完了。自分のペースで進めましょう。';bar.style.width=n/tasks.length*100+'%';progress.setAttribute('aria-valuemax',String(tasks.length));progress.setAttribute('aria-valuenow',String(n))}
-function renderTasks(){renderSafetyPriorityTasks();if(renderHomeCleaningTasks())return;const holder=document.getElementById('homeTasks'),data=homeMissionItems(),source=document.getElementById('homeMissionSource');if(source)source.textContent=data?'診断結果から選ばれた未完了の優先ミッション':'診断前の共通ミッション（診断すると切り替わります）';if(data){if(data.remaining===0){const complete=document.createElement('p');complete.className='homehint';complete.textContent='優先ミッションはすべて完了しています。診断画面から記録を見直したり、定期点検を行えます。';holder.replaceChildren(complete);updateTaskProgress();return}holder.replaceChildren(...data.items.map(item=>{const label=document.createElement('label');label.className='task';const c=document.createElement('input');c.type='checkbox';c.checked=false;c.onchange=()=>{const next=getMissionState();next[item.key]=c.checked;if(!saveMissionState(next)){c.checked=!c.checked;return}if(c.checked)recordMissionCompletion(item.key,item.label);syncDiagnosisMissionUI();renderTasks()};label.append(c,document.createTextNode(item.label));return label}));updateTaskProgress();return}holder.replaceChildren(...tasks.map((t,i)=>{const label=document.createElement('label');label.className='task';const c=document.createElement('input');c.type='checkbox';c.checked=done.includes(i);c.onchange=()=>{done=c.checked?[...done,i]:done.filter(v=>v!==i);saveSaved(taskKey,done);updateTaskProgress()};label.append(c,document.createTextNode(t));return label}));updateTaskProgress()}
+function setCommonTask(index,checked){
+ if(!Number.isInteger(index)||index<0||index>=tasks.length||typeof checked!=='boolean')return false;
+ const next=checked?[...new Set([...done,index])]:done.filter(v=>v!==index);
+ if(!saveSaved(taskKey,next))return false;
+ done=next;renderTasks();renderHomeNextThree();renderGameHomeDialogue();return true;
+}
+function renderTasks(){renderSafetyPriorityTasks();if(renderHomeCleaningTasks())return;const holder=document.getElementById('homeTasks'),data=homeMissionItems(),source=document.getElementById('homeMissionSource');if(source)source.textContent=data?'診断結果から選ばれた未完了の優先ミッション':'診断前の共通ミッション（診断すると切り替わります）';if(data){if(data.remaining===0){const complete=document.createElement('p');complete.className='homehint';complete.textContent='優先ミッションはすべて完了しています。診断画面から記録を見直したり、定期点検を行えます。';holder.replaceChildren(complete);updateTaskProgress();return}holder.replaceChildren(...data.items.map(item=>{const label=document.createElement('label');label.className='task';const c=document.createElement('input');c.type='checkbox';c.checked=false;c.onchange=()=>{const next=getMissionState();next[item.key]=c.checked;if(!saveMissionState(next)){c.checked=!c.checked;return}if(c.checked)recordMissionCompletion(item.key,item.label);syncDiagnosisMissionUI();renderTasks();renderHomeNextThree();renderGameHomeDialogue()};label.append(c,document.createTextNode(item.label));return label}));updateTaskProgress();return}holder.replaceChildren(...tasks.map((t,i)=>{const label=document.createElement('label');label.className='task';const c=document.createElement('input');c.type='checkbox';c.checked=done.includes(i);c.onchange=()=>{if(!setCommonTask(i,c.checked))c.checked=!c.checked};label.append(c,document.createTextNode(t));return label}));updateTaskProgress()}
 function addSupply(e){e.preventDefault();const name=document.getElementById('sname').value.trim();const qty=Number(document.getElementById('sqty').value);if(!name||!Number.isInteger(qty)||qty<1||qty>99999)return;const cat=document.getElementById('scategory').value;const factorRaw=document.getElementById('sfactor').value.trim();const factor=Number(factorRaw);if(cat==='water'&&(!factorRaw||!Number.isFinite(factor)||factor<=0||factor>99999)){setStorageStatus('飲料水の容量をリットル（L）で入力してください。例：500mLなら0.5、2Lなら2。',true);return}const item={name,qty:String(qty),unit:document.getElementById('sunit').value,exp:document.getElementById('sexp').value,location:document.getElementById('slocation').value.trim(),checkedAt:document.getElementById('schecked').value,nextCheck:document.getElementById('snextCheck').value,checkInterval:document.getElementById('scheckInterval').value,category:cat,factor:cat==='water'?String(factor):''};const next=[...supplies,item];if(!saveSaved(key,next)){setStorageStatus('備蓄を保存できませんでした。端末の保存領域をご確認ください。入力内容は画面に残っています。',true);return}supplies=next;e.target.reset();initializeSupplyInspectionDefaults();updateSupplyCompareHint();document.getElementById('supplySearch').value='';document.getElementById('supplyFilter').value='all';document.getElementById('supplyAddFold').open=false;renderSupplies();setStorageStatus('「'+name+'」を登録しました。',false);document.getElementById('supplyInventoryCard').scrollIntoView({block:'start',behavior:'smooth'})}function editSupply(i,host){const original=supplies[i];if(!original)return;host.replaceChildren();const form=document.createElement('form');form.className='supply-edit';form.style.cssText='padding:12px;border:1px solid #c9d9e9;border-radius:14px;background:#f6f9ff;margin:10px 0';const title=document.createElement('strong');title.textContent='備蓄を編集';form.append(title);const field=(label,value,type='text')=>{const wrap=document.createElement('label');wrap.className='supply-label';wrap.textContent=label;const input=document.createElement('input');input.className='field';input.type=type;input.value=value||'';wrap.append(input);form.append(wrap);return input};const name=field('品名',original.name);name.required=true;name.maxLength=60;const qty=field('数量',String(original.qty??''),'number');qty.min='0';qty.max='99999';qty.step='1';qty.required=true;const unitLabel=document.createElement('label');unitLabel.className='supply-label';unitLabel.textContent='単位';const unit=document.createElement('select');unit.className='field';const existing=Array.from(document.getElementById('sunit').options).map(x=>x.value);if(original.unit&&!existing.includes(original.unit))existing.push(original.unit);existing.forEach(v=>{const opt=document.createElement('option');opt.value=v;opt.textContent=v;unit.append(opt)});unit.value=original.unit||'個';unitLabel.append(unit);form.append(unitLabel);const exp=field('期限（任意）',original.exp,'date');const checkedAt=field('最後に点検した日（任意）',original.checkedAt,'date');const nextCheck=field('次の点検予定日（目安・変更可）',original.nextCheck,'date');const intervalLabel=document.createElement('label');intervalLabel.className='supply-label';intervalLabel.textContent='点検の繰り返し間隔（任意）';const checkInterval=document.createElement('select');checkInterval.className='field';[['','繰り返しなし（その都度設定）'],['1','毎月'],['3','3か月ごと'],['6','6か月ごと'],['12','1年ごと']].forEach(([value,label])=>{const opt=document.createElement('option');opt.value=value;opt.textContent=label;checkInterval.append(opt)});checkInterval.value=String(original.checkInterval||'');checkInterval.onchange=()=>{const n=Number(checkInterval.value);if([1,3,6,12].includes(n))nextCheck.value=advanceInspectionMonths(todayLocalDate(),n)};intervalLabel.append(checkInterval);form.append(intervalLabel);const location=field('保管場所（任意）',original.location);location.maxLength=80;const categoryLabel=document.createElement('label');categoryLabel.className='supply-label';categoryLabel.textContent='備蓄の分類（任意）';const category=document.createElement('select');category.className='field';[['','未分類'],['water','飲料水（容量を合算）'],['food','食料'],['toilet','非常用トイレ']].forEach(([v,t])=>{const opt=document.createElement('option');opt.value=v;opt.textContent=t;category.append(opt)});category.value=original.category||'';categoryLabel.append(category);form.append(categoryLabel);const factor=field('水1本（1容器）の容量：リットル（L）',original.category==='water'?(original.factor??''):'','number');factor.min='0.001';factor.max='99999';factor.step='any';factor.placeholder='500mLなら0.5、2Lなら2';factor.parentElement.style.display=category.value==='water'?'':'none';category.onchange=()=>{factor.parentElement.style.display=category.value==='water'?'':'none'};const target=field('目標数量（任意・補充チェック用）',original.target??'','number');target.min='1';target.max='99999';target.step='1';target.placeholder='例：24（未設定なら空欄）';const save=document.createElement('button');save.type='submit';save.className='primary';save.textContent='変更を保存';const cancel=document.createElement('button');cancel.type='button';cancel.className='pill';cancel.textContent='キャンセル';cancel.style.marginLeft='8px';cancel.onclick=()=>renderSupplies();form.append(save,cancel);form.onsubmit=e=>{e.preventDefault();const n=name.value.trim(),q=Number(qty.value),t=target.value.trim()===''?null:Number(target.value),cat=category.value,rawFactor=factor.value.trim(),factorValue=Number(rawFactor);if(!n||!Number.isInteger(q)||q<0||q>99999||t!==null&&(!Number.isInteger(t)||t<1||t>99999)||cat==='water'&&(!rawFactor||!Number.isFinite(factorValue)||factorValue<=0||factorValue>99999)){setStorageStatus('品名・0〜99999の数量・目標数量・飲料水の容量を確認してください。',true);return}const next=supplies.map((v,j)=>j===i?{...v,name:n,qty:String(q),unit:unit.value,exp:exp.value,location:location.value.trim(),checkedAt:checkedAt.value,nextCheck:nextCheck.value,checkInterval:checkInterval.value,target:t===null?'':String(t),category:cat,factor:cat==='water'?String(factorValue):''}:v);if(!saveSaved(key,next)){setStorageStatus('変更を保存できませんでした。',true);return}supplies=next;renderSupplies();setStorageStatus('「'+n+'」の変更を保存しました。',false)};host.append(form);host.scrollIntoView({block:'nearest',behavior:'smooth'})}function prepareDuplicateSupply(index){const item=supplies[index];if(!item)return;openSupplyAddForm();const set=(id,value)=>{const input=document.getElementById(id);if(input)input.value=value};set('sname',item.name||'');set('sqty','1');set('sunit',item.unit||'個');set('sexp','');set('slocation',item.location||'');set('schecked','');set('snextCheck','');set('scheckInterval',item.checkInterval||'');set('scategory',['water','food','toilet'].includes(item.category)?item.category:'');set('sfactor',item.category==='water'?(item.factor||''):'');updateSupplyCompareHint();const status='「'+(item.name||'備蓄')+'」の品名などを入力欄にコピーしました。数量と新しい期限を確認して「備蓄を追加」を押してください。元の品目は変更していません。';setStorageStatus(status,false);document.getElementById('sname').scrollIntoView({behavior:'smooth',block:'center'})}
 function adjustSupplyQuantity(index,delta){const item=supplies[index];if(!item)return;const current=Number(item.qty);if(!Number.isInteger(current)||current<0||current>99999){setStorageStatus('数量が正しくありません。「編集」から確認してください。',true);return}const quantity=current+delta;if(quantity<0||quantity>99999){setStorageStatus(quantity<0?'数量は0未満にできません。':'数量は99999を超えられません。',true);return}const next=supplies.map((v,j)=>j===index?{...v,qty:String(quantity)}:v);if(!saveSaved(key,next)){setStorageStatus('数量の変更を保存できませんでした。',true);return}supplies=next;renderSupplies();setStorageStatus('「'+(item.name||'備蓄')+'」を '+quantity+(item.unit||'個')+' に変更しました。',false)}function replenishmentNeeds(items){return items.filter(s=>Number.isInteger(Number(s.target))&&String(s.target??'').trim()!==''&&Number(s.target)>0&&Number(s.target)<=99999).map(item=>({item,missing:Math.max(0,Number(item.target)-Number(item.qty))})).filter(x=>x.missing>0).sort((a,b)=>b.missing-a.missing);}
 function supplyReplenishmentChange(item,raw,today){
@@ -2169,7 +2171,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v92'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v93'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2350,6 +2352,7 @@ function tidyCounts(){const items=readTidyPlaces();return {all:items.length,done
 function tidyStepTotals(){const items=readTidyPlaces();let complete=0;items.forEach(item=>{const steps=tidyStepsFor(item.place);const checks=Array.isArray(item.stepChecks)?item.stepChecks:item.done?steps.map(()=>true):[];complete+=steps.filter((_,i)=>checks[i]===true).length});return {complete,total:items.reduce((n,item)=>n+tidyStepsFor(item.place).length,0)}}
 function tidyJourneyProgress(){const counts=tidyCounts();return counts.all?Math.round(counts.done/counts.all*100):0}
 function tidyStageGuidance(rate,hasCriticalPending){
+ if(hasCriticalPending)return {message:'まずは寝る場所・避難経路など、命を守る安全対策を確認しましょう。最低限の備蓄は片付けの完了を待たずに確保します。',action:'命を守る安全チェック',page:'homeSafety'};
  if(rate<50)return {message:'まずは整理・整頓を進めましょう。最低限の水・食料・携帯トイレと命を守る安全対策は今から確保します。',action:'お片付けを進める',page:'tidy'};
  if(rate<75)return {message:'片付けが半分進みました。備蓄場所を確保し、家にある物と必要量を確認しましょう。買い足す前に重複を防ぎます。',action:'備蓄を確認する',page:'supplies'};
  if(hasCriticalPending)return {message:'片付け75%到達。先に寝る場所・避難経路などの未完了の安全対策を確認しましょう。最低限の備蓄は並行できます。',action:'命を守る安全チェック',page:'homeSafety'};
@@ -2378,6 +2381,7 @@ function renderGameHomeDialogue(){
  const safety=criticalSafetyState(),steps=tidyStepTotals(),rate=tidyJourneyProgress();
  let line='まずはひとつ、一緒に片付けていこうね。';
  if(safety.remaining.length)line='寝る場所と避難経路の安全から、一緒に確認しようね。';
+ else if(cleanHomeReady())line=cleanPracticeDefinitions().some(([id])=>!readCleanPractice()[id]?.done)?'基本の備えを確認できたね。今日は無理のない範囲で掃除を進めよう。':'今日の掃除はひと区切りだね。無理せず、次の点検も続けていこう。';
  else if(steps.total&&steps.complete===steps.total)line='お片付けがひと区切りついたね。次は備えを確認しよう。';
  else if(steps.complete>0)line='小さな作業が'+steps.complete+'個進んだね。次もひとつずつ確認していこう。';
  else if(rate>=50)line='今の片付け状況に合わせて、備蓄の置き場所も確認しようね。';
@@ -2387,27 +2391,12 @@ function renderGameHomeDialogue(){
  renderGameProgressSnapshot();
  const action=document.getElementById('gameNextAction');
  if(action){
-  if(safety.remaining.length){
-   action.textContent='まず住まいの安全を確認する ↗';
-   action.onclick=()=>show('homeSafety');
-  }else{
-   const remaining=readTidyPlaces().filter(item=>item.done!==true).sort(tidyPlaceSort);
-   if(remaining.length){
-    const item=remaining[0];
-    const checks=Array.isArray(item.stepChecks)?item.stepChecks:[];
-    const nextIndex=tidyStepsFor(item.place).findIndex((_,i)=>checks[i]!==true);
-    action.textContent='次は「'+item.place+'」の'+(nextIndex<0?'片付け':'作業')+'へ ↗';
-    action.onclick=()=>{
-     const filter=document.getElementById('tidyFilter'),search=document.getElementById('tidySearch');
-     if(filter)filter.value='all';
-     if(search)search.value='';
-     activeTidyChecklistId=item.id;show('tidy');
-    };
-   }else{
-    action.textContent='備蓄を確認する ↗';
-    action.onclick=()=>show('supplies');
-   }
-  }
+  const next=homePriorityActions()[0];
+  if(next?.page==='tidy'){
+   const remaining=readTidyPlaces().filter(item=>item.done!==true).sort(tidyPlaceSort),item=remaining[0];
+   if(item){action.textContent='次は「'+item.place+'」の片付けへ ↗';action.onclick=()=>{const filter=document.getElementById('tidyFilter'),search=document.getElementById('tidySearch');if(filter)filter.value='all';if(search)search.value='';activeTidyChecklistId=item.id;show('tidy')}}
+   else{action.textContent=next.label+' ↗';action.onclick=()=>show(next.page)}
+  }else{action.textContent=(next?next.label:'わが家の準備状況を確認')+' ↗';action.onclick=()=>next?openHomePriorityAction(next):show('readiness')}
  }
  if(tricera)tricera.textContent=safety.remaining.length
    ?'トリケラさん：無理せず1つずつでええんやで。まず安全を確かめような。'
@@ -2560,7 +2549,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v92');
+  const cache=await caches.open('totonoe-offline-shell-v93');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -2581,17 +2570,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v92')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v93')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v92')?await caches.open('totonoe-offline-shell-v92'):null;
+  const cache=names.includes('totonoe-offline-shell-v93')?await caches.open('totonoe-offline-shell-v93'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v92'?'必須ファイル10件の保存とv92の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v92の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v93'?'必須ファイル10件の保存とv93の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v93の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -2712,7 +2701,7 @@ function openFullBackupFromReadiness(){
  const status=document.getElementById('allBackupStatus');if(status)status.textContent='復元前に、必ず最新の全データをバックアップして保存してください。';
 }
 // Inspects existing user-owned keys in read-only mode; never deletes or modifies records.
-// v92: read-only per-record schema audit. No stored values are edited or removed.
+// v93: read-only per-record schema audit. No stored values are edited or removed.
 function checkStoredDataIntegrity(){
  const host=document.getElementById('dataIntegrityResults');if(!host)return;
  host.replaceChildren();
@@ -2842,7 +2831,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v92';
+ const cacheName='totonoe-offline-shell-v93';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -2905,7 +2894,7 @@ async function repairOfflinePreparation(){
   }
   await inspect();
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v92有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v93有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/10件。Service Worker：'+state+'。';
@@ -2945,13 +2934,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v92';
+   const current='totonoe-offline-shell-v93';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v92有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v93有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
@@ -2993,7 +2982,7 @@ async function checkReleaseReadiness(){
 }
 initOfflineStartup();
 window.addEventListener('pageshow',initOfflineStartup);
-// v92: live JMA forecast only; never retain stale weather as a current forecast.
+// v93: live JMA forecast only; never retain stale weather as a current forecast.
 
 function jstWeatherDay(value){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value))}
 function weatherDailyRows(data,areaCode,now=Date.now()){
@@ -3320,7 +3309,7 @@ function readCleanPractice(){const raw=readCleanPracticeRaw(),schedule=readClean
 function readCleanPracticeRaw(){try{const v=JSON.parse(localStorage.getItem('toto-clean-practice-v1')||'{}');return validCleanPractice(v)?v:{}}catch(e){return {}}}
 function setCleanPractice(id,done){
  const v=readCleanPracticeRaw();v[id]={done,at:new Date().toISOString()};
- try{const raw=JSON.stringify(v);localStorage.setItem('toto-clean-practice-v1',raw);if(localStorage.getItem('toto-clean-practice-v1')!==raw)throw Error('verify');renderCleanPractice();renderTasks();renderHomeNextThree();document.getElementById('cleanSaveStatus').textContent='掃除の記録を保存しました。'}catch(e){renderCleanPractice();document.getElementById('cleanSaveStatus').textContent='保存できませんでした。入力内容を別に控えてください。'}
+ try{const raw=JSON.stringify(v);localStorage.setItem('toto-clean-practice-v1',raw);if(localStorage.getItem('toto-clean-practice-v1')!==raw)throw Error('verify');renderCleanPractice();renderTasks();renderHomeNextThree();renderGameHomeDialogue();document.getElementById('cleanSaveStatus').textContent='掃除の記録を保存しました。'}catch(e){renderCleanPractice();document.getElementById('cleanSaveStatus').textContent='保存できませんでした。入力内容を別に控えてください。'}
 }
 function renderCleanPractice(){
  const host=document.getElementById('cleanPracticeItems');if(!host)return;if(!document.getElementById('cleanScheduleForm')?.dataset.editing){document.getElementById('cleanResetTime').value=readCleanSchedule().resetTime;document.getElementById('cleanResetDays').value=String(readCleanSchedule().resetDays);}host.replaceChildren();const v=readCleanPractice(),items=cleanPracticeDefinitions();document.getElementById('cleanProgress').textContent='今回の完了：'+items.filter(([id])=>v[id]?.done).length+'／'+items.length+'項目';
@@ -3340,7 +3329,7 @@ function saveCleanSchedule(){
 function cleanHomeReady(){
  try{
   const tidy=tidyCounts(),mission=homeMissionItems(),plan=readEvacuationPlan(),today=todayLocalDate(),soon=dateAfterDays(30);
-  return homeSafetyCounts().unknown===0&&tidy.all>0&&tidy.done===tidy.all&&!!mission&&mission.remaining===0&&['evPlace','evTiming','evContacts'].every(k=>typeof plan[k]==='string'&&plan[k].trim())&&['water','food','toilet'].every(cat=>supplies.some(x=>x.category===cat&&Number(x.qty)>0))&&!supplies.some(x=>Number(x.qty)<=0||(x.exp&&x.exp<=soon)||(x.nextCheck&&x.nextCheck<=today)||(Number(x.target)>0&&Number(x.qty)<Number(x.target)));
+  return homeSafetyCounts().unknown===0&&tidy.all>0&&tidy.done===tidy.all&&(mission?mission.remaining===0:tasks.every((_,i)=>done.includes(i)))&&['evPlace','evTiming','evContacts'].every(k=>typeof plan[k]==='string'&&plan[k].trim())&&['water','food','toilet'].every(cat=>supplies.some(x=>x.category===cat&&Number(x.qty)>0))&&!supplies.some(x=>Number(x.qty)<=0||(x.exp&&x.exp<=soon)||(x.nextCheck&&x.nextCheck<=today)||(Number(x.target)>0&&Number(x.qty)<Number(x.target)));
  }catch(e){return false}
 }
 function renderHomeCleaningTasks(){
@@ -3398,7 +3387,7 @@ function pickPracticeQuestions(random=Math.random){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v92','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v93','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -3407,8 +3396,8 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v92';
-   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v92有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v93';
+   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v93有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
     const checks=await Promise.all(paths.map(async p=>{const res=await cache.match(new URL(p,scope).href);return !!res?.ok}));
