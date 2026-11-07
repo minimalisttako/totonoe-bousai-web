@@ -603,6 +603,49 @@ header{z-index:50;isolation:isolate}
  .page-mascot-friends>.approved-page-mascots,
  #home .game-mascot-scene>.anime-approved-home-image{animation:none!important;transform:none!important}
 }
+
+/* v29: separate background and six independent character frames; modest and accessible. */
+#home .game-mascot-scene{
+ background:#d5eefb url('./assets/home-sky-background.svg') center center/cover no-repeat!important;
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ align-items:end!important;justify-items:center!important;gap:0!important;
+ width:min(58vw,226px)!important;max-width:226px!important;
+ aspect-ratio:640/380!important;min-height:132px!important;
+ height:auto!important;overflow:hidden!important;position:relative!important;
+ border-radius:12px!important;
+}
+#home .game-mascot-scene>.anime-approved-home-image{display:none!important}
+#home .game-mascot-scene>.character-art{
+ position:relative!important;visibility:visible!important;display:block!important;
+ width:100%!important;max-width:75px!important;min-width:0!important;
+ height:auto!important;aspect-ratio:1/1!important;
+ align-self:end!important;flex:none!important;inset:auto!important;
+ margin:0!important;opacity:1!important;pointer-events:none!important;
+ overflow:visible!important;background:transparent!important;transform:none!important;
+}
+#home .game-mascot-scene>.character-art img{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;object-fit:contain!important;
+}
+.character-art .mascot-blink{animation:mascotBlinkFrequent 5.7s step-end infinite!important;opacity:0}
+.character-art.tricera .mascot-blink{animation-duration:6.6s!important;animation-delay:1.7s!important}
+.character-art.bird .mascot-blink{animation-duration:7.4s!important;animation-delay:3.2s!important}
+@keyframes mascotBlinkFrequent{0%,90%,94%,100%{opacity:0}91%,93%{opacity:1}}
+.page-mascot-friends>.game-mascot{
+ display:block!important;position:relative!important;flex:0 0 44px!important;
+ width:44px!important;height:54px!important;overflow:hidden!important;
+ visibility:visible!important;transform:none!important;
+}
+.page-mascot-friends>.game-mascot img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+#emergency .emergency-mascot-image .mascot-blink{animation:none!important;opacity:0!important}
+@media(max-width:360px){
+ #home .game-mascot-scene{width:min(54vw,185px)!important;max-width:185px!important;min-height:110px!important}
+ .page-mascot-friends>.game-mascot{width:35px!important;flex-basis:35px!important;height:48px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .character-art .mascot-blink{animation:none!important;opacity:0!important}
+ #home .game-mascot-scene>.character-art{animation:none!important;transform:none!important}
+}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -1489,12 +1532,8 @@ function renderPageMascotGuide(id){
   if(card&&!card.querySelector('.emergency-tako-message')){
    const row=document.createElement('div');row.className='emergency-tako-message';
    row.setAttribute('aria-label','たこからのメッセージ');
-   // Emergencies never animate: a calm and legible view takes precedence.
-   const art=document.createElement('img');
-   art.src='./assets/approved-anime-scene.svg';
-   art.className='emergency-approved-mascots';art.alt='';
-   art.width=192;art.height=192;art.decoding='async';
-   row.append(art);
+   const octo=document.querySelector('#home .game-mascot-scene .game-mascot.octo');
+   if(octo){const art=octo.cloneNode(true);art.className='emergency-mascot-image character-art octo';art.setAttribute('aria-hidden','true');row.append(art)}
    const p=document.createElement('p');p.textContent='まずは、ご自身の安全を。できることを、一つずつ。';
    row.append(p);
    const heading=card.querySelector('h2');if(heading)heading.after(row);else card.prepend(row);
@@ -1507,12 +1546,10 @@ function renderPageMascotGuide(id){
   banner.className='page-mascot-help';
   banner.setAttribute('aria-label','キャラクターの案内');
   const friends=document.createElement('div');friends.className='page-mascot-friends';friends.setAttribute('aria-hidden','true');
-  const approved=document.createElement('img');
-  approved.className='approved-page-mascots';
-  approved.src='./assets/approved-anime-scene.svg';
-  approved.alt='';
-  approved.width=192;approved.height=192;approved.decoding='async';
-  friends.append(approved);
+  for(const kind of ['octo',guide[0]==='stock'?'bird':'tricera']){
+   const individual=document.querySelector('#home .game-mascot-scene .game-mascot.'+kind);
+   if(individual)friends.append(individual.cloneNode(true));
+  }
   const words=document.createElement('div');words.className='page-mascot-words';
   const title=document.createElement('strong'),line=document.createElement('p'),support=document.createElement('p'),status=document.createElement('span');
   support.className='guide-support';status.className='page-guide-stat';status.hidden=true;
