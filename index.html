@@ -739,7 +739,7 @@ header{z-index:50;isolation:isolate}
 <h2>リリース候補版の総合診断</h2>
 <p class="notice">安全・避難・備蓄・記録・データ保護などの主要機能を、自動検査します。登録済みの記録は書き換えません。</p>
 <button class="primary" type="button" style="width:100%;min-height:48px" onclick="checkReleaseCandidate()">主要機能をまとめて診断する</button>
-<div id="releaseCandidateResults" role="status" aria-live="polite"></div>
+<div id="releaseCandidateResults" role="status" aria-live="polite"></div><button class="secondary" type="button" id="dataIntegrityRun" onclick="checkStoredDataIntegrity()" style="width:100%;min-height:48px;margin-top:10px">保存データの整合性を診断する（読み取りのみ）</button><div id="dataIntegrityResults" class="notice" role="status" aria-live="polite"></div>
 <details class="more-fold" style="margin-top:9px"><summary>今回のリリース対象と今後の機能 <span aria-hidden="true">⌄</span></summary>
 <div class="more-fold-body">
 <p class="notice">現在のリリース候補：お片付け・住まいの安全・備蓄管理・避難計画・災害時モード・家族とペットのカルテ・停電断水シミュレーター・バックアップ・オフライン利用。</p>
@@ -1309,6 +1309,15 @@ function renderHouseholdReadinessBridge(){
   const excluded=water.length-valid.length;
   const litersText=Number(liters.toFixed(3)).toLocaleString('ja-JP');
   entry('登録済みの飲料水',valid.length?litersText+'L（容量を設定した有効な '+valid.length+'種類）'+(excluded?'／未集計 '+excluded+'種類':''):'容量と数量を確認できる飲料水が未登録です。','supplies',!valid.length||excluded>0);
+  const food=supplies.filter(x=>x.category==='food');
+  const foodExpired=food.filter(x=>x.exp&&x.exp<today).length;
+  entry('食料の備蓄',food.length?'登録 '+food.length+'種類'+(foodExpired?'／期限切れ '+foodExpired+'種類':''):'食料の備蓄は未登録です。','supplies',!food.length||foodExpired>0);
+  if(pets>0){
+   entry('ペットの避難準備','ペット '+pets+'頭。同行避難先の受入条件、水・食料・キャリー等を個別に確認してください。','family',true);
+  }
+  if(people>0){
+   entry('家族人数と備蓄の計算','人 '+people+'人。必要量は「備蓄管理」で日数を選んで計算できます（自動変更なし）。','supplies');
+  }
   const note=document.createElement('p');note.className='notice';
   note.textContent='飲料水の目安は別の備蓄計算で人数・日数を指定してください。家族カルテ未登録を「備蓄0人分」とは判定しません。';
   host.append(note);
@@ -2280,6 +2289,39 @@ function openFullBackupFromReadiness(){
  while(parent&&parent!==document.body){if(parent.tagName==='DETAILS')parent.open=true;parent=parent.parentElement;}
  target.scrollIntoView({block:'center',behavior:'smooth'});
  const status=document.getElementById('allBackupStatus');if(status)status.textContent='復元前に、必ず最新の全データをバックアップして保存してください。';
+}
+// Inspects existing user-owned keys in read-only mode; never deletes or modifies records.
+function checkStoredDataIntegrity(){
+ const host=document.getElementById('dataIntegrityResults');if(!host)return;
+ host.replaceChildren();
+ const source={};const issues=[];
+ let present=0;
+ for(const k of allBackupKeys){
+  try{
+   const raw=localStorage.getItem(k);
+   if(raw===null)continue;
+   present++;
+   JSON.parse(raw);
+   source[k]=raw;
+  }catch(e){issues.push('記録の読み取りまたはJSON形式に問題があります（項目 '+(allBackupKeys.indexOf(k)+1)+'）')}
+ }
+ if(present===0){
+  host.textContent='保存記録はまだありません。新規利用時は正常です。備蓄などを保存後に再診断してください。';
+  return;
+ }
+ if(Object.keys(source).length===present){
+  try{
+   validateFullBackupObject({format:'toto-full-backup-v1',data:source});
+  }catch(e){issues.push('バックアップ形式の整合性を確認できません。バックアップ内容の点検が必要です。')}
+ }
+ const summary=document.createElement('p');
+ const count=present-issues.length;
+ summary.textContent='保存記録 '+present+'種類を点検 ／ '+(issues.length?'要確認 '+issues.length+'件':'形式上の問題は検出されませんでした');
+ host.append(summary);
+ for(const issue of issues){const line=document.createElement('p');line.textContent='⚠️ '+issue;host.append(line)}
+ const caution=document.createElement('p');
+ caution.textContent=issues.length?'⚠️ 記録を削除せず、既存のバックアップを保管してください。':'✅ 読み取り専用の形式点検を完了。復元や端末移行の成功を保証するものではありません。';
+ host.append(caution);
 }
 function checkReleaseCandidate(){
  const box=document.getElementById('releaseCandidateResults');if(!box)return;
