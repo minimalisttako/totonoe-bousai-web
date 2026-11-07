@@ -548,6 +548,13 @@ header{z-index:50;isolation:isolate}
 #home .game-mascot-scene>.anime-approved-home-image{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;border-radius:16px;background:#d9edfc;box-shadow:0 6px 18px #2859861a}
 #home .game-dialogue{margin-top:10px!important}
 @media(max-width:390px){#home .game-mascot-scene{max-width:100%;margin-top:8px!important}}
+
+/* v22: simple family-card edit controls, safe on narrow phone screens. */
+#family .family-record-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:6px}
+#family .family-record-actions button{min-height:44px;min-width:62px;padding:9px 12px}
+#family #familyCancelEdit.hidden{display:none!important}
+#family #familyEntryForm{scroll-margin-top:135px}
+@media(max-width:360px){#family .family-record-actions{justify-content:flex-start}#family .family-record{flex-wrap:wrap}}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
@@ -656,7 +663,7 @@ header{z-index:50;isolation:isolate}
 <label class="supply-label" for="familyLabel">表示名（任意・個人情報を避ける）</label><input id="familyLabel" class="field" maxlength="30" placeholder="例：家族A、犬A">
 <label class="supply-label" for="familyCount">人数・頭数</label><input id="familyCount" class="field" type="number" min="1" max="30" step="1" value="1" inputmode="numeric">
 <p id="familySuggestedItems" class="notice"></p>
-<button class="primary" type="submit" style="width:100%;min-height:48px">カルテに追加する</button>
+<button class="primary" id="familySaveButton" type="submit" style="width:100%;min-height:48px">カルテに追加する</button><button class="secondary hidden" type="button" id="familyCancelEdit" onclick="cancelFamilyEdit()" style="width:100%;min-height:48px;margin-top:8px">編集を取り消す</button>
 </form>
 <p id="familyStatus" role="status" class="notice" aria-live="polite"></p>
 </div>
@@ -817,12 +824,49 @@ function renderFamilySuggestedItems(){
  const el=document.getElementById('familySuggestedItems');if(!el)return;
  el.textContent='確認する備え：'+(familyKinds[type]?.list||[]).join(' ／ ');
 }
+let editingFamilyProfileId=null;
+function cancelFamilyEdit(){
+ editingFamilyProfileId=null;
+ const form=document.getElementById('familyEntryForm');
+ if(form){
+  form.reset();
+  document.getElementById('familyCount').value='1';
+  document.getElementById('familySaveButton').textContent='カルテに追加する';
+  document.getElementById('familyCancelEdit').classList.add('hidden');
+ }
+ renderFamilySuggestedItems();
+}
+function editFamilyProfile(id){
+ const record=loadFamilyProfiles().find(item=>item.id===id);
+ const status=document.getElementById('familyStatus');
+ if(!record){if(status)status.textContent='編集対象が見つかりません。カルテを開き直してください。';return}
+ editingFamilyProfileId=record.id;
+ pendingFamilyDelete=null;
+ document.getElementById('familyType').value=record.type;
+ document.getElementById('familyLabel').value=record.label;
+ document.getElementById('familyCount').value=String(record.count);
+ document.getElementById('familySaveButton').textContent='変更を保存する';
+ document.getElementById('familyCancelEdit').classList.remove('hidden');
+ renderFamilySuggestedItems();
+ status.textContent='登録済みカルテを編集中です。変更後に「変更を保存する」を押してください。';
+ document.getElementById('familyEntryForm').scrollIntoView({block:'start',behavior:'smooth'});
+}
 function addFamilyProfile(event){
  event.preventDefault();
  const status=document.getElementById('familyStatus'),type=document.getElementById('familyType').value;
  const count=Number(document.getElementById('familyCount').value),label=document.getElementById('familyLabel').value.trim();
  const records=loadFamilyProfiles();
  if(!familyKinds[type]||!Number.isInteger(count)||count<1||count>30||label.length>30){status.textContent='対象と人数・頭数を確認してください（1〜30）。';return}
+ if(editingFamilyProfileId){
+  const index=records.findIndex(item=>item.id===editingFamilyProfileId);
+  if(index<0){status.textContent='編集中のカルテが見つかりません。内容を確認してください。';return}
+  const original=records[index];
+  records[index]={...original,type,label,count};
+  if(!verifiedSaveJson(familyProfileKey,records)){status.textContent='変更を保存できませんでした。入力は残っていますので再度お試しください。';return}
+  cancelFamilyEdit();pendingFamilyDelete=null;
+  try{renderFamilyProfiles();status.textContent='カルテの変更を保存しました。'}catch(e){status.textContent='変更を保存しました。画面を開き直して確認してください。'}
+  return;
+ }
  if(records.length>=30){status.textContent='登録できるのは30件までです。';return}
  const id='family-'+Date.now()+'-'+Math.random().toString(36).slice(2,9);
  records.push({id,type,count,label});
@@ -833,6 +877,7 @@ function addFamilyProfile(event){
 let pendingFamilyDelete=null;
 function removeFamilyProfile(id){
  const status=document.getElementById('familyStatus');
+ if(editingFamilyProfileId===id){status.textContent='このカルテを編集中です。先に編集を取り消してください。';return}
  if(pendingFamilyDelete!==id){pendingFamilyDelete=id;status.textContent='削除する場合は、同じ「削除」ボタンをもう一度押してください。';return}
  pendingFamilyDelete=null;
  const next=loadFamilyProfiles().filter(x=>x.id!==id);
@@ -852,8 +897,10 @@ function renderFamilyProfiles(){
   const desc=document.createElement('div');desc.className='family-record-description';
   const title=document.createElement('strong');title.textContent=x.label||familyKinds[x.type].name;
   const small=document.createElement('small');small.textContent=familyKinds[x.type].name+' ／ '+x.count+(x.type==='pet'?'頭':'人');
+  const edit=document.createElement('button');edit.type='button';edit.className='secondary';edit.textContent='編集';edit.setAttribute('aria-label',(x.label||familyKinds[x.type].name)+'のカルテを編集');edit.onclick=()=>editFamilyProfile(x.id);
   const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent='削除';button.setAttribute('aria-label',(x.label||familyKinds[x.type].name)+'のカルテを削除（2回押して確定）');button.onclick=()=>removeFamilyProfile(x.id);
-  desc.append(title,small);row.append(desc,button);host.append(row);
+  const actions=document.createElement('div');actions.className='family-record-actions';actions.append(edit,button);
+  desc.append(title,small);row.append(desc,actions);host.append(row);
  });
  const types=[...new Set(records.map(x=>x.type))];
  types.forEach(type=>{
