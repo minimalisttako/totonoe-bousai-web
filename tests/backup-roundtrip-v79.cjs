@@ -4,7 +4,7 @@ const aliases=source.match(/const allBackupKeys=(\[[^;]+\]);/)[1];
 const declarations=aliases.slice(1,-1).split(',').filter(k=>!k.startsWith("'")).map(k=>{const value=source.match(new RegExp('\\b'+k+"='([^']+)'"));if(!value)throw Error('Missing key '+k);return 'const '+k+'='+JSON.stringify(value[1])+';'}).join('\n');
 function extract(name){const at=source.indexOf('function '+name+'(');assert(at>=0,name);const tail=source.slice(at),end=/\n(?:async )?function /.exec(tail);assert(end,name+' boundary');return tail.slice(0,end.index)}
 const dataStore=new Map(),ctx={TextEncoder,localStorage:{getItem:k=>dataStore.get(k)??null}};vm.createContext(ctx);
-vm.runInContext(declarations+'\nconst allBackupKeys='+aliases+';\n'+['backupUtf8ByteLength','buildFullBackup','validateFullBackupObject','validSupplyMeasure','validTidyPhoto','validWeatherPreference','validEventSearchSettings','validPracticeResult','cleanPracticeDefinitions','validCleanPractice','validCleanSchedule','validFamilyNotes','applyValidatedRestoreToStorage'].map(extract).join('\n'),ctx);
+vm.runInContext(declarations+'\nconst allBackupKeys='+aliases+';\n'+['backupUtf8ByteLength','buildFullBackup','validateFullBackupObject','validSupplyMeasure','validTidyPhoto','validWeatherPreference','validEventSearchSettings','validPracticeResult','cleanPracticeDefinitions','validCleanPractice','validCleanSchedule','validFamilyNotes','validTrainingRecords','applyValidatedRestoreToStorage'].map(extract).join('\n'),ctx);
 const when='2026-11-07T12:00:00.000Z',photo='data:image/jpeg;base64,YWJj';
 const fixtures={
  'toto-supplies-v1':[{name:'トイレ用品',qty:'2',category:'toilet',measureFactor:'50'}],
@@ -49,3 +49,9 @@ ctx.setMovingCheck('route',false);assert.equal(ctx.readMovingChecklist().route,f
 movingDest.set('toto-moving-v1','{broken');ctx.setMovingCheck('risk',true);assert.equal(movingDest.get('toto-moving-v1'),'{broken');
 assert.equal(ctx.movingChecklistGroups().flat().length,12);
 console.log('PASS: moving checklist 12 tasks; save/reopen/uncheck; full-backup restoration; invalid state rejected and protected');
+
+const trainingPayload=validate({format:'toto-full-backup-v1',data:{'toto-evacuation-drills-v1':JSON.stringify([{date:'2026-11-07',type:'非常用トイレを試用',note:'確認した点'}])}});
+const trainingDest=new Map();assert(ctx.applyValidatedRestoreToStorage(trainingPayload.data,trainingPayload.keys,storage(trainingDest)).ok);
+assert.equal(JSON.parse(trainingDest.get('toto-evacuation-drills-v1'))[0].note,'確認した点');
+assert.throws(()=>validate({format:'toto-full-backup-v1',data:{'toto-evacuation-drills-v1':JSON.stringify([{date:'2026-02-30',type:'訓練'}])}}));
+console.log('PASS: training backup preserves notes and rejects nonexistent calendar dates');
