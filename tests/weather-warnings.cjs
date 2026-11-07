@@ -19,4 +19,5 @@ assert.equal(model([report('発表警報・注意報はなし',3600001,'00')]).s
 const missing=report('解除');missing.warning.class20Items[0].kinds=[];assert.equal(model([missing]).state,'unknown');assert.equal(model([]).state,'unknown');
 assert.equal(model([report('発表'),report('解除')]).state,'unknown');assert.equal(model([report('発表'),clear]).state,'unknown');
 assert.throws(()=>c.warningRowsForCity([report('解除',0,'15','wind','9999999')],city));
+const ambiguous=report('発表');delete ambiguous.dataTypeCode;assert.equal(model([ambiguous,clear]).state,'unknown');
 console.log('PASS: latest cancellation and reissue; source-order independence; per-type clear isolation; unknown codes remain active; incomplete/stale/offline/future/conflicting data never yields clear');
