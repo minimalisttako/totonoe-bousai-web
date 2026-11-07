@@ -2181,7 +2181,9 @@ async function checkReleaseReadiness(){
   const empty=Object.keys(snapshot).length===0;
   const testData=empty?{[key]:'[]'}:snapshot;
   const source={format:'toto-full-backup-v1',createdAt:new Date().toISOString(),data:testData};
-  const decoded=validateFullBackupObject(JSON.parse(JSON.stringify(source)));
+  const backupText=JSON.stringify(source,null,2);
+  if(backupUtf8ByteLength(backupText)>2000000)throw Error('backup-size');
+  const decoded=validateFullBackupObject(JSON.parse(backupText));
   const accurate=decoded.keys.length===Object.keys(testData).length&&decoded.keys.every(k=>decoded.data[k]===testData[k]);
   add('記録のバックアップ形式',accurate,empty?'テストデータで形式を確認（実記録は未登録）':'保存データ'+decoded.keys.length+'種類の形式を照合');
  }catch(e){add('記録のバックアップ形式',false,'形式を確認できません。保存データを点検してください')}
