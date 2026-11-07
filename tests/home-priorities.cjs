@@ -1,0 +1,20 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync(process.argv[2]||path.join(__dirname,'..','index.html'),'utf8');
+function extract(name){const start=source.indexOf('function '+name+'(');assert(start>=0,name);const tail=source.slice(start),end=/\n(?:async )?function /.exec(tail);assert(end,name);return tail.slice(0,end.index);}
+let safety={},otherSafety=5,tidy={all:6,done:0},plan={},mission=null,season=4,cleanDone=false,saveOK=true,readable=true;
+const c={criticalSafetyIds:['bed','exit'],tasks:['one','two','three'],done:[],taskKey:'tasks',supplies:[],readHomeSafety:()=>safety,homeSafetyCounts:()=>({unknown:otherSafety}),tidyCounts:()=>tidy,readEvacuationPlan:()=>plan,homeMissionItems:()=>mission,todayLocalDate:()=> '2026-11-08',dateAfterDays:()=> '2026-12-08',supplyStorageReadable:()=>readable,cleanPracticeDefinitions:()=>[['floor','床']],readCleanPractice:()=>({floor:{done:cleanDone}}),homeSeasonalType:()=> 'cold',seasonCounts:()=>({unchecked:season,review:0}),seasonalTemplates:{cold:{name:'寒い時期'}},saveSaved:()=>saveOK,renderTasks:()=>{},renderHomeNextThree:()=>{},renderGameHomeDialogue:()=>{}};
+vm.createContext(c);vm.runInContext(['cleanHomeReady','homePriorityActions','setCommonTask','tidyStageGuidance'].map(extract).join('\n'),c);
+const pages=()=>Array.from(c.homePriorityActions(),x=>x.page);
+assert.deepEqual(pages(),['homeSafety','evacuation','tidy','supplies']);
+for(const rate of [0,50,75,100])assert.equal(c.tidyStageGuidance(rate,true).page,'homeSafety');
+safety={bed:'done',exit:'na'};otherSafety=0;plan={evPlace:'避難先',evTiming:'判断',evContacts:'連絡'};tidy={all:6,done:6};c.done=[0,1,2];
+c.supplies=['water','food','toilet'].map(category=>({category,qty:'2',exp:'2027-01-01'}));assert.equal(c.cleanHomeReady(),true);assert.equal(pages()[0],'cleanPractice');
+season=0;cleanDone=true;assert.deepEqual(pages(),[]);cleanDone=false;
+c.done=[0,1];assert.equal(c.cleanHomeReady(),false);assert.equal(pages()[0],'home');assert.equal(c.setCommonTask(2,true),true);assert.equal(c.cleanHomeReady(),true);
+saveOK=false;assert.equal(c.setCommonTask(2,false),false);assert.deepEqual(Array.from(c.done),[0,1,2]);saveOK=true;assert.equal(c.setCommonTask(2,false),true);assert.equal(c.cleanHomeReady(),false);c.done=[0,1,2];
+mission={remaining:1};assert.equal(c.cleanHomeReady(),false);assert.equal(pages()[0],'diagnosis');mission={remaining:0};assert.equal(c.cleanHomeReady(),true);mission=null;
+c.supplies=c.supplies.filter(x=>x.category!=='food');assert.equal(pages()[0],'supplies');assert(c.homePriorityActions()[0].description.includes('食料'));assert.equal(c.cleanHomeReady(),false);
+c.supplies.push({category:'food',qty:'1',exp:'2020-01-01'});assert.equal(pages()[0],'supplies');assert.equal(c.cleanHomeReady(),false);
+c.supplies[2].exp='2027-01-01';otherSafety=1;assert.equal(pages()[0],'homeSafety');assert.equal(c.cleanHomeReady(),false);
+otherSafety=0;readable=false;assert.equal(pages()[0],'supplies');
+console.log('PASS: safety/evacuation/tidy/stock order; safety-first guidance at all progress levels; cleaning works without diagnosis; unfinished missions, missing food, expiry and safety override cleaning; failed task save keeps prior state; no redundant seasonal prompt after completion');
