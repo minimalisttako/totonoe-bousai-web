@@ -703,6 +703,62 @@ header{z-index:50;isolation:isolate}
 #home .game-mascot-scene>.character-art>.mascot-open{opacity:1!important;z-index:1!important;animation:none!important}
 #home .game-mascot-scene>.character-art>.mascot-blink{z-index:2!important;animation-name:mascotBlinkFrequent!important;animation-timing-function:step-end!important;animation-iteration-count:infinite!important}
 @media(prefers-reduced-motion:reduce){#home .game-mascot-scene>.character-art>.mascot-blink{animation:none!important;opacity:0!important}}
+
+/* v36: lock both eye-state frames to precisely the same home coordinates. */
+#home .game-mascot-scene > .character-art{
+ box-sizing:border-box!important;
+ position:relative!important;
+ top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ inset:auto!important;
+ align-self:end!important;
+ width:100%!important;height:auto!important;
+ aspect-ratio:1/1!important;
+ min-width:0!important;min-height:0!important;
+ max-width:75px!important;
+ margin:0!important;padding:0!important;border:0!important;
+ overflow:hidden!important;
+ isolation:isolate!important;
+ filter:none!important;transform:none!important;
+ animation:none!important;transition:none!important;
+}
+#home .game-mascot-scene > .character-art > img.mascot-open,
+#home .game-mascot-scene > .character-art > img.mascot-blink{
+ box-sizing:border-box!important;
+ display:block!important;
+ position:absolute!important;
+ top:0!important;left:0!important;right:0!important;bottom:0!important;
+ inset:0!important;
+ width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;
+ max-width:none!important;max-height:none!important;
+ padding:0!important;margin:0!important;border:0!important;
+ object-fit:fill!important;object-position:center center!important;
+ transform:none!important;transform-origin:center center!important;
+ transition:none!important;filter:none!important;
+ backface-visibility:visible!important;
+}
+#home .game-mascot-scene > .character-art > img.mascot-open{
+ z-index:1!important;opacity:1!important;animation:none!important;
+}
+#home .game-mascot-scene > .character-art > img.mascot-blink{
+ z-index:2!important;opacity:0;
+ animation-name:mascotBlinkFrequent!important;
+ animation-timing-function:step-end!important;
+ animation-iteration-count:infinite!important;
+ animation-duration:5.7s!important;
+ animation-delay:0s!important;
+}
+#home .game-mascot-scene > .character-art.tricera > img.mascot-blink{
+ animation-duration:6.6s!important;animation-delay:1.7s!important;
+}
+#home .game-mascot-scene > .character-art.bird > img.mascot-blink{
+ animation-duration:7.4s!important;animation-delay:3.2s!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #home .game-mascot-scene > .character-art > img.mascot-blink{
+  animation:none!important;opacity:0!important;
+ }
+}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
