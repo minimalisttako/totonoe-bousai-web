@@ -651,7 +651,7 @@ header{z-index:50;isolation:isolate}
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
 <h2>今日も、少しずつ<br>ととのえましょう。</h2>
 <p class="game-home-lead">お片付けと防災を、<br>無理なく一歩ずつ。</p>
-<div class="game-mascot-scene" role="img" aria-label="黒の無地キャップをかぶった口のないピンクのたこ、緑のトリケラさん、白いシマエナガさん"><img class="anime-approved-home-image" src="./assets/approved-anime-scene.svg" width="192" height="192" decoding="async" alt=""/><span class="game-mascot octo character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/tako.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/tako-blink.svg" width="160" height="160" decoding="async"></span><span class="game-mascot tricera character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/tricera.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/tricera-blink.svg" width="160" height="160" decoding="async"></span><span class="game-mascot bird character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/shimaenaga.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/shimaenaga-blink.svg" width="160" height="160" decoding="async"></span></div>
+<div class="game-mascot-scene" role="img" aria-label="黒の無地キャップをかぶった口のないピンクのたこ、緑のトリケラさん、白いシマエナガさん"><span class="game-mascot octo character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/tako.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/tako-blink.svg" width="160" height="160" decoding="async"></span><span class="game-mascot tricera character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/tricera.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/tricera-blink.svg" width="160" height="160" decoding="async"></span><span class="game-mascot bird character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/shimaenaga.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/shimaenaga-blink.svg" width="160" height="160" decoding="async"></span></div>
 <div class="game-dialogue" aria-live="polite"><strong id="gameSpeaker">たこ</strong><span id="gameDialogueText">「まずはひとつ、一緒に片付けていこうね。」</span></div><div class="game-support-comments"><p id="gameTriceraNote"></p><p class="game-season-note" id="gameSeasonNote"></p></div><div class="game-progress-snapshot" aria-label="現在の備えの概要"><div class="game-snapshot-item" id="gameSafetySnapshot"><span class="game-snapshot-label">住まいの安全</span><strong class="game-snapshot-value" id="gameSafetyValue">確認中</strong></div><div class="game-snapshot-item" id="gameTidySnapshot"><span class="game-snapshot-label">お片付け</span><strong class="game-snapshot-value" id="gameTidyValue">確認中</strong></div><div class="game-snapshot-item" id="gameStockSnapshot"><span class="game-snapshot-label">備蓄</span><strong class="game-snapshot-value" id="gameStockValue">確認中</strong></div></div><button type="button" id="gameNextAction" class="game-next-action" onclick="show('homeSafety')">次の一歩を確認する ↗</button>
 </div><div class="game-dashboard-title"><span>YOUR MISSIONS</span><span>今日のメニュー</span></div><div class="emergency-home-entry"><p id="homeOfflineNotice" class="home-offline-notice hidden" role="status" aria-live="polite"></p><button class="emergency-shortcut" type="button" onclick="show('emergency')" aria-label="災害時モードを開く"><span aria-hidden="true">🛡️</span><strong>災害時モード</strong><span aria-hidden="true">↗</span></button></div><div class="card" id="homeNextThreeCard" aria-label="備えの優先順位">
 <h2>今日の優先チェック</h2>
@@ -1122,7 +1122,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='rc-2026-11-07-approved-idle-v28';
+const releaseQaBuild='rc-2026-11-07-independent-blink-v29';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1241,8 +1241,8 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v28');
-  const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tricera.svg','./assets/shimaenaga.svg','./assets/app-icon.svg','./assets/approved-anime-scene.svg'];
+  const c=await caches.open('totonoe-offline-shell-v29');
+  const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tricera.svg','./assets/shimaenaga.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
  }catch(e){add('オフライン用ファイル',false,'確認できません')}
@@ -1267,9 +1267,9 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v28')){
-   const cache=await caches.open('totonoe-offline-shell-v28');
-   const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./assets/approved-anime-scene.svg'];
+  if(registration&&names.includes('totonoe-offline-shell-v29')){
+   const cache=await caches.open('totonoe-offline-shell-v29');
+   const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
   rows.push({name:'オフライン用ファイル10件',ok});
@@ -1867,7 +1867,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v28'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v29'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2207,8 +2207,8 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v28');
-  const urls=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./assets/approved-anime-scene.svg'];
+  const cache=await caches.open('totonoe-offline-shell-v29');
+  const urls=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
    return Boolean(await cache.match(url));
@@ -2226,12 +2226,12 @@ async function initOfflineStartup(){
   let readyTimer;const ready=await Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>{readyTimer=setTimeout(()=>reject(new Error('activation timeout')),12000)})]).finally(()=>clearTimeout(readyTimer));
   if(ready.scope!==registration.scope)throw Error('scope mismatch');
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v28')?await caches.open('totonoe-offline-shell-v28'):null;
-  const necessary=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./assets/approved-anime-scene.svg'];
+  const cache=names.includes('totonoe-offline-shell-v29')?await caches.open('totonoe-offline-shell-v29'):null;
+  const necessary=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v28'?'必須ファイル10件の保存とv28の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v28の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v29'?'必須ファイル10件の保存とv29の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v29の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -2425,8 +2425,8 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v28';
- const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./assets/approved-anime-scene.svg'];
+ const cacheName='totonoe-offline-shell-v29';
+ const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
   status.textContent=text;
@@ -2487,7 +2487,7 @@ async function repairOfflinePreparation(){
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v28有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v29有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/10件。Service Worker：'+state+'。';
@@ -2527,13 +2527,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v28';
+   const current='totonoe-offline-shell-v29';
    const cache=names.includes(current)?await caches.open(current):null;
-   const paths=['./','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./assets/approved-anime-scene.svg','./manifest.webmanifest'];
+   const paths=['./','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v28有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v29有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
