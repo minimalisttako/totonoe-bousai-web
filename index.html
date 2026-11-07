@@ -707,7 +707,7 @@ header{z-index:50;isolation:isolate}
 <h2>✅ リリース前チェック</h2>
 <p class="notice">保存・通信・オフライン起動の準備・バックアップ機能をまとめて確認します。既存の記録データは変更しません。</p>
 <button class="primary" id="releaseReadinessRun" type="button" onclick="checkReleaseReadiness()" style="width:100%;min-height:48px">5項目を診断する</button>
-<div id="releaseReadinessResults" role="status" aria-live="polite"></div><button class="secondary" type="button" id="offlineRepairRun" onclick="repairOfflinePreparation()" style="width:100%;min-height:48px;margin-top:8px">オフライン保存を再確認・修復する</button><p id="offlineRepairStatus" class="notice" role="status" aria-live="polite">0/9件などの場合は通信できる状態で実行してください。既存の記録は削除しません。</p><button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="openReleaseQa()">実機検証表を開く ↗</button>
+<div id="releaseReadinessResults" role="status" aria-live="polite"></div><button class="secondary" type="button" id="offlineRepairRun" onclick="repairOfflinePreparation()" style="width:100%;min-height:48px;margin-top:8px">オフライン保存を再確認・修復する</button><p id="offlineRepairStatus" class="notice" role="status" aria-live="polite">0/10件などの場合は通信できる状態で実行してください。既存の記録は削除しません。</p><button class="secondary" type="button" style="width:100%;min-height:48px;margin-top:8px" onclick="openReleaseQa()">実機検証表を開く ↗</button>
 <button type="button" class="secondary" style="width:100%;margin-top:10px" onclick="openFullBackupFromReadiness()">全データのバックアップへ ↗</button>
 <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="checkBackupIntegrity()">バックアップの整合性を確認</button>
 <p class="notice" id="backupIntegrityResult" role="status" aria-live="polite">実データの復元は行わず、バックアップの生成と読み取りを確認します。</p>
@@ -1134,8 +1134,8 @@ async function runReleaseSmokeTests(){
    const paths=['./','./manifest.webmanifest','./assets/tako.svg','./assets/tako-blink.svg','./assets/tricera.svg','./assets/tricera-blink.svg','./assets/shimaenaga.svg','./assets/shimaenaga-blink.svg','./assets/app-icon.svg','./assets/approved-anime-scene.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
-  rows.push({name:'オフライン用ファイル9件',ok});
- }catch(e){rows.push({name:'オフライン用ファイル9件',ok:false})}
+  rows.push({name:'オフライン用ファイル10件',ok});
+ }catch(e){rows.push({name:'オフライン用ファイル10件',ok:false})}
  const good=rows.filter(x=>x.ok).length;const summary=document.createElement('p');summary.style.fontWeight='700';
  summary.textContent='自動点検 '+good+'/'+rows.length+'項目'+(good===rows.length?' OK':'：確認が必要な項目あり');output.append(summary);
  for(const item of rows){const line=document.createElement('p');line.textContent=(item.ok?'✅ ':'⚠️ ')+item.name;output.append(line)}
