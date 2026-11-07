@@ -1198,7 +1198,8 @@ function getReadinessOverview(){
   const expired=supplies.filter(x=>x.exp&&x.exp<today).length;
   const due=supplies.filter(x=>(x.exp&&x.exp>=today&&x.exp<=soon)||(x.nextCheck&&x.nextCheck<=today)).length;
   const short=supplies.filter(x=>String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.qty)<Number(x.target)).length;
-  add('備蓄の期限と不足',!supplies.length?'備蓄登録はまだありません':'期限切れ '+expired+'件 ／ 点検・期限間近 '+due+'件 ／ 目標不足 '+short+'件','supplies',!supplies.length||expired+due+short>0);
+  const unknown=supplies.filter(x=>!x.exp).length;
+  add('備蓄の期限と不足',!supplies.length?'備蓄登録はまだありません':'期限切れ '+expired+'件 ／ 点検・期限間近 '+due+'件 ／ 目標不足 '+short+'件 ／ 使用期限未設定 '+unknown+'件（期限未設定は安全性を確認できないものとして扱います）','supplies',!supplies.length||expired+due+short>0);
  }catch(e){add('備蓄の期限と不足','記録を確認できません','supplies',true)}
  try{
   const humans=loadFamilyProfiles().filter(x=>x.type!=='pet').reduce((n,x)=>n+x.count,0);
@@ -1215,7 +1216,10 @@ function getReadinessOverview(){
   const liters=valid.reduce((v,x)=>v+Number(x.factor)*Number(x.qty),0);
   const fmt=v=>Number(v.toFixed(2)).toLocaleString('ja-JP');
   const unknown=waters.length>valid.length;
-  add('飲料水の計算',people+'人・'+days+'日：目安 '+fmt(total)+'L ／ 容量が分かる登録済み '+fmt(liters)+'L ／ 不足目安 '+fmt(Math.max(0,total-liters))+'L'+(unknown?'（未集計の水あり）':''),'outage',liters<total);
+  const record=waters.length?(valid.length?'計測できた飲料水 '+fmt(liters)+'L':'容量が確認できる飲料水は未登録'):'飲料水の登録なし';
+  const difference=valid.length&&!unknown?' ／ 登録済みとの差 '+fmt(Math.max(0,total-liters))+'L（目安）':' ／ 不足量は未確定';
+  const note=unknown?'（期限切れ・容量未設定など未集計の水 '+(waters.length-valid.length)+'種類）':'';
+  add('飲料水の計算',people+'人・'+days+'日：目安 '+fmt(total)+'L ／ '+record+difference+note,'outage',!valid.length||unknown||liters<total);
  }catch(e){add('飲料水の計算','シミュレーターで人数・日数を設定してください','outage',false)}
  return result;
 }
@@ -1488,6 +1492,11 @@ function renderHouseholdReadinessBridge(){
   const food=supplies.filter(x=>x.category==='food');
   const foodExpired=food.filter(x=>x.exp&&x.exp<today).length;
   entry('食料の備蓄',food.length?'食料に分類済み '+food.length+'種類'+(foodExpired?'／期限切れ '+foodExpired+'種類':''):'食料に分類された品目はありません。既存の食品は備蓄の編集で分類できます。','supplies',!food.length||foodExpired>0);
+  const toilets=supplies.filter(x=>x.category==='toilet');
+  const toiletExpired=toilets.filter(x=>x.exp&&x.exp<today).length;
+  const toiletUnknown=toilets.filter(x=>!x.exp).length;
+  entry('非常用トイレの登録',toilets.length?'分類済み '+toilets.length+'種類'+(toiletExpired?'／期限切れ '+toiletExpired+'種類':'')+(toiletUnknown?'／期限未設定 '+toiletUnknown+'種類':''):'非常用トイレに分類された品目はありません。必要に応じて備蓄画面から登録してください。','supplies',!toilets.length||toiletExpired>0);
+
   if(pets>0){
    entry('ペットの避難準備','ペット '+pets+'頭。同行避難先の受入条件、水・食料・キャリー等を個別に確認してください。','family',true);
   }
