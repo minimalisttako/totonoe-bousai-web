@@ -3176,6 +3176,7 @@ restoreWeatherLocation();renderHomeWeather();refreshHomeWeather(true);
 var municipalityWarningData=null,municipalityWarningRequest=0,municipalityWarningLoadedAt=0;
 function warningRowsForCity(reports,city){
  if(!Array.isArray(reports)||!reports.length)throw Error('format');
+ if(reports.length>1&&reports.some(report=>typeof report?.dataTypeCode!=='string'||!report.dataTypeCode.trim()))throw Error('ambiguous report type');
  const latest=new Map(),clearAt=new Map();let found=false;
  for(const report of reports){
   const at=Date.parse(report.reportDatetime);if(!Number.isFinite(at))throw Error('date');
