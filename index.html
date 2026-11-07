@@ -501,12 +501,52 @@ header{z-index:50;isolation:isolate}
 #releaseQaNextCard .qa-next-row{display:grid;gap:6px;padding:11px 0;border-bottom:1px solid #e1ebeb}
 #releaseQaNextCard .qa-next-row small{font-size:12px;color:#5a7377;line-height:1.5}
 #releaseQaNextCard .qa-next-row button{min-height:44px;width:100%}
+
+/* v19: approved mascot layout — responsive, no character redesign */
+#home .game-home-stage{min-width:0;overflow:hidden}
+#home .game-mascot-scene{
+ box-sizing:border-box;display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ align-items:end;justify-items:center;
+ width:100%!important;height:auto!important;min-height:0!important;
+ flex:0 0 auto!important;gap:clamp(4px,2vw,12px)!important;
+ padding:4px 4px 0;margin:8px 0 0;
+ position:relative!important;inset:auto!important;
+ overflow:visible!important;contain:none!important;
+ isolation:isolate;
+}
+#home .game-mascot-scene .character-art{
+ box-sizing:border-box;position:relative!important;inset:auto!important;
+ width:min(100%,106px)!important;height:auto!important;
+ aspect-ratio:1/1;min-width:0;max-width:106px;
+ flex:none!important;margin:0!important;padding:0!important;
+ overflow:hidden!important;isolation:isolate;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;transform:none!important;
+}
+#home .game-mascot-scene .character-art img{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ object-fit:contain!important;max-width:100%!important;
+}
+#home .game-dialogue{margin-top:10px!important;min-width:0;max-width:100%;overflow-wrap:anywhere}
+#home .game-support-comments{min-width:0;overflow-wrap:anywhere}
+@media(max-width:390px){
+ #home .game-mascot-scene{gap:4px!important;padding:2px 0 0}
+ #home .game-mascot-scene .character-art{max-width:90px}
+ #home .game-home-stage h2{font-size:clamp(19px,5.5vw,22px)}
+}
+@media(min-width:480px){
+ #home .game-mascot-scene .character-art{max-width:115px}
+}
+@media(prefers-reduced-motion:reduce){
+ #home .character-art .mascot-blink{animation:none!important;opacity:0!important}
+}
 </style></head><body><header><h1>🏠 ととのえ防災</h1><small>暮らしを整えて、もしもに備える。</small><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><main>
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 <span class="game-home-tag">✦ MY BOSAI ROOM</span>
 <h2>今日も、少しずつ<br>ととのえましょう。</h2>
 <p class="game-home-lead">お片付けと防災を、<br>無理なく一歩ずつ。</p>
-<div class="game-mascot-scene" role="img" aria-label="黒い帽子のピンクのたこ、緑のトリケラさん、白いシマエナガさんの単体イラスト"><span class="game-mascot octo character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/tako.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/tako-blink.svg" width="160" height="160" decoding="async"></span><span class="game-mascot tricera character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/tricera.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/tricera-blink.svg" width="160" height="160" decoding="async"></span><span class="game-mascot bird character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/shimaenaga.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/shimaenaga-blink.svg" width="160" height="160" decoding="async"></span></div>
+<div class="game-mascot-scene" role="img" aria-label="黒の無地キャップをかぶった口のないピンクのたこ、緑のトリケラさん、白いシマエナガさん"><span class="game-mascot octo character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/tako.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/tako-blink.svg" width="160" height="160" decoding="async"></span><span class="game-mascot tricera character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/tricera.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/tricera-blink.svg" width="160" height="160" decoding="async"></span><span class="game-mascot bird character-art" aria-hidden="true"><img class="mascot-open" alt="" src="./assets/shimaenaga.svg" width="160" height="160" decoding="async"><img class="mascot-blink" alt="" src="./assets/shimaenaga-blink.svg" width="160" height="160" decoding="async"></span></div>
 <div class="game-dialogue" aria-live="polite"><strong id="gameSpeaker">たこ</strong><span id="gameDialogueText">「まずはひとつ、一緒に片付けていこうね。」</span></div><div class="game-support-comments"><p id="gameTriceraNote"></p><p class="game-season-note" id="gameSeasonNote"></p></div><div class="game-progress-snapshot" aria-label="現在の備えの概要"><div class="game-snapshot-item" id="gameSafetySnapshot"><span class="game-snapshot-label">住まいの安全</span><strong class="game-snapshot-value" id="gameSafetyValue">確認中</strong></div><div class="game-snapshot-item" id="gameTidySnapshot"><span class="game-snapshot-label">お片付け</span><strong class="game-snapshot-value" id="gameTidyValue">確認中</strong></div><div class="game-snapshot-item" id="gameStockSnapshot"><span class="game-snapshot-label">備蓄</span><strong class="game-snapshot-value" id="gameStockValue">確認中</strong></div></div><button type="button" id="gameNextAction" class="game-next-action" onclick="show('homeSafety')">次の一歩を確認する ↗</button>
 </div><div class="game-dashboard-title"><span>YOUR MISSIONS</span><span>今日のメニュー</span></div><div class="emergency-home-entry"><p id="homeOfflineNotice" class="home-offline-notice hidden" role="status" aria-live="polite"></p><button class="emergency-shortcut" type="button" onclick="show('emergency')" aria-label="災害時モードを開く"><span aria-hidden="true">🛡️</span><strong>災害時モード</strong><span aria-hidden="true">↗</span></button></div><div class="home-quick-links" aria-label="よく使う機能"><button type="button" onclick="show('homeSafety')">🛡️ 住まいの安全</button><button type="button" onclick="show('evacuation')">♧ 避難計画</button><button type="button" onclick="show('tidy')">⌂ お片付け</button><button type="button" onclick="show('supplies')">▣ 備蓄管理</button></div><button class="secondary" type="button" style="width:100%;margin:0 0 10px;min-height:45px" onclick="show('outage')">停電・断水に備える：不足量を試算する ↗</button><button class="secondary" type="button" style="width:100%;min-height:46px;margin:0 0 10px" onclick="show('readiness')">わが家の防災準備状況をまとめて確認 ↗</button>
 <div class="card" id="homeNextThreeCard" aria-label="備えの優先順位">
