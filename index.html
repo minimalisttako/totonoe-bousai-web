@@ -1366,7 +1366,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='next-2026-11-08-readiness-links-v104';
+const releaseQaBuild='next-2026-11-08-emergency-storage-v105';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1485,7 +1485,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v104');
+  const c=await caches.open('totonoe-offline-shell-v105');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1511,8 +1511,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v104')){
-   const cache=await caches.open('totonoe-offline-shell-v104');
+  if(registration&&names.includes('totonoe-offline-shell-v105')){
+   const cache=await caches.open('totonoe-offline-shell-v105');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2005,6 +2005,7 @@ const data=obj.data,keys=Object.keys(data);
 if(!keys.length||keys.some(k=>!allBackupKeys.includes(k)||typeof data[k]!=='string'||data[k].length>2000000)||backupUtf8ByteLength(JSON.stringify(obj))>2000000)throw Error('keys');
 for(const k of keys){
 const v=JSON.parse(data[k]);
+if(k===emergencyChecklistKey&&!isEmergencyChecklistData(v))throw Error('emergency checklist');
 if(k===evacuationDrillKey&&!validTrainingRecords(v))throw Error('training records');
 if(k==='toto-moving-v1'&&(!v||typeof v!=='object'||Array.isArray(v)||!Object.entries(v).every(([id,done])=>['risk','route','sort','carry','pack','bed','exit','fix','region','plan','stock','backup'].includes(id)&&typeof done==='boolean')))throw Error('moving checklist');
 if(k==='toto-rest-settings-v1'&&(!v||typeof v!=='object'||Array.isArray(v)||typeof v.enabled!=='boolean'))throw Error('rest settings');
@@ -2203,7 +2204,8 @@ function saveEvacuationPlan(event){
 }
 function renderEvacuationSummary(preview=false){const box=document.getElementById('evacuationSummary');if(!box)return;box.replaceChildren();const data=preview?Object.fromEntries(evacuationFields.map(([id])=>[id,document.getElementById(id).value.trim()])):readEvacuationPlan();if(preview){const warn=document.createElement('p');warn.className='notice';warn.textContent='入力内容の確認用表示です。まだ保存されていません。編集フォームで「計画を保存して確認画面に表示」を押してください。';box.append(warn)}renderEvacuationCompleteness(data);if(!evacuationFields.some(([id])=>typeof data[id]==='string'&&data[id].trim())){const p=document.createElement('p');p.className='notice';p.textContent=preview?'まだ入力されていません。フォームに記入してください。':'避難計画は未登録です。「計画を登録・編集」から入力してください。';box.append(p);return}const important=['evPlace','evTiming','evContacts'];const createRow=([id,label])=>{const row=document.createElement('div');row.className='calc-row evacuation-display-row';const title=document.createElement('strong');title.textContent=label;const value=document.createElement('p');value.className='evacuation-summary-text';value.textContent=typeof data[id]==='string'&&data[id].trim()?data[id]:'未設定';row.append(title,value);return row};evacuationFields.filter(([id])=>important.includes(id)).sort((a,b)=>important.indexOf(a[0])-important.indexOf(b[0])).forEach(f=>box.append(createRow(f)));const more=document.createElement('details');more.className='evacuation-fold evacuation-plan-more';const moreTitle=document.createElement('summary');moreTitle.textContent='災害リスク・経路・集合方法も見る';more.append(moreTitle);const body=document.createElement('div');body.className='evacuation-fold-body';evacuationFields.filter(([id])=>!important.includes(id)).forEach(f=>body.append(createRow(f)));more.append(body);box.append(more)}
 function renderEvacuationCompleteness(data){const box=document.getElementById('evacuationCompleteness');if(!box)return;const v=data||readEvacuationPlan();const missing=evacuationFields.filter(([id])=>!(typeof v[id]==='string'&&v[id].trim()));box.textContent=missing.length?'計画の未記入：'+missing.length+'項目（'+missing.map(x=>x[1]).join('・')+'）。必要な項目を確認して記入してください。':'避難計画の6項目がすべて記入されています。実際の災害ごとの安全性も確認してください。'}
-function isEmergencyChecklistData(v){return !!(v&&Array.isArray(v.items)&&v.items.length>0&&v.items.length<=20&&v.items.every(x=>typeof x==='string'&&x.trim().length>0&&x.length<=120)&&v.checked&&typeof v.checked==='object'&&!Array.isArray(v.checked))}
+function isEmergencyChecklistData(v){return !!(v&&Array.isArray(v.items)&&v.items.length>0&&v.items.length<=20&&new Set(v.items).size===v.items.length&&v.items.every(x=>typeof x==='string'&&x.trim().length>0&&x.length<=120)&&v.checked&&typeof v.checked==='object'&&!Array.isArray(v.checked)&&Object.values(v.checked).every(x=>typeof x==='boolean'))}
+
 function readOfflineRecord(key,validate){
 try{const raw=localStorage.getItem(key);if(raw===null)return {state:'missing'};const value=JSON.parse(raw);return validate(value)?{state:'saved',value}:{state:'invalid'}}catch(e){return {state:'invalid'}}
 }
@@ -2230,7 +2232,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v104'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v105'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2306,11 +2308,65 @@ function showEmergencyText(){const field=document.getElementById('emergencyCopyT
 async function copyEmergencyText(){const field=document.getElementById('emergencyCopyText'),status=document.getElementById('emergencyCopyStatus');if(!field||!status)return;field.value=emergencyTextData();try{if(!navigator.clipboard||!navigator.clipboard.writeText)throw Error('clipboard unsupported');await navigator.clipboard.writeText(field.value);status.textContent='コピーしました。共有先には個人情報にご注意ください。'}catch(e){field.focus();field.select();status.textContent='自動コピーできません。テキスト欄を長押ししてコピーしてください。'}}
 
 const defaultEmergencyChecklist=['自分と周囲の安全を確保する','自治体の避難情報など最新情報を確認する','安全を確保してから家族などの安否を確認する'];
-function readEmergencyChecklist(){const record=readOfflineRecord(emergencyChecklistKey,isEmergencyChecklistData);return record.state==='saved'?record.value:{items:defaultEmergencyChecklist.slice(),checked:{}}}
-function renderEmergencyChecklist(){const box=document.getElementById('emergencyChecklist'),edit=document.getElementById('emergencyChecklistEdit');if(!box||!edit)return;const v=readEmergencyChecklist();box.replaceChildren();if(!edit.dataset.editing)edit.value=v.items.join('\n');const progress=document.createElement('p');progress.className='notice';progress.textContent='確認済み：'+v.items.filter(x=>v.checked[x]===true).length+' / '+v.items.length;box.append(progress);v.items.forEach(item=>{const label=document.createElement('label');label.className='task';const check=document.createElement('input');check.type='checkbox';check.checked=v.checked[item]===true;check.onchange=()=>{const now=readEmergencyChecklist();now.checked[item]=check.checked;try{localStorage.setItem(emergencyChecklistKey,JSON.stringify(now));renderEmergencyChecklist();updateOfflineReadiness()}catch(e){check.checked=!check.checked;document.getElementById('emergencyChecklistStatus').textContent='確認状態を保存できませんでした。'}};label.append(check,document.createTextNode(item));box.append(label)})}
-function markEmergencyChecklistDraft(){const field=document.getElementById('emergencyChecklistEdit');if(field)field.dataset.editing='1';const status=document.getElementById('emergencyDraftStatus');if(status)status.textContent='未保存の編集があります。保存するか、変更を取り消してください。'}
-function resetEmergencyChecklistDraft(){const field=document.getElementById('emergencyChecklistEdit');if(field){field.dataset.editing='';field.value=readEmergencyChecklist().items.join('\n')}const status=document.getElementById('emergencyDraftStatus');if(status)status.textContent='未保存の変更を取り消しました。'}
-function saveEmergencyChecklist(){const field=document.getElementById('emergencyChecklistEdit'),status=document.getElementById('emergencyChecklistStatus');const items=[...new Set(field.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean))];if(!items.length||items.length>20||items.some(x=>x.length>120)){status.textContent='1〜20項目で、1項目120文字以内にしてください。';return}const before=readEmergencyChecklist(),checked={};items.forEach(x=>{if(before.checked[x]===true)checked[x]=true});try{localStorage.setItem(emergencyChecklistKey,JSON.stringify({items,checked}));field.dataset.editing='';const draftStatus=document.getElementById('emergencyDraftStatus');if(draftStatus)draftStatus.textContent='';status.textContent='チェックリストを保存しました。';renderEmergencyChecklist();updateOfflineReadiness()}catch(e){status.textContent='保存できませんでした。'}}
+function emergencyChecklistRecord(){
+ try{const raw=localStorage.getItem(emergencyChecklistKey);if(raw===null)return {state:'missing',raw,value:{items:defaultEmergencyChecklist.slice(),checked:{}}};const value=JSON.parse(raw);return isEmergencyChecklistData(value)?{state:'saved',raw,value}:{state:'invalid',raw};}catch(e){return {state:'invalid'}}
+}
+function writeEmergencyChecklist(data,expectedRaw){
+ if(!isEmergencyChecklistData(data))return {ok:false,invalid:true};
+ try{if(localStorage.getItem(emergencyChecklistKey)!==expectedRaw)return {ok:false,changed:true};}catch(e){return {ok:false,readFailed:true}}
+ const value=JSON.stringify(data);return applyValidatedRestoreToStorage({[emergencyChecklistKey]:value},[emergencyChecklistKey],localStorage);
+}
+function emergencyChecklistSaveMessage(result){return result.changed?'保存前に記録が変わりました。内容を確認してやり直してください。':result.readFailed?'保存領域を読み取れないため、変更していません。':result.rolledBack?'保存できませんでした。元の記録に戻ったことを確認しました。':'保存できませんでした。元の記録に戻ったことを確認できません。再操作せず、保存内容をご確認ください。';}
+function toggleEmergencyChecklistItem(item,checked){
+ const status=document.getElementById('emergencyChecklistStatus'),record=emergencyChecklistRecord();
+ if(record.state==='invalid'){status.textContent='保存したチェックリストを読み取れないため、変更していません。';renderEmergencyChecklist();return false}
+ if(!record.value.items.includes(item)){status.textContent='チェック項目が変更されています。最新の項目を表示しました。';renderEmergencyChecklist();return false}
+ const states=Object.fromEntries(record.value.items.map(x=>[x,x===item?checked:record.value.checked[x]===true]));
+ const result=writeEmergencyChecklist({items:record.value.items.slice(),checked:states},record.raw);
+ status.textContent=result.ok?'確認状態を保存しました。':emergencyChecklistSaveMessage(result);
+ renderEmergencyChecklist();if(result.ok)updateOfflineReadiness();return result.ok;
+}
+let emergencyChecklistDraftItems;
+function readEmergencyChecklist(){const record=emergencyChecklistRecord();return record.state==='invalid'?{items:defaultEmergencyChecklist.slice(),checked:{}}:record.value;}
+
+function renderEmergencyChecklist(){
+ const box=document.getElementById('emergencyChecklist'),edit=document.getElementById('emergencyChecklistEdit');if(!box||!edit)return;
+ const record=emergencyChecklistRecord(),invalid=record.state==='invalid',v=invalid?{items:defaultEmergencyChecklist.slice(),checked:{}}:record.value;box.replaceChildren();
+ edit.readOnly=invalid;if(!edit.dataset.editing)edit.value=invalid?'':v.items.join('\n');
+ const progress=document.createElement('p');progress.className='notice';progress.textContent=invalid?'保存したチェックリストを読み取れません。下の標準案内は保存記録ではなく、チェック・上書きは停止しています。':(record.state==='missing'?'初期の確認事項 ／ ':'')+'確認済み：'+v.items.filter(x=>v.checked[x]===true).length+' / '+v.items.length;box.append(progress);
+ if(invalid){const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent='正常なバックアップを確認する（平常時）';button.onclick=openFullBackupFromReadiness;box.append(button)}
+ v.items.forEach(item=>{const label=document.createElement('label');label.className='task';const check=document.createElement('input');check.type='checkbox';check.checked=!invalid&&v.checked[item]===true;check.disabled=invalid;check.onchange=()=>toggleEmergencyChecklistItem(item,check.checked);label.append(check,document.createTextNode(item));box.append(label)});
+}
+
+
+function markEmergencyChecklistDraft(){
+ const field=document.getElementById('emergencyChecklistEdit');if(!field)return;
+ if(!field.dataset.editing){const record=emergencyChecklistRecord();emergencyChecklistDraftItems=record.state==='invalid'?undefined:JSON.stringify(record.value.items)}
+ field.dataset.editing='1';const status=document.getElementById('emergencyDraftStatus');if(status)status.textContent='未保存の編集があります。保存するか、変更を取り消してください。';
+}
+
+
+function resetEmergencyChecklistDraft(){
+ const field=document.getElementById('emergencyChecklistEdit'),record=emergencyChecklistRecord();
+ if(record.state==='invalid'){document.getElementById('emergencyDraftStatus').textContent='保存記録を読み取れないため、編集中の入力は残しています。';return}
+ if(field){field.dataset.editing='';field.value=record.value.items.join('\n')}emergencyChecklistDraftItems=undefined;
+ const status=document.getElementById('emergencyDraftStatus');if(status)status.textContent='未保存の変更を取り消し、現在の保存記録を表示しました。';
+}
+
+
+function saveEmergencyChecklist(){
+ const field=document.getElementById('emergencyChecklistEdit'),status=document.getElementById('emergencyChecklistStatus'),record=emergencyChecklistRecord();
+ if(record.state==='invalid'){status.textContent='保存したチェックリストを読み取れないため、上書きを停止しています。正常なバックアップを確認してください。';return}
+ const items=[...new Set(field.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean))];
+ if(!items.length||items.length>20||items.some(x=>x.length>120)){status.textContent='1〜20項目で、1項目120文字以内にしてください。';return}
+ if(field.dataset.editing&&emergencyChecklistDraftItems!==JSON.stringify(record.value.items)){status.textContent='編集中に保存された項目が変わりました。入力は残しています。変更を取り消して最新の項目を確認してから編集してください。';return}
+ const checked=Object.fromEntries(items.filter(x=>record.value.checked[x]===true).map(x=>[x,true])),result=writeEmergencyChecklist({items,checked},record.raw);
+ if(!result.ok){status.textContent=emergencyChecklistSaveMessage(result);return}
+ field.dataset.editing='';emergencyChecklistDraftItems=undefined;const draftStatus=document.getElementById('emergencyDraftStatus');if(draftStatus)draftStatus.textContent='';
+ status.textContent='チェックリストを保存しました。';renderEmergencyChecklist();updateOfflineReadiness();
+}
+
+
 function readEvacuationReview(){try{const x=JSON.parse(localStorage.getItem(evacuationReviewKey)||'{}');return x&&typeof x==='object'&&!Array.isArray(x)?x:{}}catch(e){return {}}}
 function isReviewDate(x){return typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x)&&!Number.isNaN(Date.parse(x))}
 function renderEvacuationReviewForm(){const x=readEvacuationReview(),field=document.getElementById('evacuationNextReview'),status=document.getElementById('evacuationReviewStatus');if(!field||!status)return;field.value=isReviewDate(x.next)?x.next:'';status.textContent='前回の見直し：'+(isReviewDate(x.last)?x.last:'未記録')+' ／ 次回：'+(isReviewDate(x.next)?x.next:'未設定')}
@@ -2608,7 +2664,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v104');
+  const cache=await caches.open('totonoe-offline-shell-v105');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -2629,17 +2685,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v104')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v105')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v104')?await caches.open('totonoe-offline-shell-v104'):null;
+  const cache=names.includes('totonoe-offline-shell-v105')?await caches.open('totonoe-offline-shell-v105'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v104'?'必須ファイル10件の保存とv104の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v104の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v105'?'必須ファイル10件の保存とv105の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v105の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -2890,7 +2946,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v104';
+ const cacheName='totonoe-offline-shell-v105';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -2953,7 +3009,7 @@ async function repairOfflinePreparation(){
   }
   await inspect();
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v104有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v105有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/10件。Service Worker：'+state+'。';
@@ -2993,13 +3049,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v104';
+   const current='totonoe-offline-shell-v105';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v104有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v105有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
@@ -3474,6 +3530,7 @@ function renderStockMeasures(){
 function familyNoteFields(){return [['familySuppliesNote','suppliesNote'],['familyFoodNote','foodNote'],['familySupportNote','supportNote']]}
 function validFamilyNotes(v){return !!v&&typeof v==='object'&&!Array.isArray(v)&&['suppliesNote','foodNote','supportNote'].every(k=>v[k]===undefined||(typeof v[k]==='string'&&v[k].length<=300))}
 
+function setEmergencyFamilyExpanded(expanded){document.querySelectorAll('#emergencyFamily details').forEach(x=>x.open=expanded);}
 function renderEmergencyFamily(){
  const host=document.getElementById('emergencyFamily');if(!host)return;host.replaceChildren();
  const heading=document.createElement('h3');heading.textContent='家族・ペットの個別の備え';host.append(heading);
@@ -3481,6 +3538,7 @@ function renderEmergencyFamily(){
  if(record.state==='invalid'){const p=document.createElement('p');p.textContent='保存したカルテを読み取れません。内容を推測せず、別に保管した控えを確認してください。';host.append(p);return}
  const rows=record.state==='saved'?record.value:[];
  if(!rows.length){const p=document.createElement('p');p.className='notice';p.textContent='個別のカルテは未登録です。平常時に必要な用品や支援を記録できます。';host.append(p)}
+ if(rows.length>1){const controls=document.createElement('div');controls.className='lesson-actions';for(const [label,expanded] of [['家族のメモをすべて開く',true],['すべて閉じる',false]]){const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent=label;button.onclick=()=>setEmergencyFamilyExpanded(expanded);controls.append(button)}host.append(controls)}
  for(const x of rows){const details=document.createElement('details');details.className='emergency-option-fold';const summary=document.createElement('summary');summary.textContent=(x.label||familyKinds[x.type].name)+' ／ '+x.count+(x.type==='pet'?'頭':'人')+'：備え・支援を開く';details.append(summary);const body=document.createElement('div');body.className='emergency-option-body';
  for(const [key,label] of [['suppliesNote','必要な用品'],['foodNote','食事について'],['supportNote','移動・避難時の支援']]){const strong=document.createElement('strong');strong.textContent=label;const p=document.createElement('p');p.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere';p.textContent=x[key]?.trim()||'未記入';body.append(strong,p)}details.append(body);host.append(details)}
  const note=document.createElement('p');note.className='notice';note.textContent='事前に保存したメモです。端末内の記録を表示するため、通信は不要です。';host.append(note);
@@ -3502,7 +3560,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v104','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v105','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -3511,8 +3569,8 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v104';
-   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v104有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v105';
+   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v105有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
     const checks=await Promise.all(paths.map(async p=>{const res=await cache.match(new URL(p,scope).href);return !!res?.ok}));

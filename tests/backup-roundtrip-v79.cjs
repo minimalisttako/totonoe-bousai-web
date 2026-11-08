@@ -4,7 +4,7 @@ const aliases=source.match(/const allBackupKeys=(\[[^;]+\]);/)[1];
 const declarations=aliases.slice(1,-1).split(',').filter(k=>!k.startsWith("'")).map(k=>{const value=source.match(new RegExp('\\b'+k+"='([^']+)'"));if(!value)throw Error('Missing key '+k);return 'const '+k+'='+JSON.stringify(value[1])+';'}).join('\n');
 function extract(name){const at=source.indexOf('function '+name+'(');assert(at>=0,name);const tail=source.slice(at),end=/\n(?:async )?function /.exec(tail);assert(end,name+' boundary');return tail.slice(0,end.index)}
 const dataStore=new Map(),ctx={TextEncoder,localStorage:{getItem:k=>dataStore.get(k)??null}};vm.createContext(ctx);
-vm.runInContext(declarations+'\nconst allBackupKeys='+aliases+';\n'+['backupUtf8ByteLength','buildFullBackup','validateFullBackupObject','validSupplyMeasure','validTidyPhoto','validWeatherPreference','validEventSearchSettings','validPracticeResult','cleanPracticeDefinitions','validCleanPractice','validCleanSchedule','validFamilyNotes','validTrainingRecords','applyValidatedRestoreToStorage'].map(extract).join('\n'),ctx);
+vm.runInContext(declarations+'\nconst allBackupKeys='+aliases+';\n'+['backupUtf8ByteLength','buildFullBackup','isEmergencyChecklistData','validateFullBackupObject','validSupplyMeasure','validTidyPhoto','validWeatherPreference','validEventSearchSettings','validPracticeResult','cleanPracticeDefinitions','validCleanPractice','validCleanSchedule','validFamilyNotes','validTrainingRecords','applyValidatedRestoreToStorage'].map(extract).join('\n'),ctx);
 const when='2026-11-07T12:00:00.000Z',photo='data:image/jpeg;base64,YWJj';
 const fixtures={
  'toto-supplies-v1':[{name:'トイレ用品',qty:'2',category:'toilet',measureFactor:'50'}],
@@ -60,3 +60,8 @@ const expandedQuiz=validate({format:'toto-full-backup-v1',data:{'toto-practice-r
 const expandedDest=new Map();assert(ctx.applyValidatedRestoreToStorage(expandedQuiz.data,expandedQuiz.keys,storage(expandedDest)).ok);assert.equal(JSON.parse(expandedDest.get('toto-practice-result-v1')).wrong[0],29);
 assert.throws(()=>validate({format:'toto-full-backup-v1',data:{'toto-practice-result-v1':JSON.stringify({version:1,total:5,score:4,wrong:[30],completedAt:when})}}));
 console.log('PASS: expanded-bank wrong-answer IDs survive backup/restore; out-of-range question IDs rejected');
+
+const emergencyValidated=validate({format:'toto-full-backup-v1',data:{'toto-emergency-checklist-v1':JSON.stringify({items:['確認A','確認B'],checked:{確認A:true,確認B:false}})}});
+const emergencyDest=new Map();assert(ctx.applyValidatedRestoreToStorage(emergencyValidated.data,emergencyValidated.keys,storage(emergencyDest)).ok);assert.equal(JSON.parse(emergencyDest.get('toto-emergency-checklist-v1')).checked['確認A'],true);
+for(const state of [{items:['同じ','同じ'],checked:{}},{items:['確認'],checked:{確認:'yes'}}])assert.throws(()=>validate({format:'toto-full-backup-v1',data:{'toto-emergency-checklist-v1':JSON.stringify(state)}}));
+console.log('PASS: emergency checklist backup preserves boolean confirmation state and rejects duplicate items or non-boolean confirmations');
