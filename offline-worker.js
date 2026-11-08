@@ -1,7 +1,7 @@
-/* ととのえ防災：v122 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
-const CACHE='totonoe-offline-shell-v122';
+/* ととのえ防災：v123 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
+const CACHE='totonoe-offline-shell-v123';
 const ROOT=new URL('./',self.registration.scope).href;
-const PATHS=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
+const PATHS=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./assets/home-trio-ride-v123.webp','./assets/home-trio-friends-v123.webp'];
 const URLS=PATHS.map(p=>new URL(p,ROOT).href);
 const ASSETROOT=new URL('./assets/',ROOT).pathname;
 const HOME=new URL('./',ROOT).pathname;
