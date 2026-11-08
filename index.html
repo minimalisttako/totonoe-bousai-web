@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#174c3e"><meta name="application-name" content="ととのえ防災"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ととのえ防災"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" sizes="180x180" href="./assets/app-icon-180.png"><link rel="icon" type="image/svg+xml" href="./assets/app-icon.svg"><title>ととのえ防災｜試作版</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#174c3e"><meta name="description" content="暮らしを整えて、もしもに備える。お片付け・備蓄・避難計画を家庭に合わせて記録する防災アプリ。"><meta name="application-name" content="ととのえ防災"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ととのえ防災"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" sizes="180x180" href="./assets/app-icon-180.png"><link rel="icon" type="image/svg+xml" href="./assets/app-icon.svg"><title>ととのえ防災｜暮らしを整えて、もしもに備える。</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif;color:#263d35;background:#f5f7f3}*{box-sizing:border-box}body{margin:0}header{padding:20px 18px 12px;background:#fff;position:sticky;top:0;z-index:3;border-bottom:1px solid #e5eae5}h1{font-size:23px;margin:0;color:#174c3e}small,.muted{color:#70837a}main{max-width:560px;margin:auto;padding:18px 16px 104px}.card{background:white;border:1px solid #e8eee8;border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 3px 12px #234b3610}.hero{background:linear-gradient(125deg,#e7f7ee,#eaf4ff);padding:22px}.hero h2{margin:0 0 8px;font-size:22px}.progressbar{height:10px;border-radius:20px;background:#dceae3;overflow:hidden;margin:10px 0}.progressbar>div{height:100%;background:#339b76;width:0%;transition:width .2s}.homehint{font-size:13px;color:#607d70;line-height:1.7}.homeactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.secondary{background:white;border:1px solid #a6c9bb;border-radius:12px;padding:11px 14px;font-weight:700;color:#256b53}.hero p{margin:0;line-height:1.7}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.tile{border:0;border-radius:16px;padding:16px 7px;background:#f9e5e6;color:#5e3434;font-size:16px;font-weight:700;min-height:94px}.tile:nth-child(2){background:#e1f3e4;color:#265b38}.tile:nth-child(3){background:#e3efff;color:#22558b}.tile span{display:block;font-size:12px;margin-top:6px}h2{font-size:19px;margin:6px 0 14px}.step{padding:17px;border-radius:16px;margin-bottom:10px;background:#fff0f0}.step:nth-child(2){background:#ecf8ed}.step:nth-child(3){background:#e9f2ff}.step b{font-size:19px}.step p{margin:5px 0 0;font-size:14px}.task{display:flex;align-items:center;gap:12px;padding:14px 2px;border-bottom:1px solid #e8ece8}.task:last-child{border:0}input[type=checkbox]{width:20px;height:20px;accent-color:#268c6a}button{cursor:pointer}.primary{background:#227eae;color:white;border:0;border-radius:12px;padding:12px 16px;font-weight:700}.field{width:100%;padding:12px;border:1px solid #d8e3dd;border-radius:12px;font-size:16px;margin:7px 0}.row{display:flex;gap:8px;align-items:center;justify-content:space-between}.pill{display:inline-block;padding:6px 10px;background:#e8f3ef;border-radius:999px;font-size:12px}.item{padding:12px 0;border-bottom:1px solid #e8ece8}.item:last-child{border:0}nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e1e9e4;display:flex;justify-content:center;padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:5}nav button{flex:1;max-width:120px;border:0;background:none;color:#71837a;padding:8px 1px;font-size:12px}nav button.active{color:#1979ad;font-weight:800}.hidden{display:none}.notice{font-size:12px;color:#6a7e74;line-height:1.7}
 .home-banner{position:relative;overflow:hidden;border-color:#d9ebe2;background:linear-gradient(135deg,#eaf8ee 0%,#ecf7f5 56%,#e6f0ff 100%);padding:23px 20px 20px}.home-banner:after{content:"";position:absolute;width:146px;height:146px;border:2px solid #ffffffa8;border-radius:50%;right:-48px;top:-48px;pointer-events:none}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;color:#35765d;margin-bottom:9px}.home-banner h2{font-size:24px;line-height:1.4;margin:0 0 10px}.home-banner p{font-size:14px;line-height:1.8;color:#456257;max-width:31em}.home-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px}.home-chip{display:inline-block;font-size:12px;font-weight:700;padding:7px 10px;border:1px solid #c5dfd0;border-radius:999px;background:#ffffffb5;color:#2b7054}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.section-heading h2{margin:0 0 14px}.section-note{font-size:12px;color:#71867b}.journey-card{padding:19px 15px}.journey-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.journey-tile{min-width:0;min-height:121px;text-align:left;border:1px solid #f1d7d9;border-radius:17px;background:#f9e9e9;color:#6d434a;padding:14px 10px;display:flex;flex-direction:column;justify-content:space-between}.journey-tile:nth-child(2){background:#e8f5ec;border-color:#d3e9d9;color:#366449}.journey-tile:nth-child(3){background:#e8f1fc;border-color:#d5e5f9;color:#315f90}.journey-tile strong{display:block;font-size:18px;letter-spacing:-.03em}.journey-tile small{color:inherit;font-size:12px}.journey-tile .arrow{align-self:flex-end;font-size:18px}.mission-card{border-color:#dce9df}.mission-card .task{min-height:59px}.mission-card .task input{flex-shrink:0}.mission-card .homeactions{margin-top:17px}.next-card{background:#fff;border-color:#e7ede9}.next-card p{color:#526e61;line-height:1.8;font-size:14px}@media(max-width:365px){.journey-tile{padding:12px 7px}.journey-tile strong{font-size:16px}.home-banner h2{font-size:21px}}
@@ -1098,7 +1098,7 @@ nav button.active{background:#eaf1e5;color:#345a3c;font-weight:750}
 <div class="card"><h2>機種変更・復元の順番</h2><ol><li>元の端末で全データバックアップを作り、ファイルを保存する。</li><li>新しい端末で同じアプリを開き、バックアップ画面からファイルを読み込む。</li><li>復元前の確認・予行比較で、読み込む内容を確認する。</li><li>復元後に備蓄・避難計画・地域設定などを確認する。</li></ol><p class="notice">復元先にも記録がある場合は、先にその端末のバックアップを別に保管してください。元の端末とバックアップは、移行後の確認が終わるまで残してください。</p></div>
 <div class="card"><h2>通信がなくても使うには</h2><p>通信できる状態で一度アプリを開き、「その他」のオフライン準備を完了させてください。その後、機内モードで開き直せるか確認します。</p><p>保存済みの備蓄・避難計画、例題の本文などはオフライン利用の対象です。天気の新規取得、動画、イベント検索、出典リンクの閲覧には通信が必要です。</p><button class="secondary" onclick="openHelpOfflineCheck()">オフライン準備を確認する</button></div>
 <div class="card"><h2>保存できない・記録が見つからないとき</h2><ul><li>前回と同じ端末・ブラウザ・URLで開いているか確認する。</li><li>保存結果のメッセージを確認し、保存に失敗した場合は入力内容を別に控える。</li><li>データ削除や初期化の前に、現在の記録をバックアップする。</li><li>保存データ診断で形式を確認する。診断だけで実機の復元成功を保証するものではありません。</li></ul><button class="secondary" onclick="openHelpDataCheck()">保存データ診断を開く</button></div>
-<div class="card"><h2>公開準備の状況</h2><p>現在は試作版です。天気は気象庁データを加工して表示します。警報・注意報の詳細は公式画面、避難情報は自治体からの最新情報を確認してください。</p><p>イベントは外部検索への案内です。例題は30種類から1回最大5問のオリジナル問題で、公式過去問ではありません。</p><p class="notice">Android実機・端末間の復元・拡大表示や読み上げの確認などが、正式リリース前の残作業です。</p></div>
+<div class="card"><h2>Web版の公開状況</h2><p>初回iPhone向けWeb版を公開しています。天気は気象庁データを加工して表示します。警報・注意報の詳細は公式画面、避難情報は自治体からの最新情報を確認してください。</p><p>イベントは外部検索への案内です。例題は30種類から1回最大5問のオリジナル問題で、公式過去問ではありません。</p><p class="notice">Android実機・別端末への実復元・読み上げ品質は未確認です。App Store・Google Playでの配信は未実施です。</p></div>
 <button class="secondary" onclick="show('more')">その他へ戻る</button></section><section id="cleanPractice" class="hidden"><div class="card"><h2>掃除の実践</h2><p>整理・整頓・収納で使いやすくした場所を、掃除して気持ちよく保ちましょう。</p><p class="notice">今回の掃除が終わった項目にチェックしてください。完了日時はこの端末に保存します。家具固定や避難判断など、命を守る対策は別に優先してください。</p><form id="cleanScheduleForm" oninput="this.dataset.editing='true'" onsubmit="event.preventDefault();saveCleanSchedule()"><label class="supply-label" for="cleanResetDays">掃除した日の何日後に解除する？</label><select class="field" id="cleanResetDays"><option value="1">翌日</option><option value="2">翌々日（初期設定）</option><option value="3">3日後</option><option value="7">7日後</option><option value="14">14日後</option><option value="30">30日後</option></select><label class="supply-label" for="cleanResetTime">チェックを解除する時刻</label><input class="field" id="cleanResetTime" type="time" required><button class="secondary" type="submit">間隔・時刻を保存</button><p class="notice" id="cleanScheduleStatus" role="status">端末の時刻を使います。閉じている間に時刻を過ぎた場合も、次に開くと未完了に戻ります。</p></form><p id="cleanProgress" role="status" aria-live="polite"></p><div id="cleanPracticeItems"></div><p id="cleanSaveStatus" class="notice" role="status" aria-live="polite"></p></div><div class="card"><h2>無理なく続けるコツ</h2><p class="notice">安全点検・登録した片付け・診断ミッション・避難計画を終え、水・食料・トイレの登録と備蓄の期限・不足・点検に未対応項目がない場合、ホームの「今日やること」は定期的な掃除に切り替わります。備えに未対応項目が出ると、そちらを優先します。登録だけで実際の備蓄量が十分だと保証するものではありません。</p><p>一度に全部ではなく、今日は一か所でも大丈夫です。洗剤や掃除用品は製品の表示に従い、混ぜて使わないでください。</p><p class="notice">各項目を掃除した日から、設定した日数後の時刻にチェックが外れます。初期設定は翌々日の朝5時です。実施日時は残します。設定を変えると新しい間隔で判定し直します。</p><button class="secondary" onclick="show('tidy')">お片付けの記録へ</button></div><button class="secondary" onclick="show('learn')">学ぶメニューへ戻る</button></section><section id="tidyAlbum" class="hidden"><div class="card"><h2>成長アルバム</h2><p>過去の自分と、今の暮らしを見比べましょう。物の少なさを競うものではありません。</p><p class="notice">各場所に保存した最新のBefore／Afterを表示します。写真を差し替えると、この表示も変わります。過去の写真を世代ごとに保管する機能ではありません。</p><label class="supply-label" for="tidyAlbumFilter">表示する写真</label><select id="tidyAlbumFilter" class="field" onchange="renderTidyAlbum()"><option value="all">写真があるすべての場所</option><option value="pair">Before／Afterがそろった場所</option></select><p id="tidyAlbumStatus" role="status" class="notice"></p></div><div id="tidyAlbumRecords"></div><button class="secondary" onclick="show('tidy')">片付けの記録へ戻る</button></section><section id="more" class="hidden"><div class="card more-intro"><h2>その他の防災メニュー</h2><label class="supply-label" for="featureSearch">使いたい機能を探す</label><input id="featureSearch" class="field" type="search" maxlength="80" autocomplete="off" placeholder="例：掃除、地域、補充、バックアップ" oninput="renderFeatureSearch()" aria-controls="featureSearchResults"><button class="secondary" type="button" onclick="clearFeatureSearch()">検索をクリア</button><p id="featureSearchStatus" class="notice" role="status" aria-live="polite"></p><div id="featureSearchResults"></div><button class="more-menu-button" onclick="show('helpGuide')"><strong>使い方・データ保護ガイド</strong><span>はじめての準備・機種変更・オフライン・困ったとき ↗</span></button><p class="notice">必要な備えを、目的から選べます。</p><button class="more-menu-button" onclick="show('events')"><strong>防災イベントを探す</strong><span>地域・開催月・体験や訓練から検索 ↗</span></button></div>
 <div class="card more-important"><h2>備えをまとめて確認</h2><button class="more-menu-button" type="button" onclick="show('readiness')"><strong>わが家の防災準備状況</strong><span>安全・避難計画・備蓄・家族の備え ↗</span></button></div>
 <div class="card more-important"><h2>避難・安全を確認する</h2>
@@ -1190,11 +1190,11 @@ nav button.active{background:#eaf1e5;color:#345a3c;font-weight:750}
 <button class="secondary" type="button" id="releaseSmokeButton" style="width:100%;min-height:48px" onclick="runReleaseSmokeTests()">主要機能をまとめて自動点検する</button>
 <div id="releaseSmokeResults" class="notice" role="status" aria-live="polite"></div>
 </div>
-</div></details><div class="card"><h2>初回Web版の公開準備：100%</h2><p class="notice">主要9工程とv97のiPhone最終確認を完了しました。2026年11月8日に利用者が一括確認5点すべてOKと報告した、確認済みの範囲での公開Web版です。10工程を等しく数えた進捗です。</p><progress max="10" value="10" aria-label="初回Web版の開発工程：10工程中10工程完了" style="width:100%"></progress><ul><li>実装済み：安全・避難・片付けと写真・備蓄と補充・家族とポーチ・掃除と季節点検・訓練と引越し・学習・地域情報・データ保護。</li><li>自動検証：画面移動、保存・復元、失敗時の保護、日付による切り替え、警報判定、内容量入力を更新時にまとめて確認します。</li><li>最終確認済み：v97のiPhoneで、ホームの案内・備蓄の保存と再表示・検索・文字拡大・ファイル保存・機内モード起動を一括確認しました（利用者報告）。</li></ul><p class="notice">v97の最終一括確認5点を利用者確認済みです。Android実機・別端末への実復元・読み上げは未確認です。</p><p class="notice">公開レビュー、イベント自動収集、河川情報の追加連携、月替わりイラスト全月分は未完了です。100%は初回Web版の10工程についての進捗で、全構想や全端末の確認完了を意味しません。キャラクター表示・まばたきは完成版で固定しています。</p><button class="secondary" onclick="openReleaseQa()">最終確認の記録を開く</button></div><details class="more-fold" id="releaseScopeFold"><summary>初回リリースの対象と今後の機能 <span aria-hidden="true">⌄</span></summary>
+</div></details><div class="card"><h2>初回Web版の公開準備：100%</h2><p class="notice">主要9工程とv105のiPhone最終確認を完了しました。2026年11月8日に利用者が一括確認5点すべてOKと報告した、確認済みの範囲での公開Web版です。10工程を等しく数えた進捗です。</p><progress max="10" value="10" aria-label="初回Web版の開発工程：10工程中10工程完了" style="width:100%"></progress><ul><li>実装済み：安全・避難・片付けと写真・備蓄と補充・家族とポーチ・掃除と季節点検・訓練と引越し・学習・地域情報・データ保護。</li><li>自動検証：画面移動、保存・復元、失敗時の保護、日付による切り替え、警報判定、内容量入力を更新時にまとめて確認します。</li><li>最終確認済み：v105のiPhoneで、ホームの案内・備蓄の保存と再表示・検索・文字拡大・ファイル保存・機内モード起動を一括確認しました（利用者報告）。</li></ul><p class="notice">v105の最終一括確認5組を利用者確認済みです。以後の外観・導線変更はブラウザ確認済みですが、iPhone実機での再確認は未実施です。Android実機・別端末への実復元・読み上げは未確認です。</p><p class="notice">公開レビュー、イベント自動収集、河川情報の追加連携、月替わりイラスト全月分は未完了です。100%は初回Web版の10工程についての進捗で、全構想や全端末の確認完了を意味しません。キャラクター表示・まばたきは完成版で固定しています。</p><button class="secondary" onclick="openReleaseQa()">最終確認の記録を開く</button></div><details class="more-fold" id="releaseScopeFold"><summary>初回リリースの対象と今後の機能 <span aria-hidden="true">⌄</span></summary>
 <div class="more-fold-body">
-<p class="notice"><strong>初回リリース候補：</strong>住まいの安全点検、家庭の防災診断、避難計画、備蓄・防災ポーチ管理、お片付けの記録、家族・ペットカルテ、停電・断水シミュレーター、バックアップ、災害時モード。</p>
+<p class="notice"><strong>初回Web版の対象：</strong>住まいの安全点検、家庭の防災診断、避難計画、備蓄・防災ポーチ管理、お片付けの記録、家族・ペットカルテ、停電・断水シミュレーター、バックアップ、災害時モード。</p>
 <p class="notice"><strong>今後の開発候補：</strong>公開レビューの投稿・閲覧、気象情報の拡充、防災イベント情報の自動収集。現在利用できる例題演習（30種類・1回最大5問）・動画学習・地域別イベント検索は実装済みです。</p>
-<p class="notice">試作版のため、正式リリース前にはiPhone・Androidの実機操作、復元、機内モードでの起動を別途確認します。</p>
+<p class="notice">初回Web版はiPhoneでの利用者確認を完了しています。Android実機・別端末への実復元・読み上げ品質は未確認です。ストア配信に向けた確認は別工程で進めます。</p>
 </div></details><details class="more-fold" data-more-group="trial"><summary>試作中の機能 <span aria-hidden="true">⌄</span></summary><div class="more-fold-body">
 <button class="more-menu-button" type="button" onclick="show('reviews')"><strong>防災用品レビュー（試作）</strong><span>現在はサンプルのみ ↗</span></button>
 <p class="notice">レビューは試験表示です。公開レビューの投稿・閲覧にはまだ対応していません。</p>
@@ -1466,7 +1466,7 @@ async function copyReadinessExport(){
 }
 // Device-specific QA results are intentionally separate from user preparedness backups.
 const releaseQaKey='toto-release-qa-v1';
-const releaseQaBuild='navigation-2026-11-08-home-finish-v110';
+const releaseQaBuild='release-2026-11-08-public-labels-v111';
 // 実機検証は版ごとに管理し、旧版の合格を最新版へ自動引き継ぎしません。
 function qaIsCurrent(value){return !!(value&&typeof value==='object'&&value.checked===true&&value.build===releaseQaBuild)}
 function qaIsOld(value){return value===true||(!!(value&&typeof value==='object'&&value.checked===true&&value.build!==releaseQaBuild))}
@@ -1585,7 +1585,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v110');
+  const c=await caches.open('totonoe-offline-shell-v111');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1611,8 +1611,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v110')){
-   const cache=await caches.open('totonoe-offline-shell-v110');
+  if(registration&&names.includes('totonoe-offline-shell-v111')){
+   const cache=await caches.open('totonoe-offline-shell-v111');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -1788,7 +1788,7 @@ function renderHomeStockMiniStatus(){const el=document.getElementById('homeStock
 function initHomeGroups(){let settings={};try{const stored=JSON.parse(localStorage.getItem(homeGroupKey)||'{}');if(stored&&typeof stored==='object'&&!Array.isArray(stored))settings=stored}catch(e){}document.querySelectorAll('#home details[data-home-group]').forEach(el=>{const id=el.getAttribute('data-home-group');el.open=typeof settings[id]==='boolean'?settings[id]:false;el.addEventListener('toggle',()=>{try{const current=JSON.parse(localStorage.getItem(homeGroupKey)||'{}');const next=current&&typeof current==='object'&&!Array.isArray(current)?current:{};next[id]=el.open;localStorage.setItem(homeGroupKey,JSON.stringify(next))}catch(e){}})})}
 const pageNames={training:'訓練・実践記録',moving:'引越し防災サポート',minimalistGuide:'ミニマリストのススメ',tidyAlbum:'成長アルバム',weather:'地域の天気',events:'防災イベント検索',examStudy:'防災士試験対策・無料学習',practiceQuiz:'基礎例題',cleanPractice:'掃除の実践',helpGuide:'使い方・データ保護ガイド',home:'ホーム',learn:'学ぶ',select:'整理を学ぶ',set:'整頓を学ぶ',stock:'備蓄を学ぶ',supplies:'備蓄管理',tidy:'お片付けノート',more:'その他',emergency:'災害時モード',evacuation:'マイ避難計画',homeSafety:'住まいの安全点検',pouch:'防災ポーチ',seasonalCheck:'季節別点検',diagnosis:'防災弱点診断',reviews:'防災用品レビュー',outage:'停電・断水シミュレーター',family:'家族・ペットの防災カルテ',readiness:'わが家の防災準備状況'};let activePage='home',previousPage='home';
 function goBackPage(){show(previousPage!==activePage&&validPage(previousPage)?previousPage:'home')}
-function updatePageNavigation(id){document.title=id==='home'?'ととのえ防災｜試作版':(pageNames[id]||'ととのえ防災')+'｜ととのえ防災';const bar=document.getElementById('pageNavigation'),title=document.getElementById('pageCurrentTitle'),back=document.getElementById('pageBackButton');if(bar)bar.classList.toggle('hidden',id==='home');if(title)title.textContent=pageNames[id]||'ととのえ防災';if(back)back.textContent='‹ '+(pageNames[previousPage]||'ホーム')+'へ戻る'}
+function updatePageNavigation(id){document.title=id==='home'?'ととのえ防災｜暮らしを整えて、もしもに備える。':(pageNames[id]||'ととのえ防災')+'｜ととのえ防災';const bar=document.getElementById('pageNavigation'),title=document.getElementById('pageCurrentTitle'),back=document.getElementById('pageBackButton');if(bar)bar.classList.toggle('hidden',id==='home');if(title)title.textContent=pageNames[id]||'ととのえ防災';if(back)back.textContent='‹ '+(pageNames[previousPage]||'ホーム')+'へ戻る'}
 
 const pageMascotGuides={
  learn:['tidy','まずは整理の基本から見ていこうね。気になるところからで大丈夫だよ。'],
@@ -2332,7 +2332,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v110'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v111'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2744,7 +2744,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v110');
+  const cache=await caches.open('totonoe-offline-shell-v111');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -2765,17 +2765,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v110')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v111')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v110')?await caches.open('totonoe-offline-shell-v110'):null;
+  const cache=names.includes('totonoe-offline-shell-v111')?await caches.open('totonoe-offline-shell-v111'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v110'?'必須ファイル10件の保存とv110の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v110の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v111'?'必須ファイル10件の保存とv111の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v111の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3026,7 +3026,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v110';
+ const cacheName='totonoe-offline-shell-v111';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -3089,7 +3089,7 @@ async function repairOfflinePreparation(){
   }
   await inspect();
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v110有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v111有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/10件。Service Worker：'+state+'。';
@@ -3129,13 +3129,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v110';
+   const current='totonoe-offline-shell-v111';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v110有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v111有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
@@ -3640,7 +3640,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v110','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v111','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -3649,8 +3649,8 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v110';
-   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v110有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v111';
+   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v111有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
     const checks=await Promise.all(paths.map(async p=>{const res=await cache.match(new URL(p,scope).href);return !!res?.ok}));
