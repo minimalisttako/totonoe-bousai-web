@@ -1,0 +1,29 @@
+name: Native project preparation
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'package*.json'
+      - 'capacitor.config.json'
+      - 'scripts/**'
+      - 'index.html'
+      - 'assets/**'
+      - 'manifest.webmanifest'
+      - 'offline-worker.js'
+      - '.github/workflows/native-prepare.yml'
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run native:add:android
+      - run: npm run native:add:ios
+      - run: npm run native:verify

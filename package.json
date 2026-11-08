@@ -1,0 +1,25 @@
+{
+  "name": "totonoe-bousai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ととのえ防災 mobile build workspace",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build:web": "node scripts/prepare-native-web.cjs",
+    "check": "python3 tests/release-check.py",
+    "native:add:android": "npm run build:web && cap add android",
+    "native:add:ios": "npm run build:web && cap add ios",
+    "native:sync": "npm run build:web && cap sync",
+    "native:verify": "node scripts/verify-native-bundle.cjs"
+  },
+  "dependencies": {
+    "@capacitor/core": "8.6.0",
+    "@capacitor/android": "8.6.0",
+    "@capacitor/ios": "8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.0"
+  }
+}
