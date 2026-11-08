@@ -994,7 +994,8 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 @media(max-width:365px){.refresh-title-row .refresh-page-title h2{font-size:32px}.refresh-title-row .refresh-guide{flex-basis:55%}.refresh-stock-stat.water{padding-right:92px}.refresh-stock-stat.water .water-card-friend{width:94px!important;height:107px!important}.refresh-stock-grid .refresh-stock-amount{font-size:23px}.refresh-stock-stat.water .refresh-stock-amount{font-size:29px}.refresh-feature h3{font-size:18px}.refresh-feature small{font-size:11px}.refresh-safety-card{padding-right:95px}.tidy-room-art{width:80px}.refresh-title-row .refresh-guide .character-art{height:87px!important}}
 </style><style id="approved-character-scenes-v127">
 .approved-scene-image{display:block;width:100%;height:100%;object-fit:contain;border-radius:10px;mix-blend-mode:multiply}.learning-scene{padding:0;background:#fffdf8;overflow:hidden;top:17px;bottom:17px;width:42%;left:10px}.refresh-feature{padding-left:48%}.tidy-room-art{width:105px;height:122px;right:4px;top:12px}.refresh-safety-card{padding-right:117px}.refresh-stock-stat.water .approved-water-drinking{position:absolute;right:5px;bottom:8px;width:100px;height:125px;object-fit:contain;mix-blend-mode:multiply;border-radius:12px}.refresh-stock-stat.water{min-height:151px;padding-right:111px}.approved-safety-intro{height:165px;max-width:230px;margin:0 auto 14px}.approved-safety-intro .approved-scene-image{border-radius:14px}@media(min-width:420px){.refresh-stock-stat.water .approved-water-drinking{width:125px;height:140px}.refresh-stock-stat.water{padding-right:137px}.tidy-room-art{width:115px}.refresh-safety-card{padding-right:128px}}@media(max-width:365px){.refresh-stock-stat.water .approved-water-drinking{width:91px;height:114px}.refresh-stock-stat.water{padding-right:99px}.tidy-room-art{width:91px}.refresh-safety-card{padding-right:101px}}
-</style></head><body><a class="skip-content" href="#mainContent" onclick="event.preventDefault();focusActivePage(activePage)">本文へ移動</a><header><h1><svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-7h4v7h5V9.5"/></svg><span>ととのえ防災</span></h1><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><dialog id="tutorialDialog" aria-labelledby="tutorialTitle" aria-describedby="tutorialMain" oncancel="event.preventDefault();pauseTutorial()"><div class="tutorial-body"><div class="tutorial-top"><p id="tutorialStep" aria-live="polite"></p><button class="secondary" type="button" onclick="pauseTutorial()">あとで</button></div><progress id="tutorialProgress" max="4" value="1" aria-label="はじめての案内の進み具合"></progress><div class="tutorial-mascots" aria-hidden="true"><img src="./assets/mascot-tako-open-v30.svg" alt="" width="100" height="100"><img id="tutorialFriend" src="./assets/mascot-tricera-open-v30.svg" alt="" width="78" height="78"></div><h2 id="tutorialTitle" tabindex="-1"></h2><p id="tutorialMain"></p><p id="tutorialSupport" class="tutorial-support"></p><p id="tutorialDetail"></p><div class="tutorial-actions"><button class="secondary" id="tutorialBack" type="button" onclick="moveTutorial(-1)">戻る</button><button class="primary" id="tutorialNext" type="button" onclick="moveTutorial(1)">次へ</button></div><button class="tutorial-skip" type="button" onclick="finishTutorial(true)">案内をスキップして始める</button><button class="tutorial-emergency" type="button" onclick="openTutorialEmergency()">災害時モードをすぐ開く</button></div></dialog><main id="mainContent">
+</style><style id="global-emergency-v128">header{position:sticky!important;top:0!important;padding-right:104px!important;min-height:64px}header h1{font-size:22px!important;white-space:nowrap;letter-spacing:-.06em}#globalEmergencyButton{position:absolute;top:10px;right:12px;display:flex;align-items:center;justify-content:center;gap:5px;min-width:82px;min-height:44px;padding:8px 10px;border:1px solid #eab1b8;border-radius:11px;background:#fff1f2;color:#b82035;font-size:13px;font-weight:800;line-height:1.2;z-index:2}#globalEmergencyButton svg{width:21px;height:21px;flex-shrink:0}#globalEmergencyButton:focus-visible{outline:3px solid #b82035;outline-offset:3px}#home .home-hazard-button,#more .refresh-emergency{display:none!important}header .page-navigation{margin-right:-86px}@media(max-width:365px){header{padding-left:12px!important;padding-right:96px!important}header h1{font-size:20px!important}header .brand-mark{width:25px!important;height:25px!important}#globalEmergencyButton{right:9px;min-width:77px;padding:8px;font-size:12px}}
+</style></head><body><a class="skip-content" href="#mainContent" onclick="event.preventDefault();focusActivePage(activePage)">本文へ移動</a><header><h1><svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-7h4v7h5V9.5"/></svg><span>ととのえ防災</span></h1><button type="button" id="globalEmergencyButton" onclick="show('emergency')" aria-label="災害時モードを開く"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 10 18H2Z"/><path d="M12 9v5m0 3v.2"/></svg><span>災害時</span></button><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><dialog id="tutorialDialog" aria-labelledby="tutorialTitle" aria-describedby="tutorialMain" oncancel="event.preventDefault();pauseTutorial()"><div class="tutorial-body"><div class="tutorial-top"><p id="tutorialStep" aria-live="polite"></p><button class="secondary" type="button" onclick="pauseTutorial()">あとで</button></div><progress id="tutorialProgress" max="4" value="1" aria-label="はじめての案内の進み具合"></progress><div class="tutorial-mascots" aria-hidden="true"><img src="./assets/mascot-tako-open-v30.svg" alt="" width="100" height="100"><img id="tutorialFriend" src="./assets/mascot-tricera-open-v30.svg" alt="" width="78" height="78"></div><h2 id="tutorialTitle" tabindex="-1"></h2><p id="tutorialMain"></p><p id="tutorialSupport" class="tutorial-support"></p><p id="tutorialDetail"></p><div class="tutorial-actions"><button class="secondary" id="tutorialBack" type="button" onclick="moveTutorial(-1)">戻る</button><button class="primary" id="tutorialNext" type="button" onclick="moveTutorial(1)">次へ</button></div><button class="tutorial-skip" type="button" onclick="finishTutorial(true)">案内をスキップして始める</button><button class="tutorial-emergency" type="button" onclick="openTutorialEmergency()">災害時モードをすぐ開く</button></div></dialog><main id="mainContent">
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 
 <div class="home-weather-intro"><button type="button" class="home-weather-widget" onclick="openHomeWeather()" aria-label="登録地域の今日の天気。タップして地域設定や詳しい予報を開く"><small id="homeWeatherPlace">今日の天気</small><strong id="homeWeatherSky">地域を登録</strong><span id="homeWeatherTemperature" class="home-weather-temperature">最高・最低 未取得</span><small id="homeWeatherStation"></small><small id="homeWeatherNote">タップして地域設定</small></button></div>
@@ -1776,7 +1777,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v127');
+  const c=await caches.open('totonoe-offline-shell-v128');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1802,8 +1803,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v127')){
-   const cache=await caches.open('totonoe-offline-shell-v127');
+  if(registration&&names.includes('totonoe-offline-shell-v128')){
+   const cache=await caches.open('totonoe-offline-shell-v128');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2593,7 +2594,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v127'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v128'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3005,7 +3006,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v127');
+  const cache=await caches.open('totonoe-offline-shell-v128');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3026,17 +3027,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v127')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v128')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v127')?await caches.open('totonoe-offline-shell-v127'):null;
+  const cache=names.includes('totonoe-offline-shell-v128')?await caches.open('totonoe-offline-shell-v128'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v127'?'必須ファイル10件の保存とv125の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v125の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v128'?'必須ファイル10件の保存とv125の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v125の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3287,7 +3288,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v127';
+ const cacheName='totonoe-offline-shell-v128';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -3390,7 +3391,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v127';
+   const current='totonoe-offline-shell-v128';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -3921,7 +3922,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v127';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v128';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
