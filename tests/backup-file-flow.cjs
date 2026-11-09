@@ -21,5 +21,5 @@ function delayed(){let resolve;const promise=new Promise(r=>resolve=r);return {r
  const invalid={size:100,text:async()=>'{broken'};fields.fullBackupFile.files=[invalid];fields.allBackupText.value=text;await ctx.loadFullBackupFile(fields.fullBackupFile);assert.equal(fields.allBackupText.value,'');assert.equal(previews,1);
  ctx.expected=aliases;assert.equal(vm.runInContext('allBackupKeys.every(k=>backupCategoryNames().has(k))',ctx),true);assert.equal(vm.runInContext('backupCategoryNames().size===allBackupKeys.length',ctx),true);
  assert.equal(writes,0);
- console.log('PASS: pending file cannot replace newer manual input or newer selection; mid-check edits cannot report a match; oversized raw UTF-8 and invalid files rejected; all 29 backup categories named; no storage writes');
+ console.log('PASS: pending file cannot replace newer manual input or newer selection; mid-check edits cannot report a match; oversized raw UTF-8 and invalid files rejected; all backup categories named; no storage writes');
 })().catch(e=>{console.error(e);process.exitCode=1});
