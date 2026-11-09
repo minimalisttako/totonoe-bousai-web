@@ -65,3 +65,8 @@ const emergencyValidated=validate({format:'toto-full-backup-v1',data:{'toto-emer
 const emergencyDest=new Map();assert(ctx.applyValidatedRestoreToStorage(emergencyValidated.data,emergencyValidated.keys,storage(emergencyDest)).ok);assert.equal(JSON.parse(emergencyDest.get('toto-emergency-checklist-v1')).checked['確認A'],true);
 for(const state of [{items:['同じ','同じ'],checked:{}},{items:['確認'],checked:{確認:'yes'}}])assert.throws(()=>validate({format:'toto-full-backup-v1',data:{'toto-emergency-checklist-v1':JSON.stringify(state)}}));
 console.log('PASS: emergency checklist backup preserves boolean confirmation state and rejects duplicate items or non-boolean confirmations');
+
+for(const mode of ['auto','fixed','hidden']){const data={'toto-mascot-speech-v1':JSON.stringify(mode)};const checked=validate({format:'toto-full-backup-v1',data});assert.equal(checked.data['toto-mascot-speech-v1'],JSON.stringify(mode));}
+assert.throws(()=>validate({format:'toto-full-backup-v1',data:{'toto-mascot-speech-v1':JSON.stringify('invalid')}}));
+dataStore.clear();ctx.localStorage=storage(dataStore);dataStore.set('toto-mascot-speech-v1','hidden');const speechExport=JSON.parse(ctx.buildFullBackup());assert.equal(speechExport.data['toto-mascot-speech-v1'],JSON.stringify('hidden'));assert.equal(dataStore.get('toto-mascot-speech-v1'),'hidden');
+console.log('PASS: all three speech preferences validate; invalid mode rejected; legacy raw preference exports without changing stored data');
