@@ -1003,7 +1003,18 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 </style><style>.refresh-stock-stat[data-readiness="unknown"] .refresh-meter span{background:repeating-linear-gradient(45deg,#c2b28a,#c2b28a 5px,#e6decb 5px,#e6decb 10px)}.refresh-stock-stat.food>p,.refresh-stock-stat.toilet>p{display:none}.refresh-stock-stat[data-readiness="shortage"] .refresh-meter span{background:#e78832}</style><style>body[data-speech-mode="hidden"] .refresh-speech{display:none!important}</style><style id="usability-v132">
 [hidden]{display:none!important}.guided-empty{padding:24px 17px;background:#f4faff;border:1px dashed #b6d5ed;border-radius:15px;margin:14px 0;text-align:center}.guided-empty strong{font-size:18px;display:block;color:#183d59}.guided-empty p{font-size:13px;color:#526b7e;line-height:1.8}.guided-empty button{width:100%;margin-top:6px}.operation-feedback{position:fixed;z-index:40;bottom:calc(88px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:calc(100% - 24px);max-width:560px;background:#edf8f0;border:1px solid #71ab83;border-radius:13px;box-shadow:0 5px 25px #183d5925;padding:13px;display:flex;gap:12px;align-items:center;justify-content:space-between;color:#235c38;font-size:14px;line-height:1.6;overflow-wrap:anywhere}.operation-feedback[data-state="error"]{background:#fff1f1;color:#9c2032;border-color:#dc8793}.operation-feedback button{background:#fff;border:1px solid currentColor;border-radius:9px;color:inherit;min-width:48px;min-height:44px;flex-shrink:0;font-weight:700}.card,.refresh-menu-grid>button,.refresh-step-list button,.more-menu-button{min-width:0;overflow-wrap:anywhere}button,input,select,textarea{font-family:inherit}button:not(.tutorial-skip):not(.skip-content){min-height:44px}input:not([type="checkbox"]):not([type="radio"]),select,textarea{font-size:16px!important;max-width:100%}input[type="checkbox"],input[type="radio"]{flex-shrink:0}.row>div{min-width:0}main>section{scroll-margin-top:110px}.card h2{line-height:1.5}.more-menu-button{width:100%;white-space:normal;text-align:left}#pageBackButton{min-height:44px;padding:8px 10px;font-size:13px}.feature-search-card h2{font-size:18px}.feature-search-card .supply-label{font-size:12px}.feature-search-card>button{font-size:12px}.refresh-title-row .refresh-page-title{min-width:0}.refresh-links{gap:9px}.supply-main-actions{flex-wrap:wrap}button:disabled{cursor:default}@media(max-width:365px){.quantity-control{max-width:100%}.refresh-stock-amount{overflow-wrap:anywhere}.refresh-stock-stat.water{padding-right:93px}.refresh-step-list button{grid-template-columns:68px minmax(0,1fr) 20px}.operation-feedback{font-size:13px}}
 </style><style id="gentle-wrap-up-v134">#wrapUpDialog{width:calc(100% - 32px);max-width:440px;max-height:85dvh;overflow-y:auto;border:1px solid #c5dced;border-radius:20px;padding:24px;color:#18364b;background:#fff;box-shadow:0 12px 60px #163c5940}#wrapUpDialog::backdrop{background:#16304466}#wrapUpDialog h2{font-size:25px;margin:0 0 8px}#wrapUpDialog>.primary{width:100%;min-height:48px;margin-top:14px}.wrap-up-results{background:#f0f8ff;border-radius:13px;padding:12px 14px;margin:16px 0;font-size:14px}.wrap-up-results p{margin:7px 0;line-height:1.7}.wrap-up-friend{display:flex;align-items:center;gap:10px;background:#fffdf4;border-radius:14px;padding:12px}.wrap-up-friend>div{width:85px;flex-shrink:0;height:90px}.wrap-up-friend .character-art{position:relative!important;inset:auto!important;width:85px!important;height:90px!important;transform:none!important}.wrap-up-friend p{font-size:14px;line-height:1.8;margin:0}.wrap-up-safety{border-top:1px solid #e2eaf0;padding-top:12px;margin-top:16px}.wrap-up-entry{margin:18px 0 8px;text-align:center}.wrap-up-entry button{min-height:46px;padding:10px 25px;border-color:#bad5e8;background:#f6fbff;color:#416a83;font-size:14px}
-</style></head><body><a class="skip-content" href="#mainContent" onclick="event.preventDefault();focusActivePage(activePage)">本文へ移動</a><header><h1><svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-7h4v7h5V9.5"/></svg><span>ととのえ防災</span></h1><button type="button" id="globalEmergencyButton" onclick="show('emergency')" aria-label="災害時モードを開く"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 10 18H2Z"/><path d="M12 9v5m0 3v.2"/></svg><span>災害時</span></button><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><dialog id="tutorialDialog" aria-labelledby="tutorialTitle" aria-describedby="tutorialMain" oncancel="event.preventDefault();pauseTutorial()"><div class="tutorial-body"><div class="tutorial-top"><p id="tutorialStep" aria-live="polite"></p><button class="secondary" type="button" onclick="pauseTutorial()">あとで</button></div><progress id="tutorialProgress" max="4" value="1" aria-label="はじめての案内の進み具合"></progress><div class="tutorial-mascots" aria-hidden="true"><img src="./assets/mascot-tako-open-v30.svg" alt="" width="100" height="100"><img id="tutorialFriend" src="./assets/mascot-tricera-open-v30.svg" alt="" width="78" height="78"></div><h2 id="tutorialTitle" tabindex="-1"></h2><p id="tutorialMain"></p><p id="tutorialSupport" class="tutorial-support"></p><p id="tutorialDetail"></p><div class="tutorial-actions"><button class="secondary" id="tutorialBack" type="button" onclick="moveTutorial(-1)">戻る</button><button class="primary" id="tutorialNext" type="button" onclick="moveTutorial(1)">次へ</button></div><button class="tutorial-skip" type="button" onclick="finishTutorial(true)">案内をスキップして始める</button><button class="tutorial-emergency" type="button" onclick="openTutorialEmergency()">災害時モードをすぐ開く</button></div></dialog><main id="mainContent">
+</style><style id="stock-target-style-v137">
+#supplies .stock-target-button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;border:1.5px solid #80bfda;background:#eff9ff;color:#193d54;border-radius:14px;padding:13px 15px;margin:0 0 12px;min-height:70px;box-sizing:border-box}
+#supplies .stock-target-button small{display:block;font-size:11px;font-weight:600;color:#507287;margin-bottom:4px}
+#supplies .stock-target-button strong{display:block;font-size:19px;line-height:1.5;overflow-wrap:anywhere}
+#supplies .stock-target-edit{flex-shrink:0;color:#0878bf;font-size:13px;font-weight:800}
+#supplies .stock-target-button:focus-visible{outline:3px solid #147bc3;outline-offset:3px}
+#supplies .stock-target-settings{margin:0 0 12px}
+#supplies .stock-target-settings>summary{display:none}
+#supplies .stock-target-settings:not([open]){display:none}
+#supplies .stock-target-settings #stockCalculator{scroll-margin-top:140px}
+</style>
+</head><body><a class="skip-content" href="#mainContent" onclick="event.preventDefault();focusActivePage(activePage)">本文へ移動</a><header><h1><svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-7h4v7h5V9.5"/></svg><span>ととのえ防災</span></h1><button type="button" id="globalEmergencyButton" onclick="show('emergency')" aria-label="災害時モードを開く"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 10 18H2Z"/><path d="M12 9v5m0 3v.2"/></svg><span>災害時</span></button><div id="pageNavigation" class="page-navigation hidden"><button type="button" id="pageBackButton" onclick="goBackPage()" aria-label="前の画面に戻る">‹ 戻る</button><strong id="pageCurrentTitle" aria-live="polite"></strong></div></header><dialog id="tutorialDialog" aria-labelledby="tutorialTitle" aria-describedby="tutorialMain" oncancel="event.preventDefault();pauseTutorial()"><div class="tutorial-body"><div class="tutorial-top"><p id="tutorialStep" aria-live="polite"></p><button class="secondary" type="button" onclick="pauseTutorial()">あとで</button></div><progress id="tutorialProgress" max="4" value="1" aria-label="はじめての案内の進み具合"></progress><div class="tutorial-mascots" aria-hidden="true"><img src="./assets/mascot-tako-open-v30.svg" alt="" width="100" height="100"><img id="tutorialFriend" src="./assets/mascot-tricera-open-v30.svg" alt="" width="78" height="78"></div><h2 id="tutorialTitle" tabindex="-1"></h2><p id="tutorialMain"></p><p id="tutorialSupport" class="tutorial-support"></p><p id="tutorialDetail"></p><div class="tutorial-actions"><button class="secondary" id="tutorialBack" type="button" onclick="moveTutorial(-1)">戻る</button><button class="primary" id="tutorialNext" type="button" onclick="moveTutorial(1)">次へ</button></div><button class="tutorial-skip" type="button" onclick="finishTutorial(true)">案内をスキップして始める</button><button class="tutorial-emergency" type="button" onclick="openTutorialEmergency()">災害時モードをすぐ開く</button></div></dialog><main id="mainContent">
 <section id="home"><div class="game-home-stage" aria-label="ととのえ防災 ホーム">
 
 <div class="home-weather-intro"><button type="button" class="home-weather-widget" onclick="openHomeWeather()" aria-label="登録地域の今日の天気。タップして地域設定や詳しい予報を開く"><small id="homeWeatherPlace">今日の天気</small><strong id="homeWeatherSky">地域を登録</strong><span id="homeWeatherTemperature" class="home-weather-temperature">最高・最低 未取得</span><small id="homeWeatherStation"></small><small id="homeWeatherNote">タップして地域設定</small></button></div>
@@ -1785,7 +1796,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v136');
+  const c=await caches.open('totonoe-offline-shell-v137');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1811,8 +1822,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v136')){
-   const cache=await caches.open('totonoe-offline-shell-v136');
+  if(registration&&names.includes('totonoe-offline-shell-v137')){
+   const cache=await caches.open('totonoe-offline-shell-v137');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2603,7 +2614,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v136'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v137'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3015,7 +3026,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v136');
+  const cache=await caches.open('totonoe-offline-shell-v137');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3036,17 +3047,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v136')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v137')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v136')?await caches.open('totonoe-offline-shell-v136'):null;
+  const cache=names.includes('totonoe-offline-shell-v137')?await caches.open('totonoe-offline-shell-v137'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v136'?'必須ファイル10件の保存とv125の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v125の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v137'?'必須ファイル10件の保存とv125の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v125の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3297,7 +3308,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v136';
+ const cacheName='totonoe-offline-shell-v137';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -3400,7 +3411,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v136';
+   const current='totonoe-offline-shell-v137';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -3922,7 +3933,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v136','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v137','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -3931,7 +3942,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v136';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v137';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -4252,6 +4263,9 @@ setInterval(()=>{if(document.visibilityState==='visible')renderHomeSceneTime()},
  // Inventory: real totals only. Unregistered / unknown values stay explicitly unknown.
  const stock=$('supplies');stock.prepend(titleRow('supplies','備蓄','わが家のストックを見える化',['octo','bird']));
  const stockGrid=make('div','refresh-stock-grid');const waterCard=make('div','refresh-stock-stat water');const foodCard=make('div','refresh-stock-stat food');const toiletCard=make('div','refresh-stock-stat toilet');stockGrid.append(waterCard,foodCard,toiletCard);stock.insertBefore(stockGrid,$('supplyInventoryCard'));
+ const targetButton=make('button','stock-target-button','<span><small>わが家の備蓄目安</small><strong></strong></span><span class="stock-target-edit">変更 <span aria-hidden="true">⌄</span></span>');targetButton.id='stockTargetButton';targetButton.type='button';targetButton.setAttribute('aria-controls','supplyCalcFold');targetButton.setAttribute('aria-expanded','false');
+ const targetFold=$('supplyCalcFold');stock.insertBefore(targetButton,stockGrid);stock.insertBefore(targetFold,stockGrid);targetFold.classList.add('stock-target-settings');targetFold.setAttribute('aria-labelledby','stockTargetButton');
+ targetButton.onclick=()=>{if(targetFold.open){targetFold.open=false;targetButton.focus()}else{openStockCalculator();$('calcPeople').focus({preventScroll:true})}};targetFold.addEventListener('toggle',()=>targetButton.setAttribute('aria-expanded',String(targetFold.open)));
  const tabs=make('div','refresh-filter-tabs');[['すべて','all'],['水','category-water'],['食料','category-food'],['トイレ','category-toilet']].forEach(([label,value])=>{const b=make('button','',label);b.type='button';b.dataset.filter=value;b.onclick=()=>{$('supplyFilter').value=value;renderSupplies()};tabs.append(b)});$('supplyInventoryCard').insertBefore(tabs,$('supplyInventoryCard').firstChild);$('supplyInventoryCard').querySelector('h2').textContent='備蓄リスト';
  // Learn: curated entry points, followed by the original full learning library.
  const learn=$('learn'),learnExisting=[...learn.children];learn.replaceChildren(titleRow('learn','学ぶ','少しずつ、備える力に。',['octo','tricera']));
@@ -4287,7 +4301,7 @@ setInterval(()=>{if(document.visibilityState==='visible')renderHomeSceneTime()},
  function format(n){return Number(n.toFixed(2)).toLocaleString('ja-JP')}
  function stat(card,kind,label,total,needed,unit,note){const known=total!==null;const ratio=known&&needed>0?Math.min(100,total/needed*100):0;card.innerHTML='<label>'+icon(kind)+label+'</label><div class="refresh-stock-amount">'+(known?format(total):'未登録')+(known?' <small>'+unit+'</small>':'')+' <small>/ '+(needed>0?format(needed)+unit:'回数未設定')+'</small></div><div class="refresh-meter"><span style="width:'+ratio+'%"></span></div><p></p>';card.querySelector('p').textContent=note;if(kind==='water'){const art=make('img','approved-water-drinking');art.src=approvedSceneImages.water;art.alt='ペットボトルの水を飲むトリケラさん';art.width=150;art.height=165;card.append(art)}}
  function stockStatus(card,total,needed,unit,uncertain){const badge=make('div','stock-gap');if(total===null){badge.textContent=supplyStorageReadable()?'登録内容を確認しましょう':'保存内容を確認できません';badge.dataset.state='unknown'}else if(!needed){badge.textContent='必要量を設定してください';badge.dataset.state='unknown'}else if(uncertain){badge.textContent='期限・容量を要確認／充足状況は未確定';badge.dataset.state='unknown'}else if(total<needed){badge.textContent='あと '+format(needed-total)+unit;badge.dataset.state='shortage'}else{badge.textContent='登録した数量は目安に達しています';badge.dataset.state='ready'}card.dataset.readiness=badge.dataset.state;card.append(badge)}
- function updateStock(){const today=todayLocalDate(),people=Number($('calcPeople').value),days=Number($('calcDays').value==='custom'?$('calcCustomDays').value:$('calcDays').value),freq=Number($('calcToiletPerDay').value);const valid=Number.isInteger(people)&&people>0&&Number.isInteger(days)&&days>0;const readable=supplyStorageReadable();const water=readinessWaterSummary(supplies,today);const food=stockMeasureSummary(supplies,'food',today),toilet=stockMeasureSummary(supplies,'toilet',today);const base=valid?people+'人・'+days+'日分の目安':'人数・日数を設定してください';const waterTotal=water.counted.length?water.counted.reduce((n,x)=>n+Number(x.qty)*Number(x.factor),0):null;stat(waterCard,'water','飲料水',readable?waterTotal:null,valid?people*days*3:0,'L',!readable?'保存内容を確認できません':base);stat(foodCard,'food','食料',readable&&food.valid.length?food.total:null,valid?people*days*3:0,'食',!readable?'保存内容を確認できません':food.excluded?'内容量・期限の未確認品あり':'食数を設定した登録品を集計');stat(toiletCard,'toilet','携帯トイレ',readable&&toilet.valid.length?toilet.total:null,valid&&Number.isInteger(freq)&&freq>0?people*days*freq:0,'回',!readable?'保存内容を確認できません':toilet.excluded?'内容量・期限の未確認品あり':'使用回数は必要量の計算から設定');stockStatus(waterCard,readable?waterTotal:null,valid?people*days*3:0,'L',!readable||water.excluded>0||water.undated>0);stockStatus(foodCard,readable&&food.valid.length?food.total:null,valid?people*days*3:0,'食',!readable||food.excluded>0||supplies.some(x=>x.category==='food'&&!validSupplyDate(x.exp)));stockStatus(toiletCard,readable&&toilet.valid.length?toilet.total:null,valid&&Number.isInteger(freq)&&freq>0?people*days*freq:0,'回',!readable||toilet.excluded>0||supplies.some(x=>x.category==='toilet'&&!validSupplyDate(x.exp)));tabs.querySelectorAll('button').forEach(b=>{const selected=b.dataset.filter===$('supplyFilter').value;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected))});}
+ function updateStock(){const today=todayLocalDate(),people=Number($('calcPeople').value),days=Number($('calcDays').value==='custom'?$('calcCustomDays').value:$('calcDays').value),freq=Number($('calcToiletPerDay').value);const valid=Number.isInteger(people)&&people>=1&&people<=30&&Number.isInteger(days)&&days>=1&&days<=365;const readable=supplyStorageReadable();const water=readinessWaterSummary(supplies,today);const food=stockMeasureSummary(supplies,'food',today),toilet=stockMeasureSummary(supplies,'toilet',today);const base=valid?people+'人分・'+days+'日分の目安':'人数・日数を設定してください';targetButton.querySelector('strong').textContent=base;const waterTotal=water.counted.length?water.counted.reduce((n,x)=>n+Number(x.qty)*Number(x.factor),0):null;stat(waterCard,'water','飲料水',readable?waterTotal:null,valid?people*days*3:0,'L',!readable?'保存内容を確認できません':'飲料水の必要量');stat(foodCard,'food','食料',readable&&food.valid.length?food.total:null,valid?people*days*3:0,'食',!readable?'保存内容を確認できません':food.excluded?'内容量・期限の未確認品あり':'食数を設定した登録品を集計');stat(toiletCard,'toilet','携帯トイレ',readable&&toilet.valid.length?toilet.total:null,valid&&Number.isInteger(freq)&&freq>0?people*days*freq:0,'回',!readable?'保存内容を確認できません':toilet.excluded?'内容量・期限の未確認品あり':'使用回数は必要量の計算から設定');stockStatus(waterCard,readable?waterTotal:null,valid?people*days*3:0,'L',!readable||water.excluded>0||water.undated>0);stockStatus(foodCard,readable&&food.valid.length?food.total:null,valid?people*days*3:0,'食',!readable||food.excluded>0||supplies.some(x=>x.category==='food'&&!validSupplyDate(x.exp)));stockStatus(toiletCard,readable&&toilet.valid.length?toilet.total:null,valid&&Number.isInteger(freq)&&freq>0?people*days*freq:0,'回',!readable||toilet.excluded>0||supplies.some(x=>x.category==='toilet'&&!validSupplyDate(x.exp)));tabs.querySelectorAll('button').forEach(b=>{const selected=b.dataset.filter===$('supplyFilter').value;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected))});}
  const oldSupplies=renderSupplies;renderSupplies=function(){const result=oldSupplies.apply(this,arguments);updateStock();illustrateInventory();return result};
  const oldCalc=renderStockCalculator;renderStockCalculator=function(){const result=oldCalc.apply(this,arguments);updateStock();return result};
  const oldPriority=renderHomeNextThree;renderHomeNextThree=function(){oldPriority.apply(this,arguments);const source=$('homeNextThreeActions').firstElementChild;firstMission.replaceChildren();if(source){const b=source.cloneNode(true);b.onclick=()=>source.click();firstMission.append(b)}else firstMission.append(action('わが家の準備状況を確認 →','readiness'));const safe=criticalSafetyState();stage.dataset.safetyComplete=String(safe.remaining.length===0);homeMission.classList.toggle('mission-is-safety',safe.remaining.length>0);};
@@ -4358,7 +4372,7 @@ setInterval(()=>{if(document.visibilityState==='visible')renderHomeSceneTime()},
  const oldRestore=restoreAllData;restoreAllData=function(){let before=null,after=null;try{before=JSON.stringify(allBackupKeys.map(k=>localStorage.getItem(k)))}catch(e){}const result=oldRestore.apply(this,arguments);try{after=JSON.stringify(allBackupKeys.map(k=>localStorage.getItem(k)))}catch(e){}if(before!==null&&after!==null&&before!==after){baseline=snapshot();window.dispatchEvent(new Event('toto-data-restored'))}return result};
 })();
 </script>
-<style id="affiliate-style-v136">
+<style id="affiliate-style-v137">
 #supplyRecommendations{margin:18px 0;border:1px solid #d5e4ee;border-radius:18px;background:#fff;overflow:hidden}
 #supplyRecommendations>summary{display:flex;align-items:center;gap:9px;min-height:54px;padding:14px 16px;cursor:pointer;color:#183b54;font-weight:800;list-style:none}
 #supplyRecommendations>summary::-webkit-details-marker{display:none}
@@ -4375,7 +4389,7 @@ setInterval(()=>{if(document.visibilityState==='visible')renderHomeSceneTime()},
 #supplyRecommendations .affiliate-link:focus-visible{outline:3px solid #196fc5;outline-offset:3px}
 #supplyRecommendations .affiliate-link:hover{background:#dbf0ff}
 </style>
-<script id="affiliate-script-v136">
+<script id="affiliate-script-v137">
 (function(){
  const inventory=document.getElementById('supplyInventoryCard');if(!inventory)return;
  const panel=document.createElement('details');panel.id='supplyRecommendations';
