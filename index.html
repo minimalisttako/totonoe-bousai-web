@@ -1785,7 +1785,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v135');
+  const c=await caches.open('totonoe-offline-shell-v136');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1811,8 +1811,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v135')){
-   const cache=await caches.open('totonoe-offline-shell-v135');
+  if(registration&&names.includes('totonoe-offline-shell-v136')){
+   const cache=await caches.open('totonoe-offline-shell-v136');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2603,7 +2603,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v135'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v136'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3015,7 +3015,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v135');
+  const cache=await caches.open('totonoe-offline-shell-v136');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3036,17 +3036,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v135')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v136')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v135')?await caches.open('totonoe-offline-shell-v135'):null;
+  const cache=names.includes('totonoe-offline-shell-v136')?await caches.open('totonoe-offline-shell-v136'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v135'?'必須ファイル10件の保存とv125の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v125の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v136'?'必須ファイル10件の保存とv125の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v125の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3297,7 +3297,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v135';
+ const cacheName='totonoe-offline-shell-v136';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -3400,7 +3400,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v135';
+   const current='totonoe-offline-shell-v136';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -3922,7 +3922,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v135','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v136','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -3931,7 +3931,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v135';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v136';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -4357,7 +4357,38 @@ setInterval(()=>{if(document.visibilityState==='visible')renderHomeSceneTime()},
  // A restored backup is a new reference point, never an accomplishment.
  const oldRestore=restoreAllData;restoreAllData=function(){let before=null,after=null;try{before=JSON.stringify(allBackupKeys.map(k=>localStorage.getItem(k)))}catch(e){}const result=oldRestore.apply(this,arguments);try{after=JSON.stringify(allBackupKeys.map(k=>localStorage.getItem(k)))}catch(e){}if(before!==null&&after!==null&&before!==after){baseline=snapshot();window.dispatchEvent(new Event('toto-data-restored'))}return result};
 })();
-</script></body></html>
+</script>
+<style id="affiliate-style-v136">
+#supplyRecommendations{margin:18px 0;border:1px solid #d5e4ee;border-radius:18px;background:#fff;overflow:hidden}
+#supplyRecommendations>summary{display:flex;align-items:center;gap:9px;min-height:54px;padding:14px 16px;cursor:pointer;color:#183b54;font-weight:800;list-style:none}
+#supplyRecommendations>summary::-webkit-details-marker{display:none}
+#supplyRecommendations>summary::after{content:'＋';margin-left:auto;color:#1676be;font-size:22px}
+#supplyRecommendations[open]>summary::after{content:'−'}
+#supplyRecommendations .affiliate-pr{font-size:11px;line-height:1.5;padding:2px 7px;border:1px solid #bdcbd5;border-radius:5px;color:#526674;background:#f3f7fa}
+#supplyRecommendations .affiliate-body{padding:0 14px 16px}
+#supplyRecommendations .affiliate-disclosure{font-size:12px;line-height:1.7;color:#536574;margin:0 0 12px;overflow-wrap:anywhere}
+#supplyRecommendations .affiliate-product{border:1px solid #dce6ed;border-radius:13px;padding:13px;margin-top:10px;background:#fbfdff}
+#supplyRecommendations h3{font-size:16px;margin:0 0 5px;line-height:1.5;color:#1c3345}
+#supplyRecommendations .affiliate-shop{font-size:12px;color:#59707d;margin:0 0 10px;line-height:1.6}
+#supplyRecommendations .affiliate-links{display:flex;flex-wrap:wrap;gap:8px}
+#supplyRecommendations .affiliate-link{display:flex;align-items:center;justify-content:center;gap:5px;flex:1 1 125px;min-height:46px;padding:10px 8px;box-sizing:border-box;border-radius:10px;border:1px solid #b8d9ee;background:#eaf6ff;color:#0869ac;text-decoration:none;font-size:14px;font-weight:800;line-height:1.5;text-align:center}
+#supplyRecommendations .affiliate-link:focus-visible{outline:3px solid #196fc5;outline-offset:3px}
+#supplyRecommendations .affiliate-link:hover{background:#dbf0ff}
+</style>
+<script id="affiliate-script-v136">
+(function(){
+ const inventory=document.getElementById('supplyInventoryCard');if(!inventory)return;
+ const panel=document.createElement('details');panel.id='supplyRecommendations';
+ panel.innerHTML=`<summary><span class="affiliate-pr">PR</span><span>おすすめの備え</span></summary>
+ <div class="affiliate-body"><p class="affiliate-disclosure">この欄にはアフィリエイト広告を含みます。リンク経由の購入により、運営者に報酬が入る場合があります。</p>
+ <div class="affiliate-product"><h3>BOS 臭わないトイレセット</h3><p class="affiliate-shop">BOS-SHOP（公式）・4点セット</p><div class="affiliate-links"><a class="affiliate-link" href="https://a.r10.to/hgnRvd" target="_blank" rel="sponsored noopener" aria-label="BOS 50回分を楽天市場の公式ショップで見る（外部リンク）">50回分を見る ↗</a><a class="affiliate-link" href="https://a.r10.to/h5qjkM" target="_blank" rel="sponsored noopener" aria-label="BOS 100回分を楽天市場の公式ショップで見る（外部リンク）">100回分を見る ↗</a></div></div>
+ <div class="affiliate-product"><h3>無印良品 5倍巻きトイレットペーパー</h3><p class="affiliate-shop">無印良品（公式）・各4個入り</p><div class="affiliate-links"><a class="affiliate-link" href="https://a.r10.to/h5Tn2f" target="_blank" rel="sponsored noopener" aria-label="無印良品 シングル4個入りを楽天市場の公式ショップで見る（外部リンク）">シングルを見る ↗</a><a class="affiliate-link" href="https://a.r10.to/h5rmbZ" target="_blank" rel="sponsored noopener" aria-label="無印良品 ダブル4個入りを楽天市場の公式ショップで見る（外部リンク）">ダブルを見る ↗</a></div></div>
+ <div class="affiliate-product"><h3>Anker Solix C1000 Gen 2</h3><p class="affiliate-shop">アンカー・ダイレクト楽天市場店（公式）<br>ポータブル電源 本体・ダークグレー</p><div class="affiliate-links"><a class="affiliate-link" href="https://a.r10.to/h5AA7M" target="_blank" rel="sponsored noopener" aria-label="Anker Solix C1000 Gen 2を楽天市場の公式ショップで見る（外部リンク）">公式ショップで見る ↗</a></div></div>
+ <p class="affiliate-disclosure" style="margin:12px 0 0">リンク先は楽天市場です。外部ショップを開くには通信が必要です。価格・在庫・送料はリンク先でご確認ください。</p></div>`;
+ inventory.after(panel);
+})();
+</script>
+</body></html>
 
 
 
