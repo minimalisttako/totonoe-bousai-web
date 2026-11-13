@@ -926,7 +926,7 @@ nav button.active{background:#eaf1e5;color:#345a3c;font-weight:750}
 #tutorialDialog{border:1px solid #dfe6dd;border-radius:24px;padding:0;width:calc(100% - 28px);max-width:510px;max-height:calc(100dvh - 32px);color:#263d35;background:#fafcf8;box-shadow:0 22px 80px #152c3540;overflow:auto}#tutorialDialog::backdrop{background:#172c2acc;backdrop-filter:blur(4px)}.tutorial-body{padding:24px}.tutorial-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.tutorial-top p{margin:0;font-size:13px;color:#617563}.tutorial-top button{font-size:13px;min-height:44px}.tutorial-mascots{display:flex;justify-content:center;align-items:end;gap:14px;margin:16px 0}.tutorial-mascots img{width:100px;height:100px;object-fit:contain}.tutorial-mascots img+img{width:78px;height:78px}#tutorialTitle:focus{outline:none}#tutorialTitle{font-size:24px;line-height:1.5;margin:14px 0}#tutorialMain{font-size:17px;line-height:1.8}.tutorial-support{padding:14px;border-radius:14px;background:#eef3e9;font-size:14px;line-height:1.8}#tutorialDetail{font-size:14px;line-height:1.8}.tutorial-actions{display:flex;gap:10px;margin-top:22px}.tutorial-actions button{min-height:48px;flex:1}.tutorial-emergency{display:block;width:100%;min-height:46px;margin-top:16px;border:1px solid #d7bab0;background:#fff3ee;color:#864e40;border-radius:12px;font-weight:700}.tutorial-skip{width:100%;margin-top:8px;min-height:44px;border:0;background:transparent;color:#536b58;text-decoration:underline}#tutorialDialog progress{width:100%;height:5px;accent-color:#345a3c;margin-top:18px}@media(max-width:370px){.tutorial-body{padding:18px}#tutorialTitle:focus{outline:none}#tutorialTitle{font-size:21px}.tutorial-mascots img{width:80px;height:80px}}
 </style>
 <style id="page-intros-v125">
-.page-intro .page-intro-line{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start}.page-intro-line img{width:30px;height:30px;object-fit:contain}
+.page-intro-line{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start}.page-intro-line img{width:30px;height:30px;object-fit:contain}
 .page-intro:not([open]) > :not(summary){display:none}.page-intro{margin-top:12px;border:1px solid #dce5d7;border-radius:12px;background:#f9fcf6;padding:0 14px}.page-intro summary{padding:12px 0;cursor:pointer;font-size:14px;font-weight:700;min-height:44px}.page-intro p{font-size:14px;line-height:1.8;margin:8px 0}.page-intro .secondary{font-size:14px;min-height:44px;margin:8px 0 14px}.home-intro{margin-bottom:16px}nav button[data-page="home"] .nav-icon{width:25px;height:25px}nav button[data-page="home"]{font-weight:750}
 </style><style>.home-weather-temperature{display:block;font-size:13px;font-weight:700;line-height:1.65;color:#365a45;margin-top:4px;overflow-wrap:anywhere}#homeWeatherStation{display:block;font-size:11px;color:#657663}#homeWeatherStation:empty{display:none}</style><style id="minimal-design-v125">
 :root{--ui-ink:#25312e;--ui-muted:#63716b;--ui-line:#e4e8e5;--ui-paper:#fff;--ui-radius:10px;--ui-accent:#275c49;background:#fff;color:var(--ui-ink)}
@@ -1853,7 +1853,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v147');
+  const c=await caches.open('totonoe-offline-shell-v148');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1879,8 +1879,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v147')){
-   const cache=await caches.open('totonoe-offline-shell-v147');
+  if(registration&&names.includes('totonoe-offline-shell-v148')){
+   const cache=await caches.open('totonoe-offline-shell-v148');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2061,22 +2061,29 @@ function readPageIntroSeen(){
  return new Set();
 }
 function rememberPageIntro(id){pageIntroSeen.add(id);try{localStorage.setItem(pageIntroKey,JSON.stringify([...pageIntroSeen]))}catch(e){/* Keep this session usable without persistent storage. */}}
+function renderMascotLine(row,text){
+ const match=/^(たこ|トリケラさん|シマエナガさん)：(.*)$/s.exec(text);
+ if(!match){row.classList.remove('page-intro-line');row.textContent=text;return}
+ const [,name,message]=match;
+ const mascot={'たこ':'tako','トリケラさん':'tricera','シマエナガさん':'shimaenaga'}[name];
+ const icon=document.createElement('img');
+ icon.src='./assets/mascot-'+mascot+'-open-v30.svg';
+ icon.alt=name+'：';
+ const body=document.createElement('span');body.textContent=message;
+ row.classList.add('page-intro-line');
+ row.replaceChildren(icon,body);
+}
 function renderPageIntro(id){
  const copy=pageIntroCopy[id],section=document.getElementById(id);if(!copy||!section)return;
  if(section.querySelector('.page-intro'))return;
  const host=null; // Keep page instructions outside the hidden legacy mascot banner.
  const details=document.createElement('details');details.className='page-intro'+(id==='home'?' home-intro':'');details.open=!pageIntroSeen.has(id);
  const title=document.createElement('summary');title.textContent='このページの使い方';
- const line=(mascot,name,text)=>{
-  const row=document.createElement('p');row.className='page-intro-line';
-  const icon=document.createElement('img');icon.src='./assets/mascot-'+mascot+'-open-v30.svg';icon.alt=name+'：';
-  const message=document.createElement('span');message.textContent=text;
-  row.append(icon,message);
-  return row;
- };
- const purpose=line('tako','たこ',copy[0]);
+ const purpose=document.createElement('p');
+ renderMascotLine(purpose,'たこ：'+copy[0]);
+ const first=document.createElement('p');
  const bird=['supplies','stock','pouch','weather','outage'].includes(id);
- const first=bird?line('shimaenaga','シマエナガさん',copy[1]):line('tricera','トリケラさん',copy[1]);
+ renderMascotLine(first,(bird?'シマエナガさん：':'トリケラさん：')+copy[1]);
  const close=document.createElement('button');close.className='secondary';close.type='button';close.textContent='わかりました';close.onclick=event=>{
   event.preventDefault();
   event.stopPropagation();
@@ -2098,8 +2105,8 @@ function renderTutorial(){
  document.getElementById('tutorialStep').textContent='はじめての案内 '+(tutorialState.step+1)+' / 4';
  document.getElementById('tutorialProgress').value=tutorialState.step+1;
  document.getElementById('tutorialTitle').textContent=step.title;
- document.getElementById('tutorialMain').textContent=step.main;
- document.getElementById('tutorialSupport').textContent=step.support;
+ renderMascotLine(document.getElementById('tutorialMain'),step.main);
+ renderMascotLine(document.getElementById('tutorialSupport'),step.support);
  document.getElementById('tutorialDetail').textContent=step.detail;
  document.getElementById('tutorialFriend').src='./assets/mascot-'+(step.friend==='bird'?'shimaenaga':'tricera')+'-open-v30.svg';
  document.getElementById('tutorialBack').disabled=tutorialState.step===0;
@@ -2265,9 +2272,9 @@ function renderPageMascotGuide(id){
   else if(id==='homeSafety'){info='安全点検 残り'+criticalSafetyState().remaining.length+'項目'}
   stat.textContent=info;stat.hidden=!info;
  }
- banner.querySelector('p').textContent='たこ：'+contextualMascotAdvice(id,guide[1]);
+ renderMascotLine(banner.querySelector('p'),'たこ：'+contextualMascotAdvice(id,guide[1]));
  const sub=mascotSupportingLine(id,guide[0]);
- banner.querySelector('.guide-support').textContent=sub;
+ renderMascotLine(banner.querySelector('.guide-support'),sub);
 }
 let weatherForecast=null,weatherRequest=0,weatherController=null;
 function show(id){if(!validPage(id))id='home';const emergencyPlanEntry=id==='evacuation'&&activePage==='emergency';if(id!=='home'&&id!=='emergency'&&!emergencyPlanEntry&&!hazardIsConfirmed()&&!stockIsUnlocked()){openHazardGate(false);return;}if((id==='supplies'||id==='stock')&&!stockIsUnlocked()){openStockGate(false);return;}if(id==='set'&&!readTidyPlaces().some(tidyHasSorted)){openTidyMilestone('locked');return;}if(!emergencyPlanEntry&&tutorialNeedsGate(id)){tutorialPendingPage=id;openTutorial();return}const pageChanged=id!==activePage;if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock','examStudy','practiceQuiz','cleanPractice','minimalistGuide'].includes(id)?'learn':id==='tidyAlbum'?'tidy':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family','readiness','weather','events','helpGuide','moving','training'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='more')renderFeatureSearch();if(id==='training'){if(!document.getElementById('drillDate').value)document.getElementById('drillDate').value=todayLocalDate();renderEvacuationDrills()}if(id==='moving')renderMovingChecklist();if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){renderEmergencyPlan();renderEmergencyFamily();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='tidyAlbum')renderTidyAlbum();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family'){renderFamilySuggestedItems();renderFamilyProfiles()}if(id==='readiness')renderReadinessOverview();if(id==='weather'){if(weatherForecast)renderWeatherForecast();ensureSavedMunicipalityWarnings();}if(id==='home')ensureSavedMunicipalityWarnings();if(id==='cleanPractice')renderCleanPractice();if(id==='examStudy')renderSavedPractice();if(id==='events')restoreEventSearchSettings();if(id==='more'){renderReleaseQa();renderRestSettings()}renderRestMessage();renderPageIntro(id);window.scrollTo(0,0);if(pageChanged)requestAnimationFrame(()=>focusActivePage(id))}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
@@ -2684,7 +2691,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v147'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v148'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2990,12 +2997,12 @@ function renderGameHomeDialogue(){
    else{action.textContent=next.label+' ↗';action.onclick=()=>show(next.page)}
   }else{action.textContent=(next?next.label:'わが家の準備状況を確認')+' ↗';action.onclick=()=>next?openHomePriorityAction(next):show('readiness')}
  }
- if(tricera)tricera.textContent=safety.remaining.length
+ if(tricera)renderMascotLine(tricera,safety.remaining.length
    ?'トリケラさん：無理せず1つずつでええんやで。まず安全を確かめような。'
-   :mascotSupportingLine('tidy','tidy');
+   :mascotSupportingLine('tidy','tidy'));
  if(season){
   const month=new Date().getMonth()+1;
-  season.textContent=month>=12||month<=2?'シマエナガさん：寒さへの備えと暖房器具の安全を確認してください。':month>=6&&month<=8?'シマエナガさん：飲料水と暑さへの対策を確認してください。':month>=9&&month<=11?'シマエナガさん：季節の変わり目には備蓄の期限を点検してください。':'シマエナガさん：家具の固定や避難経路を定期的に確認してください。';
+  renderMascotLine(season,month>=12||month<=2?'シマエナガさん：寒さへの備えと暖房器具の安全を確認してください。':month>=6&&month<=8?'シマエナガさん：飲料水と暑さへの対策を確認してください。':month>=9&&month<=11?'シマエナガさん：季節の変わり目には備蓄の期限を点検してください。':'シマエナガさん：家具の固定や避難経路を定期的に確認してください。');
  }
 }
 function renderHomeTidySummary(){const el=document.getElementById('homeTidySummary');if(!el)return;const c=tidyCounts(),steps=tidyStepTotals();el.textContent=c.all?'場所：'+c.done+'/'+c.all+'か所完了 ／ 小さな作業：'+steps.complete+'/'+steps.total+'項目完了':'まだ記録がありません。気になる場所から始めましょう。'}
@@ -3163,7 +3170,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v147');
+  const cache=await caches.open('totonoe-offline-shell-v148');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3184,17 +3191,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v147')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v148')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v147')?await caches.open('totonoe-offline-shell-v147'):null;
+  const cache=names.includes('totonoe-offline-shell-v148')?await caches.open('totonoe-offline-shell-v148'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v147'?'必須ファイル10件の保存とv147の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v147の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v148'?'必須ファイル10件の保存とv148の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v148の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3445,7 +3452,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v147';
+ const cacheName='totonoe-offline-shell-v148';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -3548,7 +3555,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v147';
+   const current='totonoe-offline-shell-v148';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -4070,7 +4077,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v147','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v148','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -4079,7 +4086,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v147';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v148';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -4411,7 +4418,16 @@ setInterval(()=>{if(document.visibilityState==='visible')renderHomeSceneTime()},
  const stockGrid=make('div','refresh-stock-grid');const waterCard=make('div','refresh-stock-stat water');const foodCard=make('div','refresh-stock-stat food');const toiletCard=make('div','refresh-stock-stat toilet');stockGrid.append(waterCard,foodCard,toiletCard);stock.insertBefore(stockGrid,$('supplyInventoryCard'));
  const targetButton=make('button','stock-target-button','<span><small>わが家の備蓄目安</small><strong></strong></span><span class="stock-target-edit">変更 <span aria-hidden="true">⌄</span></span>');targetButton.id='stockTargetButton';targetButton.type='button';targetButton.setAttribute('aria-controls','supplyCalcFold');targetButton.setAttribute('aria-expanded','false');
  const targetFold=$('supplyCalcFold');stock.insertBefore(targetButton,stockGrid);stock.insertBefore(targetFold,stockGrid);targetFold.classList.add('stock-target-settings');targetFold.setAttribute('aria-labelledby','stockTargetButton');
- targetButton.onclick=()=>{if(targetFold.open){targetFold.open=false;targetButton.focus()}else{openStockCalculator();$('calcPeople').focus({preventScroll:true})}};targetFold.addEventListener('toggle',()=>targetButton.setAttribute('aria-expanded',String(targetFold.open)));
+ const closeTarget=make('button','secondary','備蓄計算を閉じる');
+ closeTarget.type='button';
+ const closeCalculator=()=>{
+  targetFold.open=false;
+  targetButton.focus({preventScroll:true});
+  targetButton.scrollIntoView({block:'nearest'});
+ };
+ closeTarget.onclick=closeCalculator;
+ targetFold.querySelector('.supply-fold-content').append(closeTarget);
+ targetButton.onclick=()=>{if(targetFold.open){closeCalculator()}else{openStockCalculator();$('calcPeople').focus({preventScroll:true})}};targetFold.addEventListener('toggle',()=>targetButton.setAttribute('aria-expanded',String(targetFold.open)));
  const tabs=make('div','refresh-filter-tabs');[['すべて','all'],['水','category-water'],['食料','category-food'],['トイレ','category-toilet'],['その他','category-none']].forEach(([label,value])=>{const b=make('button','',label);b.type='button';b.dataset.filter=value;b.onclick=()=>{$('supplyFilter').value=value;renderSupplies()};tabs.append(b)});$('supplyInventoryCard').insertBefore(tabs,$('supplyInventoryCard').firstChild);$('supplyInventoryCard').querySelector('h2').textContent='備蓄リスト';
  // Learn: curated entry points, followed by the original full learning library.
  const learn=$('learn'),learnExisting=[...learn.children];learn.replaceChildren(titleRow('learn','学ぶ','少しずつ、備える力に。',['octo','tricera']));

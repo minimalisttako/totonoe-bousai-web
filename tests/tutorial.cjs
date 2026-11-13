@@ -4,11 +4,20 @@ function extract(name){const start=source.indexOf('function '+name+'(');assert(s
 const store=new Map([['private-record','keep']]);let fail=false;
 const elements=new Map();function el(id){if(!elements.has(id))elements.set(id,{textContent:'',open:false,isConnected:true,focus(){},showModal(){this.open=true},close(){this.open=false}});return elements.get(id)}
 const routes=[];const c={console,localStorage:{getItem:k=>store.get(k)||null,setItem(k,v){if(fail)throw Error('quota');store.set(k,v)}},document:{getElementById:el,activeElement:el('source')},requestAnimationFrame:fn=>fn(),show:id=>routes.push(id)};vm.createContext(c);
+c.document.createElement = tag => ({
+  tag, open:false, children:[], classList:{add(){},remove(){}},
+  append(...children){this.children.push(...children)},
+  replaceChildren(...children){this.children=children},
+  removeAttribute(name){assert.equal(name,'open');this.open=false},
+  focus(){this.focused=true},
+});
+for(const id of ['tutorialMain','tutorialSupport'])Object.assign(el(id),c.document.createElement('p'));
+vm.runInContext(extract('renderMascotLine'),c);
 const start=source.indexOf("const tutorialKey="),end=source.indexOf('const moreGroupKey=',start);
 for(const name of ['readTutorialState','saveTutorialState','tutorialNeedsGate','renderTutorial','openTutorial','moveTutorial','closeTutorial','pauseTutorial','finishTutorial','openTutorialEmergency'])vm.runInContext(extract(name),c);
 vm.runInContext(source.slice(start,end)+"let activePage='more'",c);
 assert.equal(c.tutorialNeedsGate('supplies'),true);assert.equal(c.tutorialNeedsGate('emergency'),false);
-c.openTutorial();assert(el('tutorialDialog').open);c.moveTutorial(1);c.moveTutorial(1);assert.equal(c.readTutorialState().step,2);
+c.openTutorial();assert(el('tutorialDialog').open);c.moveTutorial(1);c.moveTutorial(1);assert.equal(c.readTutorialState().step,2);assert.match(el('tutorialSupport').children[0].src,/shimaenaga/);
 c.openTutorialEmergency();assert.equal(routes.at(-1),'emergency');assert(!c.readTutorialState().completed);assert(c.tutorialNeedsGate('home'));
 c.openTutorial();assert(el('tutorialStep').textContent.includes('3 / 4'));c.moveTutorial(1);c.moveTutorial(1);assert.equal(routes.at(-1),'homeSafety');assert(!c.tutorialNeedsGate('supplies'));assert(c.readTutorialState().completed);
 c.openTutorial(true);assert(el('tutorialStep').textContent.includes('1 / 4'));c.pauseTutorial();assert.equal(routes.at(-1),'more');assert(c.readTutorialState().completed);
@@ -26,12 +35,6 @@ store.set('toto-page-intros-v1','["supplies","unknown",null,4]');assert.equal(c.
 const nav=source.slice(source.indexOf('<nav aria-label="メインメニュー">'),source.indexOf('</nav>'));assert.deepEqual([...nav.matchAll(/data-page="([^"]+)"/g)].map(x=>x[1]),['learn','tidy','home','supplies','more']);
 console.log('PASS: first-page copy coverage, independent seen states, corrupt storage, failed writes, record isolation and centered Home navigation.');
 
-c.document.createElement = tag => ({
-  tag, open:false, children:[],
-  append(...children){this.children.push(...children)},
-  removeAttribute(name){assert.equal(name,'open');this.open=false},
-  focus(){this.focused=true},
-});
 vm.runInContext(extract('renderPageIntro')+'\npageIntroSeen=new Set()',c);
 const introPages = vm.runInContext('Object.keys(pageIntroCopy)',c);
 for(const id of introPages){
