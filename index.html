@@ -969,6 +969,11 @@ nav{border-radius:0;border:0;border-top:1px solid #e1e7e1;background:#fffffff5;b
 #home .game-mascot-scene > .character-art.octo{z-index:3!important;justify-self:center!important}
 #home .game-mascot-scene > .character-art.bird{width:104%!important;max-width:150px!important;justify-self:end!important}
 @media(prefers-reduced-motion:reduce){#home .game-mascot-scene::before{transition:none}}
+
+#home .game-mascot-scene[data-weather]::after{background:var(--weather-overlay)}
+#home .game-mascot-scene[data-weather="cloudy"]{--weather-overlay:radial-gradient(ellipse at 25% 8%,#d8dce4b0,transparent 58%),linear-gradient(#697b9638,transparent 76%)}
+#home .game-mascot-scene[data-weather="rain"]{--weather-overlay:repeating-linear-gradient(110deg,transparent 0 21px,#e2f3ff75 22px 23px,transparent 24px 39px),linear-gradient(#425c7750,transparent)}
+#home .game-mascot-scene[data-weather="snow"]{--weather-overlay:radial-gradient(circle at 8px 9px,#fff 0 1px,transparent 2px) 0 0/39px 32px,radial-gradient(circle at 17px 14px,#fff9 0 2px,transparent 3px) 7px 12px/57px 49px,linear-gradient(transparent 65%,#eaf4ff56)}
 </style><style id="home-mascot-balance-v125">
 #home .game-mascot-scene > .character-art.tricera{width:140%!important;max-width:205px!important;justify-self:start!important}
 #home .game-mascot-scene > .character-art.octo{width:120%!important;max-width:172px!important;justify-self:center!important}
@@ -1865,7 +1870,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v152');
+  const c=await caches.open('totonoe-offline-shell-v153');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1891,8 +1896,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v152')){
-   const cache=await caches.open('totonoe-offline-shell-v152');
+  if(registration&&names.includes('totonoe-offline-shell-v153')){
+   const cache=await caches.open('totonoe-offline-shell-v153');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2703,7 +2708,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v152'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v153'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3182,7 +3187,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v152');
+  const cache=await caches.open('totonoe-offline-shell-v153');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3203,17 +3208,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v152')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v153')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v152')?await caches.open('totonoe-offline-shell-v152'):null;
+  const cache=names.includes('totonoe-offline-shell-v153')?await caches.open('totonoe-offline-shell-v153'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v152'?'必須ファイル10件の保存とv152の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v152の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v153'?'必須ファイル10件の保存とv153の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v153の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3464,7 +3469,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v152';
+ const cacheName='totonoe-offline-shell-v153';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -3567,7 +3572,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v152';
+   const current='totonoe-offline-shell-v153';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -3698,7 +3703,12 @@ function renderWeatherForecast(){
  try{
   const rows=weatherDailyRows(data,document.getElementById('weatherArea').value);
   status.textContent=office+'／'+report.publishingOffice+' 発表：'+new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date(report.reportDatetime))+'（日本時間）。表示中は30分ごとに更新します。';
-  for(const row of rows){const section=document.createElement('div');section.className='item';const heading=document.createElement('h3');heading.textContent=row.label+'（'+row.day+'）';const sky=document.createElement('p');sky.textContent=row.weather;section.append(heading,sky);const pops=document.createElement('p');pops.className='notice';pops.textContent=row.pops.length?'降水確率（時間帯別） '+row.pops.join(' ／ '):'この日の降水確率は、取得した予報にはありません。';section.append(pops);host.append(section)}
+  for(const row of rows){const section=document.createElement('div');section.className='item';const heading=document.createElement('h3');heading.textContent=row.label+'（'+row.day+'）';const sky=document.createElement('p');sky.textContent=row.weather;
+  const weather=homeSceneWeather(row.weather);
+  if(scene&&weather&&navigator.onLine&&Number.isFinite(age)&&age>=0){
+   scene.dataset.weather=weather;
+   scene.dataset.weatherExpires=String(Date.now()-age+24*3600000);
+  }section.append(heading,sky);const pops=document.createElement('p');pops.className='notice';pops.textContent=row.pops.length?'降水確率（時間帯別） '+row.pops.join(' ／ '):'この日の降水確率は、取得した予報にはありません。';section.append(pops);host.append(section)}
  }catch(e){status.textContent='⚠️ 地域の予報を読み取れませんでした。再取得してください。'}
 }
 window.addEventListener('pageshow',()=>{if(weatherForecast)renderWeatherForecast()});
@@ -3765,7 +3775,15 @@ function homeWeatherTemperatureSummary(data,station,now=Date.now()){
  if(!Number.isFinite(issued)||age< -10*60000||age>24*3600000)return '気温：更新が必要';
  try{const row=weatherTemperatureRows(data,station,now)[0];return '今日 最高 '+(row.max===null?'予報なし':row.max+'℃')+' ／ 最低 '+(row.min===null?'予報なし':row.min+'℃')}catch(e){return '最高・最低 未取得'}
 }
+function homeSceneWeather(text){
+ if(/雪/.test(text))return 'snow';
+ if(/雨/.test(text))return 'rain';
+ if(/曇|くもり/.test(text))return 'cloudy';
+ return '';
+}
 function renderHomeWeather(){
+ const scene=document.querySelector('#home .game-mascot-scene');
+ if(scene){delete scene.dataset.weather;delete scene.dataset.weatherExpires}
  const name=document.getElementById('homeWeatherPlace'),sky=document.getElementById('homeWeatherSky'),note=document.getElementById('homeWeatherNote');
  if(!name||!sky||!note)return;
  const temperature=document.getElementById('homeWeatherTemperature'),stationLabel=document.getElementById('homeWeatherStation');
@@ -4089,7 +4107,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v152','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v153','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -4098,7 +4116,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v152';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v153';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -4398,10 +4416,12 @@ function homeSceneTime(now=Date.now()){
 function renderHomeSceneTime(){
  const scene=document.querySelector('#home .game-mascot-scene');if(!scene)return;
  const theme=homeSceneTime(),label={morning:'朝',day:'昼',evening:'夕方',night:'夜'}[theme];
+ if(!navigator.onLine||Date.now()>=Number(scene.dataset.weatherExpires))delete scene.dataset.weather;
  scene.dataset.time=theme;scene.setAttribute('aria-label',label+'の街並みと、左からトリケラさん、黒いキャップをかぶった口のないピンクのたこ、小さめのシマエナガさん');
 }
 renderHomeSceneTime();
 window.addEventListener('pageshow',renderHomeSceneTime);
+window.addEventListener('offline',renderHomeSceneTime);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')renderHomeSceneTime()});
 setInterval(()=>{if(document.visibilityState==='visible')renderHomeSceneTime()},60000);
 </script><script id="visual-refresh-script-v125">/* v125 layout keeps every saved-data key and existing action intact. */
