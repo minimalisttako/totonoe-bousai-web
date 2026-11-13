@@ -926,7 +926,8 @@ nav button.active{background:#eaf1e5;color:#345a3c;font-weight:750}
 #tutorialDialog{border:1px solid #dfe6dd;border-radius:24px;padding:0;width:calc(100% - 28px);max-width:510px;max-height:calc(100dvh - 32px);color:#263d35;background:#fafcf8;box-shadow:0 22px 80px #152c3540;overflow:auto}#tutorialDialog::backdrop{background:#172c2acc;backdrop-filter:blur(4px)}.tutorial-body{padding:24px}.tutorial-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.tutorial-top p{margin:0;font-size:13px;color:#617563}.tutorial-top button{font-size:13px;min-height:44px}.tutorial-mascots{display:flex;justify-content:center;align-items:end;gap:14px;margin:16px 0}.tutorial-mascots img{width:100px;height:100px;object-fit:contain}.tutorial-mascots img+img{width:78px;height:78px}#tutorialTitle:focus{outline:none}#tutorialTitle{font-size:24px;line-height:1.5;margin:14px 0}#tutorialMain{font-size:17px;line-height:1.8}.tutorial-support{padding:14px;border-radius:14px;background:#eef3e9;font-size:14px;line-height:1.8}#tutorialDetail{font-size:14px;line-height:1.8}.tutorial-actions{display:flex;gap:10px;margin-top:22px}.tutorial-actions button{min-height:48px;flex:1}.tutorial-emergency{display:block;width:100%;min-height:46px;margin-top:16px;border:1px solid #d7bab0;background:#fff3ee;color:#864e40;border-radius:12px;font-weight:700}.tutorial-skip{width:100%;margin-top:8px;min-height:44px;border:0;background:transparent;color:#536b58;text-decoration:underline}#tutorialDialog progress{width:100%;height:5px;accent-color:#345a3c;margin-top:18px}@media(max-width:370px){.tutorial-body{padding:18px}#tutorialTitle:focus{outline:none}#tutorialTitle{font-size:21px}.tutorial-mascots img{width:80px;height:80px}}
 </style>
 <style id="page-intros-v125">
-.page-intro{margin-top:12px;border:1px solid #dce5d7;border-radius:12px;background:#f9fcf6;padding:0 14px}.page-intro summary{padding:12px 0;cursor:pointer;font-size:14px;font-weight:700;min-height:44px}.page-intro p{font-size:14px;line-height:1.8;margin:8px 0}.page-intro .secondary{font-size:14px;min-height:44px;margin:8px 0 14px}.home-intro{margin-bottom:16px}nav button[data-page="home"] .nav-icon{width:25px;height:25px}nav button[data-page="home"]{font-weight:750}
+.page-intro .page-intro-line{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start}.page-intro-line img{width:30px;height:30px;object-fit:contain}
+.page-intro:not([open]) > :not(summary){display:none}.page-intro{margin-top:12px;border:1px solid #dce5d7;border-radius:12px;background:#f9fcf6;padding:0 14px}.page-intro summary{padding:12px 0;cursor:pointer;font-size:14px;font-weight:700;min-height:44px}.page-intro p{font-size:14px;line-height:1.8;margin:8px 0}.page-intro .secondary{font-size:14px;min-height:44px;margin:8px 0 14px}.home-intro{margin-bottom:16px}nav button[data-page="home"] .nav-icon{width:25px;height:25px}nav button[data-page="home"]{font-weight:750}
 </style><style>.home-weather-temperature{display:block;font-size:13px;font-weight:700;line-height:1.65;color:#365a45;margin-top:4px;overflow-wrap:anywhere}#homeWeatherStation{display:block;font-size:11px;color:#657663}#homeWeatherStation:empty{display:none}</style><style id="minimal-design-v125">
 :root{--ui-ink:#25312e;--ui-muted:#63716b;--ui-line:#e4e8e5;--ui-paper:#fff;--ui-radius:10px;--ui-accent:#275c49;background:#fff;color:var(--ui-ink)}
 body{background:#fff;color:var(--ui-ink);letter-spacing:.01em}header{padding:15px max(20px,env(safe-area-inset-left));background:#fffffff5;border-bottom:1px solid #edf0ed}header h1{font-size:19px;letter-spacing:-.025em;font-weight:700;gap:8px}header h1 .brand-mark{background:transparent;border-radius:0;padding:3px;width:27px;height:27px;flex-basis:27px}.page-navigation{margin-top:10px;padding-top:8px}#pageBackButton{border:0;background:transparent;padding:4px 0;min-height:40px;font-weight:500}
@@ -1839,7 +1840,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v145');
+  const c=await caches.open('totonoe-offline-shell-v146');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1865,8 +1866,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v145')){
-   const cache=await caches.open('totonoe-offline-shell-v145');
+  if(registration&&names.includes('totonoe-offline-shell-v146')){
+   const cache=await caches.open('totonoe-offline-shell-v146');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2053,9 +2054,22 @@ function renderPageIntro(id){
  const host=null; // Keep page instructions outside the hidden legacy mascot banner.
  const details=document.createElement('details');details.className='page-intro'+(id==='home'?' home-intro':'');details.open=!pageIntroSeen.has(id);
  const title=document.createElement('summary');title.textContent='このページの使い方';
- const purpose=document.createElement('p');purpose.textContent='たこ：'+copy[0];
- const first=document.createElement('p');const bird=['supplies','stock','pouch','weather','outage'].includes(id);first.textContent=(bird?'シマエナガさん：':'トリケラさん：')+copy[1];
- const close=document.createElement('button');close.className='secondary';close.type='button';close.textContent='わかりました';close.onclick=()=>{details.open=false;title.focus()};
+ const line=(mascot,name,text)=>{
+  const row=document.createElement('p');row.className='page-intro-line';
+  const icon=document.createElement('img');icon.src='./assets/mascot-'+mascot+'-open-v30.svg';icon.alt=name+'：';
+  const message=document.createElement('span');message.textContent=text;
+  row.append(icon,message);
+  return row;
+ };
+ const purpose=line('tako','たこ',copy[0]);
+ const bird=['supplies','stock','pouch','weather','outage'].includes(id);
+ const first=bird?line('shimaenaga','シマエナガさん',copy[1]):line('tricera','トリケラさん',copy[1]);
+ const close=document.createElement('button');close.className='secondary';close.type='button';close.textContent='わかりました';close.onclick=event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  details.removeAttribute('open');
+  title.focus({preventScroll:true});
+ };
  details.append(title,purpose,first,close);
  if(host)host.append(details);else{const stage=section.querySelector('.game-home-stage');if(stage)stage.after(details);else{const title=section.querySelector(':scope > .refresh-title-row');if(title)title.after(details);else section.prepend(details)}}
  rememberPageIntro(id);
@@ -2657,7 +2671,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v145'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v146'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -2832,8 +2846,19 @@ function openStockGate(unlocked){
   ?'命を守るととのえが完了しました。次は、家族に合った備蓄を始めましょう。'
   :'命を守るととのえ '+state.completed+' / '+state.total+' 項目完了。安全チェックが済むと備蓄が解放されます。';
  const next=document.getElementById('stockGateNext');
- next.textContent=unlocked?'備蓄を始める':'命を守るととのえへ';
- next.onclick=()=>{dialog.close();show(unlocked?'supplies':'homeSafety')};
+ next.textContent=unlocked?'備蓄を始める':'残り'+state.remaining.length+'項目を確認';
+ next.onclick=()=>{
+  dialog.close();
+  if(unlocked){show('supplies');return}
+  const first=criticalSafetyState().remaining[0];
+  show('homeSafety');
+  requestAnimationFrame(()=>{
+   if(activePage!=='homeSafety'||!first)return;
+   const field=document.getElementById('safe-'+first);
+   field?.focus({preventScroll:true});
+   field?.scrollIntoView({block:'center'});
+  });
+ };
  dialog.showModal();
 }
 function criticalSafetyState(){const data=readHomeSafety();const remaining=criticalSafetyIds.filter(id=>data[id]!=='done'&&data[id]!=='na');return {remaining,total:criticalSafetyIds.length,completed:criticalSafetyIds.length-remaining.length}}
@@ -3002,7 +3027,7 @@ function toggleTidyStep(id,index,value){
  const justSorted=!wasSorted&&checks[0]&&checks[1];
  const first=justSorted&&!items.some(tidyHasSorted)&&takeTidyMilestone('set');
  renderTidy();renderPageMascotGuide('tidy');
- if(first)openTidyMilestone('set',item.place);
+ if(first)openTidyMilestone('set',item.place,id);
  else if(justSorted){
   const row=document.getElementById('tidy-record-'+id);
   row?.querySelector('.tidy-arrange-step')?.classList.add('tidy-step-unlocked');
@@ -3125,7 +3150,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v145');
+  const cache=await caches.open('totonoe-offline-shell-v146');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3146,17 +3171,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v145')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v146')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v145')?await caches.open('totonoe-offline-shell-v145'):null;
+  const cache=names.includes('totonoe-offline-shell-v146')?await caches.open('totonoe-offline-shell-v146'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v145'?'必須ファイル10件の保存とv125の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v125の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v146'?'必須ファイル10件の保存とv146の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v146の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3407,7 +3432,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v145';
+ const cacheName='totonoe-offline-shell-v146';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -3510,7 +3535,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v145';
+   const current='totonoe-offline-shell-v146';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -4032,7 +4057,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v145','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v146','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -4041,7 +4066,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v145';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v146';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -4994,11 +5019,11 @@ function takeTidyMilestone(kind){
  }catch(e){}
  return true;
 }
-function openTidyMilestone(kind,place){
+function openTidyMilestone(kind,place,id){
  const dialog=document.getElementById('tidyMilestoneDialog');
  const messages={
   locked:['🔒','整頓はロック中です','片付けで1か所を選び、最初の整理2項目を済ませましょう。','片付けへ','tidy'],
-  set:['🔓','整頓が解放されました！','「'+place+'」の整理が完了しました。残した物の置き場所を決めましょう。','整頓の基本を読む','set'],
+  set:['🔓','整頓が解放されました！','「'+place+'」の整理が完了しました。残した物の置き場所を決めましょう。',place+'の整頓を始める','tidy'],
   album:['✨','最初のBefore／Afterが完成！','「'+place+'」の変化を成長アルバムで振り返りましょう。','成長アルバムを見る','tidyAlbum']
  };
  const [icon,title,message,label,page]=messages[kind];
@@ -5008,7 +5033,7 @@ function openTidyMilestone(kind,place){
  document.getElementById('tidyMilestoneMessage').textContent=message;
  const next=document.getElementById('tidyMilestoneNext');
  next.textContent=label;
- next.onclick=()=>{dialog.close();show(page)};
+ next.onclick=()=>{dialog.close();if(kind==='set'){openTidyAlbumRecord(id);return}show(page)};
  if(!dialog.open)dialog.showModal();
 }
 syncStockGate();

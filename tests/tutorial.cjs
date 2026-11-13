@@ -25,3 +25,29 @@ assert.equal(c.readPageIntroSeen().size,0);c.rememberPageIntro('supplies');asser
 store.set('toto-page-intros-v1','["supplies","unknown",null,4]');assert.equal(c.readPageIntroSeen().size,1);store.set('toto-page-intros-v1','bad');assert.equal(c.readPageIntroSeen().size,0);fail=true;c.rememberPageIntro('tidy');assert(vm.runInContext("pageIntroSeen.has('tidy')",c));
 const nav=source.slice(source.indexOf('<nav aria-label="メインメニュー">'),source.indexOf('</nav>'));assert.deepEqual([...nav.matchAll(/data-page="([^"]+)"/g)].map(x=>x[1]),['learn','tidy','home','supplies','more']);
 console.log('PASS: first-page copy coverage, independent seen states, corrupt storage, failed writes, record isolation and centered Home navigation.');
+
+c.document.createElement = tag => ({
+  tag, open:false, children:[],
+  append(...children){this.children.push(...children)},
+  removeAttribute(name){assert.equal(name,'open');this.open=false},
+  focus(){this.focused=true},
+});
+vm.runInContext(extract('renderPageIntro')+'\npageIntroSeen=new Set()',c);
+const introPages = vm.runInContext('Object.keys(pageIntroCopy)',c);
+for(const id of introPages){
+  const section=el(id);
+  section.querySelector=selector=>selector==='.page-intro'?section.intro:null;
+  section.prepend=intro=>{section.intro=intro};
+  c.renderPageIntro(id);
+  const intro=section.intro;
+  assert.equal(intro.open,true,id);
+  const [summary,,,button]=intro.children;
+  assert.equal(button.textContent,'わかりました',id);
+  button.onclick({preventDefault(){},stopPropagation(){}});
+  assert.equal(intro.open,false,id);
+  assert.equal(summary.focused,true,id);
+  c.renderPageIntro(id);
+  assert.equal(section.intro,intro,id);
+  assert.equal(intro.open,false,id);
+}
+console.log('PASS: acknowledgement closes instructions on all '+introPages.length+' pages');

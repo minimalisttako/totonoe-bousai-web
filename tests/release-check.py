@@ -27,9 +27,14 @@ worker=(root/'offline-worker.js').read_text()
 app_versions=set(re.findall(r'totonoe-offline-shell-v\d+',source))
 worker_versions=set(re.findall(r'totonoe-offline-shell-v\d+',worker))
 assert len(app_versions)==1 and app_versions==worker_versions, 'Offline cache version mismatch'
+offline_version = next(iter(worker_versions)).removeprefix('totonoe-offline-shell-')
+startup_diagnostics = re.findall(r'(v\d+)の有効化を', source)
+assert startup_diagnostics == [offline_version, offline_version], 'Offline startup diagnostic version mismatch'
+assert re.findall(r'アプリ：(v\d+)', source) == [offline_version], 'Support report version mismatch'
+print(f'PASS: offline startup diagnostics and support report show {offline_version}')
 syntax=r"const fs=require('fs');const s=fs.readFileSync(0,'utf8');let count=0;for(const m of s.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)){new Function(m[1]);count++;}if(!count)throw Error('No inline scripts checked');console.log('PASS: JavaScript syntax ('+count+' scripts)');"
 subprocess.run(['node','-e',syntax],input=source,text=True,check=True)
 subprocess.run(['node','--check',str(root/'offline-worker.js')],check=True)
-for test in ['wrap-up.cjs','home-scene.cjs','home-temperature.cjs','tutorial.cjs','backup-roundtrip-v79.cjs','supply-storage.cjs','supply-import.cjs','daily-behavior.cjs','replenishment.cjs','training.cjs','seasonal.cjs','feature-search.cjs','home-priorities.cjs','settings-hydration.cjs','weather-warnings.cjs','supply-measure-entry.cjs','backup-file-flow.cjs','supply-search.cjs','supply-dates.cjs','practice-review.cjs','practice-bank.cjs','readiness-links.cjs','emergency-checklist.cjs']:
+for test in ['wrap-up.cjs','home-scene.cjs','home-temperature.cjs','tutorial.cjs','backup-roundtrip-v79.cjs','supply-storage.cjs','supply-import.cjs','daily-behavior.cjs','replenishment.cjs','training.cjs','seasonal.cjs','feature-search.cjs','home-priorities.cjs','settings-hydration.cjs','weather-warnings.cjs','supply-measure-entry.cjs','backup-file-flow.cjs','supply-search.cjs','supply-dates.cjs','practice-review.cjs','practice-bank.cjs','readiness-links.cjs','emergency-checklist.cjs','tidy-milestones.cjs']:
     subprocess.run(['node',str(root/'tests'/test),str(root/'index.html')],check=True)
 print(f'PASS: {len(ids)} element IDs, {len(page.handlers)} handlers, labels, routes and matching offline versions')
