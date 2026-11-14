@@ -32,7 +32,7 @@ vm.runInContext(extract('readPageIntroSeen')+'\n'+extract('rememberPageIntro'),c
 for(const id of Object.keys(names))if(id!=='emergency')assert(vm.runInContext('Object.hasOwn(pageIntroCopy,'+JSON.stringify(id)+')',c),id);
 assert.equal(c.readPageIntroSeen().size,0);c.rememberPageIntro('supplies');assert(c.readPageIntroSeen().has('supplies'));assert(!c.readPageIntroSeen().has('tidy'));assert.equal(store.get('private-record'),'keep');
 store.set('toto-page-intros-v1','["supplies","unknown",null,4]');assert.equal(c.readPageIntroSeen().size,1);store.set('toto-page-intros-v1','bad');assert.equal(c.readPageIntroSeen().size,0);fail=true;c.rememberPageIntro('tidy');assert(vm.runInContext("pageIntroSeen.has('tidy')",c));
-const nav=source.slice(source.indexOf('<nav aria-label="メインメニュー">'),source.indexOf('</nav>'));assert.deepEqual([...nav.matchAll(/data-page="([^"]+)"/g)].map(x=>x[1]),['learn','tidy','home','supplies','more']);
+const nav=source.slice(source.indexOf('<nav aria-label="メインメニュー">'),source.indexOf('</nav>'));assert.deepEqual([...nav.matchAll(/data-page="([^"]+)"/g)].map(x=>x[1]),['learn','tidy','home','supplies','more','minimalistGuide']);
 console.log('PASS: first-page copy coverage, independent seen states, corrupt storage, failed writes, record isolation and centered Home navigation.');
 
 vm.runInContext(extract('renderPageIntro')+'\npageIntroSeen=new Set()',c);
