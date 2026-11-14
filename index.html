@@ -1883,7 +1883,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v160');
+  const c=await caches.open('totonoe-offline-shell-v161');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1909,8 +1909,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v160')){
-   const cache=await caches.open('totonoe-offline-shell-v160');
+  if(registration&&names.includes('totonoe-offline-shell-v161')){
+   const cache=await caches.open('totonoe-offline-shell-v161');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2308,7 +2308,7 @@ function renderPageMascotGuide(id){
  renderMascotLine(banner.querySelector('.guide-support'),sub);
 }
 let weatherForecast=null,weatherRequest=0,weatherController=null;
-function show(id){if(!validPage(id))id='home';const emergencyPlanEntry=id==='evacuation'&&activePage==='emergency';if(id!=='home'&&id!=='emergency'&&!emergencyPlanEntry&&!hazardIsConfirmed()&&!stockIsUnlocked()){openHazardGate(false);return;}if((id==='supplies'||id==='stock')&&!stockIsUnlocked()){openStockGate(false);return;}if(id==='set'&&!readTidyPlaces().some(tidyHasSorted)){openTidyMilestone('locked');return;}if(!emergencyPlanEntry&&tutorialNeedsGate(id)){tutorialPendingPage=id;openTutorial();return}const pageChanged=id!==activePage;if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock','examStudy','practiceQuiz','cleanPractice','minimalistGuide'].includes(id)?'learn':id==='tidyAlbum'?'tidy':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family','readiness','weather','events','helpGuide','moving','training'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='more')renderFeatureSearch();if(id==='training'){if(!document.getElementById('drillDate').value)document.getElementById('drillDate').value=todayLocalDate();renderEvacuationDrills()}if(id==='moving')renderMovingChecklist();if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){ensureSavedMunicipalityWarnings();renderHomeWarningBanner();renderEmergencyPlan();renderEmergencyFamily();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='tidyAlbum')renderTidyAlbum();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family'){renderFamilySuggestedItems();renderFamilyProfiles()}if(id==='readiness')renderReadinessOverview();if(id==='weather'){if(weatherForecast)renderWeatherForecast();ensureSavedMunicipalityWarnings();}if(id==='home')ensureSavedMunicipalityWarnings();if(id==='cleanPractice')renderCleanPractice();if(id==='examStudy')renderSavedPractice();if(id==='events')restoreEventSearchSettings();if(id==='more'){renderReleaseQa();renderRestSettings()}renderRestMessage();renderPageIntro(id);window.scrollTo(0,0);if(pageChanged)requestAnimationFrame(()=>focusActivePage(id))}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
+function show(id){if(!validPage(id))id='home';const emergencyPlanEntry=id==='evacuation'&&activePage==='emergency';if(id!=='home'&&id!=='emergency'&&!emergencyPlanEntry&&!hazardIsConfirmed()&&!stockIsUnlocked()){openHazardGate(false);return;}if((id==='supplies'||id==='stock')&&!stockIsUnlocked()){openStockGate(false);return;}if(id==='set'&&!readTidyPlaces().some(tidyHasSorted)){openTidyMilestone('locked');return;}if(!emergencyPlanEntry&&tutorialNeedsGate(id)){tutorialPendingPage=id;openTutorial();return}if(id==='supplies'&&!stockSetupComplete()){openStockSetup();return}const pageChanged=id!==activePage;if(id!==activePage){armedPouchDelete=null;tidyRemovePending=null;previousPage=activePage;activePage=id;}updatePageNavigation(id);document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==id));const currentNav=(['select','set','stock','examStudy','practiceQuiz','cleanPractice','minimalistGuide'].includes(id)?'learn':id==='tidyAlbum'?'tidy':['diagnosis','reviews','pouch','homeSafety','evacuation','seasonalCheck','emergency','outage','family','readiness','weather','events','helpGuide','moving','training'].includes(id)?'more':id);document.querySelectorAll('nav button').forEach(x=>{const selected=x.dataset.page===currentNav;x.classList.toggle('active',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});if(id!=='home')renderPageMascotGuide(id);if(id==='home'){renderHomeNextThree();updateOfflineReadiness();renderTasks();renderHomeInspectionAlerts();renderHomeStockAlerts();renderHomeStockMiniStatus();renderHomeSafetyAlert();renderHomeEvacuationReview();renderHomePouchSummary();renderHomeTidySummary();renderTidyJourney();renderHomeSeasonalSummary()}if(id==='more')renderFeatureSearch();if(id==='training'){if(!document.getElementById('drillDate').value)document.getElementById('drillDate').value=todayLocalDate();renderEvacuationDrills()}if(id==='moving')renderMovingChecklist();if(id==='diagnosis')syncDiagnosisMissionUI();if(id==='evacuation'){renderEvacuationSummary();renderEvacuationDrills();renderEvacuationReviewForm()}if(id==='emergency'){ensureSavedMunicipalityWarnings();renderHomeWarningBanner();renderEmergencyPlan();renderEmergencyFamily();renderEmergencyChecklist();updateOfflineReadiness();const copy=document.getElementById('emergencyCopyText');if(copy)copy.value='';}if(id==='homeSafety'){renderHomeSafetyChecks();}if(id==='pouch')renderPouch();if(id==='tidy')renderTidy();if(id==='tidyAlbum')renderTidyAlbum();if(id==='seasonalCheck')renderSeasonalCheck();if(id==='outage')renderOutageSimulation();if(id==='family'){renderFamilySuggestedItems();renderFamilyProfiles()}if(id==='readiness')renderReadinessOverview();if(id==='weather'){if(weatherForecast)renderWeatherForecast();ensureSavedMunicipalityWarnings();}if(id==='home')ensureSavedMunicipalityWarnings();if(id==='cleanPractice')renderCleanPractice();if(id==='examStudy')renderSavedPractice();if(id==='events')restoreEventSearchSettings();if(id==='more'){renderReleaseQa();renderRestSettings()}renderRestMessage();renderPageIntro(id);window.scrollTo(0,0);if(pageChanged)requestAnimationFrame(()=>focusActivePage(id))}const priorityKey='toto-diagnosis-priorities-v1';let activePriorityTitles=null;
 function priorityTitlesFromAnswers(){try{const v=JSON.parse(localStorage.getItem(diagnosisKey)||'null');if(!v||!['apartment','house','other'].includes(v.dResidence))return null;const p=[];const add=(n,title)=>p.push({n,title});if(v.dFurniture!=='ready')add(0,'まず命を守る：家具の転倒・落下を防ぐ');if(v.dResidence==='house')add(1,'戸建ての立地と避難先を確認する');add(1,'地域の災害リスクと避難先を確認する');if(v.dResidence==='apartment')add(2,'集合住宅の設備・避難方法を確認する');if(v.dFurniture==='ready')add(2,'命を守るための安全確認を続ける');if(v.dWater!=='ready')add(v.dWater==='none'?3:4,'飲料水を確認する');if(v.dFood!=='ready')add(v.dFood==='none'?3:4,'食料を確認する');if(v.dToilet!=='ready')add(v.dToilet==='none'?3:4,'非常用トイレを確認する');if(v.dPeople==='5')add(4,'世帯人数に合う備蓄量を再計算する');if(!p.some(x=>x.n<3))add(5,'備えの維持と定期点検');return p.sort((a,b)=>a.n-b.n).map(x=>x.title)}catch(e){return null}}
 function homeMissionItems(){try{let titles=activePriorityTitles;if(!Array.isArray(titles)||!titles.length){titles=JSON.parse(localStorage.getItem(priorityKey)||'null')}if(!Array.isArray(titles)||!titles.length)titles=priorityTitlesFromAnswers();if(!Array.isArray(titles)||!titles.length)return null;const items=[];titles.forEach(title=>{if(typeof title==='string'&&Object.prototype.hasOwnProperty.call(missionTemplates,title))missionTemplates[title].forEach((label,i)=>items.push({key:title+'::'+i,label}))});if(!items.length)return null;const state=getMissionState();const incomplete=items.filter(item=>state[item.key]!==true);return {items:incomplete.slice(0,3),total:items.length,completed:items.length-incomplete.length,remaining:incomplete.length}}catch(e){return null}}
 function syncDiagnosisMissionUI(){const state=getMissionState();document.querySelectorAll('.diagnosis-mission input[data-mission-key]').forEach(input=>input.checked=state[input.dataset.missionKey]===true);document.querySelectorAll('.diagnosis-result-item').forEach(card=>{const checks=[...card.querySelectorAll('.diagnosis-mission input')],p=card.querySelector('.mission-progress');if(p&&checks.length){const n=checks.filter(x=>x.checked).length;p.textContent='ミッション '+n+' / '+checks.length+' 完了'+(n===checks.length?' ✅':'')}})}
@@ -2391,7 +2391,7 @@ function advanceInspectionMonths(dateStr,months){const [year,month,day]=dateStr.
 function markSupplyInspected(index){const item=supplies[index];if(!item)return;const today=todayLocalDate();const interval=Number(item.checkInterval);const nextDate=[1,3,6,12].includes(interval)?advanceInspectionMonths(today,interval):(item.nextCheck&&item.nextCheck<=today?'':item.nextCheck||'');const next=supplies.map((x,i)=>i===index?{...x,checkedAt:today,nextCheck:nextDate}:x);if(!saveSaved(key,next)){setStorageStatus('点検日を保存できませんでした。',true);return}supplies=next;renderSupplies();setStorageStatus('「'+(item.name||'備蓄')+'」の点検日を今日に更新しました。次の点検予定日：'+(nextDate||'未設定')+'。繰り返しを設定すると、点検後に次回予定日を自動計算します。',false)}
 function showInspectionSupplies(){selectSupplyList(supplies.some(x=>validSupplyDate(x.nextCheck)&&x.nextCheck<=todayLocalDate())?'inspection':supplies.some(supplyNeedsDateReview)?'dateReview':'upcoming')}
 function renderHomeInspectionAlerts(){const el=document.getElementById('homeInspectionAlerts');if(!el)return;el.replaceChildren();if(!supplyStorageReadable()){el.textContent='保存内容を読み取れないため、点検予定を確認できません。';return}const review=supplies.filter(supplyNeedsDateReview);if(review.length){const p=document.createElement('p');p.className='notice';p.textContent='日付を要確認：'+review.length+'件。備蓄一覧の「日付を要確認」から見直してください。';el.append(p)}const today=todayLocalDate();const due=supplies.filter(x=>validSupplyDate(x.nextCheck)&&x.nextCheck<=today).sort((a,b)=>a.nextCheck.localeCompare(b.nextCheck));const upcoming=supplies.filter(x=>validSupplyDate(x.nextCheck)&&x.nextCheck>today&&x.nextCheck<=dateAfterDays(7)).sort((a,b)=>a.nextCheck.localeCompare(b.nextCheck));if(!due.length&&!upcoming.length){const p=document.createElement('p');p.className='notice';p.textContent='今日までに点検予定の登録品はありません。次回点検予定日を設定するとここに表示されます。';el.append(p);return}const title=document.createElement('p');title.className='notice';title.textContent='今日までに点検予定：'+due.length+'件 ／ 今後7日以内：'+upcoming.length+'件';el.append(title);due.slice(0,5).forEach(item=>{const row=document.createElement('div');row.className='calc-row';const name=document.createElement('strong');name.textContent=item.name||'備蓄品';const day=document.createElement('p');day.textContent='点検予定日：'+item.nextCheck;row.append(name,day);el.append(row)});if(due.length>5){const extra=document.createElement('p');extra.className='notice';extra.textContent='ほか '+(due.length-5)+'件';el.append(extra)}upcoming.slice(0,3).forEach(item=>{const row=document.createElement('div');row.className='calc-row';const name=document.createElement('strong');name.textContent='まもなく：'+(item.name||'備蓄品');const day=document.createElement('p');day.textContent='点検予定日：'+item.nextCheck;row.append(name,day);el.append(row)});if(upcoming.length>3){const extra=document.createElement('p');extra.className='notice';extra.textContent='まもなく点検：ほか '+(upcoming.length-3)+'件';el.append(extra)}}
-function selectSupplyList(filterValue){show('supplies');const search=document.getElementById('supplySearch'),filter=document.getElementById('supplyFilter'),fold=document.querySelector('#supplies .supply-search-fold');if(search)search.value='';if(filter)filter.value=filterValue;if(fold)fold.open=true;renderSupplies();document.getElementById('supplyInventoryCard')?.scrollIntoView({block:'start',behavior:'smooth'})}
+function selectSupplyList(filterValue){show('supplies');if(activePage!=='supplies')return;const search=document.getElementById('supplySearch'),filter=document.getElementById('supplyFilter'),fold=document.querySelector('#supplies .supply-search-fold');if(search)search.value='';if(filter)filter.value=filterValue;if(fold)fold.open=true;renderSupplies();document.getElementById('supplyInventoryCard')?.scrollIntoView({block:'start',behavior:'smooth'})}
 function showExpirySupplies(){selectSupplyList('expired')}
 function showRefillSupplies(){show('supplies');const fold=document.getElementById('supplyAddFold');if(fold)fold.open=true;renderReplenishment();document.getElementById('replenishmentList')?.scrollIntoView({block:'center',behavior:'smooth'})}
 function renderHomeStockAlerts(){const expiry=document.getElementById('homeExpiryAlerts'),refill=document.getElementById('homeRefillAlerts');if(!expiry||!refill)return;expiry.replaceChildren();refill.replaceChildren();if(!supplyStorageReadable()){expiry.textContent='保存内容を読み取れないため、期限を確認できません。';refill.textContent='保存内容を読み取れないため、補充の必要数を確認できません。';return}const review=supplies.filter(supplyNeedsDateReview);if(review.length){const p=document.createElement('p');p.className='notice';p.textContent='期限・点検日を要確認：'+review.length+'件';const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent='日付を確認する';button.onclick=()=>selectSupplyList('dateReview');expiry.append(p,button)}const now=new Date();const today=todayLocalDate();const future=new Date(now.getFullYear(),now.getMonth(),now.getDate()+30);const until=[future.getFullYear(),String(future.getMonth()+1).padStart(2,'0'),String(future.getDate()).padStart(2,'0')].join('-');const expired=supplies.filter(x=>validSupplyDate(x.exp)&&x.exp<today),soon=supplies.filter(x=>validSupplyDate(x.exp)&&x.exp>=today&&x.exp<=until);const ep=document.createElement('p');ep.className='notice';ep.textContent='期限切れ：'+expired.length+'件 ／ 30日以内：'+soon.length+'件';expiry.append(ep);const targets=[...expired,...soon];targets.slice(0,3).forEach(x=>{const p=document.createElement('p');p.className='homehint';p.textContent=(x.name||'備蓄品')+'：'+x.exp+(x.exp<today?'（期限切れ）':'（期限間近）');expiry.append(p)});if(!targets.length){const p=document.createElement('p');p.className='notice';p.textContent='登録済みの備蓄に期限切れ・30日以内の品目はありません。期限未設定の品目は別途点検してください。';expiry.append(p)}const needs=supplies.filter(x=>String(x.target??'').trim()!==''&&Number(x.target)>0&&Number(x.target)>Number(x.qty));const rp=document.createElement('p');rp.className='notice';rp.textContent='補充が必要：'+needs.length+'種類';refill.append(rp);needs.slice(0,3).forEach(x=>{const p=document.createElement('p');p.className='homehint';p.textContent=(x.name||'備蓄品')+'：あと'+(Number(x.target)-Number(x.qty))+(x.unit||'個')+'補充';refill.append(p)});if(!needs.length){const p=document.createElement('p');p.className='notice';p.textContent='目標数量を下回る登録品はありません。目標未設定の品目は比較対象外です。';refill.append(p)}}
@@ -2435,7 +2435,43 @@ function updateSupplyCompareHint(){
 function renderStockComparison(people,days){const el=document.getElementById('stockComparison');if(!el)return;el.replaceChildren();if(!supplyStorageReadable()){el.textContent='保存内容を読み取れないため、飲料水の合計・不足量は未確認です。';return}const now=new Date();const today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');const fmt=n=>Number(n.toFixed(3)).toLocaleString('ja-JP');const water=supplies.filter(x=>x.category==='water');const waterState=readinessWaterSummary(supplies,today),counted=waterState.counted;const groups=new Map();counted.forEach(item=>{const v=Number(item.factor),unit=item.unit||'個',k=String(v)+'|'+unit;const old=groups.get(k)||{volume:v,unit,qty:0};old.qty+=Number(item.qty);groups.set(k,old)});const heading=document.createElement('strong');heading.textContent='登録済みの飲料水';el.append(heading);if(!counted.length){const p=document.createElement('p');p.className='notice';p.textContent='容量を設定した飲料水はまだありません。備蓄品の編集から「飲料水」と容量（L）を設定してください。未登録を0Lとは判定しません。';el.append(p)}else{[...groups.values()].sort((a,b)=>a.volume-b.volume).forEach(g=>{const row=document.createElement('div');row.className='water-breakdown-row';const v=document.createElement('span');v.textContent=(g.volume<1?fmt(g.volume*1000)+'mL':fmt(g.volume)+'L')+' × '+fmt(g.qty)+g.unit;const amount=document.createElement('b');amount.textContent='＝ '+fmt(g.volume*g.qty)+'L';row.append(v,amount);el.append(row)})}const total=counted.reduce((a,x)=>a+Number(x.factor)*Number(x.qty),0);const needed=people*days*3;if(counted.length){const sum=document.createElement('div');sum.className='water-total';const title=document.createElement('strong');title.textContent='飲料水の合計';const amount=document.createElement('b');amount.textContent=fmt(total)+'L';sum.append(title,amount);el.append(sum);const compare=document.createElement('p');compare.className='notice';compare.textContent='必要量の目安 '+fmt(needed)+'L ／ '+(waterState.excluded||waterState.undated?'期限や容量を確認できない記録があるため、使用可能量・不足量は未確定です。':total<needed?'不足目安：あと'+fmt(needed-total)+'L':'登録された期限・容量の範囲で、必要量の目安を満たしています。');el.append(compare)}if(waterState.undated){const p=document.createElement('p');p.className='notice';p.textContent='使用期限未設定の飲料水 '+waterState.undated+'種類は容量のみ合算しています。使用できるかは別途確認してください。';el.append(p)}const excluded=water.length-counted.length;if(excluded){const p=document.createElement('p');p.className='notice';p.textContent=excluded+'件の飲料水は期限切れ・容量未設定などにより合計から除外しています。';el.append(p)}}
 function renderStockCalculator(persist=true){const input=document.getElementById('calcPeople'),daysSelect=document.getElementById('calcDays'),customInput=document.getElementById('calcCustomDays'),toiletInput=document.getElementById('calcToiletPerDay'),out=document.getElementById('calcResult'),note=document.getElementById('calcNote');if(!input||!out||!toiletInput||!customInput)return;const people=Number(input.value),mode=daysSelect.value,daysText=mode==='custom'?customInput.value.trim():mode,days=Number(daysText);const raw=toiletInput.value.trim(),frequency=Number(raw),validFrequency=raw!==''&&Number.isInteger(frequency)&&frequency>=1&&frequency<=50;out.replaceChildren();if(!Number.isInteger(people)||people<1||people>30){note.textContent='世帯人数は1〜30人の整数で入力してください。';return}if(daysText===''||!Number.isInteger(days)||days<1||days>365){note.textContent='備蓄日数は1〜365日の整数で入力してください。';return}if(persist){try{localStorage.setItem(stockDaysKey,JSON.stringify({mode,customDays:customInput.value.trim(),people}))}catch(e){}}if(raw!==''&&!validFrequency){note.textContent='非常用トイレの使用回数は1〜50回の整数で入力してください。'}else{note.textContent=people+'人・'+days+'日分の計算です。登録済みの飲料水だけを容量（L）で合計しています。'}if(persist&&validFrequency){try{localStorage.setItem(toiletFrequencyKey,String(frequency))}catch(e){}}const entries=[['飲料水',people*days*3+'L','1人1日3Lの目安。生活用水や調理用水は別途確認してください。'],['食料',people*days*3+'食','朝・昼・夕の3食で計算。食品の種類や栄養・食事制限も考慮してください。'],['非常用トイレ',validFrequency?people*days*frequency+'回分':'回数未設定',validFrequency?'設定した1人1日'+frequency+'回で計算。家族で差がある場合は各人の必要量を確認してください。':'ご自身で1日あたりの使用回数を入力すると必要量を計算します。']];entries.forEach(([name,number,description])=>{const div=document.createElement('div');div.className='calc-row';const label=document.createElement('strong');label.textContent=name;const amount=document.createElement('b');amount.textContent=number;const p=document.createElement('p');p.textContent=description;div.append(label,amount,p);out.append(div)});renderStockComparison(people,days)}
 function initStockCalculator(){for(const [id,value] of Object.entries({calcPeople:'1',calcDays:'7',calcCustomDays:'',calcToiletPerDay:''})){const field=document.getElementById(id);if(field)field.value=value}try{const v=JSON.parse(localStorage.getItem(diagnosisKey)||'null');const p=v&&Number(v.dPeople);if(Number.isInteger(p)&&p>=1&&p<=5)document.getElementById('calcPeople').value=String(p)}catch(e){}try{const f=localStorage.getItem(toiletFrequencyKey);if(f!==null&&Number.isInteger(Number(f))&&Number(f)>=1&&Number(f)<=50)document.getElementById('calcToiletPerDay').value=f}catch(e){}try{const v=JSON.parse(localStorage.getItem(stockDaysKey)||'null');if(v&&['3','7','custom'].includes(v.mode)){if(Number.isInteger(v.people)&&v.people>=1&&v.people<=30)document.getElementById('calcPeople').value=String(v.people);document.getElementById('calcDays').value=v.mode;if(typeof v.customDays==='string'&&/^\d{1,3}$/.test(v.customDays))document.getElementById('calcCustomDays').value=v.customDays}}catch(e){}document.getElementById('calcCustomDaysWrap').classList.toggle('hidden',document.getElementById('calcDays').value!=='custom');renderStockCalculator(false)}
-function openStockCalculator(){show('supplies');document.getElementById('supplyCalcFold').open=true;initStockCalculator();document.getElementById('stockCalculator').scrollIntoView({block:'start',behavior:'smooth'})}
+function stockSetupComplete(){
+ try{
+  const saved=JSON.parse(localStorage.getItem(stockDaysKey)||'null');
+  const days=Number(saved?.mode==='custom'?saved.customDays:saved?.mode);
+  const frequency=Number(localStorage.getItem(toiletFrequencyKey));
+  return ['3','7','custom'].includes(saved?.mode)&&Number.isInteger(saved.people)&&saved.people>=1&&saved.people<=30
+   &&Number.isInteger(days)&&days>=1&&days<=365&&Number.isInteger(frequency)&&frequency>=1&&frequency<=50;
+ }catch(e){return false}
+}
+function openStockSetup(){
+ const dialog=document.getElementById('stockSetupDialog');
+ if(dialog.open)return;
+ document.getElementById('stockSetupPeople').value=document.getElementById('calcPeople').value;
+ const mode=document.getElementById('calcDays').value;
+ document.getElementById('stockSetupDays').value=mode==='custom'?document.getElementById('calcCustomDays').value:mode;
+ document.getElementById('stockSetupToilet').value=document.getElementById('calcToiletPerDay').value;
+ document.getElementById('stockSetupStatus').textContent='';
+ dialog.showModal();
+}
+function finishStockSetup(event){
+ event.preventDefault();
+ if(!event.currentTarget.reportValidity())return;
+ const field=id=>document.getElementById(id);
+ const people=Number(field('stockSetupPeople').value),days=String(Number(field('stockSetupDays').value));
+ const frequency=String(Number(field('stockSetupToilet').value));
+ const mode=['3','7'].includes(days)?days:'custom';
+ const settings={mode,customDays:mode==='custom'?days:'',people};
+ try{
+  localStorage.setItem(stockDaysKey,JSON.stringify(settings));
+  localStorage.setItem(toiletFrequencyKey,frequency);
+  if(localStorage.getItem(stockDaysKey)!==JSON.stringify(settings)||localStorage.getItem(toiletFrequencyKey)!==frequency)throw Error('save');
+ }catch(e){field('stockSetupStatus').textContent='設定を保存できませんでした。もう一度お試しください。';return}
+ initStockCalculator();
+ field('stockSetupDialog').close();
+ show('supplies');
+}
+function openStockCalculator(){show('supplies');if(activePage!=='supplies')return;document.getElementById('supplyCalcFold').open=true;initStockCalculator();document.getElementById('stockCalculator').scrollIntoView({block:'start',behavior:'smooth'})}
 function loadDiagnosis(){try{const v=JSON.parse(localStorage.getItem(diagnosisKey)||'null');if(!v||typeof v!=='object')return;const opts={dResidence:['apartment','house','other'],dPeople:['1','2','3','4','5'],dWater:['none','partial','ready'],dFood:['none','partial','ready'],dToilet:['none','partial','ready'],dFurniture:['none','partial','ready']};Object.keys(opts).forEach(id=>{if(opts[id].includes(v[id]))document.getElementById(id).value=v[id]})}catch(e){}}
 const missionHistoryKey='toto-mission-history-v1';
 function readMissionHistory(){try{const v=JSON.parse(localStorage.getItem(missionHistoryKey)||'[]');return Array.isArray(v)?v.filter(x=>x&&typeof x.label==='string'&&typeof x.date==='string').slice(-500):[]}catch(e){return []}}
@@ -2722,7 +2758,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v160'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v161'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3201,7 +3237,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v160');
+  const cache=await caches.open('totonoe-offline-shell-v161');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3222,17 +3258,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v160')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v161')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v160')?await caches.open('totonoe-offline-shell-v160'):null;
+  const cache=names.includes('totonoe-offline-shell-v161')?await caches.open('totonoe-offline-shell-v161'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v160'?'必須ファイル10件の保存とv160の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v160の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v161'?'必須ファイル10件の保存とv161の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v161の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3483,7 +3519,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v160';
+ const cacheName='totonoe-offline-shell-v161';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -3586,7 +3622,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v160';
+   const current='totonoe-offline-shell-v161';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -4121,7 +4157,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v160','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v161','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -4130,7 +4166,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v160';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v161';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -5017,6 +5053,21 @@ nav [data-page]{position:relative}
 <p id="stockGateMessage"></p>
 <button class="primary" id="stockGateNext" type="button"></button>
 <form method="dialog"><button class="secondary">閉じる</button></form>
+</dialog>
+<dialog id="stockSetupDialog" aria-labelledby="stockSetupTitle" style="max-width:min(90vw,440px);max-height:90dvh">
+<form id="stockSetupForm" onsubmit="finishStockSetup(event)">
+<h2 id="stockSetupTitle">わが家の備蓄目安を設定</h2>
+<p>3項目を設定すると、飲料水・食料・携帯トイレの目安を確認できます。</p>
+<label class="supply-label" for="stockSetupPeople">世帯人数（人）</label>
+<input class="field" id="stockSetupPeople" type="number" min="1" max="30" required inputmode="numeric">
+<label class="supply-label" for="stockSetupDays">備蓄日数（日）</label>
+<input class="field" id="stockSetupDays" type="number" min="1" max="365" required inputmode="numeric">
+<label class="supply-label" for="stockSetupToilet">非常用トイレ（1人1日あたりの回数）</label>
+<input class="field" id="stockSetupToilet" type="number" min="1" max="50" required inputmode="numeric">
+<p id="stockSetupStatus" role="status"></p>
+<button type="submit" class="primary">設定して備蓄へ進む</button>
+<button type="button" class="secondary" onclick="document.getElementById('stockSetupDialog').close()">戻る</button>
+</form>
 </dialog>
 <dialog id="sharedRegionDialog" aria-labelledby="sharedRegionTitle">
 <h2 id="sharedRegionTitle">天気・災害情報の地域</h2>
