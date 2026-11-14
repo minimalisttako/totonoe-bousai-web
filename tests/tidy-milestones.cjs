@@ -15,7 +15,6 @@ const context = vm.createContext({
     places = next;
     return true;
   },
-  document: {getElementById: id => id === 'tidyActionStatus' ? status : null},
   localStorage: {getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value)},
   renderTidy() {},
   renderPageMascotGuide() {},
@@ -29,6 +28,7 @@ const context = vm.createContext({
   stockMeasureSummary: () => ({total:9}),
   verifiedSaveJson: (key, value) => {storage.set(key, JSON.stringify(value));return true},
   syncMinimalistGuideLock() {},
+  document: {querySelector: () => null,getElementById: id => id === "tidyActionStatus" ? status : null},
   openProgressUnlock: title => milestones.push(title),
   openTidyMilestone: (...args) => milestones.push(args),
   todayLocalDate: () => '2026-11-13',
@@ -71,8 +71,10 @@ for (const index of [2, 3]) context.toggleTidyStep('entry', index, true);
 context.toggleTidyStep('kitchen', 2, true);
 assert.equal(context.minimalistGuideIsUnlocked(), false);
 context.toggleTidyStep('kitchen', 3, true);
-assert.equal(context.minimalistGuideIsUnlocked(), true);
+assert.ok(context.readLivingMilestone().date);
+assert.equal(context.minimalistGuideIsUnlocked(), false);
 assert.equal(milestones.at(-1), '暮らしの備え');
+storage.set('toto-living-milestone', JSON.stringify({...context.readLivingMilestone(), guideUnlocked:true}));
 context.toggleTidyStep('kitchen', 3, false);
 assert.equal(context.minimalistGuideIsUnlocked(), true);
 places = [];
