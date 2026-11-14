@@ -1161,12 +1161,12 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 <details id="evacuationEditFold" data-close-at-end class="evacuation-fold"><summary>✎ 避難計画を登録・編集する <span aria-hidden="true">⌄</span></summary><div class="evacuation-fold-body"><div class="card"><h2>マイ避難計画</h2>
 <p class="notice">災害ごとに安全な行動は異なります。自治体のハザードマップと避難情報を確認して記入してください。</p>
 <form onsubmit="saveEvacuationPlan(event)" id="evacuationForm">
-<label class="supply-label" for="evHazard">自宅周辺の災害リスク</label><textarea class="field" id="evHazard" rows="2" maxlength="500" placeholder="例：河川氾濫、土砂災害、津波などの確認結果"></textarea>
-<label class="supply-label" for="evPlace">避難先・安全な場所</label><textarea class="field" id="evPlace" rows="2" maxlength="500" placeholder="例：洪水時の避難先、地震時の安全確保場所"></textarea>
-<label class="supply-label" for="evRoute">安全に移動する経路と注意点</label><textarea class="field" id="evRoute" rows="2" maxlength="500" placeholder="例：浸水する道や崖の近くを避ける"></textarea>
-<label class="supply-label" for="evTiming">避難を開始する判断・タイミング</label><textarea class="field" id="evTiming" rows="2" maxlength="500" placeholder="例：自治体の避難情報や危険の切迫、家族の移動時間を確認"></textarea>
-<label class="supply-label" for="evContacts">家族・大切な人との連絡方法</label><textarea class="field" id="evContacts" rows="2" maxlength="500" placeholder="例：安否メッセージ、災害用伝言サービス"></textarea>
-<label class="supply-label" for="evMeeting">連絡できない場合の安否確認・集合方法</label><textarea class="field" id="evMeeting" rows="2" maxlength="500" placeholder="例：あらかじめ決めた安全な集合場所と連絡方法"></textarea>
+<label class="supply-label" for="evHazard">自宅周辺の災害リスク</label><textarea class="field" id="evHazard" rows="2" maxlength="500" placeholder="例：河川氾濫、土砂災害、津波などの確認結果"></textarea><select class="field" aria-label="入力例を追加" onchange="appendEvacuationSuggestion(this,'evHazard')"><option value="">候補から追加（任意）</option><option>河川氾濫</option><option>内水氾濫</option><option>土砂災害</option><option>津波</option><option>高潮</option></select>
+<label class="supply-label" for="evPlace">避難先・安全な場所</label><textarea class="field" id="evPlace" rows="2" maxlength="500" placeholder="例：洪水時の避難先、地震時の安全確保場所"></textarea><select class="field" aria-label="入力例を追加" onchange="appendEvacuationSuggestion(this,'evPlace')"><option value="">候補から追加（任意）</option><option>災害の種類に対応する指定緊急避難場所</option><option>安全を確認した親族・知人宅</option></select>
+<label class="supply-label" for="evRoute">安全に移動する経路と注意点</label><textarea class="field" id="evRoute" rows="2" maxlength="500" placeholder="例：浸水する道や崖の近くを避ける"></textarea><select class="field" aria-label="入力例を追加" onchange="appendEvacuationSuggestion(this,'evRoute')"><option value="">候補から追加（任意）</option><option>浸水しやすい道を避ける</option><option>崖や擁壁の近くを避ける</option><option>予備の経路も確認する</option></select>
+<label class="supply-label" for="evTiming">避難を開始する判断・タイミング</label><textarea class="field" id="evTiming" rows="2" maxlength="500" placeholder="例：自治体の避難情報や危険の切迫、家族の移動時間を確認"></textarea><select class="field" aria-label="入力例を追加" onchange="appendEvacuationSuggestion(this,'evTiming')"><option value="">候補から追加（任意）</option><option>自治体の避難情報を確認</option><option>移動にかかる時間を見込んで早めに行動</option></select>
+<label class="supply-label" for="evContacts">家族・大切な人との連絡方法</label><textarea class="field" id="evContacts" rows="2" maxlength="500" placeholder="例：安否メッセージ、災害用伝言サービス"></textarea><select class="field" aria-label="入力例を追加" onchange="appendEvacuationSuggestion(this,'evContacts')"><option value="">候補から追加（任意）</option><option>電話・SMS</option><option>メッセージアプリ</option><option>災害用伝言ダイヤル（171）</option><option>災害用伝言板（web171）</option></select>
+<label class="supply-label" for="evMeeting">連絡できない場合の安否確認・集合方法</label><textarea class="field" id="evMeeting" rows="2" maxlength="500" placeholder="例：あらかじめ決めた安全な集合場所と連絡方法"></textarea><select class="field" aria-label="入力例を追加" onchange="appendEvacuationSuggestion(this,'evMeeting')"><option value="">候補から追加（任意）</option><option>事前に決めた安全な場所で集合</option><option>離れて暮らす親族に安否を伝える</option></select>
 <button class="primary" type="submit">計画を保存して確認画面に表示</button><button class="secondary" type="button" onclick="renderEvacuationSummary(true)">保存せず入力内容を確認</button></form>
 <p id="evacuationStatus" class="notice" role="status"></p>
 <p class="notice">保存先はこの端末のプレビュー内です。暗号化されないため、不要な個人情報や秘密情報は入力しないでください。</p></div></div></details><details class="evacuation-fold"><summary>見直し予定を設定する <span aria-hidden="true">⌄</span></summary><div class="evacuation-fold-body"><div class="evacuation-review"><h3>避難計画の見直し</h3><p class="notice">次回の確認予定日を決めておくと、ホームにも表示されます。見直した実績日はボタンを押した日に記録されます。</p><label class="supply-label" for="evacuationNextReview">次回の見直し予定日</label><input class="field" type="date" id="evacuationNextReview"><button class="secondary" type="button" onclick="saveEvacuationReviewDate()">予定日を保存</button><button class="secondary" type="button" onclick="completeEvacuationReview()">今日、避難計画を見直した</button><p id="evacuationReviewStatus" class="notice" role="status"></p></div></div></details><div class="card"><h3>訓練・確認の記録</h3><p class="notice">避難訓練や防災用品を試した記録を、一か所で振り返れます。</p><button class="secondary" type="button" onclick="show('training')">訓練・実践記録を開く ↗</button></div><div class="card"><button class="secondary" onclick="show('home')">ホームへ戻る</button></div>
@@ -1883,7 +1883,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v164');
+  const c=await caches.open('totonoe-offline-shell-v165');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -1909,8 +1909,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v164')){
-   const cache=await caches.open('totonoe-offline-shell-v164');
+  if(registration&&names.includes('totonoe-offline-shell-v165')){
+   const cache=await caches.open('totonoe-offline-shell-v165');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2707,6 +2707,16 @@ const evacuationFields=[['evHazard','自宅周辺の災害リスク'],['evPlace'
 function readEvacuationPlan(){try{const v=JSON.parse(localStorage.getItem(evacuationKey)||'{}');return v&&typeof v==='object'&&!Array.isArray(v)?v:{}}catch(e){return {}}}
 function loadEvacuationPlan(){const v=readEvacuationPlan();evacuationFields.forEach(([id])=>{const input=document.getElementById(id);if(input)input.value=typeof v[id]==='string'?v[id]:''})}
 function openEvacuationEdit(){const fold=document.getElementById('evacuationEditFold');if(fold)fold.open=true;document.getElementById('evPlace')?.scrollIntoView({block:'center',behavior:'smooth'})}
+function appendEvacuationSuggestion(select,id){
+ const input=document.getElementById(id);
+ const choice=select.value;
+ select.value='';
+ if(!choice)return;
+ const lines=input.value.split('\n');
+ const next=[input.value.trimEnd(),choice].filter(Boolean).join('\n');
+ if(!lines.includes(choice)&&next.length<=input.maxLength)input.value=next;
+ input.focus({preventScroll:true});
+}
 function saveEvacuationPlan(event){
  event.preventDefault();
  const next={};
@@ -2758,7 +2768,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v164'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v165'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3237,7 +3247,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v164');
+  const cache=await caches.open('totonoe-offline-shell-v165');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3258,17 +3268,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v164')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v165')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v164')?await caches.open('totonoe-offline-shell-v164'):null;
+  const cache=names.includes('totonoe-offline-shell-v165')?await caches.open('totonoe-offline-shell-v165'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v164'?'必須ファイル10件の保存とv164の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v164の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v165'?'必須ファイル10件の保存とv165の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v165の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3519,7 +3529,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v164';
+ const cacheName='totonoe-offline-shell-v165';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -3622,7 +3632,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v164';
+   const current='totonoe-offline-shell-v165';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -4157,7 +4167,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v164','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v165','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -4166,7 +4176,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v164';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v165';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -5088,7 +5098,7 @@ nav [data-page]{position:relative}
 <p id="hazardSaveStatus" role="status"></p>
 </div>
 <div id="hazardUnlockItems" hidden><span>片付け</span><span>学ぶ</span><span>その他</span></div>
-<button class="primary" type="button" id="hazardGoSafety" hidden>命を守るととのえを始める</button>
+<button class="primary" type="button" id="hazardGoSafety" hidden>マイ避難計画を入力する</button>
 <form method="dialog"><button class="secondary">閉じる</button></form>
 </dialog>
 <script>
@@ -5192,7 +5202,8 @@ function openHazardGate(unlocked){
  };
  document.getElementById('hazardGoSafety').onclick=()=>{
   document.getElementById('hazardGateDialog').close();
-  show('homeSafety');
+  show('evacuation');
+  if(activePage==='evacuation')openEvacuationEdit();
  };
 }
 </script>
