@@ -19,6 +19,7 @@ const context = vm.createContext({
   localStorage: {getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value)},
   renderTidy() {},
   renderPageMascotGuide() {},
+  openProgressUnlock: title => milestones.push(title),
   openTidyMilestone: (...args) => milestones.push(args),
   todayLocalDate: () => '2026-11-13',
   activeTidyChecklistId: null,
@@ -52,6 +53,18 @@ context.toggleTidyStep('kitchen', 0, true);
 context.toggleTidyStep('kitchen', 1, true);
 assert.deepEqual(milestones, [['set', '玄関', 'entry']]);
 assert.match(status.textContent, /キッチン.*解放/);
+
+assert.equal(context.minimalistGuideIsUnlocked(), false);
+for (const index of [2, 3]) context.toggleTidyStep('entry', index, true);
+context.toggleTidyStep('kitchen', 2, true);
+assert.equal(context.minimalistGuideIsUnlocked(), false);
+context.toggleTidyStep('kitchen', 3, true);
+assert.equal(context.minimalistGuideIsUnlocked(), true);
+assert.equal(milestones.at(-1), 'ミニマリストのススメ');
+context.toggleTidyStep('kitchen', 3, false);
+assert.equal(context.minimalistGuideIsUnlocked(), false);
+places = [];
+assert.equal(context.minimalistGuideIsUnlocked(), false);
 
 const photo = 'data:image/jpeg;base64,AAAA';
 assert.equal(context.tidyAlbumRecords([{beforePhoto:photo}], true).length, 0);
