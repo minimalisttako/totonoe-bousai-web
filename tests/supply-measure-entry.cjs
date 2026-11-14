@@ -6,8 +6,8 @@ const ids=['sname','sqty','sunit','sexp','slocation','schecked','snextCheck','sc
 let canSave=true,status='';const c={supplies:[],key:'supplies',document:{getElementById:id=>fields[id],createElement:tag=>node(tag)},saveSaved:()=>canSave,renderSupplies:()=>{},setStorageStatus:text=>status=text,initializeSupplyInspectionDefaults:()=>{},openSupplyAddForm:()=>{}};vm.createContext(c);vm.runInContext(['validSupplyMeasure','updateSupplyCompareHint','addSupply','prepareDuplicateSupply'].map(extract).join('\n'),c);
 function fill(category,measure,qty='2'){Object.assign(fields.sname,{value:'テスト備蓄'});fields.sqty.value=qty;fields.sunit.value='箱';fields.scategory.value=category;c.updateSupplyCompareHint();fields.smeasureFactor.value=measure;fields.sfactor.value='2';fields.scheckInterval.value='6';}
 const event={preventDefault(){},target:{reset(){fields.smeasureFactor.value='';fields.scategory.value='';fields.sunit.value='個'}}};
-fill('toilet','50');c.addSupply(event);assert.equal(c.supplies[0].measureFactor,'50');assert.equal(Number(c.supplies[0].qty)*Number(c.supplies[0].measureFactor),100);
-c.prepareDuplicateSupply(0);assert.equal(fields.smeasureFactor.value,'50');assert.equal(fields.sqty.value,'1');assert.equal(fields.sexp.value,'');assert.equal(c.supplies.length,1);
+fill('toilet','50');c.addSupply(event);assert.equal(c.supplies[0].measureFactor,'');assert.equal(fields.smeasureFactor.disabled,true);
+c.prepareDuplicateSupply(0);assert.equal(fields.smeasureFactor.value,'');assert.equal(fields.sqty.value,'1');assert.equal(fields.sexp.value,'');assert.equal(c.supplies.length,1);
 fields.scategory.value='food';c.updateSupplyCompareHint();assert.equal(fields.smeasureFactor.value,'');fields.smeasureFactor.value='3';fields.sunit.value='袋';c.updateSupplyCompareHint();assert.equal(fields.smeasureFactor.value,'');
 fill('food','4');c.addSupply(event);assert.equal(c.supplies[1].measureFactor,'4');
 fill('food','');c.addSupply(event);assert.equal(c.supplies[2].measureFactor,'');
@@ -16,6 +16,9 @@ canSave=false;fill('toilet','20');const count=c.supplies.length;c.addSupply(even
 fill('water','50');c.addSupply(event);assert.equal(c.supplies.at(-1).measureFactor,'');assert.equal(c.supplies.at(-1).factor,'2');
 // Exercise the production editor, including unchanged conversion and unit/category changes.
 const host=node();c.editSupply(0,host);let form=host.children[0];const inputFor=text=>form.children.find(x=>x.textContent===text)?.children[0];
-let measure=inputFor('数量1単位あたりの食数・使用回数（任意）');assert.equal(measure.value,'50');inputFor('品名').value='更新した備蓄';form.onsubmit({preventDefault(){}});assert.equal(c.supplies[0].measureFactor,'50');
-c.editSupply(0,host);form=host.children[0];measure=inputFor('数量1単位あたりの食数・使用回数（任意）');const category=inputFor('備蓄の分類（任意）'),unit=inputFor('単位');category.value='food';category.onchange();assert.equal(measure.value,'');measure.value='3';unit.value='袋';unit.onchange();assert.equal(measure.value,'');measure.value='4';form.onsubmit({preventDefault(){}});assert.equal(c.supplies[0].category,'food');assert.equal(c.supplies[0].measureFactor,'4');assert.equal(c.supplies[0].unit,'袋');
+let measure=inputFor('数量1単位あたりの食数（任意）');assert.equal(measure.disabled,true);inputFor('品名').value='更新した備蓄';form.onsubmit({preventDefault(){}});assert.equal(c.supplies[0].measureFactor,'');
+c.editSupply(0,host);form=host.children[0];measure=inputFor('数量1単位あたりの食数（任意）');const category=inputFor('備蓄の分類（任意）'),unit=inputFor('単位');category.value='food';category.onchange();assert.equal(measure.value,'');measure.value='3';unit.value='袋';unit.onchange();assert.equal(measure.value,'');measure.value='4';form.onsubmit({preventDefault(){}});assert.equal(c.supplies[0].category,'food');assert.equal(c.supplies[0].measureFactor,'4');assert.equal(c.supplies[0].unit,'袋');
 console.log('PASS: food/toilet content entry and totals; duplicate carries conversion with blank expiry; category/unit changes clear conversion; optional blanks, invalid values and failed saves; editing preserves or updates conversion correctly');
+
+vm.runInContext(extract('validSupplyDate')+'\n'+extract('stockMeasureSummary'),c);
+assert.equal(c.stockMeasureSummary([{category:'toilet',qty:'49'},{category:'toilet',qty:'2',measureFactor:'25'},{category:'toilet',qty:'100',exp:'2020-01-01'}],'toilet','2026-11-14').total,99);
