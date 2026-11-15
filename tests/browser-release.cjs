@@ -79,9 +79,41 @@ async function run() {
   await page.goto(base + '?page=evacuationVideos');
   await page.locator('#evacuationVideos a[href*="youtu.be"]').first().waitFor();
   assert.equal(await page.locator('#evacuationVideos a[href*="youtu.be"]:visible').count(), 4);
+  await page.goto(base + '?page=reviewBackup');
+  await page.locator('#reviewBackupFile').waitFor();
+  const reviewFile = {
+   name: 'toto-test-reviews.json',
+   mimeType: 'application/json',
+   buffer: Buffer.from(JSON.stringify({
+    format: 'toto-local-review-backup-v1',
+    reviews: [{ name: 'テスト用の水', category: '水', comment: '復元確認', stars: 4, photos: [], used: true }]
+   }))
+  };
+  const reviewStatus = page.locator('#reviewBackupStatus');
+  await page.locator('#reviewBackupFile').setInputFiles(reviewFile);
+  await page.locator('#reviewBackupImport').click();
+  await reviewStatus.getByText('1件を追加しました。重複 0件。').waitFor();
+  await page.locator('#reviewBackupFile').setInputFiles(reviewFile);
+  await page.locator('#reviewBackupImport').click();
+  await reviewStatus.getByText('0件を追加しました。重複 1件。').waitFor();
   assert.deepEqual(errors, []);
-  console.log('PASS: browser startup, pre-setup backup, first-use guide, room gate and evacuation links');
+  console.log('PASS: browser startup, pre-setup backup, first-use guide, room gate, evacuation links and review deduplication');
   await context.close();
+
+  const offlineContext = await browser.newContext();
+  const offlinePage = await offlineContext.newPage();
+  await offlinePage.goto(base);
+  // Local loopback supports service workers, but the app starts its installer only on HTTPS.
+  await offlinePage.evaluate(() => navigator.serviceWorker.register('./offline-worker.js').then(() => null));
+  await offlinePage.waitForFunction(() => Boolean(navigator.serviceWorker.controller), null, { timeout: 20000 });
+  await offlineContext.setOffline(true);
+  await offlinePage.reload();
+  await offlinePage.locator('#home').waitFor();
+  assert.equal(await offlinePage.locator('#gameDialogueText').textContent() === '', false);
+  await offlinePage.locator('#tutorialDialog[open]').getByRole('button', { name: '災害時モードをすぐ開く' }).click();
+  await offlinePage.locator('#emergency').waitFor();
+  console.log('PASS: offline restart and access to disaster mode before initial setup');
+  await offlineContext.close();
  } finally {
   await browser?.close();
   server.close();
