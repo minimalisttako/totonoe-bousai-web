@@ -26,9 +26,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install browser test dependencies
+      - name: Install Playwright client
         run: |
           npm install --prefix "$RUNNER_TEMP/toto-browser" --no-audit --no-fund playwright@1.55.1
-          "$RUNNER_TEMP/toto-browser/node_modules/.bin/playwright" install --with-deps chromium
       - name: Verify first-use flows in Chromium
-        run: TOTO_PLAYWRIGHT_PATH="$RUNNER_TEMP/toto-browser/node_modules/playwright" node tests/browser-release.cjs
+        run: TOTO_PLAYWRIGHT_PATH="$RUNNER_TEMP/toto-browser/node_modules/playwright" TOTO_CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)" node tests/browser-release.cjs

@@ -22,7 +22,7 @@ async function run() {
  const base = 'http://127.0.0.1:' + server.address().port + '/';
  let browser;
  try {
-  browser = await chromium.launch();
+  browser = await chromium.launch({ executablePath: process.env.TOTO_CHROMIUM_PATH || undefined });
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', isMobile: true, hasTouch: true });
   await context.route('**/*', route => route.request().url().startsWith(base) ? route.continue() : route.abort());
   const page = await context.newPage();
