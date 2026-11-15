@@ -1069,6 +1069,8 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 </section>
 <section id="learn" class="hidden"><div class="card"><h2>防災士試験対策・無料学習</h2><p class="notice">例題動画・音声学習への入口と、学習の進め方をまとめました。</p><button class="secondary" type="button" onclick="show('examStudy')">学習メニューを開く ↗</button></div><div class="card"><h2>防災 × お片付けの3ステップ</h2><button class="step" onclick="show('select')"><span class="step-arrow" aria-hidden="true">↗</span><b>Select（整理）</b><p>持ち物を見直し、必要な物を選ぶ。</p></button><button class="step" onclick="show('set')"><span hidden id="setLessonLock" class="lesson-lock"></span><span class="step-arrow" aria-hidden="true">↗</span><b>Set（整頓）</b><p>必要な物を使いやすく、安全に整える。</p></button><button class="step" onclick="show('stock')"><span hidden id="stockLessonLock" class="lesson-lock"></span><span class="step-arrow" aria-hidden="true">↗</span><b>Stock（備蓄）</b><p>家庭に合った防災用品を備える。</p></button></div><div class="card"><h2>お片付けの4ステップ</h2><button class="secondary" onclick="show('cleanPractice')">掃除の実践を記録する ↗</button><p>① 整理 → ② 整頓 → ③ 収納 → ④ 掃除</p><p class="notice">アプリ全体の3ステップとは区別して扱います。</p></div><div class="card" id="evacuationVideos">
 <h2 tabindex="-1">電気・水道・ガスが止まったら？ 夏と冬の避難生活</h2>
+<div data-evacuation-video-lock><p class="notice">🔒 初回のマイ避難計画を完成・保存すると解放されます。</p><button class="secondary" type="button" onclick="openEvacuationPlanFromVideos()">マイ避難計画を開く →</button></div>
+<div data-evacuation-video-content hidden>
 <div class="exam-video-author" data-video-author><div><strong>アプリ作者・防災ミニマリストたこの実践動画</strong><p class="notice">YouTubeで視聴できます（通信が必要です）。</p></div></div>
 <h3>自宅で過ごす備え</h3>
 <div class="author-video-entry"><p class="notice">冬にライフラインが止まったとき、自宅の備蓄でどう過ごすかを試します。</p><a class="secondary" href="https://youtu.be/urWo9qLz8sQ" target="_blank" rel="noopener noreferrer">冬の在宅避難生活訓練 ↗</a></div>
@@ -1076,6 +1078,7 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 <h3>自宅を離れるときの備え</h3>
 <div class="author-video-entry"><p class="notice">冬の避難生活を想定し、防災リュックの持ち物を見直す参考にできます。</p><a class="secondary" href="https://youtu.be/6nxKj9RQ8Bo" target="_blank" rel="noopener noreferrer">冬の避難生活訓練 ↗</a></div>
 <div class="author-video-entry"><p class="notice">夏の避難生活を想定し、暑い時期に何を持ち出すかを考える参考にできます。</p><a class="secondary" href="https://youtu.be/f6rZtF8WmOQ" target="_blank" rel="noopener noreferrer">夏の避難生活訓練 ↗</a></div>
+</div>
 </div>
 </section>
 
@@ -1250,7 +1253,8 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 <p>自宅の安全が確保でき、生活を続けられるなら、在宅避難を選びましょう。</p>
 <p><strong>自宅に危険が迫っているときは、早めに安全な場所へ。</strong> ハザードマップや自治体の避難情報を確認しましょう。</p>
 <p>自宅で暮らせなくなったときに備えて、安全な親戚・知人宅や避難所など、滞在先も考えておきましょう。</p>
-<button class="secondary" type="button" onclick="openEvacuationVideos()">夏と冬の避難生活を動画で見る →</button>
+<button class="secondary" type="button" data-evacuation-video-button disabled onclick="openEvacuationVideos()">🔒 夏と冬の避難生活を動画で見る</button>
+<p data-evacuation-video-note>初回のマイ避難計画を完成・保存すると解放されます。</p>
 </aside>
 <div class="card"><h2>保存した避難計画</h2><div id="evacuationCompleteness" class="notice" role="status" aria-live="polite"></div><button class="secondary" type="button" onclick="openEvacuationEdit()">✎ 計画を登録・編集</button><div id="evacuationSummary" aria-live="polite"></div><button class="secondary" type="button" data-go-bag-entry onclick="show('goBag')">🔒 防災リュックを確認する</button><p class="notice">表示内容は事前に自分で記録したものです。最新の自治体の避難情報を必ず優先してください。通信・電源が使えない場合に備えて紙にも控えてください。</p></div>
 <details id="evacuationEditFold" data-close-at-end class="evacuation-fold"><summary>✎ 避難計画を登録・編集する <span aria-hidden="true">⌄</span></summary><div class="evacuation-fold-body"><div class="card"><h2>マイ避難計画</h2>
@@ -2021,7 +2025,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v198');
+  const c=await caches.open('totonoe-offline-shell-v199');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -2047,8 +2051,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v198')){
-   const cache=await caches.open('totonoe-offline-shell-v198');
+  if(registration&&names.includes('totonoe-offline-shell-v199')){
+   const cache=await caches.open('totonoe-offline-shell-v199');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2890,6 +2894,7 @@ function saveEvacuationPlan(event){
   renderEvacuationSummary();renderEmergencyPlan();updateOfflineReadiness();renderPageMascotGuide('evacuation');
   const fold=document.getElementById('evacuationEditFold');if(fold)fold.open=false;
   msg.textContent='避難計画と連絡方法を保存しました。';
+  syncEvacuationVideoLock();
   syncHazardGate();
   syncStockGate();
   if(!wasReady&&evacuationIsReady()){
@@ -2932,7 +2937,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v198'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v199'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3606,7 +3611,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v198');
+  const cache=await caches.open('totonoe-offline-shell-v199');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3627,17 +3632,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v198')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v199')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v198')?await caches.open('totonoe-offline-shell-v198'):null;
+  const cache=names.includes('totonoe-offline-shell-v199')?await caches.open('totonoe-offline-shell-v199'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v198'?'必須ファイル10件の保存とv198の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v198の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v199'?'必須ファイル10件の保存とv199の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v199の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3888,7 +3893,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v198';
+ const cacheName='totonoe-offline-shell-v199';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -3991,7 +3996,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v198';
+   const current='totonoe-offline-shell-v199';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -4532,7 +4537,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v198','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v199','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -4541,7 +4546,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v198';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v199';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -5814,7 +5819,37 @@ function openEvacuationPreview(selector){
  dialog.firstElementChild.replaceChildren(content);
  if(!dialog.open)dialog.showModal();
 }
+function evacuationVideosAreUnlocked(){
+ const key='totonoe-first-evacuation-plan-completed';
+ try{if(localStorage.getItem(key)==='1')return true}catch(e){}
+ const plan=readEvacuationPlan();
+ const complete=evacuationIsReady()&&evacuationFields.every(([id])=>typeof plan[id]==='string'&&plan[id].trim()!=='');
+ if(complete){try{localStorage.setItem(key,'1')}catch(e){}}
+ return complete;
+}
+function syncEvacuationVideoLock(){
+ const unlocked=evacuationVideosAreUnlocked();
+ document.querySelectorAll('[data-evacuation-video-button]').forEach(button=>{
+  button.disabled=!unlocked;
+  button.textContent=unlocked?'夏と冬の避難生活を動画で見る →':'🔒 夏と冬の避難生活を動画で見る';
+ });
+ document.querySelectorAll('[data-evacuation-video-lock],[data-evacuation-video-note]').forEach(node=>node.hidden=unlocked);
+ document.querySelectorAll('[data-evacuation-video-content]').forEach(node=>node.hidden=!unlocked);
+}
+function openEvacuationPlanFromVideos(){
+ if(!hazardIsConfirmed()||tutorialNeedsGate('evacuation')){
+  openEvacuationPreview('#evacuation .evacuation-home-choice');
+  return;
+ }
+ document.getElementById('evacuationPreview')?.close();
+ goToEvacuationPlan();
+}
 function openEvacuationVideos(){
+ syncEvacuationVideoLock();
+ if(!evacuationVideosAreUnlocked()){
+  openEvacuationPlanFromVideos();
+  return;
+ }
  if(!hazardIsConfirmed()||tutorialNeedsGate('learn')){
   openEvacuationPreview('#evacuationVideos');
   return;
@@ -5828,6 +5863,10 @@ function openEvacuationVideos(){
   heading.scrollIntoView({block:'start'});
  });
 }
+syncEvacuationVideoLock();
+window.addEventListener('pageshow',syncEvacuationVideoLock);
+window.addEventListener('storage',syncEvacuationVideoLock);
+window.addEventListener('toto-data-restored',syncEvacuationVideoLock);
 const requestedPage=new URLSearchParams(location.search).get('page');
 if(requestedPage==='evacuationVideos'||(requestedPage==='learn'&&location.hash==='#evacuationVideos'))openEvacuationVideos();
 else if(requestedPage==='evacuation'&&(!hazardIsConfirmed()||tutorialNeedsGate('evacuation')))openEvacuationPreview('#evacuation .evacuation-home-choice');
