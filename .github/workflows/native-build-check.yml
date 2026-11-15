@@ -29,7 +29,9 @@ jobs:
           java-version: '21'
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm run native:add:android
-      - run: sdkmanager 'platforms;android-36'
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4
+        with:
+          packages: 'platform-tools platforms;android-36'
       - name: Compile Android debug APK
         working-directory: android
         run: bash gradlew :app:assembleDebug --no-daemon
