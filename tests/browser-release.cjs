@@ -96,6 +96,55 @@ async function run() {
   await page.locator('#reviewBackupFile').setInputFiles(reviewFile);
   await page.locator('#reviewBackupImport').click();
   await reviewStatus.getByText('0件を追加しました。重複 1件。').waitFor();
+  await page.goto(base + '?page=reviews');
+  await page.locator('#reviewFormFold summary').click();
+  const samplePhoto = await page.evaluate(() => {
+   const canvas = document.createElement('canvas');
+   canvas.width = 1280;
+   canvas.height = 960;
+   const ctx = canvas.getContext('2d');
+   const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+   gradient.addColorStop(0, '#9b593d');
+   gradient.addColorStop(1, '#f5d77e');
+   ctx.fillStyle = gradient;
+   ctx.fillRect(0, 0, canvas.width, canvas.height);
+   return canvas.toDataURL('image/png').split(',')[1];
+  });
+  await page.locator('#reviewPhotoInput').setInputFiles({
+   name: 'test-photo.png', mimeType: 'image/png', buffer: Buffer.from(samplePhoto, 'base64')
+  });
+  await page.locator('#reviewFormStatus').getByText('写真 1/3枚を準備しました。').waitFor();
+  const photo = await page.locator('#reviewPhotoPreview img').evaluate(async img => {
+   await img.decode();
+   return { width: img.naturalWidth, height: img.naturalHeight, src: img.src };
+  });
+  assert.equal(Math.max(photo.width, photo.height), 480);
+  assert.ok(photo.src.length <= 60000);
+  await page.locator('#reviewProduct').fill('写真付きのテスト用ランタン');
+  await page.locator('#reviewStars').selectOption('4');
+  await page.locator('#reviewComment').fill('写真付きバックアップの確認');
+  await page.locator('#reviewUsed').check();
+  await page.locator('#reviewSave').click();
+  await page.locator('#reviewList summary').getByText('写真付きのテスト用ランタン').waitFor();
+  await page.getByRole('link', { name: 'レビューと写真のバックアップ' }).click();
+  const [download] = await Promise.all([
+   page.waitForEvent('download'),
+   page.locator('#reviewBackupSave').click()
+  ]);
+  const backupPath = await download.path();
+  const exported = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+  assert.deepEqual(exported.reviews.find(review => review.name === '写真付きのテスト用ランタン').photos, [photo.src]);
+  const restoreContext = await browser.newContext();
+  const restorePage = await restoreContext.newPage();
+  await restoreContext.route('**/*', route => route.request().url().startsWith(base) ? route.continue() : route.abort());
+  await restorePage.goto(base + '?page=reviewBackup');
+  await restorePage.locator('#reviewBackupFile').setInputFiles({
+   name: 'review-backup.json', mimeType: 'application/json', buffer: fs.readFileSync(backupPath)
+  });
+  await restorePage.locator('#reviewBackupImport').click();
+  await restorePage.locator('#reviewBackupStatus').getByText('2件を追加しました。重複 0件。').waitFor();
+  await restoreContext.close();
+  console.log('PASS: review photo compression, local save, download and restore in a fresh browser context');
   assert.deepEqual(errors, []);
   console.log('PASS: browser startup, pre-setup backup, first-use guide, room gate, evacuation links and review deduplication');
   await context.close();
