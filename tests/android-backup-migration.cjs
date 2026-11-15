@@ -47,9 +47,11 @@ async function waitFor(check, name) {
 async function run() {
  const backup = await exportWebBackup();
  adb('install', '-r', path.join(android, 'app/build/outputs/apk/debug/app-debug.apk'));
- adb('shell', 'am', 'start', '-n', appId + '/.MainActivity');
+ const launch = adb('shell', 'am', 'start', '-W', '-n', appId + '/.MainActivity');
+ assert.match(launch, /Status: ok/, launch);
  const socketName = await waitFor(() => {
-  const pid = adb('shell', 'pidof', appId);
+  const pid = adb('shell', 'pidof ' + appId + ' || true');
+  if (!pid) return undefined;
   const name = 'webview_devtools_remote_' + pid;
   return adb('shell', 'cat', '/proc/net/unix').includes('@' + name) ? name : undefined;
  }, 'Android app WebView');
