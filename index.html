@@ -1260,6 +1260,11 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 <div class="card"><h2>いまの持ち物</h2><p class="notice">持ち歩いている物にチェックを付けてください。持っていない物を上に表示します。</p><button type="button" class="secondary" onclick="openPouchAdd()">＋ 持ち物を追加する</button><details class="compact-filter"><summary>検索・絞り込み <span aria-hidden="true">⌄</span></summary><div class="compact-filter-body"><label class="supply-label" for="pouchSearch">持ち物を検索</label><input class="field" id="pouchSearch" type="search" placeholder="例：ライト" oninput="renderPouch()"><label class="supply-label" for="pouchFilter">表示する持ち物</label><select class="field" id="pouchFilter" onchange="renderPouch()"><option value="all">すべて</option><option value="missing">持ち歩いていない</option><option value="carried">持ち歩いている</option><option value="due">点検予定日を迎えた物</option></select><button type="button" class="secondary" onclick="resetPouchFilter()">検索・絞り込みを解除</button></div></details><p id="pouchListStatus" class="notice" aria-live="polite" role="status"></p><div id="pouchItems"></div></div>
 <details id="pouchAddFold" data-close-at-end class="pouch-fold"><summary>新しい持ち物を登録する <span aria-hidden="true">⌄</span></summary><div class="pouch-fold-body"><div class="card"><h2>持ち物を登録</h2><details class="compact-filter"><summary>防災ポーチの中身の一例</summary><ul><li>小型ライト・ホイッスル</li><li>携帯トイレ・ウェットティッシュ</li><li>絆創膏・必要な薬・小さな非常食</li></ul></details><form id="pouchForm" onsubmit="addPouchItem(event)"><label for="pouchName" class="supply-label">持ち物の名前</label><input id="pouchName" class="field" required maxlength="60" placeholder="例：小型ライト、常備薬、携帯トイレ"><details class="minimal-optional pouch-optional"><summary>用途・メモを追加する（任意）<span aria-hidden="true">⌄</span></summary><div class="minimal-optional-body"><label for="pouchNote" class="supply-label">用途・確認ポイント（任意）</label><input id="pouchNote" class="field" maxlength="120" placeholder="例：電池の残量を確認する"></div></details><label for="pouchNextCheck" class="supply-label">次の点検予定日（3か月後を自動入力・変更可）</label><input id="pouchNextCheck" class="field" type="date"><p class="notice">点検の目安日です。食品の賞味期限や電池の使用推奨期限ではありません。不要なら空欄にもできます。</p><button type="submit" class="primary">持ち物を追加する</button></form><p id="pouchStatus" class="notice" role="status" aria-live="polite"></p></div>
 </div></details><div class="card"><button class="secondary" type="button" onclick="show('home')">ホームへ戻る</button></div>
+<div class="card" id="pouchVideos"><h2>防災ポーチ・防災ボトルの実例</h2>
+<div class="exam-video-author" data-video-author><div><strong>アプリ作者・防災ミニマリストたこの動画</strong><p class="notice">YouTubeで視聴できます（通信が必要です）。</p></div></div>
+<div class="author-video-entry"><p class="notice">普段から持ち歩く防災ポーチに、どんなものを入れているか紹介します。</p><a class="secondary" href="https://youtu.be/Zc2ItR-mdv0" target="_blank" rel="noopener noreferrer">ミニマリストの防災ポーチの中身 ↗</a></div>
+<div class="author-video-entry"><p class="notice">ボトルにまとめた防災グッズと、自転車での持ち運び方を考えるヒントを紹介します。</p><a class="secondary" href="https://youtu.be/7js0GSG1NBs" target="_blank" rel="noopener noreferrer">ミニマリストの防災ボトル ↗</a></div>
+</div>
 </section>
 <section id="goBag" class="hidden">
 <div class="card"><h2>1次持ち出し・防災リュック</h2>
@@ -1274,6 +1279,11 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 <form onsubmit="addGoBagItem(event)"><label class="supply-label" for="goBagName">持ち物の名前</label><input class="field" id="goBagName" maxlength="60" required><button class="primary" type="submit">追加する</button></form>
 </div>
 <div class="card"><button class="secondary" type="button" onclick="show('evacuation')">マイ避難計画を開く</button><button class="secondary" type="button" onclick="show('pouch')">防災ポーチを開く</button></div>
+<div class="card" id="goBagVideos"><h2>防災リュックの実例</h2>
+<div class="exam-video-author" data-video-author><div><strong>アプリ作者・防災ミニマリストたこの動画</strong><p class="notice">YouTubeで視聴できます（通信が必要です）。</p></div></div>
+<div class="author-video-entry"><p class="notice">避難所で3泊する想定で、リュックに入れた持ち出し品を紹介します。</p><a class="secondary" href="https://youtu.be/nXQQXK70sUE" target="_blank" rel="noopener noreferrer">避難所で3泊を想定した防災リュック ↗</a></div>
+<div class="author-video-entry"><p class="notice">入れすぎていないか点検し、持ち出し品を減らす実例です。</p><a class="secondary" href="https://youtu.be/zbZ_pPZFVt8" target="_blank" rel="noopener noreferrer">防災リュックの中身を見直して減らす ↗</a></div>
+</div>
 </section>
 <section id="tidy" class="hidden"><div class="card"><h2>お片付けを進める</h2><p class="notice">書く必要はありません。場所ごとのやることにチェックを付けるだけで進みます。無理のない範囲で1つずつ取り組みましょう。</p><button class="secondary" type="button" onclick="show('tidyAlbum')">成長アルバムを見る ↗</button><div id="tidySummary" class="notice" role="status"></div><div class="tidy-place-progress">
 <div id="tidyPlaceMeter" class="tidy-place-meter" role="progressbar" aria-label="片付けが完了した場所" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0"></div>
@@ -1282,6 +1292,10 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 </div><p class="notice">はじめから6つの場所を登録しています。必要に応じて「新しい場所を登録する」から廊下・収納などを追加できます。該当しない場所は削除できます。</p></div>
 <div class="card"><h2>場所ごとのチェックリスト</h2><p class="notice">各場所の4つの作業を完了すると、その場所が自動で完了になります。記録・メモは必要な方だけ使えます。</p><details class="compact-filter"><summary>検索・絞り込み <span aria-hidden="true">⌄</span></summary><div class="compact-filter-body"><label for="tidySearch" class="supply-label">場所・片付け前後の記録を検索</label><input id="tidySearch" type="search" class="field" placeholder="例：玄関、通路、収納" oninput="renderTidy()"><label for="tidyFilter" class="supply-label">表示する記録</label><select id="tidyFilter" class="field" onchange="renderTidy()"><option value="all">すべて</option><option value="working">進行中</option><option value="done">完了</option></select><button class="secondary" type="button" onclick="resetTidySearch()">検索・絞り込みを解除</button></div></details><p id="tidyActionStatus" class="notice" role="status" aria-live="polite"></p><div id="tidyList"></div></div><details id="tidyAddFold" data-close-at-end class="tidy-fold"><summary>＋ ほかの場所を追加する<span aria-hidden="true">⌄</span></summary><div class="tidy-fold-body"><div class="card"><h2>新しい場所を記録</h2><form id="tidyAddForm" onsubmit="addTidyPlace(event)"><label class="supply-label" for="tidyPlace">片付ける場所</label><select id="tidyPlace" class="field" onchange="toggleTidyCustom()"><option value="玄関">玄関</option><option value="リビング">リビング</option><option value="寝室">寝室</option><option value="キッチン">キッチン</option><option value="洗面・トイレ">洗面・トイレ</option><option value="浴室">浴室</option><option value="廊下">廊下</option><option value="収納">収納</option><option value="custom">その他・自由入力</option></select><div id="tidyCustomWrap" class="hidden"><label class="supply-label" for="tidyCustom">場所の名前</label><input id="tidyCustom" class="field" maxlength="40" placeholder="例：子ども部屋"></div><details class="minimal-optional tidy-optional"><summary>作業メモ・片付け前の様子を残す（任意）<span aria-hidden="true">⌄</span></summary><div class="minimal-optional-body"><label class="supply-label" for="tidyNext">次に取り組むこと（任意）</label><input id="tidyNext" class="field" maxlength="160" placeholder="例：玄関の非常用ライトを取り出しやすくする"><label class="supply-label" for="tidyBefore">片付ける前の状態・困りごと（任意）</label><textarea id="tidyBefore" class="field" rows="2" maxlength="500" placeholder="例：玄関の床に物があり、通路が狭い"></textarea></div></details><button class="primary" type="submit">この場所を記録する</button></form><p class="notice" id="tidyStatus" role="status"></p></div>
 </div></details><details id="tidyExportFold" data-close-at-end class="tidy-fold"><summary>記録を書き出す（必要なときだけ）<span aria-hidden="true">⌄</span></summary><div class="tidy-fold-body"><div class="card"><h2>記録を文章で控える</h2><p class="notice">現在登録されている全件をテキストにまとめます。必要に応じてメモなどにコピーしてください。</p><button class="secondary" type="button" onclick="prepareTidyText()">記録をテキストにまとめる</button><label class="supply-label" for="tidyExportText">コピー用テキスト</label><textarea id="tidyExportText" class="field" rows="8" readonly></textarea><button class="secondary" type="button" onclick="copyTidyText()">テキストをコピー</button><p id="tidyExportStatus" class="notice" role="status"></p></div></div></details><div class="card"><button class="secondary" type="button" onclick="show('home')">ホームへ戻る</button></div>
+<div class="card" id="tidyVideos"><h2>防災を意識した部屋づくりの実例</h2>
+<div class="exam-video-author" data-video-author><div><strong>アプリ作者・防災ミニマリストたこの動画</strong><p class="notice">YouTubeで視聴できます（通信が必要です）。</p></div></div>
+<div class="author-video-entry"><p class="notice">防災を意識した部屋の実例を見ながら、自宅の片付けや備えのヒントを探せます。</p><a class="secondary" href="https://youtu.be/m0rgwGvFUMA" target="_blank" rel="noopener noreferrer">ミニマリストの防災ルームツアー ↗</a></div>
+</div>
 </section>
 
 <section id="seasonalCheck" class="hidden">
@@ -1363,6 +1377,9 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 .exam-video-author{display:flex;align-items:center;gap:12px}
 .exam-video-author img{width:64px;height:auto;flex:0 0 64px}
 .exam-video-author .notice{margin:4px 0 0}
+.author-video-entry{margin-top:14px}
+.author-video-entry .notice{margin:0 0 6px}
+.author-video-entry a.secondary{display:block;white-space:normal}
 </style>
 <section id="examStudy" class="hidden"><div class="card"><h2>アプリ内で例題を解く</h2><p class="notice">教本の講目に沿った30種類の例題から、分野を選んで最大5問。公的資料を基にしたオリジナル例題で、公式過去問や試験範囲全体を網羅する模擬試験ではありません。最後まで解いた成績と間違えた問題をこの端末に保存します。途中の回答は再起動で消え、無料学習メニューに戻ります。</p><p class="notice">出題の可能性は、公開されている教本の講目との対応を基に判断しています。出題頻度の分析ではありません。受験年度の教本・教材も併せて確認してください。<a href="https://bousaisi.jp/license/" target="_blank" rel="noopener noreferrer">公式の履修講目を確認 ↗</a></p><label class="supply-label" for="practiceTopic">学習する分野</label><select id="practiceTopic" class="field" onchange="renderPracticeTopic()"><option value="all">全分野（30問）</option><option value="earthquake">地震・津波・火災への備え（10問）</option><option value="weather">気象・風水害・土砂・火山（8問）</option><option value="stock">家庭の備蓄（3問）</option><option value="evacuation">避難場所・避難所・ハザードマップ（4問）</option><option value="community">地域防災・防災士・ボランティア（3問）</option><option value="systems">被災者支援・事業継続（2問）</option></select><p id="practiceTopicStatus" class="notice" role="status" aria-live="polite"></p><p class="notice">分野は学習しやすくするための分類です。試験の出題割合を示しません。5問未満の分野では、その分野の全問を出題します。解説一覧も同じ分野に絞り込みます。</p><button class="primary" id="practiceStartButton" onclick="startPracticeQuiz()">全分野から5問を始める</button><div id="savedPracticeResults" aria-live="polite"></div></div><div class="card"><details><summary>全30問の解説を読む・検索する</summary><p class="notice">問題を解かずに、正解・理由・出典を確認できます。本文はオフラインでも読めます。出典先を開くには通信が必要です。</p><label class="supply-label" for="practiceGuideSearch">問題・正解・解説から検索</label><input class="field" id="practiceGuideSearch" maxlength="100" placeholder="例：家具、トイレ、避難" oninput="renderPracticeGuide()"><button class="secondary" type="button" onclick="resetPracticeGuide()">分野・検索を解除</button><p id="practiceGuideStatus" class="notice" role="status" aria-live="polite"></p><div id="practiceGuideResults"></div></details></div>
 <div class="card"><h2>防災士試験対策・無料学習</h2><p>教本で理解し、例題で確かめ、音声で復習しましょう。</p><p class="notice">例題はオリジナルです。受講年度の教本・研修案内と合わせてご利用ください。</p>
@@ -1991,7 +2008,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v193');
+  const c=await caches.open('totonoe-offline-shell-v194');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -2017,8 +2034,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v193')){
-   const cache=await caches.open('totonoe-offline-shell-v193');
+  if(registration&&names.includes('totonoe-offline-shell-v194')){
+   const cache=await caches.open('totonoe-offline-shell-v194');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2902,7 +2919,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v193'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v194'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3576,7 +3593,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v193');
+  const cache=await caches.open('totonoe-offline-shell-v194');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3597,17 +3614,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v193')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v194')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v193')?await caches.open('totonoe-offline-shell-v193'):null;
+  const cache=names.includes('totonoe-offline-shell-v194')?await caches.open('totonoe-offline-shell-v194'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v193'?'必須ファイル10件の保存とv193の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v193の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v194'?'必須ファイル10件の保存とv194の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v194の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3858,7 +3875,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v193';
+ const cacheName='totonoe-offline-shell-v194';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -3961,7 +3978,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v193';
+   const current='totonoe-offline-shell-v194';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -4502,7 +4519,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v193','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v194','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -4511,7 +4528,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v193';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v194';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -5092,7 +5109,7 @@ setInterval(()=>{if(document.visibilityState==='visible')renderHomeSceneTime()},
  const title=document.createElement('h2');title.id='wrapUpTitle';title.textContent='今日はここまで';const note=document.createElement('p');note.className='notice';note.textContent='今回アプリを開いてから、進めたことを振り返ります。';const rows=document.createElement('div');rows.className='wrap-up-results';const friend=document.createElement('div');friend.className='wrap-up-friend';const art=document.createElement('div');const message=document.createElement('p');friend.append(art,message);const safety=document.createElement('p');safety.className='notice wrap-up-safety';const close=document.createElement('button');close.type='button';close.className='primary';close.textContent='おつかれさまでした';close.onclick=()=>dialog.close();dialog.append(title,note,rows,friend,safety,close);document.body.append(dialog);
  const names=['たこ','トリケラさん','シマエナガさん'],kinds=['octo','tricera','bird'];let turn=0;
  function open(){const changes=sessionProgressSummary(baseline,snapshot());rows.replaceChildren();if(changes.length){changes.forEach(row=>{const p=document.createElement('p');const text=document.createElement('strong');text.textContent=row.label+'：'+row.count+'項目';p.append(text);rows.append(p)})}else{const p=document.createElement('p');p.textContent='記録の変化がない日も、確認する時間を持てました。';rows.append(p)}const index=turn++%3;art.replaceChildren();const original=document.querySelector('#home .character-art.'+kinds[index]);if(original)art.append(original.cloneNode(true));message.textContent=names[index]+'：'+[['できたことを大切に。続きは、またできるときに。','今日はここまででも大丈夫。また少しずつ進めましょう。'][changes.length?0:1],'ひとつずつで、ええんやで。今日はゆっくり休んでな。','確認の時間も、大切な備えです。おつかれさまでした。'][index];const pending=criticalSafetyState().remaining.length;safety.textContent=pending?'未確認の重要な安全チェック：'+pending+'項目。今回の記録はそのまま残ります。':'確認の記録はそのまま残ります。暮らしが変わったときは、また見直しましょう。';dialog.showModal();close.focus()}
- for(const page of ['home','tidy','supplies','learn','more','homeSafety','cleanPractice','seasonalCheck']){const section=document.getElementById(page);if(!section)continue;const box=document.createElement('div');box.className='wrap-up-entry';const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent='今日はここまで';button.onclick=open;box.append(button);section.insertBefore(box,page==='supplies'?document.getElementById('supplyBackupFold'):null)}
+ for(const page of ['home','tidy','supplies','learn','more','homeSafety','cleanPractice','seasonalCheck']){const section=document.getElementById(page);if(!section)continue;const box=document.createElement('div');box.className='wrap-up-entry';const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent='今日はここまで';button.onclick=open;box.append(button);section.insertBefore(box,document.getElementById({supplies:'supplyBackupFold',tidy:'tidyVideos'}[page]||''))}
  // A restored backup is a new reference point, never an accomplishment.
  const oldRestore=restoreAllData;restoreAllData=function(){let before=null,after=null;try{before=JSON.stringify(allBackupKeys.map(k=>localStorage.getItem(k)))}catch(e){}const result=oldRestore.apply(this,arguments);try{after=JSON.stringify(allBackupKeys.map(k=>localStorage.getItem(k)))}catch(e){}if(before!==null&&after!==null&&before!==after){baseline=snapshot();window.dispatchEvent(new Event('toto-data-restored'))}return result};
 })();
@@ -5764,8 +5781,10 @@ document.querySelectorAll('details[data-close-at-end]').forEach(fold=>{
 syncStockGate();
 syncHazardGate();
 syncMinimalistGuideLock();
+const videoAuthorImage=document.querySelector('#examStudy .exam-video-author img');
+document.querySelectorAll('[data-video-author]').forEach(author=>author.prepend(videoAuthorImage.cloneNode()));
 const requestedPage=new URLSearchParams(location.search).get('page');
-if(['minimalistGuide','goBag','evacuation','pouch','supplies','learn','examStudy'].includes(requestedPage))show(requestedPage);
+if(['minimalistGuide','goBag','evacuation','pouch','supplies','learn','examStudy','tidy'].includes(requestedPage))show(requestedPage);
 window.addEventListener('pageshow',syncStockGate);
 window.addEventListener('storage',event=>{
  if(event.key===null||[homeSafetyKey,'totonoe-hazard-confirmed',weatherLocationKey].includes(event.key))syncStockGate();
