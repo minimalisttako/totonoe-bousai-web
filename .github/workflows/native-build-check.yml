@@ -1,0 +1,55 @@
+name: Native build checks
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/native-build-check.yml'
+      - 'package*.json'
+      - 'capacitor.config.json'
+      - 'scripts/**'
+      - 'index.html'
+      - 'assets/**'
+      - 'manifest.webmanifest'
+      - 'offline-worker.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run native:add:android
+      - run: sdkmanager 'platforms;android-36'
+      - name: Compile Android debug APK
+        working-directory: android
+        run: bash gradlew :app:assembleDebug --no-daemon
+      - run: test -s android/app/build/outputs/apk/debug/app-debug.apk
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: xcodebuild -version
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build:web
+      - run: npx cap add ios --packagemanager SPM
+      - name: Compile iOS Simulator app
+        run: >
+          xcodebuild -project ios/App/App.xcodeproj -scheme App
+          -configuration Debug -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO build
+      - run: test -d ios/build/Build/Products/Debug-iphonesimulator/App.app
