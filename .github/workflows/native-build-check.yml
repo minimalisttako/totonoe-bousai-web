@@ -6,6 +6,7 @@ on:
       - 'package*.json'
       - 'capacitor.config.json'
       - 'scripts/**'
+      - 'tests/android-backup-migration.cjs'
       - 'index.html'
       - 'assets/**'
       - 'manifest.webmanifest'
@@ -36,6 +37,21 @@ jobs:
         working-directory: android
         run: bash gradlew :app:assembleDebug --no-daemon
       - run: test -s android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Install browser test client
+        run: npm install --prefix "$RUNNER_TEMP/toto-browser" --no-audit --no-fund playwright@1.55.1
+      - name: Enable emulator hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Verify Web backup migration in Android
+        uses: reactivecircus/android-emulator-runner@4c44018e59b437e86cdfc41da381398f93ed8808 # v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          script: TOTO_PLAYWRIGHT_PATH="$RUNNER_TEMP/toto-browser/node_modules/playwright" TOTO_CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)" node tests/android-backup-migration.cjs
   ios:
     runs-on: macos-26
     timeout-minutes: 20
