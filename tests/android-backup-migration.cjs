@@ -2,37 +2,11 @@ const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
 const path = require('node:path');
 const { setTimeout: delay } = require('node:timers/promises');
-const { chromium } = require(process.env.TOTO_PLAYWRIGHT_PATH || 'playwright');
+const exportWebBackup = require('./web-migration-fixture.cjs');
 
 const appId = 'jp.minimalisttako.totonoebousai';
 const android = path.resolve(__dirname, '../android');
 const adb = (...args) => execFileSync('adb', args, { encoding: 'utf8', timeout: 30000 }).trim();
-
-async function exportWebBackup() {
- const browser = await chromium.launch({ executablePath: process.env.TOTO_CHROMIUM_PATH || undefined });
- try {
-  const page = await browser.newPage();
-  const url = 'http://localhost:19434/';
-  await page.route('**/*', route => route.request().url() === url
-   ? route.fulfill({ path: path.resolve(__dirname, '../index.html'), contentType: 'text/html' })
-   : route.abort());
-  await page.goto(url);
-  return await page.evaluate(() => {
-   const canvas = document.createElement('canvas');
-   canvas.width = canvas.height = 16;
-   const ctx = canvas.getContext('2d');
-   ctx.fillStyle = 'salmon';
-   ctx.fillRect(0, 0, 16, 16);
-   const photo = canvas.toDataURL('image/jpeg');
-   const rooms = [{ id: 'migration', place: '移行テスト用の玄関', beforePhoto: photo, afterPhoto: photo }];
-   localStorage.setItem(tidyKey, JSON.stringify(rooms));
-   localStorage.setItem(key, JSON.stringify([{ name: '移行テスト用の水', qty: '2', category: 'water' }]));
-   return { full: buildFullBackup(), photo };
-  });
- } finally {
-  await browser.close();
- }
-}
 
 async function waitFor(check, name) {
  const deadline = Date.now() + 45000;
