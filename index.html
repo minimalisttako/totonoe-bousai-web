@@ -1195,12 +1195,22 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 <button class="secondary" type="button" data-go-bag-entry onclick="show('goBag')">🔒 防災リュックを確認する</button>
 <button class="secondary" type="button" onclick="show('pouch')">防災ポーチを開く</button>
 </div>
-<details class="supply-fold" id="supplyBackupFold" data-close-at-end><summary>バックアップ・復元を開く<span class="supply-fold-chevron" aria-hidden="true">⌄</span></summary><div class="supply-fold-content"><div class="card"><h2>備蓄データのバックアップ</h2><p class="notice">試作版の保存領域はファイル・プレビューごとに異なる場合があります。コピーしたバックアップは「メモ」などに保管してください。</p><button class="backup-button" type="button" onclick="exportSupplies()">バックアップを表示</button><label class="supply-label" for="backupText">バックアップ（JSON形式）</label><textarea class="field backup-text" id="backupText" rows="5" placeholder="「バックアップを表示」でここに表示されます。復元時は保存した文字列を貼り付けてください。"></textarea><button class="backup-button" type="button" onclick="importSupplies()">バックアップから復元</button><p id="backupStatus" class="notice" role="status" aria-live="polite"></p></div><div class="card"><h2>アプリ全体のバックアップ</h2><p class="notice">備蓄・点検日・防災診断・ミッション完了状態・完了履歴・計算設定をまとめて保存します。現在のデータを置き換える復元は2回押して確定します。復元前には現在のバックアップを別途保管してください。</p><div class="full-backup-actions"><button class="primary" type="button" onclick="downloadFullBackup()">バックアップをファイル保存</button><button class="secondary" type="button" onclick="downloadFullBackup(false)">写真を除いて保存</button><p id="fullBackupCapacity" class="notice" role="status"></p><p class="notice">端末内の備蓄レビューとレビュー写真はバックアップ対象外です。「写真を除いて保存」は機種変更時の文章・進捗の退避用です。既存の端末に復元すると、上書きされる片付け記録の写真も置き換わります。</p><button class="secondary" type="button" onclick="copyFullBackup()">コピーする</button></div><p class="notice">大切な個人情報が含まれることがあります。保存したファイルは安全な場所で管理してください。</p><details class="compact-filter"><summary>機種変更の手順 <span aria-hidden="true">⌄</span></summary><ol><li>元の端末で「バックアップをファイル保存」を押し、保存先にJSONファイルがあることを確認します。</li><li>新しい端末にファイルを移し、このアプリを開きます。</li><li>下の「バックアップファイルから読み込む」で選択し、作成日時・写真の枚数・上書きされる記録を確認します。</li><li>新しい端末に記録がある場合は、その記録も先に別のファイルへ保存します。</li><li>確認後に復元ボタンを2回押します。備蓄・写真・避難計画・家族のメモを確認するまで、元の端末の記録を残してください。</li></ol><p class="notice">自動同期は行いません。写真も含め、バックアップは上限2MBです。</p></details><label class="supply-label" for="fullBackupFile">バックアップファイルから読み込む</label><input id="fullBackupFile" class="field" type="file" accept=".json,application/json" onchange="loadFullBackupFile(this)"><p id="fullBackupFileStatus" class="notice" role="status" aria-live="polite"></p><button class="backup-button" type="button" onclick="verifyImportedBackupFile()" style="margin-top:8px">選択したバックアップファイルの一致を確認</button><p id="backupFileVerifyStatus" class="notice" role="status" aria-live="polite">選択したファイルと読み込み済みの内容が一致するか検証します。保存データには触れません。</p><details class="compact-filter"><summary>コピー・貼り付けで操作する（予備） <span aria-hidden="true">⌄</span></summary><div class="compact-filter-body"><button class="backup-button" type="button" onclick="exportAllData()">全データのバックアップを表示</button></div></details><p class="notice" style="margin:12px 0 6px"><strong>まず、バックアップを読み込んでください。</strong> 初めて試す場合は下の「現在の記録で安全に比較テスト」を押してください。記録は変更しません。</p>
+<details class="supply-fold" id="supplyBackupFold" data-close-at-end><summary>バックアップ・復元を開く<span class="supply-fold-chevron" aria-hidden="true">⌄</span></summary><div class="supply-fold-content"><div class="card"><h2>備蓄データのバックアップ</h2><p class="notice">試作版の保存領域はファイル・プレビューごとに異なる場合があります。コピーしたバックアップは「メモ」などに保管してください。</p><button class="backup-button" type="button" onclick="exportSupplies()">バックアップを表示</button><label class="supply-label" for="backupText">バックアップ（JSON形式）</label><textarea class="field backup-text" id="backupText" rows="5" placeholder="「バックアップを表示」でここに表示されます。復元時は保存した文字列を貼り付けてください。"></textarea><button class="backup-button" type="button" onclick="importSupplies()">バックアップから復元</button><p id="backupStatus" class="notice" role="status" aria-live="polite"></p></div><div class="card"><h2>アプリ全体のバックアップ</h2><p class="notice">備蓄・点検日・防災診断・ミッション完了状態・完了履歴・計算設定をまとめて保存します。現在のデータを置き換える復元は2回押して確定します。復元前には現在のバックアップを別途保管してください。</p><div class="full-backup-actions"><button class="primary" type="button" onclick="downloadFullBackup()">バックアップをファイル保存</button><button class="secondary" type="button" onclick="downloadFullBackup(false)">写真を除いて保存</button><p id="fullBackupCapacity" class="notice" role="status"></p><p class="notice">端末内の備蓄レビューとその写真は、下の「備蓄レビューのバックアップ・復元」から別のファイルに保存できます。「写真を除いて保存」は機種変更時の文章・進捗の退避用です。既存の端末に復元すると、上書きされる片付け記録の写真も置き換わります。</p><button class="secondary" type="button" onclick="copyFullBackup()">コピーする</button></div><p class="notice">大切な個人情報が含まれることがあります。保存したファイルは安全な場所で管理してください。</p><details class="compact-filter"><summary>機種変更の手順 <span aria-hidden="true">⌄</span></summary><ol><li>元の端末で「バックアップをファイル保存」を押し、保存先にJSONファイルがあることを確認します。</li><li>新しい端末にファイルを移し、このアプリを開きます。</li><li>下の「バックアップファイルから読み込む」で選択し、作成日時・写真の枚数・上書きされる記録を確認します。</li><li>新しい端末に記録がある場合は、その記録も先に別のファイルへ保存します。</li><li>確認後に復元ボタンを2回押します。備蓄・写真・避難計画・家族のメモを確認するまで、元の端末の記録を残してください。</li></ol><p class="notice">自動同期は行いません。写真も含め、バックアップは上限2MBです。</p></details><label class="supply-label" for="fullBackupFile">バックアップファイルから読み込む</label><input id="fullBackupFile" class="field" type="file" accept=".json,application/json" onchange="loadFullBackupFile(this)"><p id="fullBackupFileStatus" class="notice" role="status" aria-live="polite"></p><button class="backup-button" type="button" onclick="verifyImportedBackupFile()" style="margin-top:8px">選択したバックアップファイルの一致を確認</button><p id="backupFileVerifyStatus" class="notice" role="status" aria-live="polite">選択したファイルと読み込み済みの内容が一致するか検証します。保存データには触れません。</p><details class="compact-filter"><summary>コピー・貼り付けで操作する（予備） <span aria-hidden="true">⌄</span></summary><div class="compact-filter-body"><button class="backup-button" type="button" onclick="exportAllData()">全データのバックアップを表示</button></div></details><p class="notice" style="margin:12px 0 6px"><strong>まず、バックアップを読み込んでください。</strong> 初めて試す場合は下の「現在の記録で安全に比較テスト」を押してください。記録は変更しません。</p>
 <button class="backup-button" type="button" onclick="compareCurrentBackupSafely()">現在の記録で安全に比較テスト（復元しない）</button>
 <label class="supply-label" for="allBackupText">読み込んだバックアップの内容</label><textarea class="field backup-text" id="allBackupText" oninput="invalidateFullRestorePreview()" rows="5" placeholder="上の「現在の記録で安全に比較テスト」、またはバックアップファイルの読み込みをご利用ください。"></textarea><button class="backup-button" type="button" onclick="previewFullBackup()">復元する内容を確認</button><p id="fullBackupPreview" class="notice" role="status" aria-live="polite"></p>
 <button class="backup-button" type="button" onclick="dryRunFullRestore()">現在の記録と比較して復元を予行検証する</button>
 <div id="fullBackupDiff" class="notice" role="status" aria-live="polite"></div>
-<button class="backup-button" type="button" onclick="restoreAllData()">確認後に復元する（2回押して確定）</button><p id="allBackupStatus" class="notice" role="status" aria-live="polite"></p></div></div></details>
+<button class="backup-button" type="button" onclick="restoreAllData()">確認後に復元する（2回押して確定）</button><p id="allBackupStatus" class="notice" role="status" aria-live="polite"></p></div>
+<details id="reviewBackupFold" class="card compact-filter">
+<summary>備蓄レビューのバックアップ・復元</summary>
+<p class="notice">端末内に保存した感想と写真を専用のJSONファイルで引き継ぎます。同じレビューは重複せず、公開レビューへの投稿や変更は行いません。</p>
+<button class="secondary" type="button" id="reviewBackupSave">レビューと写真をファイル保存</button>
+<label class="supply-label" for="reviewBackupFile">レビューのバックアップファイル</label>
+<input class="field" type="file" id="reviewBackupFile" accept=".json,application/json">
+<button class="primary" type="button" id="reviewBackupImport" disabled>レビューを端末に追加</button>
+<p id="reviewBackupStatus" class="notice" role="status"></p>
+</details>
+</div></details>
 </section>
 <section id="reviews" class="hidden">
 <div class="card review-intro"><h2>みんなの備蓄レビュー</h2><p class="notice">レビューは端末に保存できます。Googleでログインすると公開申請や「役に立った」の投票ができます。</p><button class="secondary" type="button" onclick="show('supplies')">← 備蓄ページへ戻る</button></div>
@@ -2040,7 +2050,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v208');
+  const c=await caches.open('totonoe-offline-shell-v209');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -2066,8 +2076,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v208')){
-   const cache=await caches.open('totonoe-offline-shell-v208');
+  if(registration&&names.includes('totonoe-offline-shell-v209')){
+   const cache=await caches.open('totonoe-offline-shell-v209');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2983,7 +2993,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v208'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v209'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3664,7 +3674,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v208');
+  const cache=await caches.open('totonoe-offline-shell-v209');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3685,17 +3695,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v208')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v209')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v208')?await caches.open('totonoe-offline-shell-v208'):null;
+  const cache=names.includes('totonoe-offline-shell-v209')?await caches.open('totonoe-offline-shell-v209'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v208'?'必須ファイル10件の保存とv208の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v208の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v209'?'必須ファイル10件の保存とv209の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v209の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3965,7 +3975,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v208';
+ const cacheName='totonoe-offline-shell-v209';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -4068,7 +4078,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v208';
+   const current='totonoe-offline-shell-v209';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -4609,7 +4619,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v208','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v209','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -4618,7 +4628,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v208';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v209';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -5272,6 +5282,14 @@ setInterval(()=>{if(document.visibilityState==='visible')renderHomeSceneTime()},
 #reviews .review-detail button{min-height:44px;margin:0}
 </style>
 <script id="stock-review-script-v145">
+function reviewBackupRecords(payload){
+ if(payload?.format!=='toto-local-review-backup-v1'||!Array.isArray(payload.reviews)||payload.reviews.length>10000)throw Error('review format');
+ return payload.reviews.map(row=>{
+  const {name,category,comment,stars,photos,used}=row||{};
+  if(typeof name!=='string'||!name.trim()||name.length>80||!['その他','水','食料','トイレ'].includes(category)||typeof comment!=='string'||!comment.trim()||comment.length>600||!Number.isInteger(stars)||stars<0||stars>5||!Array.isArray(photos)||photos.length>3||!photos.every(validTidyPhoto)||used!==true)throw Error('invalid review');
+  return {name,category,comment,stars,photos,used};
+ });
+}
 (function(){
  const $=id=>document.getElementById(id),form=$('stockReviewForm'),list=$('reviewList'),status=$('reviewFormStatus'),preview=$('reviewPhotoPreview'),fileInput=$('reviewPhotoInput'),save=$('reviewSave');
  const entry=document.createElement('button');entry.id='supplyReviewEntry';entry.type='button';entry.innerHTML='<span>みんなの備蓄レビュー<small>使った備蓄の感想を記録</small></span><span aria-hidden="true">→</span>';entry.onclick=()=>show('reviews');$('supplyRecommendations').after(entry);
@@ -5293,6 +5311,63 @@ setInterval(()=>{if(document.visibilityState==='visible')renderHomeSceneTime()},
    tx.oncomplete=()=>resolve(req.result);tx.onabort=()=>reject(tx.error);
   });
  }
+ const reviewBackupFile=$('reviewBackupFile'),reviewBackupImport=$('reviewBackupImport'),reviewBackupStatus=$('reviewBackupStatus'),reviewBackupSave=$('reviewBackupSave');
+ const maxReviewBackupBytes=20000000;
+ let reviewBackupBusy=false;
+ function updateReviewBackupControls(){
+  reviewBackupFile.disabled=reviewBackupBusy;
+  reviewBackupSave.disabled=reviewBackupBusy;
+  reviewBackupImport.disabled=reviewBackupBusy||!reviewBackupFile.files?.length;
+ }
+ reviewBackupFile.addEventListener('change',()=>{
+  updateReviewBackupControls();
+  reviewBackupStatus.textContent=reviewBackupFile.files?.length?'「レビューを端末に追加」を押すと、ファイルを検証して読み込みます。':'';
+ });
+ reviewBackupSave.onclick=async()=>{
+  if(reviewBackupBusy)return;
+  reviewBackupBusy=true;updateReviewBackupControls();
+  try{
+   const reviews=reviewBackupRecords({format:'toto-local-review-backup-v1',reviews:await store('readonly',s=>s.getAll())});
+   if(!reviews.length){reviewBackupStatus.textContent='端末内に保存したレビューがありません。';return}
+   const blob=new Blob([JSON.stringify({format:'toto-local-review-backup-v1',reviews})],{type:'application/json'});
+   if(blob.size>maxReviewBackupBytes){reviewBackupStatus.textContent='レビューのバックアップが上限20MBを超えています。';return}
+   const url=URL.createObjectURL(blob),link=document.createElement('a');
+   link.href=url;link.download='toto-reviews-'+todayLocalDate()+'.json';
+   document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);
+   reviewBackupStatus.textContent=reviews.length+'件のレビューのファイル保存を開始しました。保存先を確認してください。';
+  }catch(e){reviewBackupStatus.textContent='レビューを書き出せませんでした。'}
+  finally{reviewBackupBusy=false;updateReviewBackupControls()}
+ };
+ reviewBackupImport.onclick=async()=>{
+  const file=reviewBackupFile.files?.[0];
+  if(reviewBackupBusy||!file)return;
+  reviewBackupBusy=true;updateReviewBackupControls();
+  try{
+   if(file.size>maxReviewBackupBytes){reviewBackupStatus.textContent='ファイルが上限20MBを超えています。';return}
+   let reviews;
+   try{reviews=reviewBackupRecords(JSON.parse(await file.text()))}
+   catch(e){reviewBackupStatus.textContent='レビューのバックアップ形式を確認できませんでした。記録は変更されていません。';return}
+   const db=await database();
+   const added=await new Promise((resolve,reject)=>{
+    const tx=db.transaction('reviews','readwrite'),items=tx.objectStore('reviews'),request=items.getAll();
+    let count=0;
+    tx.oncomplete=()=>resolve(count);tx.onabort=()=>reject(tx.error);
+    request.onsuccess=()=>{
+     const keys=new Set(request.result.map(({name,category,comment,stars,photos,used})=>JSON.stringify([name,category,comment,stars,photos,used])));
+     for(const row of reviews){
+      const {name,category,comment,stars,photos,used}=row;
+      const signature=JSON.stringify([name,category,comment,stars,photos,used]);
+      if(keys.has(signature))continue;
+      items.add(row);keys.add(signature);count++;
+     }
+    };
+   });
+   reviewBackupFile.value='';
+   reviewBackupStatus.textContent=added+'件を追加しました。重複 '+(reviews.length-added)+'件。';
+   if(activePage==='reviews')await load();else loaded=false;
+  }catch(e){reviewBackupStatus.textContent='復元できませんでした。既存のレビューはそのままです。'}
+  finally{reviewBackupBusy=false;updateReviewBackupControls()}
+ };
  function image(src,alt){const img=document.createElement('img');img.src=src;img.alt=alt;img.loading='lazy';img.decoding='async';return img}
  function renderPhotos(){
   preview.replaceChildren();
@@ -6084,7 +6159,13 @@ function installFirstOperationGuides(){
 }
 installFirstOperationGuides();
 const requestedPage=new URLSearchParams(location.search).get('page');
-if(requestedPage==='backup')openFullBackupFromReadiness();
+if(requestedPage==='backup'||requestedPage==='reviewBackup'){
+ openFullBackupFromReadiness();
+ if(requestedPage==='reviewBackup'){
+  const fold=document.getElementById('reviewBackupFold');
+  fold.open=true;fold.scrollIntoView({block:'start'});
+ }
+}
 else if(requestedPage==='evacuationVideos'||(requestedPage==='learn'&&location.hash==='#evacuationVideos'))openEvacuationVideos();
 else if(requestedPage==='evacuation'&&(!hazardIsConfirmed()||tutorialNeedsGate('evacuation')))openEvacuationPreview('#evacuation .evacuation-home-choice');
 else if(['minimalistGuide','goBag','evacuation','pouch','supplies','learn','examStudy','tidy','more'].includes(requestedPage))show(requestedPage);
