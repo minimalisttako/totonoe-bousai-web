@@ -149,6 +149,88 @@ async function run() {
   console.log('PASS: browser startup, pre-setup backup, first-use guide, room gate, evacuation links and review deduplication');
   await context.close();
 
+  const reviewContext = await browser.newContext({ serviceWorkers: 'block' });
+  let posted;
+  let published = false;
+  let votes = 0;
+  const reviewId = 'mock-review-id';
+  await reviewContext.addInitScript(() => {
+   localStorage.setItem('toto-tutorial-v1', JSON.stringify({ version: 1, step: 3, completed: true }));
+   localStorage.setItem('toto-weather-location-v1', JSON.stringify({ office: '400000', area: '400010', station: '', warningCity: '4013000' }));
+   localStorage.setItem('totonoe-hazard-confirmed', '4013000');
+   if (location.search.includes('code=')) sessionStorage.setItem('totonoe-review-oauth-verifier', 'mock-verifier');
+  });
+  await reviewContext.route('**/*', async route => {
+   const request = route.request();
+   const url = new URL(request.url());
+   if (request.url().startsWith(base)) return route.continue();
+   if (!url.hostname.endsWith('.supabase.co')) return route.abort();
+   const cors = {
+    'access-control-allow-origin': new URL(base).origin,
+    'access-control-allow-methods': 'POST, OPTIONS',
+    'access-control-allow-headers': 'apikey, authorization, content-type'
+   };
+   if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+   const respond = json => route.fulfill({ json, headers: cors });
+   const body = request.postDataJSON();
+   const headers = await request.allHeaders();
+   if (url.pathname === '/auth/v1/token') {
+    assert.deepEqual(body, { auth_code: 'mock-code', code_verifier: 'mock-verifier' });
+    return respond({ access_token: 'mock-session' });
+   }
+   if (url.pathname.endsWith('/submit_stock_review')) {
+    assert.equal(headers.authorization, 'Bearer mock-session');
+    posted = body;
+    return respond(reviewId);
+   }
+   if (url.pathname.endsWith('/list_stock_reviews')) {
+    return respond(published ? [{
+     id: reviewId, name: posted.p_name, category: posted.p_category, stars: posted.p_stars,
+     helpful: votes, photo_count: 0, voted: Boolean(votes && headers.authorization)
+    }] : []);
+   }
+   if (url.pathname.endsWith('/read_stock_review')) {
+    assert.equal(body.p_review, reviewId);
+    return respond([{ comment: posted.p_comment, photos: [] }]);
+   }
+   if (url.pathname.endsWith('/set_stock_review_helpful')) {
+    assert.equal(headers.authorization, 'Bearer mock-session');
+    votes = body.p_vote ? 1 : 0;
+    return respond([{ helpful: votes, voted: Boolean(votes) }]);
+   }
+   return route.abort();
+  });
+  const shared = await reviewContext.newPage();
+  shared.on('dialog', dialog => dialog.accept());
+  await shared.goto(base + '?code=mock-code');
+  await shared.locator('#reviewSignOut').waitFor();
+  assert.equal(new URL(shared.url()).searchParams.has('code'), false);
+  await shared.locator('#reviewFormFold summary').click();
+  await shared.locator('#reviewProduct').fill('公開申請テスト');
+  await shared.locator('#reviewCategory').selectOption('水');
+  await shared.locator('#reviewStars').selectOption('4');
+  await shared.locator('#reviewComment').fill('テスト用の感想');
+  await shared.locator('#reviewUsed').check();
+  await shared.locator('#reviewShare').click();
+  await shared.locator('#reviewFormStatus').getByText('公開申請を受け付けました。').waitFor();
+  assert.deepEqual(posted, { p_name: '公開申請テスト', p_category: '水', p_comment: 'テスト用の感想', p_stars: 4, p_photos: [], p_used: true });
+  assert.equal(await shared.locator('#sharedReviewList summary').count(), 0);
+  published = true;
+  await shared.reload();
+  await shared.locator('#sharedReviewList summary').getByText('公開申請テスト').click();
+  const vote = shared.getByRole('button', { name: '👍 役に立った', exact: true });
+  await vote.click();
+  await shared.getByRole('button', { name: '👍 役に立ったを取り消す', exact: true }).click();
+  await vote.waitFor();
+  assert.equal(votes, 0);
+  published = false;
+  await shared.reload();
+  await shared.locator('#sharedReviewStatus').getByText('公開されたレビューはありません。').waitFor();
+  await shared.locator('#reviewSignOut').click();
+  await shared.locator('#sharedReviewLogin').waitFor();
+  await reviewContext.close();
+  console.log('PASS: simulated OAuth callback, public review request, moderation visibility, vote and sign-out');
+
   const offlineContext = await browser.newContext();
   const offlinePage = await offlineContext.newPage();
   await offlinePage.goto(base);
