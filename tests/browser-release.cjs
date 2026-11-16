@@ -216,7 +216,7 @@ async function run() {
   assert.deepEqual(posted, { p_name: '公開申請テスト', p_category: '水', p_comment: 'テスト用の感想', p_stars: 4, p_photos: [], p_used: true });
   assert.equal(await shared.locator('#sharedReviewList summary').count(), 0);
   published = true;
-  await shared.reload();
+  await shared.goto(base + '?page=reviews');
   await shared.locator('#sharedReviewList summary').getByText('公開申請テスト').click();
   const vote = shared.getByRole('button', { name: '👍 役に立った', exact: true });
   await vote.click();
@@ -224,7 +224,7 @@ async function run() {
   await vote.waitFor();
   assert.equal(votes, 0);
   published = false;
-  await shared.reload();
+  await shared.goto(base + '?page=reviews');
   await shared.locator('#sharedReviewStatus').getByText('公開されたレビューはありません。').waitFor();
   await shared.locator('#reviewSignOut').click();
   await shared.locator('#sharedReviewLogin').waitFor();
