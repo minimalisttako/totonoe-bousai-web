@@ -126,6 +126,26 @@ async function run() {
   await page.locator('#reviewUsed').check();
   await page.locator('#reviewSave').click();
   await page.locator('#reviewList summary').getByText('写真付きのテスト用ランタン').waitFor();
+  const savedReview = page.locator('#reviewList details').filter({ hasText: '写真付きのテスト用ランタン' });
+  await savedReview.locator('summary').click();
+  await savedReview.getByRole('button', { name: 'このレビューを公開申請する' }).click();
+  await page.locator('#sharedReviewLogin[open] #reviewGoogleLogin').waitFor();
+  assert.equal(await page.locator('#reviewGoogleLogin').evaluate(el => el === document.activeElement), true);
+  await page.evaluate(() => sessionStorage.setItem('totonoe-review-session', 'test-session'));
+  let submittedReview;
+  await context.route('https://*.supabase.co/rest/v1/rpc/submit_stock_review', async route => {
+   submittedReview = route.request().postDataJSON();
+   await route.fulfill({ json: 'test-review', headers: { 'access-control-allow-origin': '*' } });
+  });
+  await page.reload();
+  await savedReview.locator('summary').click();
+  page.once('dialog', dialog => dialog.accept());
+  await savedReview.getByRole('button', { name: 'このレビューを公開申請する' }).click();
+  await savedReview.getByRole('status').getByText('公開申請を受け付けました。').waitFor();
+  assert.deepEqual(submittedReview, {
+   p_name: '写真付きのテスト用ランタン', p_category: 'その他', p_comment: '写真付きバックアップの確認',
+   p_stars: 4, p_photos: [photo.src], p_used: true
+  });
   await page.getByRole('link', { name: 'レビューと写真のバックアップ' }).click();
   const [download] = await Promise.all([
    page.waitForEvent('download'),
