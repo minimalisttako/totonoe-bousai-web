@@ -1,0 +1,112 @@
+name: Native build checks
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/native-build-check.yml'
+      - 'package*.json'
+      - 'capacitor.config.json'
+      - 'scripts/**'
+      - 'tests/*backup-migration.cjs'
+      - 'tests/web-migration-fixture.cjs'
+      - '*.html'
+      - 'assets/**'
+      - 'manifest.webmanifest'
+      - 'offline-worker.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run native:add:android
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4
+        with:
+          packages: 'platform-tools platforms;android-36'
+      - name: Compile Android debug APK
+        working-directory: android
+        run: bash gradlew :app:assembleDebug --no-daemon
+      - run: test -s android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Install browser test client
+        run: npm install --prefix "$RUNNER_TEMP/toto-browser" --no-audit --no-fund playwright@1.55.1
+      - name: Enable emulator hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Verify Web backup migration in Android
+        uses: reactivecircus/android-emulator-runner@4c44018e59b437e86cdfc41da381398f93ed8808 # v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          script: TOTO_PLAYWRIGHT_PATH="$RUNNER_TEMP/toto-browser/node_modules/playwright" TOTO_CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)" node tests/android-backup-migration.cjs
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: xcodebuild -version
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build:web
+      - run: npx cap add ios --packagemanager SPM
+      - name: Prepare iOS migration test build
+        run: |
+          npm install --prefix "$RUNNER_TEMP/toto-browser" --no-audit --no-fund playwright@1.55.1
+          node "$RUNNER_TEMP/toto-browser/node_modules/playwright/cli.js" install chromium
+          TOTO_PLAYWRIGHT_PATH="$RUNNER_TEMP/toto-browser/node_modules/playwright" node tests/ios-backup-migration.cjs
+      - name: Compile iOS Simulator app
+        run: >
+          xcodebuild -project ios/App/App.xcodeproj -scheme App
+          -configuration Debug -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO build
+      - run: test -d ios/build/Build/Products/Debug-iphonesimulator/App.app
+      - name: Verify Web backup migration in iOS
+        timeout-minutes: 6
+        run: |
+          simulator=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; print(next(d["udid"] for devices in json.load(sys.stdin)["devices"].values() for d in devices if d["name"].startswith("iPhone")))')
+          echo "Starting iPhone simulator $simulator"
+          xcrun simctl boot "$simulator"
+          app_id=jp.minimalisttako.totonoebousai
+          app=ios/build/Build/Products/Debug-iphonesimulator/App.app
+          installed=false
+          for attempt in {1..45}; do
+            if xcrun simctl install "$simulator" "$app"; then
+              installed=true
+              break
+            fi
+            sleep 2
+          done
+          test "$installed" = true
+          container=$(xcrun simctl get_app_container "$simulator" "$app_id" data)
+          for phase in import verify; do
+            xcrun simctl launch "$simulator" "$app_id" "$phase"
+            result="$container/Documents/migration-$phase.txt"
+            for attempt in {1..40}; do
+              if test -f "$result"; then break; fi
+              sleep 1
+            done
+            if ! test -f "$result"; then
+              echo "No migration result for $phase"
+              exit 1
+            fi
+            cat "$result"
+            grep -q '^PASS:' "$result"
+            xcrun simctl terminate "$simulator" "$app_id"
+          done

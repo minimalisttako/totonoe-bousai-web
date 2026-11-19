@@ -70,6 +70,10 @@
 
 プライバシーポリシー：https://minimalisttako.github.io/totonoe-bousai-web/privacy.html
 
+アカウント削除案内URL：https://minimalisttako.github.io/totonoe-bousai-web/account-deletion.html
+
+本番の投稿管理SQL適用と実操作テストは未完了。
+
 ## その他の掲載前確認
 - 配信するネイティブ版でのデータ取扱いの再照合と、各ストアの申告
 - 販売価格、配信地域、販売者情報

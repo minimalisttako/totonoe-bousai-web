@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>レビュー管理のサーバー設定 | ととのえ防災</title><meta name="description" content="ととのえ防災の端末保存、公開レビュー、外部サービスへの送信、データ削除について。"><style>
+*{box-sizing:border-box}body{margin:0;background:#f5f8f3;color:#243c34;font-family:system-ui,sans-serif;font-size:16px;line-height:1.9}main{max-width:760px;margin:auto;padding:28px 20px 48px}h1{font-size:26px}h2{font-size:20px}section{background:white;border:1px solid #dbe4dc;border-radius:20px;padding:22px;margin:20px 0}a{color:#096cad;overflow-wrap:anywhere}li{margin:8px 0}p{overflow-wrap:anywhere}
+</style></head><body><main><h1>レビュー管理のサーバー設定</h1><p>ととのえ防災の管理者用設定です。ログイン用の鍵やパスワードの入力は不要です。</p><section><h2>設定手順</h2><ol><li>「設定SQLをコピー」を押します。</li><li>下の「SupabaseのSQL Editorを開く」から、新しいクエリへ貼り付けてRunを押します。</li><li>「Success」の表示を確認し、アプリのレビュー画面を再読み込みします。</li></ol><p>このSQLの実行だけでは、既存の投稿やアカウントは削除しません。本人による削除・投稿者ブロックを行う関数と、管理用の保存先を追加します。既存の公開承認は引き続き管理者が行います。</p><button id="copySql" type="button" style="font:inherit;padding:12px">設定SQLをコピー</button><p id="copyStatus" role="status"></p><p><a href="https://supabase.com/dashboard/project/hynlhllzdliutsdtjufo/sql/new" target="_blank" rel="noopener noreferrer">SupabaseのSQL Editorを開く</a></p><details><summary>設定SQLを表示</summary><textarea id="setupSql" readonly aria-label="設定用SQL" style="width:100%;height:320px;font-size:16px">begin;
+
+create table if not exists public.stock_review_blocks (
+  blocker uuid not null references auth.users(id) on delete cascade,
+  author uuid not null references auth.users(id) on delete cascade,
+  primary key (blocker, author), check (blocker &lt;&gt; author)
+);
+create table if not exists public.stock_review_suspensions (
+  author uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+alter table public.stock_review_blocks enable row level security;
+alter table public.stock_review_suspensions enable row level security;
+revoke all on public.stock_review_blocks, public.stock_review_suspensions from public, anon, authenticated;
+alter table public.stock_reviews add column if not exists rules_version text;
+alter table public.stock_reviews add column if not exists rules_accepted_at timestamptz;
+
+create or replace function public.stock_review_controls()
+returns integer language sql stable set search_path = &#x27;&#x27; as $$ select 2 $$;
+
+-- Require an existing account and live session even if a deleted account&#x27;s JWT has not expired.
+create or replace function public.require_stock_review_actor()
+returns uuid language plpgsql security definer set search_path = &#x27;&#x27; as $$
+declare actor uuid := auth.uid(); session_id uuid;
+begin
+  session_id := nullif(current_setting(&#x27;request.jwt.claims&#x27;,true),&#x27;&#x27;)::jsonb -&gt;&gt; &#x27;session_id&#x27;;
+  if actor is null or not exists(select 1 from auth.users u where u.id=actor)
+    or not exists(select 1 from auth.sessions s where s.id=session_id and s.user_id=actor)
+  then raise exception &#x27;Sign in again&#x27;; end if;
+  return actor;
+end; $$;
+revoke all on function public.require_stock_review_actor() from public, anon, authenticated;
+
+create or replace function public.list_stock_reviews(p_search text default &#x27;&#x27;, p_offset integer default 0)
+returns table(id uuid, name text, category text, stars integer, photo_count integer, helpful bigint, voted boolean)
+language sql stable security definer set search_path = &#x27;&#x27; as $$
+ select r.id,r.name,r.category,r.stars,cardinality(r.photos),
+ (select count(*) from public.stock_review_votes v where v.review_id=r.id),
+ exists(select 1 from public.stock_review_votes v where v.review_id=r.id and v.voter=auth.uid())
+ from public.stock_reviews r
+ where r.published
+ and not exists(select 1 from public.stock_review_suspensions s where s.author=r.author)
+ and not exists(select 1 from public.stock_review_blocks b where b.blocker=auth.uid() and b.author=r.author)
+ and strpos(lower(r.name || &#x27; &#x27; || r.category || &#x27; &#x27; || r.comment),lower(left(trim(coalesce(p_search,&#x27;&#x27;)),100)))&gt;0
+ order by r.created_at desc,r.id desc limit 16 offset greatest(0,least(coalesce(p_offset,0),10000));
+$$;
+create or replace function public.read_stock_review(p_review uuid)
+returns table(comment text, photos text[])
+language sql stable security definer set search_path = &#x27;&#x27; as $$
+ select r.comment,r.photos from public.stock_reviews r where r.id=p_review and r.published
+ and not exists(select 1 from public.stock_review_suspensions s where s.author=r.author)
+ and not exists(select 1 from public.stock_review_blocks b where b.blocker=auth.uid() and b.author=r.author);
+$$;
+
+create or replace function public.set_stock_review_author_block(p_review uuid)
+returns boolean language plpgsql security definer set search_path = &#x27;&#x27; as $$
+declare actor uuid := public.require_stock_review_actor(); target uuid;
+begin
+ select r.author into target from public.stock_reviews r where r.id=p_review and r.published;
+ if target is null or target=actor then raise exception &#x27;Cannot block this author&#x27;; end if;
+ insert into public.stock_review_blocks(blocker,author) values(actor,target) on conflict do nothing;
+ return true;
+end; $$;
+create or replace function public.clear_my_stock_review_blocks()
+returns boolean language plpgsql security definer set search_path = &#x27;&#x27; as $$
+declare actor uuid := public.require_stock_review_actor();
+begin delete from public.stock_review_blocks b where b.blocker=actor; return true; end; $$;
+
+create or replace function public.list_my_stock_reviews()
+returns table(id uuid,name text,published boolean,created_at timestamptz)
+language plpgsql stable security definer set search_path = &#x27;&#x27; as $$
+declare actor uuid := public.require_stock_review_actor();
+begin return query select r.id,r.name,r.published,r.created_at from public.stock_reviews r where r.author=actor order by r.created_at desc; end; $$;
+create or replace function public.delete_my_stock_review(p_review uuid)
+returns boolean language plpgsql security definer set search_path = &#x27;&#x27; as $$
+declare actor uuid := public.require_stock_review_actor(); removed uuid;
+begin
+ delete from public.stock_reviews r where r.id=p_review and r.author=actor returning r.id into removed;
+ if removed is null then raise exception &#x27;Review not owned or unavailable&#x27;; end if;
+ return true;
+end; $$;
+
+-- No caller-supplied account ID. Associated reviews, votes, blocks and sessions cascade.
+create or replace function public.delete_my_stock_review_account()
+returns boolean language plpgsql security definer set search_path = &#x27;&#x27; as $$
+declare actor uuid := public.require_stock_review_actor();
+begin
+ delete from auth.users u where u.id=actor;
+ if not found then raise exception &#x27;Account unavailable&#x27;; end if;
+ return true;
+end; $$;
+
+-- Preserve the existing endpoint for older clients, including moderation restrictions.
+create or replace function public.submit_stock_review(p_name text,p_category text,p_comment text,p_stars integer,p_photos text[],p_used boolean)
+returns uuid language plpgsql security definer set search_path = &#x27;&#x27; as $$
+declare actor uuid := public.require_stock_review_actor(); result uuid;
+begin
+ if exists(select 1 from public.stock_review_suspensions s where s.author=actor) then raise exception &#x27;Posting suspended&#x27;; end if;
+ if p_used is distinct from true then raise exception &#x27;Usage confirmation required&#x27;; end if;
+ if p_photos is null or cardinality(p_photos)&gt;3 or exists(select 1 from unnest(p_photos) photo where photo is null or char_length(photo)&gt;200000 or photo !~ &#x27;^data:image/jpeg;base64,/9j/[A-Za-z0-9+/]+={0,2}$&#x27;) then raise exception &#x27;Invalid review photos&#x27;; end if;
+ perform pg_advisory_xact_lock(hashtextextended(actor::text,0));
+ if exists(select 1 from public.stock_reviews r where r.author=actor and r.created_at&gt;now()-interval &#x27;30 seconds&#x27;) then raise exception &#x27;Please wait before posting again&#x27;; end if;
+ insert into public.stock_reviews(author,name,category,comment,stars,photos,used) values(actor,trim(p_name),p_category,trim(p_comment),p_stars,p_photos,true) returning id into result;
+ return result;
+end; $$;
+create or replace function public.submit_stock_review_v2(p_name text,p_category text,p_comment text,p_stars integer,p_photos text[],p_used boolean,p_rules_version text)
+returns uuid language plpgsql security definer set search_path = &#x27;&#x27; as $$
+declare result uuid;
+begin
+ if p_rules_version is distinct from &#x27;2026-11-19&#x27; then raise exception &#x27;Accept current posting rules&#x27;; end if;
+ result:=public.submit_stock_review(p_name,p_category,p_comment,p_stars,p_photos,p_used);
+ update public.stock_reviews set rules_version=p_rules_version,rules_accepted_at=now() where id=result;
+ return result;
+end; $$;
+create or replace function public.set_stock_review_helpful(p_review uuid,p_vote boolean)
+returns table(helpful bigint,voted boolean) language plpgsql security definer set search_path = &#x27;&#x27; as $$
+declare actor uuid := public.require_stock_review_actor();
+begin
+ if p_vote is null then raise exception &#x27;Vote required&#x27;; end if;
+ if exists(select 1 from public.stock_review_suspensions s where s.author=actor) then raise exception &#x27;Voting suspended&#x27;; end if;
+ if not exists(select 1 from public.read_stock_review(p_review)) then raise exception &#x27;Review unavailable&#x27;; end if;
+ if p_vote then insert into public.stock_review_votes(review_id,voter) values(p_review,actor) on conflict do nothing;
+ else delete from public.stock_review_votes v where v.review_id=p_review and v.voter=actor; end if;
+ return query select count(*),coalesce(bool_or(v.voter=actor),false) from public.stock_review_votes v where v.review_id=p_review;
+end; $$;
+
+revoke all on function public.stock_review_controls(),public.set_stock_review_author_block(uuid),public.clear_my_stock_review_blocks(),public.list_my_stock_reviews(),public.delete_my_stock_review(uuid),public.delete_my_stock_review_account(),public.submit_stock_review_v2(text,text,text,integer,text[],boolean,text) from public,anon,authenticated;
+grant execute on function public.stock_review_controls() to anon,authenticated;
+grant execute on function public.set_stock_review_author_block(uuid),public.clear_my_stock_review_blocks(),public.list_my_stock_reviews(),public.delete_my_stock_review(uuid),public.delete_my_stock_review_account(),public.submit_stock_review_v2(text,text,text,integer,text[],boolean,text) to authenticated;
+-- Original function ACLs are preserved by CREATE OR REPLACE.
+notify pgrst,&#x27;reload schema&#x27;;
+commit;
+</textarea></details></section><p><a href="./index.html?page=reviews">アプリのレビュー画面を開く</a></p></main><script>
+document.getElementById('copySql').onclick=async()=>{const field=document.getElementById('setupSql'),status=document.getElementById('copyStatus');try{await navigator.clipboard.writeText(field.value);status.textContent='コピーしました。SQL Editorの新しいクエリへ貼り付けてください。'}catch(e){field.closest('details').open=true;field.focus();field.select();status.textContent='SQLを選択しました。コピーしてSQL Editorへ貼り付けてください。'}};
+</script></body></html>

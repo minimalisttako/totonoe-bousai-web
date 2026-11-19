@@ -8,7 +8,7 @@ assert.equal(config.webDir, 'native-web');
 assert(!config.server?.url, 'Production shell must bundle local assets');
 assert(!config.server?.cleartext, 'No cleartext override');
 const dirs = ['native-web', 'android/app/src/main/assets/public', 'ios/App/App/public'];
-const files = ['index.html','manifest.webmanifest','offline-worker.js','support.html','privacy.html'];
+const files = ['index.html','manifest.webmanifest','offline-worker.js','support.html','privacy.html','review-rules.html','account-deletion.html'];
 function walk(dir) { return fs.readdirSync(path.join(root, dir), {withFileTypes:true}).flatMap(e => e.isDirectory() ? walk(dir+'/'+e.name) : [dir+'/'+e.name]); }
 files.push(...walk('assets'));
 for(const dir of dirs) {
