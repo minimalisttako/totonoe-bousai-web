@@ -194,7 +194,7 @@ async function run() {
   await restorePage.locator('#reviewBackupImport').click();
   await restorePage.locator('#reviewBackupStatus').getByText('3件を追加しました。重複 0件。').waitFor();
   await restorePage.locator('#reviewPasteFold summary').click();
-  const recovered = { ...exported.reviews[0], name: 'たまごっち', comment: 'びっちりばっちりたまごっち', stars: 5 };
+  const recovered = { ...exported.reviews.find(review => review.photos.length), name: 'たまごっち', comment: 'びっちりばっちりたまごっち', stars: 5 };
   await restorePage.locator('#reviewBackupText').fill(JSON.stringify([recovered]));
   await restorePage.locator('#reviewBackupPaste').click();
   await restorePage.locator('#reviewBackupStatus').getByText('1件を追加しました。重複 0件。').waitFor();
