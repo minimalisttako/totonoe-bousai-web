@@ -274,11 +274,15 @@ async function run() {
   const otherId='40000000-0000-0000-0000-000000000001',ownId='40000000-0000-0000-0000-000000000002';
   await controlsContext.addInitScript(()=>{
    localStorage.setItem('toto-tutorial-v1',JSON.stringify({version:2,step:4,completed:true}));
+   localStorage.setItem('toto-weather-location-v1',JSON.stringify({office:'400000',area:'400010',station:'',warningCity:'4013000'}));
+   localStorage.setItem('totonoe-hazard-confirmed','4013000');
    sessionStorage.setItem('totonoe-review-session','test-token');
   });
   await controlsContext.route('**/*',async route=>{
    if(route.request().url().startsWith(base))return route.continue();
-   const name=new URL(route.request().url()).pathname.split('/').pop();
+   const pathname=new URL(route.request().url()).pathname;
+   if(!pathname.startsWith('/rest/v1/rpc/')||route.request().method()!=='POST')return route.abort();
+   const name=pathname.split('/').pop();
    const body=route.request().postDataJSON();
    let result;
    if(name==='stock_review_controls')result=2;
@@ -297,6 +301,7 @@ async function run() {
   });
   const controlPage=await controlsContext.newPage();
   await controlPage.goto(base+'?page=reviews');
+  await controlPage.locator('#reviews').waitFor();
   await controlPage.locator('#reviewAccountControls').waitFor();
   await controlPage.locator('#sharedReviewList summary').click();
   controlPage.once('dialog',dialog=>dialog.accept());
