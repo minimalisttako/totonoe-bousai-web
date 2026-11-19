@@ -1233,6 +1233,7 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 </details>
 <button class="secondary" id="reviewSignOut" type="button" hidden>ログアウト</button>
 </div>
+<div class="card"><h2>公開投稿とアカウント</h2><p class="notice">端末内のレビューと、送信済みの投稿は別に管理します。</p><p id="reviewAccountStatus" class="notice" role="status"></p><div id="reviewAccountControls" hidden><button class="secondary" type="button" id="reviewMyPosts">送信済みの自分の投稿を見る</button><div id="reviewMyPostList"></div><button class="secondary" type="button" id="reviewClearBlocks">投稿者のブロックをすべて解除</button><button class="secondary" type="button" id="reviewDeleteAccount">アプリ側アカウントを削除</button></div><p id="reviewControlsSetup" class="notice">投稿・アカウント削除機能は準備中です。<a href="./support.html#review-help">送信済みデータの削除相談</a></p><p><a href="./review-rules.html">公開投稿のルール</a></p></div>
 <details id="reviewFormFold" class="card review-fold"><summary>＋ 使った備蓄のレビューを書く</summary>
 <form id="stockReviewForm">
 <label class="supply-label" for="reviewProduct">商品・用品名</label>
@@ -2060,7 +2061,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v220');
+  const c=await caches.open('totonoe-offline-shell-v221');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -2086,8 +2087,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v220')){
-   const cache=await caches.open('totonoe-offline-shell-v220');
+  if(registration&&names.includes('totonoe-offline-shell-v221')){
+   const cache=await caches.open('totonoe-offline-shell-v221');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -3014,7 +3015,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v220'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v221'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3695,7 +3696,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v220');
+  const cache=await caches.open('totonoe-offline-shell-v221');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3716,17 +3717,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v220')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v221')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v220')?await caches.open('totonoe-offline-shell-v220'):null;
+  const cache=names.includes('totonoe-offline-shell-v221')?await caches.open('totonoe-offline-shell-v221'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v220'?'必須ファイル10件の保存とv220の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v220の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v221'?'必須ファイル10件の保存とv221の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v221の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3996,7 +3997,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v220';
+ const cacheName='totonoe-offline-shell-v221';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -4099,7 +4100,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v220';
+   const current='totonoe-offline-shell-v221';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -4640,7 +4641,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v220','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v221','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -4649,7 +4650,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v220';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v221';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -5554,6 +5555,8 @@ function reviewBackupRecords(payload){
   const verifierKey = 'totonoe-review-oauth-verifier';
   const signOut = $('reviewSignOut');
   const sessionKey = 'totonoe-review-session';
+  const accountControls=$('reviewAccountControls'),accountStatus=$('reviewAccountStatus'),myPostList=$('reviewMyPostList');
+  let controlsReady=false,accountGeneration=0,accountBusy=false;
   let accessToken = '';
   let offset = 0;
   let generation = 0;
@@ -5563,10 +5566,13 @@ function reviewBackupRecords(payload){
   const syncLogin = () => {
    login.hidden = Boolean(accessToken);
    signOut.hidden = !accessToken;
+   accountControls.hidden=!(accessToken&&controlsReady);
+   $('reviewControlsSetup').hidden=controlsReady;
+   if(controlsReady&&!accessToken)accountStatus.textContent='ログインすると、送信済みの投稿とアカウントを管理できます。';
   };
   syncLogin();
   const changeSession = token => {
-   accessToken = token;
+   accessToken = token;accountGeneration++;myPostList.replaceChildren();
    try{if(token)sessionStorage.setItem(sessionKey,token);else sessionStorage.removeItem(sessionKey)}catch(e){}
    syncLogin();
   };
@@ -5582,6 +5588,51 @@ function reviewBackupRecords(payload){
    return response.json();
   }
   const rpc=(name,body)=>request('/rest/v1/rpc/'+name,body);
+  request('/rest/v1/rpc/stock_review_controls',{},false).then(version=>{
+   controlsReady=version===2;syncLogin();
+  }).catch(()=>{/* Keep new server controls disabled until the migration is available. */});
+  async function loadMyPosts(){
+   const requestGeneration=++accountGeneration;
+   accountStatus.textContent='送信済みの投稿を確認中です。';
+   try{
+    const posts=await rpc('list_my_stock_reviews',{});
+    if(requestGeneration!==accountGeneration||!accessToken)return;
+    myPostList.replaceChildren();
+    for(const post of posts){
+     const entry=document.createElement('div');entry.className='review-item';
+     const label=text('p',post.name+'（'+(post.published?'承認済み':'非公開・審査待ち')+'）');
+     const remove=text('button','この送信済み投稿を削除','secondary');remove.type='button';
+     remove.onclick=async()=>{
+      if(!confirm('送信済みの「'+post.name+'」と写真・関連する投票をサーバーから削除します。元に戻せません。端末内のレビューは残ります。削除しますか？'))return;
+      remove.disabled=true;
+      try{if(await rpc('delete_my_stock_review',{p_review:post.id})!==true)throw Error('Unconfirmed');await loadMyPosts();await refreshShared();accountStatus.textContent='送信済みの投稿を削除しました。端末内の記録は残っています。'}
+      catch(e){accountStatus.textContent='削除結果を確認できませんでした。通信やログインを確認して、一覧を開き直してください。';remove.disabled=false}
+     };
+     entry.append(label,remove);myPostList.append(entry);
+    }
+    accountStatus.textContent=posts.length?'送信済みの投稿です。公開一覧での表示状態とは異なる場合があります。':'送信済みの投稿はありません。';
+   }catch(e){if(requestGeneration===accountGeneration)accountStatus.textContent='取得できませんでした。ログアウトしてから再ログインし、お試しください。'}
+  }
+  $('reviewMyPosts').onclick=loadMyPosts;
+  $('reviewClearBlocks').onclick=async()=>{
+   if(!confirm('このアカウントの投稿者ブロックをすべて解除しますか？'))return;
+   const button=$('reviewClearBlocks');button.disabled=true;
+   try{if(await rpc('clear_my_stock_review_blocks',{})!==true)throw Error('Unconfirmed');await refreshShared();accountStatus.textContent='投稿者のブロックを解除しました。'}
+   catch(e){accountStatus.textContent='解除結果を確認できませんでした。通信やログインを確認してください。'}
+   finally{button.disabled=false}
+  };
+  $('reviewDeleteAccount').onclick=async()=>{
+   if(accountBusy)return;
+   const answer=prompt('このアプリ側のアカウントと、送信済みの全投稿・写真・投票・ブロック設定を削除します。元に戻せません。端末内の備蓄・写真・レビューとGoogleアカウント自体は残ります。実行する場合は「削除」と入力してください。');
+   if(answer!=='削除')return;
+   accountBusy=true;const button=$('reviewDeleteAccount');button.disabled=true;
+   try{
+    if(await rpc('delete_my_stock_review_account',{})!==true)throw Error('Unconfirmed');
+    changeSession('');try{sessionStorage.removeItem(verifierKey)}catch(e){}
+    await refreshShared();accountStatus.textContent='アプリ側アカウントと送信済みデータを削除しました。端末内の記録とGoogleアカウントは残っています。';
+   }catch(e){accountStatus.textContent='削除結果を確認できませんでした。ログアウト・再ログインで状態を確認し、必要ならサポートへご連絡ください。'}
+   finally{accountBusy=false;button.disabled=false}
+  };
   googleLogin.onclick=async()=>{
    googleLogin.disabled=true;
    loginStatus.textContent='';
@@ -5679,6 +5730,17 @@ function reviewBackupRecords(payload){
      report.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 投稿の通報・相談')+'&body='+encodeURIComponent('対象レビューID：'+review.id+'\n商品名：'+review.name+'\n理由：\n');
      const reportLine=document.createElement('p');reportLine.append(report);
      detail.append(vote,reportLine);
+     if(controlsReady){
+      const block=text('button','この投稿者をブロック','secondary');block.type='button';
+      block.onclick=async()=>{
+       if(!accessToken){login.open=true;googleLogin.focus();return}
+       if(!confirm('この投稿者のレビューを、このアカウントの一覧に表示しないようにしますか？'))return;
+       block.disabled=true;
+       try{if(await rpc('set_stock_review_author_block',{p_review:review.id})!==true)throw Error('Unconfirmed');await refreshShared();feedStatus.textContent='この投稿者をブロックしました。'}
+       catch(e){feedStatus.textContent='ブロック結果を確認できませんでした。自分の投稿はブロックできません。通信やログインも確認してください。';block.disabled=false}
+      };
+      detail.append(block);
+     }
      row.append(detail);
      feedStatus.textContent='';
     }catch(e){feedStatus.textContent='詳細を読み込めませんでした。閉じてからもう一度開いてください。'}
@@ -5729,13 +5791,14 @@ function reviewBackupRecords(payload){
      feedback.textContent='レビューと写真を端末に保存しました。Googleでログインすると公開を申請できます。';
      login.open=true;googleLogin.focus();return false;
     }
-    if(!confirm('レビューと写真を端末に保存しました。管理者が承認すると、誰でも閲覧できます。公開を申請しますか？')){
+    if(!confirm('レビューと写真を端末に保存しました。管理者が承認すると、誰でも閲覧できます。投稿ルール（誹謗中傷・個人情報・無断転載・虚偽や危険な情報・宣伝目的の投稿は禁止）に同意して公開を申請しますか？')){
      feedback.textContent='レビューと写真を端末に保存しました。';
      return false;
     }
-    await rpc('submit_stock_review',{
+    await rpc(controlsReady?'submit_stock_review_v2':'submit_stock_review',{
      p_name:review.name,p_category:review.category,p_comment:review.comment,
-     p_stars:review.stars,p_photos:review.photos,p_used:review.used
+     p_stars:review.stars,p_photos:review.photos,p_used:review.used,
+     ...(controlsReady?{p_rules_version:'2026-11-19'}:{})
     });
     feedback.textContent='公開申請を受け付けました。承認後に掲載されます。端末にもレビューと写真を保存しています。';
     return true;

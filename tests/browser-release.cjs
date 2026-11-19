@@ -269,6 +269,74 @@ async function run() {
   console.log('PASS: public privacy/support pages fit mobile widths and report draft contains the selected review ID');
   await context.close();
 
+  const controlsContext=await browser.newContext({serviceWorkers:'block',viewport:{width:390,height:844}});
+  let blocked=false,myPostDeleted=false,deleteCalls=0,failDelete=false;
+  const otherId='40000000-0000-0000-0000-000000000001',ownId='40000000-0000-0000-0000-000000000002';
+  await controlsContext.addInitScript(()=>{
+   localStorage.setItem('toto-tutorial-v1',JSON.stringify({version:2,step:4,completed:true}));
+   sessionStorage.setItem('totonoe-review-session','test-token');
+  });
+  await controlsContext.route('**/*',async route=>{
+   if(route.request().url().startsWith(base))return route.continue();
+   const name=new URL(route.request().url()).pathname.split('/').pop();
+   const body=route.request().postDataJSON();
+   let result;
+   if(name==='stock_review_controls')result=2;
+   else if(name==='list_stock_reviews')result=blocked?[]:[{id:otherId,name:'他の投稿者の用品',category:'水',stars:4,photo_count:0,helpful:0,voted:false}];
+   else if(name==='read_stock_review')result=[{comment:'使用した感想',photos:[]}];
+   else if(name==='set_stock_review_author_block'){assert.equal(body.p_review,otherId);blocked=true;result=true;}
+   else if(name==='clear_my_stock_review_blocks'){blocked=false;result=true;}
+   else if(name==='list_my_stock_reviews')result=myPostDeleted?[]:[{id:ownId,name:'送信済みの用品',published:false}];
+   else if(name==='delete_my_stock_review'){assert.equal(body.p_review,ownId);myPostDeleted=true;result=true;}
+   else if(name==='delete_my_stock_review_account'){
+    assert.deepEqual(body,{});deleteCalls++;
+    if(failDelete)return route.fulfill({status:500,json:{message:'test failure'}});
+    result=true;
+   }else return route.abort();
+   return route.fulfill({json:result});
+  });
+  const controlPage=await controlsContext.newPage();
+  await controlPage.goto(base+'?page=reviews');
+  await controlPage.locator('#reviewAccountControls').waitFor();
+  await controlPage.locator('#sharedReviewList summary').click();
+  controlPage.once('dialog',dialog=>dialog.accept());
+  await controlPage.getByRole('button',{name:'この投稿者をブロック',exact:true}).click();
+  await controlPage.locator('#sharedReviewStatus').getByText('この投稿者をブロックしました。',{exact:true}).waitFor();
+  assert.equal(await controlPage.locator('#sharedReviewList summary').count(),0);
+  controlPage.once('dialog',dialog=>dialog.accept());
+  await controlPage.locator('#reviewClearBlocks').click();
+  await controlPage.locator('#sharedReviewList summary').waitFor();
+  await controlPage.locator('#reviewMyPosts').click();
+  await controlPage.getByText('送信済みの用品（非公開・審査待ち）',{exact:true}).waitFor();
+  controlPage.once('dialog',dialog=>dialog.accept());
+  await controlPage.getByRole('button',{name:'この送信済み投稿を削除',exact:true}).click();
+  await controlPage.locator('#reviewAccountStatus').getByText('送信済みの投稿を削除しました。端末内の記録は残っています。',{exact:true}).waitFor();
+  await controlPage.locator('#reviewFormFold summary').click();
+  await controlPage.locator('#reviewProduct').fill('端末に残す用品');
+  await controlPage.locator('#reviewStars').selectOption('5');
+  await controlPage.locator('#reviewComment').fill('端末に残す感想');
+  await controlPage.locator('#reviewUsed').check();
+  await controlPage.locator('#reviewSave').click();
+  await controlPage.locator('#reviewList .review-title').getByText('端末に残す用品',{exact:true}).waitFor();
+  controlPage.once('dialog',dialog=>dialog.dismiss());
+  await controlPage.locator('#reviewDeleteAccount').click();
+  assert.equal(deleteCalls,0);
+  failDelete=true;
+  controlPage.once('dialog',dialog=>dialog.accept('削除'));
+  await controlPage.locator('#reviewDeleteAccount').click();
+  await controlPage.locator('#reviewAccountStatus').getByText('削除結果を確認できませんでした。',{exact:false}).waitFor();
+  assert.equal(await controlPage.evaluate(()=>sessionStorage.getItem('totonoe-review-session')),'test-token');
+  failDelete=false;
+  controlPage.once('dialog',dialog=>dialog.accept('削除'));
+  await controlPage.locator('#reviewDeleteAccount').click();
+  await controlPage.locator('#reviewAccountStatus').getByText('アプリ側アカウントと送信済みデータを削除しました。',{exact:false}).waitFor();
+  assert.equal(deleteCalls,2);
+  assert.equal(await controlPage.evaluate(()=>sessionStorage.getItem('totonoe-review-session')),null);
+  assert.equal(await controlPage.locator('#reviewAccountControls').isVisible(),false);
+  assert.equal(await controlPage.locator('#reviewList .review-title').textContent(),'端末に残す用品');
+  console.log('PASS: block/clear, own-post deletion, cancelled/failed/successful account deletion and retained local reviews');
+  await controlsContext.close();
+
   const offlineContext = await browser.newContext();
   const offlinePage = await offlineContext.newPage();
   await offlinePage.goto(base);

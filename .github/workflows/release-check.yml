@@ -31,3 +31,23 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/toto-browser" --no-audit --no-fund playwright@1.55.1
       - name: Verify first-use flows in Chromium
         run: TOTO_PLAYWRIGHT_PATH="$RUNNER_TEMP/toto-browser/node_modules/playwright" TOTO_CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)" node tests/browser-release.cjs
+
+  review-database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify review permissions and account deletion in an isolated database
+        env:
+          PGPASSWORD: postgres
+        run: psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -f tests/review-controls-db.sql
