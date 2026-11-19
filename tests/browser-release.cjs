@@ -146,6 +146,36 @@ async function run() {
    p_name: '写真付きのテスト用ランタン', p_category: 'その他', p_comment: '写真付きバックアップの確認',
    p_stars: 4, p_photos: [photo.src], p_used: true
   });
+  let rejectSubmission = true;
+  await context.route('https://*.supabase.co/rest/v1/rpc/submit_stock_review', route =>
+   route.fulfill({ status: rejectSubmission ? 500 : 200, json: 'test-direct-review',
+    headers: { 'access-control-allow-origin': '*' } }));
+  if(!await page.locator('#reviewProduct').isVisible())await page.locator('#reviewFormFold summary').click();
+  await page.locator('#reviewProduct').fill('公開申請から保存するレビュー');
+  await page.locator('#reviewStars').selectOption('5');
+  await page.locator('#reviewComment').fill('申請失敗後も端末に残す');
+  await page.locator('#reviewUsed').check();
+  await page.locator('#reviewPhotoInput').setInputFiles({
+   name: 'test-photo.png', mimeType: 'image/png', buffer: Buffer.from(samplePhoto, 'base64')
+  });
+  await page.locator('#reviewFormStatus').getByText('写真 1/3枚を準備しました。').waitFor();
+  page.once('dialog', dialog => dialog.accept());
+  await page.locator('#reviewShare').click();
+  await page.locator('#reviewFormStatus').getByText('公開申請できませんでした。', { exact: false }).waitFor();
+  const directReview = page.locator('#reviewList details').filter({ hasText: '公開申請から保存するレビュー' });
+  await directReview.locator('summary').waitFor();
+  assert.equal(await page.locator('#reviewProduct').inputValue(), '公開申請から保存するレビュー');
+  rejectSubmission = false;
+  page.once('dialog', dialog => dialog.accept());
+  await page.locator('#reviewShare').click();
+  await page.locator('#reviewFormStatus').getByText('公開申請を受け付けました。', { exact: false }).waitFor();
+  assert.equal(await page.locator('#reviewList details').count(), 3);
+  await page.locator('#reviewSignOut').click();
+  await page.reload();
+  await directReview.locator('summary').click();
+  assert.equal(await directReview.locator('img').getAttribute('src'), photo.src);
+  assert.equal(await page.locator('#reviewList details').count(), 3);
+  console.log('PASS: direct submission keeps photos locally after failure, retry, sign-out and reload without duplicates');
   await page.getByRole('link', { name: 'レビューと写真のバックアップ' }).click();
   const [download] = await Promise.all([
    page.waitForEvent('download'),
@@ -162,7 +192,7 @@ async function run() {
    name: 'review-backup.json', mimeType: 'application/json', buffer: fs.readFileSync(backupPath)
   });
   await restorePage.locator('#reviewBackupImport').click();
-  await restorePage.locator('#reviewBackupStatus').getByText('2件を追加しました。重複 0件。').waitFor();
+  await restorePage.locator('#reviewBackupStatus').getByText('3件を追加しました。重複 0件。').waitFor();
   await restoreContext.close();
   console.log('PASS: review photo compression, local save, download and restore in a fresh browser context');
   assert.deepEqual(errors, []);
