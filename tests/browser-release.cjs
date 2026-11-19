@@ -239,6 +239,32 @@ async function run() {
   await offlinePage.locator('#tutorialSupport').getByText('トリケラです。', { exact: false }).waitFor();
   await offlinePage.locator('#tutorialDetail').getByText('シマエナガです。', { exact: false }).waitFor();
   assert.equal(await offlinePage.locator('#tutorialWelcomeBird').isVisible(), true);
+  for(let step=2;step<=4;step++){
+   await offlinePage.locator('#tutorialNext').click();
+   for(const width of [320,390]){
+    await offlinePage.setViewportSize({width,height:844});
+    const detail=await offlinePage.locator('#tutorialDetail').evaluate(el=>{
+     const parent=getComputedStyle(el.parentElement);
+     return {
+      mascotLayout:el.classList.contains('page-intro-line'),
+      width:el.getBoundingClientRect().width,
+      available:el.parentElement.clientWidth-parseFloat(parent.paddingLeft)-parseFloat(parent.paddingRight),
+      height:el.getBoundingClientRect().height
+     };
+    });
+    assert.equal(detail.mascotLayout,false);
+    assert.ok(detail.width>=detail.available-2,JSON.stringify(detail));
+    assert.ok(detail.height<240,JSON.stringify(detail));
+   }
+  }
+  await offlinePage.locator('#tutorialBack').click();
+  await offlinePage.locator('#tutorialBack').click();
+  await offlinePage.locator('#tutorialBack').click();
+  assert.equal(await offlinePage.locator('#tutorialDetail').evaluate(el=>el.classList.contains('page-intro-line')),true);
+  await offlinePage.locator('#tutorialNext').click();
+  assert.equal(await offlinePage.locator('#tutorialDetail').evaluate(el=>el.classList.contains('page-intro-line')),false);
+  console.log('PASS: tutorial detail uses full width after mascot introduction at 320px and 390px, including back navigation');
+
   await offlinePage.locator('#tutorialDialog[open]').getByRole('button', { name: '災害時モードをすぐ開く' }).click();
   await offlinePage.locator('#emergency').waitFor();
   console.log('PASS: offline restart and access to disaster mode before initial setup');
