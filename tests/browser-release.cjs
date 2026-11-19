@@ -233,6 +233,12 @@ async function run() {
   await offlinePage.reload();
   await offlinePage.locator('#home').waitFor();
   assert.equal(await offlinePage.locator('#gameDialogueText').textContent() === '', false);
+  await offlinePage.locator('#tutorialNext').click();
+  await offlinePage.locator('#tutorialTitle').getByText('はじめまして！', { exact: true }).waitFor();
+  await offlinePage.locator('#tutorialMain').getByText('たこです！', { exact: false }).waitFor();
+  await offlinePage.locator('#tutorialSupport').getByText('トリケラです。', { exact: false }).waitFor();
+  await offlinePage.locator('#tutorialDetail').getByText('シマエナガです。', { exact: false }).waitFor();
+  assert.equal(await offlinePage.locator('#tutorialWelcomeBird').isVisible(), true);
   await offlinePage.locator('#tutorialDialog[open]').getByRole('button', { name: '災害時モードをすぐ開く' }).click();
   await offlinePage.locator('#emergency').waitFor();
   console.log('PASS: offline restart and access to disaster mode before initial setup');
