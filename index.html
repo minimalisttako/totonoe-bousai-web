@@ -1213,7 +1213,7 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 </div></details>
 </section>
 <section id="reviews" class="hidden">
-<div class="card review-intro"><h2>みんなの備蓄レビュー</h2><p class="notice">レビューは端末に保存できます。Googleでログインすると公開申請や「役に立った」の投票ができます。</p><button class="secondary" type="button" onclick="show('supplies')">← 備蓄ページへ戻る</button></div>
+<div class="card review-intro"><h2>みんなの備蓄レビュー</h2><p class="notice">公開申請すると、レビューと写真をこの端末にも保存します。Googleでログインすると公開申請や「役に立った」の投票ができます。</p><button class="secondary" type="button" onclick="show('supplies')">← 備蓄ページへ戻る</button></div>
 <div class="card" id="sharedReviewPanel" hidden>
 <h2>みんなの投稿</h2>
 <label class="supply-label" for="sharedReviewSearch">公開レビューを検索</label>
@@ -2050,7 +2050,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v213');
+  const c=await caches.open('totonoe-offline-shell-v214');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -2076,8 +2076,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v213')){
-   const cache=await caches.open('totonoe-offline-shell-v213');
+  if(registration&&names.includes('totonoe-offline-shell-v214')){
+   const cache=await caches.open('totonoe-offline-shell-v214');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -2993,7 +2993,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v213'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v214'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3674,7 +3674,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v213');
+  const cache=await caches.open('totonoe-offline-shell-v214');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3695,17 +3695,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v213')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v214')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v213')?await caches.open('totonoe-offline-shell-v213'):null;
+  const cache=names.includes('totonoe-offline-shell-v214')?await caches.open('totonoe-offline-shell-v214'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v213'?'必須ファイル10件の保存とv213の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v213の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v214'?'必須ファイル10件の保存とv214の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v214の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3975,7 +3975,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v213';
+ const cacheName='totonoe-offline-shell-v214';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -4078,7 +4078,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v213';
+   const current='totonoe-offline-shell-v214';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -4619,7 +4619,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v213','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v214','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -4628,7 +4628,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v213';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v214';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
@@ -5329,6 +5329,25 @@ function reviewBackupRecords(payload){
    tx.oncomplete=()=>resolve(req.result);tx.onabort=()=>reject(tx.error);
   });
  }
+ // Match the backup merge rule so retries keep one local copy.
+ async function preserveReview(review){
+  const db=await database();
+  const record={name:review.name,category:review.category,comment:review.comment,
+   stars:review.stars,photos:review.photos.slice(),used:review.used};
+  const signature=JSON.stringify(Object.values(record));
+  return new Promise((resolve,reject)=>{
+   const tx=db.transaction('reviews','readwrite'),items=tx.objectStore('reviews');
+   const request=items.getAll();
+   tx.oncomplete=()=>resolve();
+   tx.onabort=()=>reject(tx.error);
+   request.onsuccess=()=>{
+    const exists=request.result.some(r=>JSON.stringify([
+     r.name,r.category,r.comment,r.stars,r.photos,r.used
+    ])===signature);
+    if(!exists)items.add(record);
+   };
+  });
+ }
  const reviewBackupFile=$('reviewBackupFile'),reviewBackupImport=$('reviewBackupImport'),reviewBackupStatus=$('reviewBackupStatus'),reviewBackupSave=$('reviewBackupSave');
  const maxReviewBackupBytes=20000000;
  let reviewBackupBusy=false;
@@ -5655,23 +5674,32 @@ function reviewBackupRecords(payload){
   search.addEventListener('input',()=>{clearTimeout(searchTimer);generation++;searchTimer=setTimeout(refreshShared,250)});
   submitPublicReview=async (review, feedback)=>{
    if(processing||saving)return false;
-   if(!accessToken){
-    feedback.textContent='Googleでログインすると公開を申請できます。';
-    login.open=true;googleLogin.focus();return false;
-   }
-   if(!confirm('レビューと添付写真を送信します。管理者が承認すると、誰でも閲覧できます。公開を申請しますか？'))return false;
    saving=true;
    renderPhotos();
    share.disabled=true;
    try{
+    try{await preserveReview(review)}
+    catch(e){
+     feedback.textContent='端末に保存できませんでした。入力内容を残しています。端末の空き容量をご確認ください。';
+     return false;
+    }
+    if(!review.id){$('reviewSearch').value='';limit=15;await load()}
+    if(!accessToken){
+     feedback.textContent='レビューと写真を端末に保存しました。Googleでログインすると公開を申請できます。';
+     login.open=true;googleLogin.focus();return false;
+    }
+    if(!confirm('レビューと写真を端末に保存しました。管理者が承認すると、誰でも閲覧できます。公開を申請しますか？')){
+     feedback.textContent='レビューと写真を端末に保存しました。';
+     return false;
+    }
     await rpc('submit_stock_review',{
      p_name:review.name,p_category:review.category,p_comment:review.comment,
      p_stars:review.stars,p_photos:review.photos,p_used:review.used
     });
-    feedback.textContent='公開申請を受け付けました。承認後に掲載されます。';
+    feedback.textContent='公開申請を受け付けました。承認後に掲載されます。端末にもレビューと写真を保存しています。';
     return true;
    }catch(e){
-    feedback.textContent='送信できませんでした。入力内容は残っています。通信やログインを確認してください。';
+    feedback.textContent='公開申請できませんでした。レビューと写真は端末に保存しています。通信やログインを確認してください。';
     return false;
    }finally{
     saving=false;share.disabled=false;renderPhotos();
