@@ -8,6 +8,6 @@ if (!html.includes('<head>') || !html.includes('</head>')) throw Error('Missing 
 fs.rmSync(out, {recursive:true, force:true});
 fs.mkdirSync(out, {recursive:true});
 fs.writeFileSync(path.join(out, 'index.html'), html);
-for (const file of ['manifest.webmanifest', 'offline-worker.js', 'support.html']) fs.copyFileSync(path.join(root,file),path.join(out,file));
+for (const file of ['manifest.webmanifest', 'offline-worker.js', 'support.html','privacy.html']) fs.copyFileSync(path.join(root,file),path.join(out,file));
 fs.cpSync(path.join(root, 'assets'), path.join(out, 'assets'), {recursive:true});
 console.log('Prepared bundled web assets in native-web; no remote server URL configured.');

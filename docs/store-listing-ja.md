@@ -66,10 +66,12 @@
 
 サポートURL：https://minimalisttako.github.io/totonoe-bousai-web/support.html
 
-受信・返信の確認は未実施。
+受信・返信は利用者がテスト完了（2026年11月19日）。
+
+プライバシーポリシー：https://minimalisttako.github.io/totonoe-bousai-web/privacy.html
 
 ## その他の掲載前確認
-- プライバシーポリシーのURLと、実際の保存・送信内容に沿った各ストアの申告
+- 配信するネイティブ版でのデータ取扱いの再照合と、各ストアの申告
 - 販売価格、配信地域、販売者情報
 - 正式なストア用アイコンと起動画面
 - ネイティブ版のログイン方法。変更した場合は上の掲載原稿も更新する
