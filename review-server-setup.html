@@ -1,7 +1,18 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>レビュー管理のサーバー設定 | ととのえ防災</title><meta name="description" content="ととのえ防災の端末保存、公開レビュー、外部サービスへの送信、データ削除について。"><style>
 *{box-sizing:border-box}body{margin:0;background:#f5f8f3;color:#243c34;font-family:system-ui,sans-serif;font-size:16px;line-height:1.9}main{max-width:760px;margin:auto;padding:28px 20px 48px}h1{font-size:26px}h2{font-size:20px}section{background:white;border:1px solid #dbe4dc;border-radius:20px;padding:22px;margin:20px 0}a{color:#096cad;overflow-wrap:anywhere}li{margin:8px 0}p{overflow-wrap:anywhere}
-</style></head><body><main><h1>レビュー管理のサーバー設定</h1><p>ととのえ防災の管理者用設定です。ログイン用の鍵やパスワードの入力は不要です。</p><section><h2>設定手順</h2><ol><li>「設定SQLをコピー」を押します。</li><li>下の「SupabaseのSQL Editorを開く」から、新しいクエリへ貼り付けてRunを押します。</li><li>「Success」の表示を確認し、アプリのレビュー画面を再読み込みします。</li></ol><p>このSQLの実行だけでは、既存の投稿やアカウントは削除しません。本人による削除・投稿者ブロックを行う関数と、管理用の保存先を追加します。既存の公開承認は引き続き管理者が行います。</p><button id="copySql" type="button" style="font:inherit;padding:12px">設定SQLをコピー</button><p id="copyStatus" role="status"></p><p><a href="https://supabase.com/dashboard/project/hynlhllzdliutsdtjufo/sql/new" target="_blank" rel="noopener noreferrer">SupabaseのSQL Editorを開く</a></p><details><summary>設定SQLを表示</summary><textarea id="setupSql" readonly aria-label="設定用SQL" style="width:100%;height:320px;font-size:16px">begin;
+</style></head><body><main><h1>レビュー管理のサーバー設定</h1><p>ととのえ防災の管理者用設定です。ログイン用の鍵やパスワードの入力は不要です。</p>
+<section id="native-login"><h2>iOS・Android版のログイン設定</h2>
+<p>ストア版でGoogleログインを使うための設定です。認証後にアプリへ戻るURLを登録します。</p>
+<ol><li>下の「戻り先URLをコピー」を押します。</li><li>「Supabaseの認証URL設定を開く」から、Redirect URLsの「Add URL」に貼り付けて保存します。</li><li>ストア版のテスト配布後、Googleログインからアプリのレビュー画面へ戻り、ログイン済みになることを確認します。</li></ol>
+<label for="nativeRedirectUrl">追加するRedirect URL</label>
+<input id="nativeRedirectUrl" readonly value="jp.minimalisttako.totonoebousai://review-auth/callback" style="display:block;width:100%;font:inherit;margin:8px 0;padding:10px">
+<button id="copyNativeRedirect" type="button" style="font:inherit;padding:12px">戻り先URLをコピー</button><p id="nativeCopyStatus" role="status"></p>
+<p><a href="https://supabase.com/dashboard/project/hynlhllzdliutsdtjufo/auth/url-configuration" target="_blank" rel="noopener noreferrer">Supabaseの認証URL設定を開く</a></p>
+<p>Web版のURLもRedirect URLsに登録します。</p><p><code>https://minimalisttako.github.io/totonoe-bousai-web/</code></p>
+<p>正式なアプリIDを変更する場合は、アプリとこの戻り先URLを同じIDにそろえます。</p>
+<p><a href="https://supabase.com/docs/guides/auth/redirect-urls" target="_blank" rel="noopener noreferrer">Supabase公式の設定説明</a></p></section>
+<section><h2>レビュー管理SQLの設定手順</h2><ol><li>「設定SQLをコピー」を押します。</li><li>下の「SupabaseのSQL Editorを開く」から、新しいクエリへ貼り付けてRunを押します。</li><li>「Success」の表示を確認し、アプリのレビュー画面を再読み込みします。</li></ol><p>このSQLの実行だけでは、既存の投稿やアカウントは削除しません。本人による削除・投稿者ブロックを行う関数と、管理用の保存先を追加します。既存の公開承認は引き続き管理者が行います。</p><button id="copySql" type="button" style="font:inherit;padding:12px">設定SQLをコピー</button><p id="copyStatus" role="status"></p><p><a href="https://supabase.com/dashboard/project/hynlhllzdliutsdtjufo/sql/new" target="_blank" rel="noopener noreferrer">SupabaseのSQL Editorを開く</a></p><details><summary>設定SQLを表示</summary><textarea id="setupSql" readonly aria-label="設定用SQL" style="width:100%;height:320px;font-size:16px">begin;
 
 create table if not exists public.stock_review_blocks (
   blocker uuid not null references auth.users(id) on delete cascade,
@@ -135,4 +146,10 @@ notify pgrst,&#x27;reload schema&#x27;;
 commit;
 </textarea></details></section><p><a href="./index.html?page=reviews">アプリのレビュー画面を開く</a></p></main><script>
 document.getElementById('copySql').onclick=async()=>{const field=document.getElementById('setupSql'),status=document.getElementById('copyStatus');try{await navigator.clipboard.writeText(field.value);status.textContent='コピーしました。SQL Editorの新しいクエリへ貼り付けてください。'}catch(e){field.closest('details').open=true;field.focus();field.select();status.textContent='SQLを選択しました。コピーしてSQL Editorへ貼り付けてください。'}};
+
+document.getElementById('copyNativeRedirect').onclick=async()=>{
+ const field=document.getElementById('nativeRedirectUrl'),status=document.getElementById('nativeCopyStatus');
+ try{await navigator.clipboard.writeText(field.value);status.textContent='コピーしました。Redirect URLsのAdd URLに貼り付けて保存してください。'}
+ catch(e){field.focus();field.select();status.textContent='戻り先URLを選択しました。コピーしてRedirect URLsに追加してください。'}
+};
 </script></body></html>

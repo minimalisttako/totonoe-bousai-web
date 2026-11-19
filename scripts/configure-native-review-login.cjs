@@ -2,6 +2,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const { appId } = require('../capacitor.config.json');
+const callback = `${appId}://review-auth/callback`;
+if (!fs.readFileSync(path.join(root, 'index.html'), 'utf8').includes(`const nativeRedirect = '${callback}'`)) {
+  throw Error('Match nativeRedirect in index.html to the appId in capacitor.config.json');
+}
 
 const targets = {
   android: {
