@@ -64,8 +64,7 @@ jobs:
           cache: npm
       - run: xcodebuild -version
       - run: npm ci --ignore-scripts --no-audit --no-fund
-      - run: npm run build:web
-      - run: npx cap add ios --packagemanager SPM
+      - run: npm run native:add:ios
       - name: Prepare iOS migration test build
         run: |
           npm install --prefix "$RUNNER_TEMP/toto-browser" --no-audit --no-fund playwright@1.55.1

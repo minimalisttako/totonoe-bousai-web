@@ -5553,6 +5553,11 @@ function reviewBackupRecords(payload){
   const search = $('sharedReviewSearch');
   const googleLogin = $('reviewGoogleLogin');
   const verifierKey = 'totonoe-review-oauth-verifier';
+  const nativeVerifierKey = 'totonoe-review-native-oauth';
+  const capacitor = window.Capacitor;
+  const isNative = capacitor?.isNativePlatform?.() === true;
+  const nativeRedirect = 'jp.minimalisttako.totonoebousai://review-auth/callback';
+  const webRedirect = 'https://minimalisttako.github.io/totonoe-bousai-web/';
   const signOut = $('reviewSignOut');
   const sessionKey = 'totonoe-review-session';
   const accountControls=$('reviewAccountControls'),accountStatus=$('reviewAccountStatus'),myPostList=$('reviewMyPostList');
@@ -5633,47 +5638,82 @@ function reviewBackupRecords(payload){
    }catch(e){accountStatus.textContent='削除結果を確認できませんでした。ログアウト・再ログインで状態を確認し、必要ならサポートへご連絡ください。'}
    finally{accountBusy=false;button.disabled=false}
   };
+  async function finishReviewLogin(code, verifier) {
+   show('reviews');
+   login.open=true;
+   try{
+    if(!code)throw Error('Authorization failed');
+    const session=await request('/auth/v1/token?grant_type=pkce',{auth_code:code,code_verifier:verifier},false);
+    if(!session.access_token)throw Error('No access token');
+    changeSession(session.access_token);
+    login.open=false;
+    await refreshShared();
+   }catch(e){
+    loginStatus.textContent=isNative?'ログインできませんでした。もう一度お試しください。':'ログインできませんでした。同じブラウザのタブからもう一度お試しください。';
+   }finally{googleLogin.disabled=false}
+  }
+  async function receiveNativeReviewLogin(rawUrl) {
+   let url;
+   try{url=new URL(rawUrl)}catch(e){return}
+   if(url.href.split(/[?#]/,1)[0]!==nativeRedirect)return;
+   const code=url.searchParams.get('code');
+   const authError=url.searchParams.has('error')||new URLSearchParams(url.hash.slice(1)).has('error');
+   if(!code&&!authError)return;
+   let pending;
+   try{
+    pending=JSON.parse(localStorage.getItem(nativeVerifierKey));
+    localStorage.removeItem(nativeVerifierKey);
+   }catch(e){return}
+   if(!pending||!/^[a-f0-9]{64}$/.test(pending.verifier)||!(pending.expires>Date.now()))return;
+   googleLogin.disabled=true;
+   try{await capacitor.Plugins.Browser.close()}catch(e){}
+   await finishReviewLogin(code,pending.verifier);
+  }
+  const nativeLoginReady=!isNative||Promise.resolve().then(async()=>{
+   const {App,Browser}=capacitor.Plugins;
+   await App.addListener('appUrlOpen',({url})=>receiveNativeReviewLogin(url));
+   await Browser.addListener('browserFinished',()=>{googleLogin.disabled=false});
+   const launch=await App.getLaunchUrl();
+   if(launch?.url)await receiveNativeReviewLogin(launch.url);
+   return true;
+  }).catch(()=>false);
   googleLogin.onclick=async()=>{
    googleLogin.disabled=true;
    loginStatus.textContent='';
    try{
+    if(!await nativeLoginReady)throw Error('Native login unavailable');
     const verifier=Array.from(crypto.getRandomValues(new Uint8Array(32)),byte=>byte.toString(16).padStart(2,'0')).join('');
     const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));
     const challenge=btoa(String.fromCharCode(...new Uint8Array(digest))).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'');
-    sessionStorage.setItem(verifierKey,verifier);
     const authorize=new URL('/auth/v1/authorize',sharedConfig.url);
     authorize.search=new URLSearchParams({
      provider:'google',
-     redirect_to:'https://minimalisttako.github.io/totonoe-bousai-web/',
+     redirect_to:isNative?nativeRedirect:webRedirect,
      code_challenge:challenge,
      code_challenge_method:'s256'
     }).toString();
-    location.assign(authorize.href);
+    if(isNative){
+     localStorage.setItem(nativeVerifierKey,JSON.stringify({verifier,expires:Date.now()+10*60*1000}));
+     await capacitor.Plugins.Browser.open({url:authorize.href});
+    }else{
+     sessionStorage.setItem(verifierKey,verifier);
+     location.assign(authorize.href);
+    }
    }catch(e){
-    loginStatus.textContent='Googleログインを開始できませんでした。Safariで開き直してお試しください。';
+    if(isNative){try{localStorage.removeItem(nativeVerifierKey)}catch(e){}}
+    loginStatus.textContent=isNative?'Googleログインを開始できませんでした。アプリを開き直してお試しください。':'Googleログインを開始できませんでした。ブラウザで開き直してお試しください。';
     googleLogin.disabled=false;
    }
   };
   const callback=new URL(location.href);
   const authCode=callback.searchParams.get('code');
-  if(authCode||callback.searchParams.has('error')){
+  if(!isNative&&(authCode||callback.searchParams.has('error'))){
    let verifier;
    try{verifier=sessionStorage.getItem(verifierKey);sessionStorage.removeItem(verifierKey)}catch(e){}
    if(verifier){
     for(const key of ['code','error','error_code','error_description'])callback.searchParams.delete(key);
     history.replaceState(history.state,'',callback.href);
-    setTimeout(async()=>{
-     show('reviews');
-     login.open=true;
-     try{
-      if(!authCode)throw Error('Authorization failed');
-      const session=await request('/auth/v1/token?grant_type=pkce',{auth_code:authCode,code_verifier:verifier},false);
-      if(!session.access_token)throw Error('No access token');
-      changeSession(session.access_token);
-      login.open=false;
-      await refreshShared();
-     }catch(e){loginStatus.textContent='ログインできませんでした。同じSafariタブからもう一度お試しください。'}
-    },0);
+    setTimeout(()=>finishReviewLogin(authCode,verifier),0);
    }
   }
   signOut.onclick=()=>{changeSession('');refreshShared()};

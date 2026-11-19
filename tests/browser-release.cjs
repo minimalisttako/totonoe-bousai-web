@@ -342,6 +342,62 @@ async function run() {
   console.log('PASS: block/clear, own-post deletion, cancelled/failed/successful account deletion and retained local reviews');
   await controlsContext.close();
 
+  const nativeContext=await browser.newContext({serviceWorkers:'block'});
+  const callbackUrl='jp.minimalisttako.totonoebousai://review-auth/callback';
+  let exchanged=0;
+  await nativeContext.addInitScript(()=>{
+   localStorage.setItem('toto-tutorial-v1',JSON.stringify({version:2,step:4,completed:true}));
+   localStorage.setItem('toto-weather-location-v1',JSON.stringify({office:'400000',area:'400010',station:'',warningCity:'4013000'}));
+   localStorage.setItem('totonoe-hazard-confirmed','4013000');
+   window.nativeOAuthTest={};
+   window.Capacitor={isNativePlatform:()=>true,Plugins:{
+    App:{
+     addListener:async(name,callback)=>{window.nativeOAuthTest[name]=callback},
+     getLaunchUrl:async()=>({url:sessionStorage.getItem('native-test-launch-url')})
+    },
+    Browser:{
+     addListener:async(name,callback)=>{window.nativeOAuthTest[name]=callback},
+     open:async({url})=>{window.nativeOAuthTest.authorizeUrl=url},
+     close:async()=>{}
+    }
+   }};
+  });
+  await nativeContext.route('**/*',async route=>{
+   const url=route.request().url();
+   if(url.startsWith(base))return route.continue();
+   if(url.includes('/auth/v1/token?grant_type=pkce')){
+    exchanged++;
+    const {auth_code,code_verifier}=route.request().postDataJSON();
+    assert.equal(auth_code,'cold-start-code');
+    assert.match(code_verifier,/^[a-f0-9]{64}$/);
+    return route.fulfill({json:{access_token:'native-test-session'}});
+   }
+   if(url.endsWith('/stock_review_controls'))return route.fulfill({json:2});
+   if(url.endsWith('/list_stock_reviews'))return route.fulfill({json:[]});
+   return route.abort();
+  });
+  const nativePage=await nativeContext.newPage();
+  await nativePage.goto(base+'?page=reviews');
+  await nativePage.locator('#sharedReviewLogin summary').click();
+  await nativePage.locator('#reviewGoogleLogin').click();
+  await nativePage.waitForFunction(()=>window.nativeOAuthTest.authorizeUrl);
+  const authorize=new URL(await nativePage.evaluate(()=>window.nativeOAuthTest.authorizeUrl));
+  assert.equal(authorize.searchParams.get('provider'),'google');
+  assert.equal(authorize.searchParams.get('redirect_to'),callbackUrl);
+  assert.equal(authorize.searchParams.get('code_challenge_method'),'s256');
+  assert.match(authorize.searchParams.get('code_challenge'),/^[A-Za-z0-9_-]{43}$/);
+  await nativePage.evaluate(callback=>window.nativeOAuthTest.appUrlOpen({url:callback}),callbackUrl.replace('/callback','/wrong')+'?code=ignored');
+  assert.equal(exchanged,0);
+  await nativePage.evaluate(callback=>sessionStorage.setItem('native-test-launch-url',callback),callbackUrl+'?code=cold-start-code');
+  await nativePage.reload();
+  await nativePage.locator('#reviewAccountControls').waitFor();
+  await nativePage.evaluate(callback=>window.nativeOAuthTest.appUrlOpen({url:callback}),callbackUrl+'?code=cold-start-code');
+  assert.equal(exchanged,1);
+  assert.equal(await nativePage.evaluate(()=>localStorage.getItem('totonoe-review-native-oauth')),null);
+  assert.equal(await nativePage.evaluate(()=>sessionStorage.getItem('totonoe-review-session')),'native-test-session');
+  console.log('PASS: native Google login requests the app callback, resumes on cold start, and ignores invalid or duplicate callbacks');
+  await nativeContext.close();
+
   const offlineContext = await browser.newContext();
   const offlinePage = await offlineContext.newPage();
   await offlinePage.goto(base);
