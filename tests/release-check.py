@@ -2,10 +2,15 @@
 from pathlib import Path
 from html.parser import HTMLParser
 from collections import Counter
-import re, subprocess, sys
+import re, subprocess, sys, hashlib, json
 
 root = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path(__file__).resolve().parents[1]
 source = (root / 'index.html').read_text()
+# Embedded artwork must stay byte-identical during unrelated text/version changes.
+image_urls=set(re.findall(r'data:image/[a-z+]+;base64,[A-Za-z0-9+/=]+',source))
+expected=json.loads((root/'tests/embedded-image-hashes.json').read_text())
+assert sorted(hashlib.sha256(url.encode()).hexdigest() for url in image_urls)==expected, 'Embedded artwork changed; inspect images and update the manifest only for intentional art changes'
+print(f'PASS: {len(image_urls)} embedded illustrations match approved hashes')
 class Page(HTMLParser):
     def __init__(self):
         super().__init__(); self.ids=[]; self.handlers=[]; self.labels=[]
