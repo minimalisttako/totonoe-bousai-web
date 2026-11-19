@@ -62,7 +62,13 @@
 
 ## 掲載前に決める情報
 
-- サポート用メールアドレスと問い合わせページ
+サポートメール：totonoe.bousai.support@gmail.com
+
+サポートURL：https://minimalisttako.github.io/totonoe-bousai-web/support.html
+
+受信・返信の確認は未実施。
+
+## その他の掲載前確認
 - プライバシーポリシーのURLと、実際の保存・送信内容に沿った各ストアの申告
 - 販売価格、配信地域、販売者情報
 - 正式なストア用アイコンと起動画面
