@@ -221,6 +221,27 @@ async function run() {
   console.log('PASS: review photo compression, local save, download and restore in a fresh browser context');
   assert.deepEqual(errors, []);
   console.log('PASS: browser startup, pre-setup backup, first-use guide, room gate, evacuation links and review deduplication');
+  // Inspect the report draft without opening a mail client or sending mail.
+  const reviewId='12345678-1234-1234-1234-123456789012';
+  await context.route('**/rest/v1/rpc/list_stock_reviews', route=>route.fulfill({json:[{id:reviewId,name:'確認用レビュー',category:'その他',stars:4,photo_count:0,helpful:0,voted:false}]}));
+  await context.route('**/rest/v1/rpc/read_stock_review', route=>route.fulfill({json:[{comment:'テスト本文',photos:[]}]}));
+  await page.goto(base+'?page=reviews');
+  await page.locator('#sharedReviewList summary').click();
+  const reportLink=page.getByRole('link',{name:'この投稿を通報・相談する'});
+  const reportUrl=new URL(await reportLink.getAttribute('href'));
+  assert.equal(reportUrl.pathname,'totonoe.bousai.support@gmail.com');
+  assert.ok(reportUrl.searchParams.get('body').includes(reviewId));
+  assert.ok(reportUrl.searchParams.get('body').includes('確認用レビュー'));
+  await page.goto(base+'privacy.html');
+  await page.getByRole('heading',{name:'プライバシーポリシー',exact:true}).waitFor();
+  for(const width of [320,390]){
+   await page.setViewportSize({width,height:844});
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  }
+  await page.getByRole('link',{name:'サポートページ',exact:true}).click();
+  await page.getByRole('heading',{name:'投稿の通報・削除相談',exact:true}).waitFor();
+  assert.equal(await page.locator('a[href="./privacy.html"]').count(),1);
+  console.log('PASS: public privacy/support pages fit mobile widths and report draft contains the selected review ID');
   await context.close();
 
   const offlineContext = await browser.newContext();
