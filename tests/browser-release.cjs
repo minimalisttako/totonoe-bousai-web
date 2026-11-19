@@ -221,6 +221,31 @@ async function run() {
   console.log('PASS: review photo compression, local save, download and restore in a fresh browser context');
   assert.deepEqual(errors, []);
   console.log('PASS: browser startup, pre-setup backup, first-use guide, room gate, evacuation links and review deduplication');
+  await page.evaluate(()=>localStorage.removeItem('toto-first-operation-guides-v1'));
+  await page.goto(base+'?page=tidy');
+  const photoFold=page.locator('[data-tidy-photo-guide]').first();
+  await photoFold.locator('summary').click();
+  const photoGuide=photoFold.locator('.first-operation-guide');
+  await photoGuide.waitFor();
+  for(const width of [320,390]){
+   await page.setViewportSize({width,height:844});
+   const sizes=await photoFold.evaluate(fold=>{
+    const box=el=>el.getBoundingClientRect();
+    const guide=fold.querySelector('.first-operation-guide'),grid=fold.querySelector('.tidy-photo-grid');
+    return {outsideGrid:guide.parentElement===grid.parentElement,imageWidth:box(guide.querySelector('img')).width,imageHeight:box(guide.querySelector('img')).height,textWidth:box(guide.querySelector('p')).width,guideWidth:box(guide).width,gridWidth:box(grid).width,height:box(guide).height};
+   });
+   assert.equal(sizes.outsideGrid,true);
+   assert.equal(sizes.imageWidth,40);
+   assert.equal(sizes.imageHeight,40);
+   assert.ok(sizes.textWidth>80,JSON.stringify(sizes));
+   assert.ok(Math.abs(sizes.guideWidth-sizes.gridWidth)<2,JSON.stringify(sizes));
+   assert.ok(sizes.height<190,JSON.stringify(sizes));
+  }
+  await photoGuide.getByRole('button',{name:'案内を閉じる'}).click();
+  assert.equal(await photoFold.locator('input[type=file]').first().isEnabled(),true);
+  assert.equal(await photoFold.locator('input[type=file]').nth(1).isEnabled(),false);
+  console.log('PASS: first photo guide stays above both columns with a 40px mascot at 320px and 390px');
+
   // Inspect the report draft without opening a mail client or sending mail.
   const reviewId='12345678-1234-1234-1234-123456789012';
   await context.route('**/rest/v1/rpc/list_stock_reviews', route=>route.fulfill({json:[{id:reviewId,name:'確認用レビュー',category:'その他',stars:4,photo_count:0,helpful:0,voted:false}]}));
