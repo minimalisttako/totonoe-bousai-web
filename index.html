@@ -1449,7 +1449,8 @@ body{background:#fff;color:#172535}header{padding:14px 18px;background:#ffffffee
 <div class="card"><h2>通信がなくても使うには</h2><p>通信できる状態で一度アプリを開き、「その他」のオフライン準備を完了させてください。その後、機内モードで開き直せるか確認します。</p><p>保存済みの備蓄・避難計画、例題の本文などはオフライン利用の対象です。天気の新規取得、動画、イベント検索、出典リンクの閲覧には通信が必要です。</p><button class="secondary" onclick="openHelpOfflineCheck()">オフライン準備を確認する</button></div>
 <div class="card"><h2>保存できない・記録が見つからないとき</h2><ul><li>前回と同じ端末・ブラウザ・URLで開いているか確認する。</li><li>保存結果のメッセージを確認し、保存に失敗した場合は入力内容を別に控える。</li><li>データ削除や初期化の前に、現在の記録をバックアップする。</li><li>保存データ診断で形式を確認する。診断だけで実機の復元成功を保証するものではありません。</li></ul><button class="secondary" onclick="openHelpDataCheck()">保存データ診断を開く</button></div>
 <div class="card"><h2>Web版の公開状況</h2><p>初回iPhone向けWeb版を公開しています。天気は気象庁データを加工して表示します。警報・注意報の詳細は公式画面、避難情報は自治体からの最新情報を確認してください。</p><p>イベントは外部検索への案内です。例題は30種類から1回最大5問のオリジナル問題で、公式過去問ではありません。</p><p class="notice">Android実機・別端末への実復元・読み上げ品質は未確認です。App Store・Google Playでの配信は未実施です。</p></div>
-<button class="secondary" onclick="show('more')">その他へ戻る</button></section><section id="cleanPractice" class="hidden"><div class="card"><h2>掃除の実践</h2><p>整理・整頓・収納で使いやすくした場所を、掃除して気持ちよく保ちましょう。</p><p class="notice">今回の掃除が終わった項目にチェックしてください。完了日時はこの端末に保存します。家具固定や避難判断など、命を守る対策は別に優先してください。</p><form id="cleanScheduleForm" oninput="this.dataset.editing='true'" onsubmit="event.preventDefault();saveCleanSchedule()"><label class="supply-label" for="cleanResetDays">掃除した日の何日後に解除する？</label><select class="field" id="cleanResetDays"><option value="1">翌日</option><option value="2">翌々日（初期設定）</option><option value="3">3日後</option><option value="7">7日後</option><option value="14">14日後</option><option value="30">30日後</option></select><label class="supply-label" for="cleanResetTime">チェックを解除する時刻</label><input class="field" id="cleanResetTime" type="time" required><button class="secondary" type="submit">間隔・時刻を保存</button><p class="notice" id="cleanScheduleStatus" role="status">端末の時刻を使います。閉じている間に時刻を過ぎた場合も、次に開くと未完了に戻ります。</p></form><p id="cleanProgress" role="status" aria-live="polite"></p><div id="cleanPracticeItems"></div><p id="cleanSaveStatus" class="notice" role="status" aria-live="polite"></p></div><div class="card"><h2>無理なく続けるコツ</h2><p class="notice">安全点検・登録した片付け・診断ミッション・避難計画を終え、水・食料・トイレの登録と備蓄の期限・不足・点検に未対応項目がない場合、ホームの「今日やること」は定期的な掃除に切り替わります。備えに未対応項目が出ると、そちらを優先します。登録だけで実際の備蓄量が十分だと保証するものではありません。</p><p>一度に全部ではなく、今日は一か所でも大丈夫です。洗剤や掃除用品は製品の表示に従い、混ぜて使わないでください。</p><p class="notice">各項目を掃除した日から、設定した日数後の時刻にチェックが外れます。初期設定は翌々日の朝5時です。実施日時は残します。設定を変えると新しい間隔で判定し直します。</p><button class="secondary" onclick="show('tidy')">お片付けの記録へ</button></div><button class="secondary" onclick="show('learn')">学ぶメニューへ戻る</button></section><section id="tidyAlbum" class="hidden"><div class="card" id="livingAlbumCard" hidden><h2>暮らしの備えの達成記録</h2><p><strong id="livingAlbumDate"></strong></p><p id="livingAlbumResult"></p><p id="livingAlbumGoal"></p><button type="button" class="secondary" onclick="openLivingMilestone()">達成記録と暮らしの目標を開く</button></div><div class="card"><h2>成長アルバム</h2><p>過去の自分と、今の暮らしを見比べましょう。物の少なさを競うものではありません。</p><p class="notice">各場所に保存した最新のBefore／Afterを表示します。写真を差し替えると、この表示も変わります。過去の写真を世代ごとに保管する機能ではありません。</p><label class="supply-label" for="tidyAlbumFilter">表示する写真</label><select id="tidyAlbumFilter" class="field" onchange="renderTidyAlbum()"><option value="all">写真があるすべての場所</option><option value="pair">Before／Afterがそろった場所</option></select><p id="tidyAlbumStatus" role="status" class="notice"></p></div><div id="tidyAlbumRecords"></div><button class="secondary" onclick="show('tidy')">片付けの記録へ戻る</button></section><section id="more" class="hidden"><div class="card more-intro"><h2>その他の防災メニュー</h2><label class="supply-label" for="featureSearch">使いたい機能を探す</label><input id="featureSearch" class="field" type="search" maxlength="80" autocomplete="off" placeholder="例：掃除、地域、補充、バックアップ" oninput="renderFeatureSearch()" aria-controls="featureSearchResults"><button class="secondary" type="button" onclick="clearFeatureSearch()">検索をクリア</button><p id="featureSearchStatus" class="notice" role="status" aria-live="polite"></p><div id="featureSearchResults"></div><button class="more-menu-button" onclick="show('helpGuide')"><strong>使い方・データ保護ガイド</strong><span>はじめての準備・機種変更・オフライン・困ったとき ↗</span></button><button class="more-menu-button" type="button" onclick="openTutorial(true)"><strong>はじめての案内</strong><span>たこと仲間の4画面ガイドを見直す ↗</span></button><p class="notice">必要な備えを、目的から選べます。</p><button class="more-menu-button" onclick="show('events')"><strong>防災イベントを探す</strong><span>地域・開催月・体験や訓練から検索 ↗</span></button></div>
+<button class="secondary" onclick="show('more')">その他へ戻る</button><div class="card"><h2>お問い合わせ</h2><p>ととのえ防災 サポート</p><p style="overflow-wrap:anywhere"><a href="mailto:totonoe.bousai.support@gmail.com">totonoe.bousai.support@gmail.com</a></p><p>不具合のあった画面と操作、端末・ブラウザの種類をお知らせください。パスワードや、ご家族の住所・連絡先を含むバックアップは送らないでください。</p><a href="./support.html">サポートページを開く →</a></div>
+</section><section id="cleanPractice" class="hidden"><div class="card"><h2>掃除の実践</h2><p>整理・整頓・収納で使いやすくした場所を、掃除して気持ちよく保ちましょう。</p><p class="notice">今回の掃除が終わった項目にチェックしてください。完了日時はこの端末に保存します。家具固定や避難判断など、命を守る対策は別に優先してください。</p><form id="cleanScheduleForm" oninput="this.dataset.editing='true'" onsubmit="event.preventDefault();saveCleanSchedule()"><label class="supply-label" for="cleanResetDays">掃除した日の何日後に解除する？</label><select class="field" id="cleanResetDays"><option value="1">翌日</option><option value="2">翌々日（初期設定）</option><option value="3">3日後</option><option value="7">7日後</option><option value="14">14日後</option><option value="30">30日後</option></select><label class="supply-label" for="cleanResetTime">チェックを解除する時刻</label><input class="field" id="cleanResetTime" type="time" required><button class="secondary" type="submit">間隔・時刻を保存</button><p class="notice" id="cleanScheduleStatus" role="status">端末の時刻を使います。閉じている間に時刻を過ぎた場合も、次に開くと未完了に戻ります。</p></form><p id="cleanProgress" role="status" aria-live="polite"></p><div id="cleanPracticeItems"></div><p id="cleanSaveStatus" class="notice" role="status" aria-live="polite"></p></div><div class="card"><h2>無理なく続けるコツ</h2><p class="notice">安全点検・登録した片付け・診断ミッション・避難計画を終え、水・食料・トイレの登録と備蓄の期限・不足・点検に未対応項目がない場合、ホームの「今日やること」は定期的な掃除に切り替わります。備えに未対応項目が出ると、そちらを優先します。登録だけで実際の備蓄量が十分だと保証するものではありません。</p><p>一度に全部ではなく、今日は一か所でも大丈夫です。洗剤や掃除用品は製品の表示に従い、混ぜて使わないでください。</p><p class="notice">各項目を掃除した日から、設定した日数後の時刻にチェックが外れます。初期設定は翌々日の朝5時です。実施日時は残します。設定を変えると新しい間隔で判定し直します。</p><button class="secondary" onclick="show('tidy')">お片付けの記録へ</button></div><button class="secondary" onclick="show('learn')">学ぶメニューへ戻る</button></section><section id="tidyAlbum" class="hidden"><div class="card" id="livingAlbumCard" hidden><h2>暮らしの備えの達成記録</h2><p><strong id="livingAlbumDate"></strong></p><p id="livingAlbumResult"></p><p id="livingAlbumGoal"></p><button type="button" class="secondary" onclick="openLivingMilestone()">達成記録と暮らしの目標を開く</button></div><div class="card"><h2>成長アルバム</h2><p>過去の自分と、今の暮らしを見比べましょう。物の少なさを競うものではありません。</p><p class="notice">各場所に保存した最新のBefore／Afterを表示します。写真を差し替えると、この表示も変わります。過去の写真を世代ごとに保管する機能ではありません。</p><label class="supply-label" for="tidyAlbumFilter">表示する写真</label><select id="tidyAlbumFilter" class="field" onchange="renderTidyAlbum()"><option value="all">写真があるすべての場所</option><option value="pair">Before／Afterがそろった場所</option></select><p id="tidyAlbumStatus" role="status" class="notice"></p></div><div id="tidyAlbumRecords"></div><button class="secondary" onclick="show('tidy')">片付けの記録へ戻る</button></section><section id="more" class="hidden"><div class="card more-intro"><h2>その他の防災メニュー</h2><label class="supply-label" for="featureSearch">使いたい機能を探す</label><input id="featureSearch" class="field" type="search" maxlength="80" autocomplete="off" placeholder="例：掃除、地域、補充、バックアップ" oninput="renderFeatureSearch()" aria-controls="featureSearchResults"><button class="secondary" type="button" onclick="clearFeatureSearch()">検索をクリア</button><p id="featureSearchStatus" class="notice" role="status" aria-live="polite"></p><div id="featureSearchResults"></div><button class="more-menu-button" onclick="show('helpGuide')"><strong>使い方・データ保護ガイド</strong><span>はじめての準備・機種変更・オフライン・困ったとき ↗</span></button><button class="more-menu-button" type="button" onclick="openTutorial(true)"><strong>はじめての案内</strong><span>たこと仲間の4画面ガイドを見直す ↗</span></button><p class="notice">必要な備えを、目的から選べます。</p><button class="more-menu-button" onclick="show('events')"><strong>防災イベントを探す</strong><span>地域・開催月・体験や訓練から検索 ↗</span></button></div>
 <div class="card more-important"><h2>備えをまとめて確認</h2><button class="more-menu-button" type="button" onclick="show('readiness')"><strong>わが家の防災準備状況</strong><span>安全・避難計画・備蓄・家族の備え ↗</span></button></div>
 <div class="card more-important"><h2>避難・安全を確認する</h2>
 <button class="more-menu-button" type="button" onclick="show('evacuation')"><strong>マイ避難計画</strong><span>避難先・連絡方法を確認 ↗</span></button>
@@ -2057,7 +2058,7 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v217');
+  const c=await caches.open('totonoe-offline-shell-v218');
   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
@@ -2083,8 +2084,8 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v217')){
-   const cache=await caches.open('totonoe-offline-shell-v217');
+  if(registration&&names.includes('totonoe-offline-shell-v218')){
+   const cache=await caches.open('totonoe-offline-shell-v218');
    const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
@@ -3011,7 +3012,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v217'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v218'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3692,7 +3693,7 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v217');
+  const cache=await caches.open('totonoe-offline-shell-v218');
   const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
@@ -3713,17 +3714,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v217')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v218')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v217')?await caches.open('totonoe-offline-shell-v217'):null;
+  const cache=names.includes('totonoe-offline-shell-v218')?await caches.open('totonoe-offline-shell-v218'):null;
   const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v217'?'必須ファイル10件の保存とv217の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v217の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v218'?'必須ファイル10件の保存とv218の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/10件。'+(workerCache?'旧版が動作している可能性があります。':'v218の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -3993,7 +3994,7 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v217';
+ const cacheName='totonoe-offline-shell-v218';
  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg'];
  const detail=[];
  const finish=async text=>{
@@ -4096,7 +4097,7 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v217';
+   const current='totonoe-offline-shell-v218';
    const cache=names.includes(current)?await caches.open(current):null;
    const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/home-sky-background.svg','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
@@ -4637,7 +4638,7 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v217','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v218','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/10件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
@@ -4646,7 +4647,7 @@ async function buildSupportReport(){
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v217';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v218';
    const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v125有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
