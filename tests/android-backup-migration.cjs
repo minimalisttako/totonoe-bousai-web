@@ -88,6 +88,9 @@ async function run() {
    }, inputId, content);
   }
   await openBackup('backup');
+  assert.equal(await evaluate(async () => window.Capacitor?.isPluginAvailable('App') &&
+   window.Capacitor.isPluginAvailable('Browser') &&
+   (await crypto.subtle.digest('SHA-256', new TextEncoder().encode('PKCE'))).byteLength === 32), true);
   const exported = JSON.parse(backup.full).data;
   await selectFile('fullBackupFile', backup.full);
   await waitFor(() => evaluate(() => document.querySelector('#fullBackupFileStatus').textContent.includes('読み込みました')), 'backup preview');

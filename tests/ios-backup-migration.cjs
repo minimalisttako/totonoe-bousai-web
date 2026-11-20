@@ -2,6 +2,9 @@ const fs = require('node:fs/promises');
 const exportWebBackup = require('./web-migration-fixture.cjs');
 
 async function migrate(backup, phase) {
+ const app = window.Capacitor;
+ if (!app?.isPluginAvailable('App') || !app.isPluginAvailable('Browser')) throw new Error('Native OAuth plugins unavailable');
+ if ((await crypto.subtle.digest('SHA-256', new TextEncoder().encode('PKCE'))).byteLength !== 32) throw new Error('PKCE SHA-256 unavailable');
  const review = {
   name: 'iOSへの移行テスト', category: '水', comment: '写真付きレビュー',
   stars: 4, photos: [backup.photo], used: true
