@@ -1,7 +1,7 @@
-/* ととのえ防災：v226 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
-const CACHE='totonoe-offline-shell-v226';
+/* ととのえ防災：v227 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
+const CACHE='totonoe-offline-shell-v227';
 const ROOT=new URL('./',self.registration.scope).href;
-const PATHS=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v226.js','./assets/home-sky-background.svg'];
+const PATHS=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v227.js','./assets/home-sky-background.svg'];
 const URLS=PATHS.map(p=>new URL(p,ROOT).href);
 const ASSETROOT=new URL('./assets/',ROOT).pathname;
 const HOME=new URL('./',ROOT).pathname;

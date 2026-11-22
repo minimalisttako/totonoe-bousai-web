@@ -172,16 +172,28 @@
  const favoriteToggle=button('お気に入りに追加',toggleFavorite);favoriteToggle.id='favoritePageToggle';
  const feedback=button('感想・不具合を送る',openFeedback);feedback.id='pageFeedback';toolbar.append(favoriteToggle,feedback);document.querySelector('header').append(toolbar);
  const favoritesCard=card('favoritePages','お気に入り');const moreShortcuts=$('more').querySelector('.refresh-menu-grid');if(moreShortcuts)moreShortcuts.after(favoritesCard);else $('more').append(favoritesCard);
- const homeFavorites=card('homeFavorites','お気に入り');$('home').prepend(homeFavorites);
+ const homeFavorites=card('homeFavorites','お気に入り');
+ const homeMission=document.querySelector('#home .refresh-home-mission');
+ if(homeMission)homeMission.before(homeFavorites);else $('home').append(homeFavorites);
  function pageTitle(page) {return pageNames[page]||page}
  function renderFavorites() {
   [favoritesCard,homeFavorites].forEach(host=>{
    host.replaceChildren(element('h2','お気に入り'));host.hidden=!preferences.favorites.length&&host===homeFavorites;
    if(!preferences.favorites.length)host.append(element('p','使いたいページで「お気に入りに追加」を押してください。最大8件登録できます。','notice'));
-   const row=element('div',undefined,'experience-actions');preferences.favorites.forEach(page=>row.append(button(pageTitle(page),()=>show(page))));host.append(row);
+   const row=element('div',undefined,'experience-favorites');
+   preferences.favorites.forEach(page=>{
+    const item=element('div',undefined,'experience-favorite-item');
+    const open=button(pageTitle(page),()=>show(page));open.classList.add('experience-favorite-open');
+    const remove=button('お気に入り解除',()=>removeFavorite(page));remove.classList.add('experience-favorite-remove');remove.setAttribute('aria-label',pageTitle(page)+'のお気に入り解除');
+    item.append(open,remove);row.append(item);
+   });host.append(row);
   });
   favoriteToggle.disabled=!allowedPages.includes(activePage);
   favoriteToggle.textContent=preferences.favorites.includes(activePage)?'お気に入りから外す':'お気に入りに追加';favoriteToggle.setAttribute('aria-pressed',String(preferences.favorites.includes(activePage)));
+ }
+ function removeFavorite(page) {
+  loadPreferences();
+  if(savePreferences({...preferences,favorites:preferences.favorites.filter(saved=>saved!==page)}))saveMessage('「'+pageTitle(page)+'」のお気に入りを解除しました。');
  }
  function toggleFavorite() {
   loadPreferences();const favorites=preferences.favorites.slice();const index=favorites.indexOf(activePage);
@@ -204,11 +216,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v226\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v227\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
+ updates.append(element('h3','v227　2026年11月22日'),element('p','ホームのお気に入りをイラストと「今日やること」の間に移動し、各項目の端に「お気に入り解除」を追加しました。'));
  updates.append(element('h3','v226　2026年11月22日'),element('p','感想・不具合報告、保存状態の確認、削除の取り消し、お気に入り、簡易表示、期限・点検のお知らせ、先に使う備蓄、買い物画面、講座の詳細とワークシート見本を追加しました。'));
  updates.append(element('h3','v225まで'),element('p','講座の相談窓口、YouTubeチャンネルへのリンク、左上のアプリアイコンを追加しました。'));$('more').append(updates);
  const reminderCard=card('reminderCard','期限・点検のお知らせ');
