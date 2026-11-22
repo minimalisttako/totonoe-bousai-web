@@ -62,7 +62,7 @@
  }
  const $ = id => document.getElementById(id);
  const undoEntries = [];
- let restoringDeletion = false, lastFailure = '', lastSavedAt = '', storageSummary = '', refreshTimer;
+ let restoringDeletion = false, lastFailure = '', lastSavedAt = '', storageSummary = '', refreshTimer, statusTimer;
  let preferences = {simple:false,reminders:false,favorites:[]};
  let preferencesReadable = true;
  function element(tag, text, className) {
@@ -90,7 +90,8 @@
  const statusPanel=element('aside',undefined,'experience-storage-status');statusPanel.id='experienceStorageStatus';statusPanel.setAttribute('role','status');statusPanel.hidden=true;
  const statusMessage=element('span');statusPanel.append(statusMessage,button('閉じる',()=>statusPanel.hidden=true));document.body.append(statusPanel);
  function saveMessage(message,failed=false) {
-  statusMessage.textContent=message;statusPanel.dataset.error=String(failed);statusPanel.hidden=false;
+  clearTimeout(statusTimer);statusMessage.textContent=message;statusPanel.dataset.error=String(failed);statusPanel.hidden=false;
+  if(!failed)statusTimer=setTimeout(()=>statusPanel.hidden=true,3500);
   if(failed)lastFailure=message;
   const summary=$('recordStorageSummary');if(summary)summary.textContent=lastFailure||message;
  }
