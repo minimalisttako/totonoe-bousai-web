@@ -23,6 +23,7 @@
   if (!Array.isArray(current)) throw Error('invalid-records');
   if (deletion.item.id && current.some(item => item.id === deletion.item.id)) throw Error('already-present');
   // Supplies have no IDs. Keep intentional identical entries and restore just this deletion.
+  if (!deletion.item.id && deletion.remainingCopies !== undefined && current.filter(item => JSON.stringify(item) === JSON.stringify(deletion.item)).length !== deletion.remainingCopies) throw Error('record-changed');
   const next = current.slice();
   next.splice(Math.min(deletion.index, next.length), 0, deletion.item);
   return next;
@@ -115,7 +116,7 @@
   if(!restoringDeletion&&protectedArrays.has(storageKey)&&before!==null) {
    try {
     const deletion=removedRecord(JSON.parse(before),JSON.parse(String(value)));
-    if(deletion){undoEntries.unshift({...deletion,key:storageKey,label:deletion.item.name||deletion.item.place||deletion.item.label||'記録'});undoEntries.splice(5)}
+    if(deletion){undoEntries.unshift({...deletion,remainingCopies:JSON.parse(String(value)).filter(item=>JSON.stringify(item)===JSON.stringify(deletion.item)).length,key:storageKey,label:deletion.item.name||deletion.item.place||deletion.item.label||'記録'});undoEntries.splice(5)}
    }catch(e){}
   }
   if(storageKey!==preferenceKey){lastSavedAt=new Date().toLocaleString('ja-JP');lastFailure='';saveMessage('この端末への保存を確認しました。');}
@@ -169,7 +170,7 @@
  const toolbar=element('div',undefined,'experience-toolbar');
  const favoriteToggle=button('お気に入りに追加',toggleFavorite);favoriteToggle.id='favoritePageToggle';
  const feedback=button('感想・不具合を送る',openFeedback);feedback.id='pageFeedback';toolbar.append(favoriteToggle,feedback);document.querySelector('header').append(toolbar);
- const favoritesCard=card('favoritePages','お気に入り');$('more').prepend(favoritesCard);
+ const favoritesCard=card('favoritePages','お気に入り');const moreShortcuts=$('more').querySelector('.refresh-menu-grid');if(moreShortcuts)moreShortcuts.after(favoritesCard);else $('more').append(favoritesCard);
  const homeFavorites=card('homeFavorites','お気に入り');$('home').prepend(homeFavorites);
  function pageTitle(page) {return pageNames[page]||page}
  function renderFavorites() {
@@ -309,6 +310,7 @@
  if(lecture) {
   const details=element('details');details.id='workshopDetails';details.append(element('summary','講座の流れ・料金条件・見本を見る'));
   details.append(element('h3','講座の進め方'),element('p','講師による講座、ワークシートを使った整理、アプリを使った自宅での振り返りを組み合わせます。対象者やご希望に合わせ、内容・時間をご相談いただけます。'));
+  details.append(element('p','参加者は地域の住民・親子・企業の従業員などを想定しています。60分の場合の進行例は、導入10分、講座・ワーク30分、振り返り20分です。実際の時間と内容はご相談のうえ決定します。'));
   details.append(element('h3','料金条件'),element('p','30,000円／回。講座・参加者用ワークシート・アプリでの自宅振り返りを含みます。交通費は別途。開催場所・時間・参加人数をお知らせください。税の扱いを含む最終金額は、お見積もり時にご案内します。'));
   details.append(element('h3','参加者用ワークシートの見本'),element('p','親子向け「わが家の防災プラン」の1ページ見本です。避難先、連絡方法、備蓄、今週やることを書き込みます。講座で使う内容は対象者に合わせてご相談ください。'));
   const sample=element('a','ワークシート見本を開く（PDF）','secondary');sample.id='worksheetSampleLink';sample.href='./assets/workshop-worksheet-sample.pdf';sample.target='_blank';sample.rel='noopener noreferrer';
