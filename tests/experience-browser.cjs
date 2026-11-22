@@ -1,0 +1,79 @@
+const assert = require('node:assert/strict');
+module.exports = async function verifyExperience(browser,base) {
+ const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
+ await context.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
+ await context.addInitScript(()=>{
+  const write=Storage.prototype.setItem;
+  Storage.prototype.setItem=function(key,value){
+   if(window.__failExperienceWrite===key)throw new DOMException('full','QuotaExceededError');
+   if(window.__silentExperienceWrite===key)return;
+   return write.call(this,key,value);
+  };
+  if(localStorage.getItem('experience-test-seeded'))return;
+  localStorage.setItem('experience-test-seeded','1');
+  localStorage.setItem('toto-tutorial-v1',JSON.stringify({version:2,step:4,completed:true}));
+  localStorage.setItem('toto-weather-location-v1',JSON.stringify({office:'400000',area:'400010',station:'',warningCity:'4013000'}));
+  localStorage.setItem('totonoe-hazard-confirmed','4013000');
+  localStorage.setItem('toto-evacuation-plan-v1',JSON.stringify({evHazard:'確認済み',evPlace:'集会所',evRoute:'大通り',evTiming:'家族で確認',evContacts:'電話',evMeeting:'集会所'}));
+  localStorage.setItem('toto-home-safety-v1',JSON.stringify({sleep:'done',bedpath:'done',door:'done',hall:'done',fix:'done'}));
+  localStorage.setItem('toto-tidy-defaults-v2','true');
+  localStorage.setItem('toto-tidy-v1',JSON.stringify([{id:'room1',place:'玄関',done:true}]));
+  localStorage.setItem('toto-stock-days-v1',JSON.stringify({people:1,mode:'3'}));
+  localStorage.setItem('toto-toilet-frequency-v1','5');
+  const expiry=new Date(Date.now()+9*3600000+2*86400000).toISOString().slice(0,10);
+  localStorage.setItem('toto-supplies-v1',JSON.stringify([{name:'テスト食品',qty:'3',unit:'個',category:'food',exp:expiry,target:'5'},{name:'テスト用ライト',qty:'1',unit:'個',target:'2'}]));
+ });
+ const page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));
+ try {
+  await page.goto(base+'?page=more');await page.locator('#simpleDisplay').waitFor();
+  await page.locator('#simpleDisplay').check();
+  assert.equal(await page.locator('body').evaluate(node=>node.classList.contains('simple-display')),true);
+  if(await page.locator('#experienceStorageStatus').isVisible())await page.locator('#experienceStorageStatus button').click();
+  await page.locator('#favoritePageToggle').click();
+  assert.match(await page.locator('#favoritePages').textContent(),/その他/);
+  await page.reload();await page.locator('#simpleDisplay:checked').waitFor();
+  assert.match(await page.locator('#favoritePages').textContent(),/その他/);
+  await page.locator('#remindersEnabled').check();
+  assert.match(await page.locator('#reminderList').textContent(),/テスト食品/);
+  await page.locator('#workshopDetails summary').click();
+  assert.match(await page.locator('#workshopDetails').textContent(),/30,000円／回/);
+  const pdf=await context.request.get(base+'assets/workshop-worksheet-sample.pdf');assert.equal(pdf.status(),200);assert.ok((await pdf.body()).subarray(0,4).equals(Buffer.from('%PDF')));
+  await page.locator('#pageFeedback').click();await page.locator('#feedbackDialog textarea').first().fill('表示確認の感想');
+  const mail=decodeURIComponent(await page.locator('#feedbackDialog a').getAttribute('href'));
+  assert.match(mail,/ページ：その他/);assert.match(mail,/表示確認の感想/);assert.doesNotMatch(mail,/テスト食品/);
+  await page.locator('#feedbackDialog').getByRole('button',{name:'閉じる',exact:true}).click();
+  await page.evaluate(()=>show('supplies'));await page.locator('#dailySupplyTools').waitFor();
+  assert.match(await page.locator('#useSoonList').textContent(),/テスト食品/);
+  await page.locator('#useSoonList button').first().click();
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('toto-supplies-v1'))[0].qty),'2');
+  await page.locator('#dailySupplyTools').getByRole('button',{name:'買い物画面を開く'}).click();
+  assert.match(await page.locator('#shoppingList').textContent(),/あと3個/);
+  await page.locator('#shoppingList input').first().check();
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('toto-supplies-v1'))[0].qty),'2');
+  await page.locator('#shoppingDialog').getByRole('button',{name:'閉じる',exact:true}).click();
+  await page.evaluate(()=>{window.__failExperienceWrite='toto-supplies-v1'});
+  await page.locator('#useSoonList button').first().click();
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('toto-supplies-v1'))[0].qty),'2');
+  assert.match(await page.locator('#experienceStorageStatus').textContent(),/保存できません/);
+  await page.evaluate(()=>{window.__failExperienceWrite='';window.__silentExperienceWrite='toto-supplies-v1'});
+  await page.locator('#useSoonList button').first().click();
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('toto-supplies-v1'))[0].qty),'2');
+  await page.evaluate(()=>{window.__silentExperienceWrite=''});
+  await page.locator('#experienceStorageStatus button').click();
+  await page.getByRole('button',{name:'テスト用ライトの編集・点検・削除を開く',exact:true}).click();
+  await page.getByRole('button',{name:'テスト用ライトを削除',exact:true}).click();
+  await page.getByRole('button',{name:'テスト用ライトの削除を確定',exact:true}).click();
+  await page.evaluate(()=>show('more'));await page.locator('#recentDeletions').getByRole('button',{name:'元に戻す',exact:true}).click();
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('toto-supplies-v1')).length),2);
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('toto-supplies-v1'))[0].qty),'2');
+  const prefs=await page.evaluate(()=>JSON.parse(localStorage.getItem('toto-experience-v1')));
+  assert.equal(prefs.simple,true);assert.equal(prefs.reminders,true);assert.deepEqual(prefs.favorites,['more']);
+  assert.equal(await page.evaluate(()=>validateFullBackupObject(JSON.parse(buildFullBackup())).keys.includes('toto-experience-v1')),true);
+  for(const width of [320,390]) {
+   await page.setViewportSize({width,height:844});
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  }
+  assert.deepEqual(errors,[]);
+  console.log('PASS: mobile feature entry points, persistent favorites/simple view, reminders, worksheet, private feedback, stock use/shopping, quota/silent failures, deletion restore and settings backup');
+ }finally{await context.close()}
+};
