@@ -370,11 +370,9 @@
    "自宅周辺のハザードマップを確認": 28,
    "仲間からのひとこと": 29,
    "今日の優先チェック": 29,
-   "今日やること": 29,
    "まずは、住まいの安全から": 8,
    "お気に入り": 13,
    "期限・点検のお知らせ": 39,
-   "備えをととのえる": 29,
    "ほかのおすすめを見る": 29
   },
   learn: {
@@ -653,20 +651,51 @@
   'バックアップ・機種変更':38, 'オフライン利用の確認':40, 'プチガイドをもう一度表示':40,
   '使い方・お問い合わせ':33, 'プライバシーポリシー':38
  };
+ // Only the marked shortcuts use the object on its own.
+ const shortcutObjects = {
+  '地域・天気の設定':'weather-card',
+  '世帯人数・備蓄日数':'calculator-bottle',
+  '住まいの安全点検':'home-checklist',
+  'バックアップ・機種変更':'shield-folder',
+  'オフライン利用の確認':'settings-book',
+  'プチガイドをもう一度表示':'settings-book',
+  '季節の防災':'seasonal-checklist',
+  '避難生活':'map',
+  '家族・ペットカルテ':'family-card',
+  'マイ避難計画':'map'
+ };
+ const checklist = '<rect x="10" y="8" width="28" height="34" rx="3" fill="#fff9e8"/><path d="M19 8V6a5 5 0 0 1 10 0v2h3v5H16V8z" fill="#b6c7d5"/>';
+ const objectArtwork = {
+  'weather-card': '<rect x="5" y="8" width="38" height="32" rx="4" fill="#fff7df"/><circle cx="30" cy="20" r="5" fill="#ffbf4b" stroke="#a45f13"/><path d="M30 11v2m7 2 2-2m0 7h2m-4 5 2 2" stroke="#a45f13"/><path d="M16 33a5 5 0 0 1 0-10 7 7 0 0 1 13 1 4.5 4.5 0 1 1 1 9Z" fill="#bce5f6"/>',
+  'calculator-bottle': '<rect x="5" y="7" width="23" height="34" rx="4" fill="#e7edf2"/><rect x="9" y="12" width="15" height="7" rx="1" fill="#b9ded0"/><path d="M10 25h2m4 0h2m4 0h2m-14 5h2m4 0h2m4 0h2m-14 5h2m4 0h2m4 0h2"/><path d="M35 18h6v5l2 3v12a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3V26l2-3z" fill="#cef0ff"/><path d="M35 18h6v4h-6zm-2 11h10v5H33z" fill="#67b9e0"/>',
+  'home-checklist': checklist+'<path d="m19 23 5-5 5 5v6H19z" fill="#9bd0ec"/><path d="m15 34 2 2 3-4m-5 7 2 2 3-4" stroke="#54802d"/><path d="M24 34h8m-8 5h8"/>',
+  'shield-folder': '<path d="M4 13a3 3 0 0 1 3-3h12l5 5h16a4 4 0 0 1 4 4v17a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z" fill="#ffda80"/><path d="M5 19h38" stroke="#987233"/><path d="m24 21 8 3v4c0 6-5 8-8 10-3-2-8-4-8-10v-4z" fill="#91cce9"/>',
+  'settings-book': '<path d="M24 14c-6-5-13-6-20-5v26c7-1 14 0 20 5 6-5 13-6 20-5V9c-7-1-14 0-20 5z" fill="#a1d6f2"/><path d="M24 14v26M9 16c3 0 6 1 10 3M9 24c3 0 6 1 10 3"/><circle cx="34" cy="24" r="5" fill="#f4fbff"/><path d="M34 17v2m0 10v2m-7-7h2m10 0h2m-12-5 1.5 1.5m7 7L39 29m-10 0 1.5-1.5m7-7L39 19"/>',
+  'seasonal-checklist': checklist+'<path d="m15 23 2 2 4-5m-6 14 2 2 4-5" stroke="#54802d"/><path d="M29 18v10m-4-7 8 4m-8 0 8-4" stroke="#3978a5"/><circle cx="29" cy="35" r="3" fill="#ffbe48" stroke="#a96a1d"/><path d="M29 30v1m0 8v1m-5-5h1m8 0h1" stroke="#a96a1d"/>',
+  'map': '<path d="m5 14 12-5 14 4 12-5v27l-12 5-14-4-12 5z" fill="#dcf0c2"/><path d="M17 9v27m14-23v27" stroke="#73905b"/><path d="m6 29 11-6 12 5 14-7M9 19l7 5m4 11 8-7" stroke="#fff9db" stroke-width="3"/><path d="M35 16c0 5-7 11-7 11s-7-6-7-11a7 7 0 0 1 14 0z" fill="#e97463" stroke="#8d4539"/><circle cx="28" cy="16" r="2.2" fill="#fff" stroke="none"/>',
+  'family-card': '<rect x="7" y="6" width="34" height="36" rx="4" fill="#fff7df"/><path d="M18 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm12 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12 22a6 6 0 0 1 12 0Zm12 0a6 6 0 0 1 12 0Z" fill="#6ba1bd" stroke="none"/><path d="M18 36c0-2 3-5 6-5s6 3 6 5c0 3-4 2-6 1-2 1-6 2-6-1Z" fill="#9e755f" stroke="none"/><path d="M17 30h0m5-3h0m4 0h0m5 3h0" stroke="#9e755f" stroke-width="3"/>'
+ };
  const tidyPlaces = [
   [/寝室|寝る場所/u,21], [/玄関|廊下/u,22], [/台所|キッチン/u,23],
   [/リビング|居間/u,24], [/クローゼット|押入れ|押し入れ/u,31],
   [/洗面|浴室|風呂/u,32]
  ];
  const label = node => node.textContent.replace(/[\s→⌄]+$/u,'').replace(/\s+/gu,' ').trim();
- function addIcon(node,number,replaceSelector) {
+ function addIcon(node,number,replaceSelector,object) {
   if (!node || typeof number !== 'number' || node.querySelector(':scope > .chibi-icon')) return;
   const icon = document.createElement('span');
   const index = number - 1;
   icon.className = 'chibi-icon';
-  icon.dataset.illustration = number;
   icon.setAttribute('aria-hidden','true');
-  icon.style.backgroundPosition = (index % 8 * 100 / 7)+'% '+(Math.floor(index / 8) * 25)+'%';
+  if (object) {
+   icon.classList.add('object-icon');
+   icon.dataset.objectIcon=object;
+   icon.innerHTML='<svg viewBox="0 0 48 48" focusable="false" aria-hidden="true"><g fill="none" stroke="#35546a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+objectArtwork[object]+'</g></svg>';
+   node.classList.add('with-object-icon');
+  } else {
+   icon.dataset.illustration=number;
+   icon.style.backgroundPosition=(index % 8 * 100 / 7)+'% '+(Math.floor(index / 8) * 25)+'%';
+  }
   const previous = replaceSelector && node.querySelector(replaceSelector);
   if (previous) previous.replaceWith(icon);
   else node.prepend(icon);
@@ -681,8 +710,9 @@
   section.querySelectorAll('h2,h3,summary').forEach(node => decorateHeading(node,section.id));
  }
  document.querySelectorAll('.refresh-menu-grid button, #more .more-menu-button').forEach(node => {
-  const number=node.id==='optionalLifestyleGuide' ? 4 : shortcuts[label(node)];
-  addIcon(node,number,':scope > svg');
+  const title=label(node);
+  const number=node.id==='optionalLifestyleGuide' ? 4 : shortcuts[title];
+  addIcon(node,number,':scope > svg',shortcutObjects[title]);
   if (number && node.matches('.more-menu-button,#optionalLifestyleGuide')) {
    const icon=node.querySelector(':scope > .chibi-icon');
    const copy=document.createElement('span');
