@@ -371,6 +371,7 @@
    "仲間からのひとこと": 29,
    "今日の優先チェック": 29,
    "今日やること": 29,
+   "まずは、住まいの安全から": 8,
    "お気に入り": 13,
    "期限・点検のお知らせ": 39,
    "備えをととのえる": 29,
@@ -430,6 +431,7 @@
    "停電への備え": 37,
    "家族やペットに合わせて": 15,
    "いまある備蓄": 5,
+   "備蓄リスト": 5,
    "検索・絞り込み": 5,
    "＋ 備蓄品を登録する": 5,
    "備蓄を登録": 5,
@@ -589,6 +591,7 @@
   },
   more: {
    "その他の防災メニュー": 40,
+   "機能を探す": 40,
    "備えをまとめて確認": 40,
    "避難・安全を確認する": 40,
    "訓練・実践を振り返る": 18,
@@ -657,7 +660,7 @@
  ];
  const label = node => node.textContent.replace(/[\s→⌄]+$/u,'').replace(/\s+/gu,' ').trim();
  function addIcon(node,number,replaceSelector) {
-  if (!node || !number || node.querySelector(':scope > .chibi-icon')) return;
+  if (!node || typeof number !== 'number' || node.querySelector(':scope > .chibi-icon')) return;
   const icon = document.createElement('span');
   const index = number - 1;
   icon.className = 'chibi-icon';
@@ -690,6 +693,7 @@
  for (const [id,number] of Object.entries({
   stockTargetButton:16, pageFeedback:33
  })) addIcon(document.getElementById(id),number);
+ document.querySelectorAll('main a[href^="https://disaportal.gsi.go.jp/"]').forEach(node => addIcon(node,28));
  for (const [id,number] of Object.entries({
   fullBackupDialog:38, stockSetupDialog:16, stockGateDialog:8, livingMilestoneDialog:12, shoppingDialog:17
  })) {
@@ -710,6 +714,9 @@
    addIcon(node,tidyPlaces.find(([pattern]) => pattern.test(place))?.[1] ?? 1);
   });
  });
+ for (const [id,number] of [['homeReminders',39],['recentDeletions',38]]) {
+  decorateList(document.getElementById(id),host => addIcon(host.querySelector('h2'),number));
+ }
  for (const id of ['favoritePages','homeFavorites']) {
   decorateList(document.getElementById(id),host => {
    addIcon(host.querySelector('h2'),13);
