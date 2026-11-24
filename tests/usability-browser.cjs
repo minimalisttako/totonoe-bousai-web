@@ -49,6 +49,18 @@ module.exports=async function verifyUsability(browser,base){
   assert.equal(await page.locator('#familyLabel').inputValue(),'');
   assert.equal(await page.evaluate(()=>Object.keys(JSON.parse(sessionStorage.getItem('toto-form-drafts-v1')||'{}')).length),0);
 
+  await page.evaluate(()=>localStorage.setItem('toto-home-safety-v1',JSON.stringify({sleep:'done',bedpath:'done',door:'done',hall:'done',fix:'done'})));
+  await page.goto(base+'?page=supplies');
+  await page.locator('#supplyAddFold > summary').click();
+  await page.locator('#sname').fill('入力途中の食品');
+  await page.locator('#scategory').selectOption('food');
+  await page.locator('#smeasureFactor').fill('2');
+  await page.reload();
+  await page.locator('#smeasureFactor').waitFor();
+  assert.equal(await page.locator('#sname').inputValue(),'入力途中の食品');
+  assert.equal(await page.locator('#smeasureFactor').inputValue(),'2');
+  assert.equal(await page.locator('#scategory').inputValue(),'food');
+
   await page.evaluate(()=>{
    const canvas=document.createElement('canvas');canvas.width=2;canvas.height=2;
    const photo=canvas.toDataURL('image/jpeg');

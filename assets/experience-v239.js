@@ -867,14 +867,23 @@
  const draftStatus=el('p',undefined,'notice');draftStatus.id='draftStatus';draftStatus.setAttribute('role','status');document.querySelector('header').append(draftStatus);
  function formKey(form){const section=form.closest('main > section');if(!section||section.id==='reviews'||form.method==='dialog')return null;return section.id+':'+(form.id||[...section.querySelectorAll('form')].indexOf(form))}
  function fields(form){return [...form.querySelectorAll('input[id],textarea[id],select[id]')].filter(n=>!n.readOnly&&!['file','password','hidden','submit','button'].includes(n.type))}
+ function syncDraftFields(form){
+  if(form.querySelector('#scategory'))updateSupplyCompareHint();
+  if(form.querySelector('#tidyPlace'))toggleTidyCustom();
+  if(form.querySelector('#familyType'))renderFamilySuggestedItems();
+ }
  function saveDrafts(){try{sessionStorage.setItem(draftKey,JSON.stringify(drafts))}catch(e){draftStatus.textContent='入力途中の内容を一時保存できません。画面を閉じる前に記録を保存してください。'}}
  function forgetDraft(form){const id=formKey(form);if(!id)return;delete drafts[id];saveDrafts();delete form.dataset.draftApplied;form.querySelector('.draft-resume')?.remove()}
  function clearDrafts(){drafts={};saveDrafts();document.querySelectorAll('.draft-resume').forEach(n=>n.remove())}
  function restoreDrafts(){
   for(const form of $(activePage).querySelectorAll('form')){
    const id=formKey(form),values=drafts[id];if(!id||!values||form.dataset.draftApplied==='true')continue;
+   for(const select of form.querySelectorAll('select[id]')){
+    if(typeof values[select.id]==='string')select.value=values[select.id];
+   }
+   syncDraftFields(form);
    for(const n of fields(form)){if(!Object.hasOwn(values,n.id))continue;const value=values[n.id];if(['checkbox','radio'].includes(n.type)){if(typeof value==='boolean')n.checked=value}else if(typeof value==='string'&&value.length<=5000)n.value=value}
-   form.dataset.draftApplied='true';const note=el('div',undefined,'draft-resume');note.append(el('span','入力途中の内容を戻しました。写真は必要に応じて選び直してください。'),action('入力途中の内容を取り消す',()=>{forgetDraft(form);form.reset();delete form.dataset.draftApplied}));form.prepend(note);
+   form.dataset.draftApplied='true';const note=el('div',undefined,'draft-resume');note.append(el('span','入力途中の内容を戻しました。写真は必要に応じて選び直してください。'),action('入力途中の内容を取り消す',()=>{forgetDraft(form);form.reset();syncDraftFields(form);delete form.dataset.draftApplied}));form.prepend(note);
    for(let parent=form.parentElement;parent&&parent!==$(activePage);parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
   }
  }
@@ -912,7 +921,11 @@
  renderBadges();restoreDrafts();syncHazardGate();
  const focus=entryUrl.searchParams.get('focus');
  const targets={family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
- if(targets[focus])requestAnimationFrame(()=>$(targets[focus]).scrollIntoView({block:'start'}));
+ if(targets[focus])requestAnimationFrame(()=>{
+  const target=$(targets[focus]);
+  target.style.scrollMarginTop=(document.querySelector('header').offsetHeight+12)+'px';
+  target.scrollIntoView({block:'start'});
+ });
  if(entryUrl.searchParams.get('share')==='1'&&!document.querySelector('dialog[open]'))openShare();
  if(entryUrl.searchParams.get('guide')==='1'){tutorialPendingPage=targetPage;tutorialState={...tutorialState,step:0};openTutorial()}else queueMicrotask(startSetup);
 })();
