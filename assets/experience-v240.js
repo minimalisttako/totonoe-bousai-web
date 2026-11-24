@@ -2,7 +2,7 @@
 (function () {
  'use strict';
  const preferenceKey = 'toto-experience-v1';
- const allowedPages = ['home','learn','tidy','supplies','more','emergency','homeSafety','evacuation','pouch','goBag','training','family','weather','readiness','seasonalCheck','outage','minimalistGuide','examStudy','moving','tidyAlbum'];
+ const allowedPages = ['home','learn','tidy','supplies','more','emergency','homeSafety','evacuation','pouch','goBag','training','family','weather','readiness','seasonalCheck','outage','minimalistGuide','examStudy','moving','tidyAlbum','select','set','stock','diagnosis','reviews','helpGuide','cleanPractice','events','practiceQuiz'];
  function validPreferences(value) {
   return !!value && typeof value === 'object' && !Array.isArray(value)
    && ['deviceNotifications'].every(field => value[field] === undefined || typeof value[field] === 'boolean')
@@ -182,38 +182,107 @@
  const lifestyleName=element('span','ミニマリストのススメ');const lifestyleArrow=element('span','→');lifestyleArrow.setAttribute('aria-hidden','true');
  lifestyleCard.append(leaf,lifestyleName,lifestyleArrow);$('more').querySelector('.refresh-menu-grid').append(lifestyleCard);
  const manualGuide=element('div',undefined,'experience-actions');manualGuide.append(button('はじめての案内を見る',()=>openTutorial(true)));document.querySelector('#home .refresh-home-mission').append(manualGuide);
- const toolbar=element('div',undefined,'experience-toolbar');
- const favoriteToggle=button('お気に入りに追加',toggleFavorite);favoriteToggle.id='favoritePageToggle';
- const feedback=button('感想・不具合を送る',openFeedback);feedback.id='pageFeedback';toolbar.append(favoriteToggle,feedback);document.querySelector('header').append(toolbar);
- const favoritesCard=card('favoritePages','お気に入り');const moreShortcuts=$('more').querySelector('.refresh-menu-grid');if(moreShortcuts)moreShortcuts.after(favoritesCard);else $('more').append(favoritesCard);
- const homeFavorites=card('homeFavorites','お気に入り');
- const homeMission=document.querySelector('#home .refresh-home-mission');
- if(homeMission)homeMission.before(homeFavorites);else $('home').append(homeFavorites);
+ const favoritesPanel=element('dialog');
+ favoritesPanel.id='favoritesDialog';
+ favoritesPanel.setAttribute('aria-labelledby','favoritesTitle');
+ const favoritesHeading=element('div',undefined,'favorites-panel-heading');
+ const favoritesTitle=element('h2','お気に入り');
+ favoritesTitle.id='favoritesTitle';
+ const closeFavorites=button('閉じる',()=>favoritesPanel.close());
+ favoritesHeading.append(favoritesTitle,closeFavorites);
+ const favoriteToggle=button('このページをお気に入りに追加',toggleFavorite);
+ favoriteToggle.id='favoritePageToggle';
+ const favoriteStatus=element('p',undefined,'notice');
+ favoriteStatus.id='favoriteStatus';
+ favoriteStatus.setAttribute('role','status');
+ const favoritesCard=element('div');
+ favoritesCard.id='favoritePages';
+ favoritesPanel.append(favoritesHeading,favoriteToggle,favoriteStatus,favoritesCard);
+ const favoritesLauncher=button('',()=>{
+  loadPreferences();
+  renderFavorites();
+  favoriteStatus.textContent='';
+  favoritesPanel.showModal();
+  favoritesLauncher.setAttribute('aria-expanded','true');
+ });
+ favoritesLauncher.id='favoritesLauncher';
+ favoritesLauncher.setAttribute('aria-haspopup','dialog');
+ favoritesLauncher.setAttribute('aria-controls','favoritesDialog');
+ favoritesLauncher.setAttribute('aria-expanded','false');
+ favoritesLauncher.innerHTML='<svg viewBox="0 0 24 24" fill="#ffe19a" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m12 2.5 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9Z"/></svg><span>お気に入り</span>';
+ favoritesPanel.addEventListener('close',()=>{
+  favoritesLauncher.setAttribute('aria-expanded','false');
+ });
+ document.body.append(favoritesPanel,favoritesLauncher);
+ const feedback=button('感想・不具合を送る',openFeedback);
+ feedback.id='pageFeedback';
+ const feedbackFooter=element('footer',undefined,'page-feedback-footer');
+ feedbackFooter.append(feedback);
+
+ function positionFavoritesLauncher() {
+  const navigation=document.querySelector('nav');
+  const moreButton=navigation.querySelector('[data-page="more"]');
+  const navBox=navigation.getBoundingClientRect();
+  const moreBox=moreButton.getBoundingClientRect();
+  const right=Math.max(12,innerWidth-moreBox.left-(moreBox.width+56)/2);
+  document.documentElement.style.setProperty('--favorites-right',right+'px');
+  document.documentElement.style.setProperty('--favorites-bottom',(innerHeight-navBox.top+12)+'px');
+ }
+ window.addEventListener('resize',positionFavoritesLauncher);
+ if(typeof ResizeObserver!=='undefined'){
+  new ResizeObserver(positionFavoritesLauncher).observe(document.querySelector('nav'));
+ }
+ positionFavoritesLauncher();
  function pageTitle(page) {return pageNames[page]||page}
  function renderFavorites() {
-  [favoritesCard,homeFavorites].forEach(host=>{
-   host.replaceChildren(element('h2','お気に入り'));host.hidden=!preferences.favorites.length&&host===homeFavorites;
-   if(!preferences.favorites.length)host.append(element('p','使いたいページで「お気に入りに追加」を押してください。最大8件登録できます。','notice'));
-   const row=element('div',undefined,'experience-favorites');
-   preferences.favorites.forEach(page=>{
-    const item=element('div',undefined,'experience-favorite-item');
-    const open=button(pageTitle(page),()=>show(page));open.classList.add('experience-favorite-open');open.dataset.favoritePage=page;
-    const remove=button('お気に入り解除',()=>removeFavorite(page));remove.classList.add('experience-favorite-remove');remove.setAttribute('aria-label',pageTitle(page)+'のお気に入り解除');
-    item.append(open,remove);row.append(item);
-   });host.append(row);
+  favoritesCard.replaceChildren();
+  if(!preferences.favorites.length){
+   favoritesCard.append(element('p','よく使うページを開き、上のボタンから登録してください。最大8件です。','notice'));
+  }
+  const row=element('div',undefined,'experience-favorites');
+  preferences.favorites.forEach(page=>{
+   const item=element('div',undefined,'experience-favorite-item');
+   const open=button(pageTitle(page),()=>{
+    favoritesPanel.close();
+    show(page);
+   });
+   open.classList.add('experience-favorite-open');
+   open.dataset.favoritePage=page;
+   const remove=button('解除',()=>removeFavorite(page));
+   remove.classList.add('experience-favorite-remove');
+   remove.setAttribute('aria-label',pageTitle(page)+'のお気に入り解除');
+   item.append(open,remove);
+   row.append(item);
   });
-  toolbar.hidden=activePage==='emergency';
+  favoritesCard.append(row);
+  favoritesLauncher.setAttribute('aria-label','お気に入りを開く（'+preferences.favorites.length+'件）');
   favoriteToggle.disabled=!allowedPages.includes(activePage);
-  favoriteToggle.textContent=preferences.favorites.includes(activePage)?'お気に入りから外す':'お気に入りに追加';favoriteToggle.setAttribute('aria-pressed',String(preferences.favorites.includes(activePage)));
+  const registered=preferences.favorites.includes(activePage);
+  favoriteToggle.textContent=registered?'このページのお気に入りを解除':'このページをお気に入りに追加';
+  favoriteToggle.setAttribute('aria-pressed',String(registered));
+  const section=$(activePage);
+  if(section)section.append(feedbackFooter);
  }
  function removeFavorite(page) {
   loadPreferences();
-  if(savePreferences({...preferences,favorites:preferences.favorites.filter(saved=>saved!==page)}))saveMessage('「'+pageTitle(page)+'」のお気に入りを解除しました。');
+  if(savePreferences({...preferences,favorites:preferences.favorites.filter(saved=>saved!==page)})){
+   favoriteStatus.textContent='「'+pageTitle(page)+'」のお気に入りを解除しました。';
+   favoriteToggle.focus();
+  }
  }
  function toggleFavorite() {
-  loadPreferences();const favorites=preferences.favorites.slice();const index=favorites.indexOf(activePage);
-  if(index>=0)favorites.splice(index,1);else if(favorites.length<8)favorites.push(activePage);else{saveMessage('お気に入りは8件までです。「その他」からページを開いて外してください。');return}
-  if(savePreferences({...preferences,favorites}))saveMessage(index>=0?'お気に入りから外しました。':'お気に入りに追加しました。');
+  loadPreferences();
+  const favorites=preferences.favorites.slice();
+  const index=favorites.indexOf(activePage);
+  if(index>=0)favorites.splice(index,1);
+  else if(favorites.length<8)favorites.push(activePage);
+  else{
+   favoriteStatus.textContent='お気に入りは8件までです。登録済みのページを解除すると追加できます。';
+   return;
+  }
+  if(savePreferences({...preferences,favorites})){
+   favoriteStatus.textContent=index>=0?'お気に入りから外しました。':'このページをお気に入りに追加しました。';
+  }
  }
  const displayCard=card('simpleDisplayCard','表示を選ぶ');
  const simpleLabel=element('label',undefined,'experience-row');const simpleCheckbox=element('input');simpleCheckbox.type='checkbox';simpleCheckbox.id='simpleDisplay';
@@ -231,7 +300,7 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v231\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v240\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
@@ -353,7 +422,7 @@
  const originalRestore=restoreAllData;
  restoreAllData=function(){restoringDeletion=true;try{return originalRestore.apply(this,arguments)}finally{restoringDeletion=false}};
  const originalShow=show;
- show=function(page){const result=originalShow.apply(this,arguments);renderFavorites();renderReminders();if(activePage==='supplies'){renderSupplyTools();renderOptionalSetup()}return result};
+ show=function(page){const previous=activePage;const result=originalShow.apply(this,arguments);if(previous!==activePage&&favoritesPanel.open)favoritesPanel.close();renderFavorites();renderReminders();if(activePage==='supplies'){renderSupplyTools();renderOptionalSetup()}return result};
  window.addEventListener('storage',event=>{
   if(event.key===preferenceKey||event.key===null){loadPreferences();applyPreferences()}
   if(event.key===null||protectedArrays.has(event.key)){undoEntries.length=0;renderUndo()}
@@ -793,9 +862,9 @@
  function group(id,title){const n=el('div',undefined,'more-purpose');n.id=id;n.append(el('h2',title));return n}
  const familyGroup=group('moreFamilyGroup','家族の備え'),settingsGroup=group('moreSettingsGroup','アプリの設定・データ'),authorGroup=group('moreAuthorGroup','作者・講座・お問い合わせ');
  const authorGrid=el('div',undefined,'refresh-menu-grid');authorGrid.append($('optionalLifestyleGuide'));authorGroup.append(authorGrid);
- familyGroup.append(quick,$('favoritePages'));
+ familyGroup.append(quick);
  for(const card of cards){
-  if(card===quick||card.id==='favoritePages'||card.matches('.refresh-title-row,.page-intro,.feature-search-card,.wrap-up-entry'))continue;
+  if(card===quick||card.id==='favoritePages'||card.matches('.refresh-title-row,.page-intro,.feature-search-card,.wrap-up-entry,.page-feedback-footer'))continue;
   if(card.id==='lectureInformation'){authorGroup.append(card);continue}
   if(card.querySelector('h2')?.textContent.trim()==='暮らしに合わせる'){familyGroup.append(card);continue}
   for(const link of [...card.querySelectorAll(':scope > .more-menu-button')])if(/使い方・お問い合わせ|プライバシーポリシー/.test(link.textContent))authorGroup.append(link);
@@ -919,6 +988,7 @@
   if(!hazardIsConfirmed()){setupActive=true;openHazardGate(false)}
  }
  renderBadges();restoreDrafts();syncHazardGate();
+ $(activePage).append(document.querySelector('.page-feedback-footer'));
  const focus=entryUrl.searchParams.get('focus');
  const targets={family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
  if(targets[focus])requestAnimationFrame(()=>{
