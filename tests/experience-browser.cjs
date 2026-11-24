@@ -15,6 +15,12 @@ module.exports = async function verifyExperience(browser,base) {
     const cards=fresh.locator('#'+route+' .refresh-menu-grid button > .chibi-icon');
     assert.deepEqual(await cards.evaluateAll(nodes => nodes.map(node => Number(node.dataset.illustration))),icons);
     assert.equal(await fresh.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    if (route==='more') {
+     for (const title of ['機能を探す','削除の取り消し']) {
+      const heading=fresh.getByRole('heading',{name:title,exact:true}).filter({visible:true});
+      assert.equal(await heading.locator('.chibi-icon').count(),1);
+     }
+    }
    }
   }
   await fresh.goto(base+'?page=tidy');
