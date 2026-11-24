@@ -683,13 +683,17 @@
  document.querySelectorAll('.refresh-menu-grid button, #more .more-menu-button').forEach(node => {
   const number=node.id==='optionalLifestyleGuide' ? 4 : shortcuts[label(node)];
   addIcon(node,number,':scope > svg');
+  if (number && node.matches('.more-menu-button,#optionalLifestyleGuide')) {
+   const icon=node.querySelector(':scope > .chibi-icon');
+   const copy=document.createElement('span');
+   copy.className='chibi-card-copy';
+   copy.append(...Array.from(node.childNodes).filter(child => child!==icon));
+   node.prepend(copy);
+  }
  });
  document.querySelectorAll('.refresh-tiles .refresh-tile').forEach((node,index) => {
   addIcon(node,[2,3,5][index],':scope > svg');
  });
- for (const page of ['learn','tidy','supplies']) {
-  addIcon(document.querySelector('nav button[data-page="'+page+'"]'),pages[page],':scope > .nav-icon');
- }
  for (const [id,number] of Object.entries({
   stockTargetButton:16, pageFeedback:33
  })) addIcon(document.getElementById(id),number);

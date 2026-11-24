@@ -7,7 +7,11 @@ module.exports = async function verifyExperience(browser,base) {
   await fresh.goto(base+'?page=homeSafety');await fresh.locator('#safe-sleep').waitFor();
   assert.equal(await fresh.locator('dialog[open]').count(),0);
   assert.equal(await fresh.locator('nav button').count(),5);
-  assert.equal(await fresh.locator('nav .chibi-icon').count(),3);
+  assert.equal(await fresh.locator('nav .chibi-icon').count(),0);
+  const navIcons=fresh.locator('nav button > svg.nav-icon');
+  assert.equal(await navIcons.count(),5);
+  assert.equal(await navIcons.evaluateAll(icons=>new Set(icons.map(icon=>getComputedStyle(icon).color)).size),5);
+  assert.equal(await fresh.locator('#stockLockBadge').isVisible(),true);
   for (const width of [320,390]) {
    await fresh.setViewportSize({width,height:844});
    for (const [route,icons] of [['more',[15,9,18,11,4]],['learn',[8,20,9,1]]]) {
@@ -16,6 +20,16 @@ module.exports = async function verifyExperience(browser,base) {
     assert.deepEqual(await cards.evaluateAll(nodes => nodes.map(node => Number(node.dataset.illustration))),icons);
     assert.equal(await fresh.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     if (route==='more') {
+     const rows=fresh.locator('#more :is(.more-menu-button,#optionalLifestyleGuide).with-chibi:visible');
+     const placement=await rows.evaluateAll(nodes=>nodes.map(row=>{
+      const copy=row.querySelector('.chibi-card-copy').getBoundingClientRect();
+      const art=row.querySelector('.chibi-icon').getBoundingClientRect();
+      return [copy.width,copy.right,art.left,art.width,row.getBoundingClientRect().right];
+     }));
+     assert(placement.length>=4);
+     for (const [copyWidth,copyRight,artLeft,artWidth,rowRight] of placement) {
+      assert(copyWidth>0 && copyRight<=artLeft && artWidth>=(width===320?72:84) && artLeft+artWidth<=rowRight);
+     }
      for (const title of ['機能を探す','削除の取り消し']) {
       const heading=fresh.getByRole('heading',{name:title,exact:true}).filter({visible:true});
       assert.equal(await heading.locator('.chibi-icon').count(),1);
