@@ -173,9 +173,11 @@
  $('supplies').insertBefore(optionalSetup,$('supplyInventoryCard'));
  function renderOptionalSetup(){optionalSetup.hidden=stockSetupComplete()}
  renderOptionalSetup();
- const lifestyleCard=card('optionalLifestyleGuide','暮らしをととのえるヒント');
- lifestyleCard.append(element('p','ミニマリズムは作者がおすすめする暮らし方のひとつです。自分に合う工夫から試せます。','notice'),button('ミニマリストのススメを開く',()=>show('minimalistGuide')));
- $('more').append(lifestyleCard);
+ const lifestyleCard=button('',()=>show('minimalistGuide'));lifestyleCard.id='optionalLifestyleGuide';lifestyleCard.classList.add('minimalist-menu-card');lifestyleCard.setAttribute('aria-label','ミニマリストのススメを開く');
+ const leaf=document.createElementNS('http://www.w3.org/2000/svg','svg');leaf.setAttribute('viewBox','0 0 24 24');leaf.setAttribute('fill','none');leaf.setAttribute('stroke','currentColor');leaf.setAttribute('stroke-width','1.7');leaf.setAttribute('stroke-linecap','round');leaf.setAttribute('stroke-linejoin','round');leaf.setAttribute('aria-hidden','true');leaf.setAttribute('focusable','false');
+ const leafPath=document.createElementNS('http://www.w3.org/2000/svg','path');leafPath.setAttribute('d','M5 15C5 8 11 5 19 5c0 8-3 14-10 14H5v-4ZM5 19 15 9');leaf.append(leafPath);
+ const lifestyleName=element('span','ミニマリストのススメ');const lifestyleArrow=element('span','→');lifestyleArrow.setAttribute('aria-hidden','true');
+ lifestyleCard.append(leaf,lifestyleName,lifestyleArrow);$('more').querySelector('.refresh-menu-grid').append(lifestyleCard);
  const manualGuide=element('div',undefined,'experience-actions');manualGuide.append(button('はじめての案内を見る',()=>openTutorial(true)));document.querySelector('#home .refresh-home-mission').append(manualGuide);
  const toolbar=element('div',undefined,'experience-toolbar');
  const favoriteToggle=button('お気に入りに追加',toggleFavorite);favoriteToggle.id='favoritePageToggle';
@@ -225,11 +227,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v230\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v231\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
+ updates.append(element('h3','v231　2026年11月24日'),element('p','その他のミニマリストのススメを、4枚の青いカードの下に葉のアイコン付き横長カードとして配置しました。'));
  updates.append(element('h3','v230　2026年11月24日'),element('p','優先安全点検の完了で備蓄を解放し、初回設定を必要な場面に分けました。下のメニューを5つに整理し、今日やることは1つと、折りたたんだ追加のおすすめを表示します。'));
  updates.append(element('h3','v229　2026年11月23日'),element('p','住まいの安全点検が完了したら、場所ごとのチェックリストへ進める案内を追加しました。'));
  updates.append(element('h3','v227　2026年11月22日'),element('p','ホームのお気に入りをイラストと「今日やること」の間に移動し、各項目の端に「お気に入り解除」を追加しました。'));
