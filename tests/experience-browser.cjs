@@ -25,6 +25,16 @@ module.exports = async function verifyExperience(browser,base) {
     const cards=fresh.locator('#'+route+' .refresh-menu-grid button > .chibi-icon');
     assert.deepEqual(await cards.evaluateAll(nodes => nodes.map(node => node.dataset.objectIcon??Number(node.dataset.illustration))),icons);
     assert.equal(await fresh.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    assert.equal(await fresh.locator('header #favoritePageToggle,header #pageFeedback').count(),0);
+    assert.equal(await fresh.locator('#pageFeedback').evaluate(n=>n.closest('main > section').id),route);
+    const positions=await fresh.evaluate(()=>{
+     const launch=document.getElementById('favoritesLauncher').getBoundingClientRect();
+     const tab=document.querySelector('nav [data-page=more]').getBoundingClientRect();
+     const nav=document.querySelector('nav').getBoundingClientRect();
+     return {left:launch.left,right:launch.right,width:innerWidth,bottom:launch.bottom,top:nav.top,centers:Math.abs((launch.left+launch.right-tab.left-tab.right)/2)};
+    });
+    assert(positions.left>=0 && positions.right<=positions.width && positions.bottom<positions.top && positions.centers<2,JSON.stringify(positions));
+
     if (route==='learn') {
      const exam=fresh.locator('#learn > .card').filter({has:fresh.getByRole('button',{name:'例題・音声学習',exact:true})});
      assert.equal(await exam.locator('h2 > .chibi-icon').count(),1);
@@ -55,6 +65,11 @@ module.exports = async function verifyExperience(browser,base) {
     }
    }
   }
+  await fresh.evaluate(()=>show('helpGuide'));
+  await fresh.locator('#favoritesLauncher').click();
+  await fresh.locator('#favoritePageToggle').click();
+  assert.equal(await fresh.evaluate(()=>validateFullBackupObject(JSON.parse(buildFullBackup())).keys.includes('toto-experience-v1')),true);
+  await fresh.locator('#favoritesDialog').getByRole('button',{name:'閉じる',exact:true}).click();
   await fresh.locator('#globalEmergencyButton').click();
   const emergency=fresh.locator('#emergency');
   await emergency.waitFor();
@@ -65,7 +80,8 @@ module.exports = async function verifyExperience(browser,base) {
   const familyIcon=emergency.locator('#emergencyFamily > h3 > [data-object-icon="family-card"] > svg');
   await familyIcon.waitFor();
   await fresh.locator('nav [data-page="home"]').click();
-  assert.equal(await fresh.locator('#favoritePageToggle').isVisible(),true);
+  assert.equal(await fresh.locator('#favoritesLauncher').isVisible(),true);
+  assert.equal(await fresh.locator('#favoritePageToggle').isVisible(),false);
   assert.equal(await fresh.locator('#pageFeedback').isVisible(),true);
   await fresh.locator('#globalEmergencyButton').click();
   await familyIcon.waitFor();
@@ -132,10 +148,17 @@ module.exports = async function verifyExperience(browser,base) {
   await page.locator('#simpleDisplay').check();
   assert.equal(await page.locator('body').evaluate(node=>node.classList.contains('simple-display')),true);
   if(await page.locator('#experienceStorageStatus').isVisible())await page.locator('#experienceStorageStatus button').click();
+  await page.locator('#favoritesLauncher').click();
   await page.locator('#favoritePageToggle').click();
   assert.match(await page.locator('#favoritePages').textContent(),/その他/);
+  await page.locator('#favoritesDialog').getByRole('button',{name:'閉じる',exact:true}).click();
   await page.reload();await page.locator('#simpleDisplay:checked').waitFor();
   assert.match(await page.locator('#favoritePages').textContent(),/その他/);
+  await page.locator('nav [data-page=home]').click();
+  await page.locator('#favoritesLauncher').click();
+  await page.locator('#favoritesDialog [data-favorite-page=more]').click();
+  assert.equal(await page.locator('#favoritesDialog').isVisible(),false);
+  assert.equal(await page.evaluate(()=>activePage),'more');
   await page.locator('#remindersEnabled').check();
   assert.match(await page.locator('#reminderList').textContent(),/テスト食品/);
   await page.locator('#workshopDetails summary').click();
