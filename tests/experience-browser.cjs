@@ -2,6 +2,12 @@ const assert = require('node:assert/strict');
 module.exports = async function verifyExperience(browser,base) {
  const firstUse=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
  await firstUse.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
+ await firstUse.addInitScript(()=>{
+  if(localStorage.getItem('toto-tutorial-v1'))return;
+  localStorage.setItem('toto-tutorial-v1',JSON.stringify({version:2,step:4,completed:true}));
+  localStorage.setItem('toto-weather-location-v1',JSON.stringify({office:'400000',area:'400010',station:'',warningCity:'4013000'}));
+  localStorage.setItem('totonoe-hazard-confirmed','4013000');
+ });
  const fresh=await firstUse.newPage();
  try {
   await fresh.goto(base+'?page=homeSafety');await fresh.locator('#safe-sleep').waitFor();
