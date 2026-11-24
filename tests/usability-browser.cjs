@@ -36,6 +36,7 @@ module.exports=async function verifyUsability(browser,base){
   }
   await page.goto(base+'?page=family');
   await page.locator('#familyLabel').fill('非公開の家族メモ');
+  await page.locator('#familyEntryForm details summary').click();
   await page.locator('#familySupportNote').fill('非公開の支援内容');
   await page.locator('nav [data-page=more]').click();
   await page.locator('#pageBackButton').click();
