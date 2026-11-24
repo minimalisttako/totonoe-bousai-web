@@ -22,13 +22,15 @@ module.exports = async function verifyExperience(browser,base) {
     if (route==='more') {
      const rows=fresh.locator('#more :is(.more-menu-button,#optionalLifestyleGuide).with-chibi:visible');
      const placement=await rows.evaluateAll(nodes=>nodes.map(row=>{
-      const copy=row.querySelector('.chibi-card-copy').getBoundingClientRect();
+      const label=row.querySelector('.chibi-card-copy');
+      const copy=label.getBoundingClientRect();
       const art=row.querySelector('.chibi-icon').getBoundingClientRect();
-      return [copy.width,copy.right,art.left,art.width,row.getBoundingClientRect().right];
+      return [copy.width,copy.right,art.left,art.width,row.getBoundingClientRect().right,parseFloat(getComputedStyle(label).fontSize),getComputedStyle(label).color===getComputedStyle(row).color];
      }));
      assert(placement.length>=4);
-     for (const [copyWidth,copyRight,artLeft,artWidth,rowRight] of placement) {
+     for (const [copyWidth,copyRight,artLeft,artWidth,rowRight,fontSize,labelColorMatches] of placement) {
       assert(copyWidth>0 && copyRight<=artLeft && artWidth>=(width===320?72:84) && artLeft+artWidth<=rowRight);
+      assert(fontSize>=15 && labelColorMatches);
      }
      for (const title of ['機能を探す','削除の取り消し']) {
       const heading=fresh.getByRole('heading',{name:title,exact:true}).filter({visible:true});
