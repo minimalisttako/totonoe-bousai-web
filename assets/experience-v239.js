@@ -912,7 +912,11 @@
  renderBadges();restoreDrafts();syncHazardGate();
  const focus=entryUrl.searchParams.get('focus');
  const targets={family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
- if(targets[focus])requestAnimationFrame(()=>$(targets[focus]).scrollIntoView({block:'start'}));
+ if(targets[focus])requestAnimationFrame(()=>{
+  const target=$(targets[focus]);
+  target.style.scrollMarginTop=(document.querySelector('header').offsetHeight+12)+'px';
+  target.scrollIntoView({block:'start'});
+ });
  if(entryUrl.searchParams.get('share')==='1'&&!document.querySelector('dialog[open]'))openShare();
  if(entryUrl.searchParams.get('guide')==='1'){tutorialPendingPage=targetPage;tutorialState={...tutorialState,step:0};openTutorial()}else queueMicrotask(startSetup);
 })();
