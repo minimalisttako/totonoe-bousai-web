@@ -97,7 +97,7 @@
  }
  const protectedArrays=new Set([key,tidyKey,pouchKey,familyProfileKey,evacuationDrillKey]);
  function refreshAfterWrite() {
-  clearTimeout(refreshTimer);refreshTimer=setTimeout(()=>{renderStorage();renderReminders();renderSupplyTools();renderUndo()},0);
+  clearTimeout(refreshTimer);refreshTimer=setTimeout(()=>{renderStorage();renderReminders();renderSupplyTools();renderUndo();if(typeof optionalSetup!=='undefined')renderOptionalSetup()},0);
  }
  // Observe all app record writes, including older callers that use localStorage directly.
  let storagePrototype,originalSet,originalGet,originalRemove;
@@ -168,6 +168,15 @@
   }catch(e){saveMessage('保存領域を確認できませんでした。容量不足やブラウザの保存設定を確認してください。',true)}
   finally{try{originalRemove.call(localStorage,probe)}catch(e){}renderStorage()}
  }
+ const optionalSetup=card('optionalStockSetup','必要量の計算は、あとから設定できます');
+ optionalSetup.append(element('p','安全点検が済んだら、まず家にある備蓄を1つ登録しましょう。人数・日数・トイレの回数を設定すると、必要量の目安を計算できます。','notice'),button('人数・日数を設定する',openStockSetup));
+ $('supplies').insertBefore(optionalSetup,$('supplyInventoryCard'));
+ function renderOptionalSetup(){optionalSetup.hidden=stockSetupComplete()}
+ renderOptionalSetup();
+ const lifestyleCard=card('optionalLifestyleGuide','暮らしをととのえるヒント');
+ lifestyleCard.append(element('p','ミニマリズムは作者がおすすめする暮らし方のひとつです。自分に合う工夫から試せます。','notice'),button('ミニマリストのススメを開く',()=>show('minimalistGuide')));
+ $('more').append(lifestyleCard);
+ const manualGuide=element('div',undefined,'experience-actions');manualGuide.append(button('はじめての案内を見る',()=>openTutorial(true)));document.querySelector('#home .refresh-home-mission').append(manualGuide);
  const toolbar=element('div',undefined,'experience-toolbar');
  const favoriteToggle=button('お気に入りに追加',toggleFavorite);favoriteToggle.id='favoritePageToggle';
  const feedback=button('感想・不具合を送る',openFeedback);feedback.id='pageFeedback';toolbar.append(favoriteToggle,feedback);document.querySelector('header').append(toolbar);
@@ -216,11 +225,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v229\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v230\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
+ updates.append(element('h3','v230　2026年11月24日'),element('p','優先安全点検の完了で備蓄を解放し、初回設定を必要な場面に分けました。下のメニューを5つに整理し、今日やることは1つと、折りたたんだ追加のおすすめを表示します。'));
  updates.append(element('h3','v229　2026年11月23日'),element('p','住まいの安全点検が完了したら、場所ごとのチェックリストへ進める案内を追加しました。'));
  updates.append(element('h3','v227　2026年11月22日'),element('p','ホームのお気に入りをイラストと「今日やること」の間に移動し、各項目の端に「お気に入り解除」を追加しました。'));
  updates.append(element('h3','v226　2026年11月22日'),element('p','感想・不具合報告、保存状態の確認、削除の取り消し、お気に入り、簡易表示、期限・点検のお知らせ、先に使う備蓄、買い物画面、講座の詳細とワークシート見本を追加しました。'));
@@ -336,7 +346,7 @@
  const originalRestore=restoreAllData;
  restoreAllData=function(){restoringDeletion=true;try{return originalRestore.apply(this,arguments)}finally{restoringDeletion=false}};
  const originalShow=show;
- show=function(page){const result=originalShow.apply(this,arguments);renderFavorites();renderReminders();if(activePage==='supplies')renderSupplyTools();return result};
+ show=function(page){const result=originalShow.apply(this,arguments);renderFavorites();renderReminders();if(activePage==='supplies'){renderSupplyTools();renderOptionalSetup()}return result};
  window.addEventListener('storage',event=>{
   if(event.key===preferenceKey||event.key===null){loadPreferences();applyPreferences()}
   if(event.key===null||protectedArrays.has(event.key)){undoEntries.length=0;renderUndo()}

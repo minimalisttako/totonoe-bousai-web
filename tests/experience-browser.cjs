@@ -1,5 +1,31 @@
 const assert = require('node:assert/strict');
 module.exports = async function verifyExperience(browser,base) {
+ const firstUse=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
+ await firstUse.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
+ const fresh=await firstUse.newPage();
+ try {
+  await fresh.goto(base+'?page=homeSafety');await fresh.locator('#safe-sleep').waitFor();
+  assert.equal(await fresh.locator('dialog[open]').count(),0);
+  assert.equal(await fresh.locator('nav button').count(),5);
+  await fresh.goto(base+'?page=supplies');await fresh.locator('#stockGateDialog[open]').waitFor();
+  assert.equal(await fresh.locator('#supplies').isVisible(),false);
+  await fresh.locator('#stockGateNext').click();await fresh.locator('#safe-sleep').waitFor();
+  for(const field of ['sleep','fix','bedpath','door'])await fresh.locator('#safe-'+field).selectOption('done');
+  assert.equal(await fresh.evaluate(()=>stockIsUnlocked()),false);
+  await fresh.locator('#safe-hall').selectOption('na');await fresh.locator('#stockGateDialog[open]').waitFor();
+  await fresh.locator('#stockGateNext').click();await fresh.locator('#optionalStockSetup').waitFor();
+  assert.equal(await fresh.locator('#stockSetupDialog[open]').count(),0);
+  assert.equal(await fresh.evaluate(()=>readTidyPlaces().some(item=>!item.done)),true);
+  await fresh.reload();await fresh.locator('#optionalStockSetup').waitFor();
+  assert.equal(await fresh.evaluate(()=>stockIsUnlocked()),true);
+  await fresh.evaluate(()=>updateHomeSafety('sleep','needs'));
+  assert.equal(await fresh.locator('#supplies').isVisible(),false);
+  await fresh.goto(base);await fresh.locator('.refresh-home-mission').waitFor();
+  assert.equal(await fresh.locator('.refresh-home-mission > div:first-of-type > .home-priority-action').count(),1);
+  assert.equal(await fresh.locator('#homeOtherSuggestions').getAttribute('open'),null);
+  for(const width of [320,390]){await fresh.setViewportSize({width,height:844});assert.equal(await fresh.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true)}
+  console.log('PASS: no mandatory regional/profile forms before safety, five tabs, safety required for stock, unfinished rooms allowed, optional quantity setup, persistent unlock and relock, single primary mission');
+ }finally{await firstUse.close()}
  const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
  await context.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
  await context.addInitScript(()=>{
