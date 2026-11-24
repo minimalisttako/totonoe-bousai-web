@@ -49,6 +49,21 @@ module.exports = async function verifyExperience(browser,base) {
     }
    }
   }
+  await fresh.locator('#globalEmergencyButton').click();
+  const emergency=fresh.locator('#emergency');
+  await emergency.waitFor();
+  assert.equal(await fresh.locator('.experience-toolbar').isVisible(),false);
+  const marked=emergency.locator('h2,h3,summary').filter({hasText:/^(災害時の確認画面|自分の緊急時チェックリスト|最新の災害情報|通信が使えない場合の事前確認|緊急時情報をコピーする|チェック項目を編集（平常時）)/});
+  assert.equal(await marked.count(),6);
+  assert.equal(await marked.locator('.chibi-icon').count(),0);
+  const familyIcon=emergency.locator('#emergencyFamily > h3 > [data-object-icon="family-card"] > svg');
+  await familyIcon.waitFor();
+  await fresh.locator('nav [data-page="home"]').click();
+  assert.equal(await fresh.locator('#favoritePageToggle').isVisible(),true);
+  assert.equal(await fresh.locator('#pageFeedback').isVisible(),true);
+  await fresh.locator('#globalEmergencyButton').click();
+  await familyIcon.waitFor();
+  assert.equal(await familyIcon.count(),1);
   await fresh.goto(base+'?page=tidy');
   assert.equal(await fresh.locator('#tidyList .tidy-checklist summary > .chibi-icon').count(),
                await fresh.locator('#tidyList .tidy-checklist summary').count());
