@@ -7,6 +7,26 @@ module.exports = async function verifyExperience(browser,base) {
   await fresh.goto(base+'?page=homeSafety');await fresh.locator('#safe-sleep').waitFor();
   assert.equal(await fresh.locator('dialog[open]').count(),0);
   assert.equal(await fresh.locator('nav button').count(),5);
+  assert.equal(await fresh.locator('nav .chibi-icon').count(),3);
+  for (const width of [320,390]) {
+   await fresh.setViewportSize({width,height:844});
+   for (const [route,icons] of [['more',[15,9,18,11,4]],['learn',[8,20,9,1]]]) {
+    await fresh.goto(base+'?page='+route);
+    const cards=fresh.locator('#'+route+' .refresh-menu-grid button > .chibi-icon');
+    assert.deepEqual(await cards.evaluateAll(nodes => nodes.map(node => Number(node.dataset.illustration))),icons);
+    assert.equal(await fresh.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+   }
+  }
+  await fresh.goto(base+'?page=tidy');
+  assert.equal(await fresh.locator('#tidyList .tidy-checklist summary > .chibi-icon').count(),
+               await fresh.locator('#tidyList .tidy-checklist summary').count());
+  const sprite=await fresh.evaluate(async () => {
+   const image=new Image();
+   image.src='./assets/chibi-icons-v232.webp';
+   await image.decode();
+   return [image.naturalWidth,image.naturalHeight];
+  });
+  assert.deepEqual(sprite,[1024,640]);
   await fresh.goto(base+'?page=supplies');await fresh.locator('#stockGateDialog[open]').waitFor();
   assert.equal(await fresh.locator('#supplies').isVisible(),false);
   await fresh.locator('#stockGateNext').click();await fresh.locator('#safe-sleep').waitFor();

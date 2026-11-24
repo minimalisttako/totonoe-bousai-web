@@ -194,7 +194,7 @@
    const row=element('div',undefined,'experience-favorites');
    preferences.favorites.forEach(page=>{
     const item=element('div',undefined,'experience-favorite-item');
-    const open=button(pageTitle(page),()=>show(page));open.classList.add('experience-favorite-open');
+    const open=button(pageTitle(page),()=>show(page));open.classList.add('experience-favorite-open');open.dataset.favoritePage=page;
     const remove=button('お気に入り解除',()=>removeFavorite(page));remove.classList.add('experience-favorite-remove');remove.setAttribute('aria-label',pageTitle(page)+'のお気に入り解除');
     item.append(open,remove);row.append(item);
    });host.append(row);
@@ -360,4 +360,365 @@
  setInterval(()=>{if(!document.hidden){renderReminders();renderSupplyTools();notifyDue()}},60000);
  notifyDue();
  window.TotonoeExperience={validPreferences,removedRecord,putBack,useSoon,validDate,calendarText};
+})();
+
+(() => {
+ if (typeof document === 'undefined') return;
+ // The sprite follows the order of the approved 40 illustrations.
+ const headings = {
+  home: {
+   "自宅周辺のハザードマップを確認": 28,
+   "仲間からのひとこと": 29,
+   "今日の優先チェック": 29,
+   "今日やること": 29,
+   "お気に入り": 13,
+   "期限・点検のお知らせ": 39,
+   "備えをととのえる": 29,
+   "ほかのおすすめを見る": 29
+  },
+  learn: {
+   "防災士試験対策・無料学習": 10,
+   "防災 × お片付けの3ステップ": 10,
+   "お片付けの4ステップ": 10,
+   "電気・水道・ガスが止まったら？ 夏と冬の避難生活": 30,
+   "自宅で過ごす備え": 10,
+   "自宅を離れるときの備え": 10,
+   "テーマから学ぶ": 10
+  },
+  minimalistGuide: {
+   "ミニマリストのススメ": 4,
+   "わが家の理想の暮らし": 14,
+   "考え方を読む": 4,
+   "どんな暮らしにしたいか": 14,
+   "どんな暮らしに時間を使いたいですか？": 14,
+   "整理・整頓・収納・掃除": 32,
+   "整理で、毎日の片付けを楽にする": 2,
+   "「好き」×「使う」で整理する": 2,
+   "「好き」と「使う」で、持ち物を見直す": 2,
+   "手放しは、迷いの少ないモノから": 2,
+   "ミニマリズムと防災": 4,
+   "ミニマリズムと防災の相性がいい理由": 4,
+   "暮らしの変化とたこの部屋": 4,
+   "片付けで毎日の暮らしが変わる": 4,
+   "整理で生まれた余白を、どんな暮らしに使いますか？": 14,
+   "アプリ作者・ミニマリストたこの部屋": 4,
+   "片付けた場所を使いやすく保つ": 4,
+   "実践の4ステップ": 4,
+   "1．減らす前に、目的を決める": 14,
+   "2．必要な物を選ぶ〈整理〉": 2,
+   "3．使う場所・戻す場所を決める〈整頓・収納〉": 3,
+   "4．暮らしに合わせて、備えと掃除を続ける": 32,
+   "わが家で実践する": 4
+  },
+  select: {
+   "Select": 2,
+   "整理のポイント": 2
+  },
+  set: {
+   "Set": 3,
+   "整頓のポイント": 3
+  },
+  stock: {
+   "Stock": 5,
+   "備蓄のポイント": 5
+  },
+  supplies: {
+   "必要なもの一覧": 5,
+   "現金・大切な書類": 5,
+   "薬・健康管理": 27,
+   "水・食料・トイレ": 26,
+   "停電への備え": 37,
+   "家族やペットに合わせて": 15,
+   "いまある備蓄": 5,
+   "検索・絞り込み": 5,
+   "＋ 備蓄品を登録する": 5,
+   "備蓄を登録": 5,
+   "保管場所・点検設定（任意）": 5,
+   "補充リスト": 17,
+   "買い物用の補充メモを作る": 17,
+   "わが家の備蓄目安を計算する": 16,
+   "食料の内容量を確認": 25,
+   "わが家の備蓄目安を計算": 16,
+   "飲料水の内訳と合計": 16,
+   "持ち出しの備え": 5,
+   "バックアップ・復元を開く": 38,
+   "備蓄データのバックアップ": 38,
+   "アプリ全体のバックアップ": 38,
+   "機種変更の手順": 38,
+   "コピー・貼り付けで操作する（予備）": 5,
+   "備蓄レビューのバックアップ・復元": 38,
+   "コピーしたレビューを貼り付けて復元": 38,
+   "必要量の計算は、あとから設定できます": 16,
+   "備蓄を使う・買い足す": 35,
+   "先に使う備蓄": 35
+  },
+  reviews: {
+   "みんなの備蓄レビュー": 36,
+   "みんなの投稿": 36,
+   "投稿・投票のためにログイン": 36,
+   "公開投稿とアカウント": 38,
+   "＋ 使った備蓄のレビューを書く": 36,
+   "この端末のレビュー": 36
+  },
+  diagnosis: {
+   "家庭別の防災弱点診断": 29,
+   "防災ミッションの完了履歴": 29
+  },
+  emergency: {
+   "災害時の確認画面": 8,
+   "自分の緊急時チェックリスト": 8,
+   "最新の災害情報": 8,
+   "通信が使えない場合の事前確認": 8,
+   "緊急時情報をコピーする": 8,
+   "緊急時情報をメモに控える": 8,
+   "チェック項目を編集（平常時）": 8
+  },
+  evacuation: {
+   "自宅が安全なら、在宅避難を": 9,
+   "保存した避難計画": 38,
+   "✎ 避難計画を登録・編集する": 9,
+   "マイ避難計画": 9,
+   "見直し予定を設定する": 39,
+   "避難計画の見直し": 9,
+   "訓練・確認の記録": 18
+  },
+  homeSafety: {
+   "住まいの安全点検": 8,
+   "① 寝る場所・家具の安全": 8,
+   "② 部屋から屋外への避難経路": 8,
+   "住まいの安全点検が完了しました": 8
+  },
+  pouch: {
+   "0次持ち出し・防災ポーチ": 6,
+   "いまの持ち物": 6,
+   "検索・絞り込み": 6,
+   "新しい持ち物を登録する": 6,
+   "持ち物を登録": 6,
+   "防災ポーチの中身の一例": 6,
+   "用途・メモを追加する（任意）": 6,
+   "防災ポーチ・防災ボトルの実例": 6
+  },
+  goBag: {
+   "1次持ち出し・防災リュック": 7,
+   "中身を追加する": 7,
+   "防災リュックの中身の一例": 7,
+   "防災リュックの実例": 7
+  },
+  tidy: {
+   "お片付けを進める": 1,
+   "場所ごとのチェックリスト": 1,
+   "検索・絞り込み": 1,
+   "＋ ほかの場所を追加する": 1,
+   "新しい場所を記録": 1,
+   "作業メモ・片付け前の様子を残す（任意）": 1,
+   "記録を書き出す（必要なときだけ）": 1,
+   "記録を文章で控える": 1,
+   "防災を意識した部屋づくりの実例": 1,
+   "ととのえる３ステップ": 1,
+   "実践ノート": 12,
+   "写真とチェックで、変化を記録": 12
+  },
+  seasonalCheck: {
+   "季節別の防災点検": 20,
+   "確認する項目": 20
+  },
+  readiness: {
+   "わが家の防災準備状況": 29,
+   "次に確認すること": 29,
+   "点検内容をテキストで控える": 29
+  },
+  family: {
+   "家族・ペットの防災カルテ": 15,
+   "個別に必要な備え・支援（任意）": 15,
+   "登録した家族・ペット": 15,
+   "必要な備えの確認": 15
+  },
+  training: {
+   "訓練・実践記録": 18,
+   "気づいたことを記録する（任意）": 18
+  },
+  moving: {
+   "引越し防災サポート": 11,
+   "1．転居先を決める前・転居前": 11,
+   "2．荷造り・持ち物の見直し": 11,
+   "3．入居直後に命を守る": 11,
+   "4．新しい地域での備え": 11
+  },
+  outage: {
+   "停電・断水シミュレーター": 30,
+   "停電時の確認ポイント": 30
+  },
+  examStudy: {
+   "アプリ内で例題を解く": 10,
+   "全30問の解説を読む・検索する": 10,
+   "防災士試験対策・無料学習": 10,
+   "学習の進め方": 10,
+   "試験の基本情報": 10,
+   "家庭の備えにも生かす": 10
+  },
+  weather: {
+   "気象庁の天気予報": 19,
+   "最高・最低気温": 19,
+   "警報・注意報と詳しい予報": 19
+  },
+  events: {
+   "防災イベントを探す": 18,
+   "全国の情報源から探す": 18
+  },
+  practiceQuiz: {
+   "防災士試験対策・基礎例題": 10
+  },
+  helpGuide: {
+   "使い方・データ保護ガイド": 38,
+   "はじめての準備": 40,
+   "記録はどこに保存される？": 38,
+   "機種変更・復元の順番": 38,
+   "通信がなくても使うには": 40,
+   "保存できない・記録が見つからないとき": 38,
+   "Web版の公開状況": 40,
+   "プライバシーとデータ": 38,
+   "お問い合わせ": 33
+  },
+  cleanPractice: {
+   "掃除の実践": 32,
+   "無理なく続けるコツ": 32
+  },
+  tidyAlbum: {
+   "暮らしの備えの達成記録": 12,
+   "成長アルバム": 12
+  },
+  more: {
+   "その他の防災メニュー": 40,
+   "備えをまとめて確認": 40,
+   "避難・安全を確認する": 40,
+   "訓練・実践を振り返る": 18,
+   "引越しの備え": 40,
+   "家族に合わせた備え": 40,
+   "地域の天気": 19,
+   "防災シミュレーション": 40,
+   "備えを見直す": 40,
+   "はじめての使い方": 40,
+   "バックアップ・機種変更": 38,
+   "ホーム画面に追加・オフラインの準備": 40,
+   "表示設定": 40,
+   "不具合報告用の情報を確認": 33,
+   "動作診断・公開準備（必要なときだけ）": 40,
+   "リリース候補版の総合診断": 40,
+   "今回のリリース対象と今後の機能": 40,
+   "✅ リリース前チェック": 40,
+   "🐙 キャラクター6枚とまばたきの確認": 40,
+   "保存データの総合点検": 38,
+   "リリース前の実機検証表": 40,
+   "次に行う実機検証": 40,
+   "アプリの自動整合性チェック": 40,
+   "検証結果を手動でコピーする": 40,
+   "自動スモークテスト": 40,
+   "初回Web版の公開準備：100%": 40,
+   "初回リリースの対象と今後の機能": 40,
+   "試作中の機能": 40,
+   "片付け完了！": 12,
+   "片付けも備蓄も、達成！": 12,
+   "わが家の暮らし、こう変わりました": 12,
+   "ミニマリストのススメが解放されました": 4,
+   "わが家の備蓄目安を設定": 16,
+   "天気・災害情報の地域": 40,
+   "自宅周辺のハザードマップを確認": 28,
+   "お気に入り": 13,
+   "暮らしに合わせる": 14,
+   "キャラクターの吹き出し": 40,
+   "データとアプリ": 38,
+   "講座のご依頼・ご相談": 34,
+   "削除の取り消し": 38,
+   "記録の保存状態": 38,
+   "表示を選ぶ": 40,
+   "更新のお知らせ": 39,
+   "期限・点検のお知らせ": 39
+  }
+ };
+ const pages = {
+  home:29, learn:10, tidy:1, select:2, set:3, stock:5, supplies:5,
+  pouch:6, goBag:7, homeSafety:8, evacuation:9, examStudy:10,
+  practiceQuiz:10, moving:11, tidyAlbum:12, minimalistGuide:4,
+  family:15, training:18, events:18, weather:19, seasonalCheck:20,
+  diagnosis:29, readiness:29, outage:30, cleanPractice:32, reviews:36,
+  helpGuide:40, more:40
+ };
+ const shortcuts = {
+  '住まいの安全':8, '季節の防災':20, '避難生活':9, 'お片付け':1,
+  '家族・ペットカルテ':15, 'マイ避難計画':9, '訓練・実践記録':18, '引越し防災':11,
+  '地域・天気の設定':19, '世帯人数・備蓄日数':16, '住まいの安全点検':8,
+  'バックアップ・機種変更':38, 'オフライン利用の確認':40, 'プチガイドをもう一度表示':40,
+  '使い方・お問い合わせ':33, 'プライバシーポリシー':38
+ };
+ const tidyPlaces = [
+  [/寝室|寝る場所/u,21], [/玄関|廊下/u,22], [/台所|キッチン/u,23],
+  [/リビング|居間/u,24], [/クローゼット|押入れ|押し入れ/u,31],
+  [/洗面|浴室|風呂/u,32]
+ ];
+ const label = node => node.textContent.replace(/[\s→⌄]+$/u,'').replace(/\s+/gu,' ').trim();
+ function addIcon(node,number,replaceSelector) {
+  if (!node || !number || node.querySelector(':scope > .chibi-icon')) return;
+  const icon = document.createElement('span');
+  const index = number - 1;
+  icon.className = 'chibi-icon';
+  icon.dataset.illustration = number;
+  icon.setAttribute('aria-hidden','true');
+  icon.style.backgroundPosition = (index % 8 * 100 / 7)+'% '+(Math.floor(index / 8) * 25)+'%';
+  const previous = replaceSelector && node.querySelector(replaceSelector);
+  if (previous) previous.replaceWith(icon);
+  else node.prepend(icon);
+  node.classList.add('with-chibi');
+ }
+ const decorateHeading = (node,section) => {
+  const title=label(node);
+  const number=headings[section]?.[title.replace(/ YOUR MISSIONS$/u,'')];
+  addIcon(node,number);
+ };
+ for (const section of document.querySelectorAll('main > section')) {
+  section.querySelectorAll('h2,h3,summary').forEach(node => decorateHeading(node,section.id));
+ }
+ document.querySelectorAll('.refresh-menu-grid button, #more .more-menu-button').forEach(node => {
+  const number=node.id==='optionalLifestyleGuide' ? 4 : shortcuts[label(node)];
+  addIcon(node,number,':scope > svg');
+ });
+ document.querySelectorAll('.refresh-tiles .refresh-tile').forEach((node,index) => {
+  addIcon(node,[2,3,5][index],':scope > svg');
+ });
+ for (const page of ['learn','tidy','supplies']) {
+  addIcon(document.querySelector('nav button[data-page="'+page+'"]'),pages[page],':scope > .nav-icon');
+ }
+ for (const [id,number] of Object.entries({
+  stockTargetButton:16, pageFeedback:33
+ })) addIcon(document.getElementById(id),number);
+ for (const [id,number] of Object.entries({
+  fullBackupDialog:38, stockSetupDialog:16, stockGateDialog:8, livingMilestoneDialog:12, shoppingDialog:17
+ })) {
+  addIcon(document.querySelector('#'+id+' h2'),number);
+ }
+ function decorateList(host,decorate) {
+  if (!host) return;
+  decorate(host);
+  new MutationObserver(records => {
+   if (records.some(record => Array.from(record.addedNodes).some(node =>
+    node instanceof Element && !node.classList.contains('chibi-icon')
+   ))) decorate(host);
+  }).observe(host,{childList:true,subtree:true});
+ }
+ decorateList(document.getElementById('tidyList'),host => {
+  host.querySelectorAll('.tidy-checklist > summary').forEach(node => {
+   const place=label(node).split(/\s\d+\//u)[0];
+   addIcon(node,tidyPlaces.find(([pattern]) => pattern.test(place))?.[1] ?? 1);
+  });
+ });
+ for (const id of ['favoritePages','homeFavorites']) {
+  decorateList(document.getElementById(id),host => {
+   addIcon(host.querySelector('h2'),13);
+   host.querySelectorAll('[data-favorite-page]').forEach(node => addIcon(node,pages[node.dataset.favoritePage]));
+  });
+ }
+ decorateList(document.querySelector('#supplies .refresh-stock-grid'),host => {
+  host.querySelectorAll('.refresh-stock-stat label').forEach((node,index) => {
+   addIcon(node,[25,25,26][index],':scope > svg');
+  });
+ });
 })();
