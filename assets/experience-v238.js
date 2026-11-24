@@ -120,7 +120,10 @@
     if(deletion){undoEntries.unshift({...deletion,remainingCopies:JSON.parse(String(value)).filter(item=>JSON.stringify(item)===JSON.stringify(deletion.item)).length,key:storageKey,label:deletion.item.name||deletion.item.place||deletion.item.label||'記録'});undoEntries.splice(5)}
    }catch(e){}
   }
-  if(storageKey!==preferenceKey){lastSavedAt=new Date().toLocaleString('ja-JP');lastFailure='';saveMessage('この端末への保存を確認しました。');}
+  if(storageKey!==preferenceKey){
+   lastSavedAt=new Date().toLocaleString('ja-JP');lastFailure='';
+   if(!restoringDeletion&&before!==String(value))document.dispatchEvent(new CustomEvent('toto-record-saved',{detail:{key:storageKey,before,value:String(value)}}));
+  }
   refreshAfterWrite();
  };
  function refreshRecordViews(storageKey) {
@@ -411,15 +414,15 @@
    "わが家で実践する": 4
   },
   select: {
-   "Select": 2,
+   "整理": 2,
    "整理のポイント": 2
   },
   set: {
-   "Set": 3,
+   "整頓": 3,
    "整頓のポイント": 3
   },
   stock: {
-   "Stock": 5,
+   "備蓄": 5,
    "備蓄のポイント": 5
   },
   supplies: {
@@ -760,4 +763,156 @@
    addIcon(node,[25,25,26][index],':scope > svg');
   });
  });
+})();
+
+/* Purpose-based menus, actual achievements, explicit sharing and resumable forms. */
+(function improveEverydayUse() {
+ if(typeof document==='undefined')return;
+ const $=id=>document.getElementById(id);
+ const entryUrl=new URL(location.href),entryPage=entryUrl.searchParams.get('page');
+ const targetPage=validPage(entryPage)?entryPage:'homeSafety';
+ function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n}
+ function action(text,run){const n=el('button',text,'secondary');n.type='button';n.onclick=run;return n}
+ const style=el('style');
+ style.textContent=`
+ main p,main label,main li{line-height:1.7}main .notice{color:#465969;font-size:14px}
+ main :is(button.primary,button.secondary,a.secondary){border-radius:12px;min-height:44px}
+ .refresh-tiles .refresh-tile strong{font-size:21px}.refresh-tiles .refresh-tile small{font-size:11px;font-weight:500}
+ .more-purpose{margin:22px 0 28px;border-top:2px solid #e2edf1;padding-top:16px}.more-purpose>h2{font-size:21px;margin:0 0 14px}
+ .milestone-badges{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}.milestone-badges li{background:#eef5eb;border:1px solid #c5dcb5;border-radius:12px;padding:7px 11px;font-size:14px}
+ .milestone-notice{padding:12px;background:#fff7dd;border-radius:12px;margin:12px 0;color:#514221}.milestone-notice:empty{display:none}
+ #achievementShareDialog{width:min(94vw,620px);max-height:90dvh;overflow:auto}#achievementShareDialog label{display:flex;align-items:flex-start;gap:9px;padding:8px 0;font-size:15px}
+ #achievementShareDialog input[type=checkbox]{flex:0 0 21px;width:21px;height:21px;margin-top:3px}
+ #sharePhotos img{width:64px;height:64px;object-fit:cover;border-radius:6px}#sharePreview{width:100%;min-height:130px;font-size:15px;line-height:1.7}
+ .related-video{margin:14px 0;padding:14px;background:#f2f8fc;border-radius:12px}.related-video a{display:inline-block;min-height:44px;padding:8px 0}
+ .draft-resume{background:#f4f8ee;border-radius:10px;padding:10px;font-size:14px}#draftStatus{font-size:13px;color:#465969}
+ `;document.head.append(style);
+
+ // Keep each existing control and its event handlers while moving it into a purpose group.
+ const more=$('more'),quick=more.querySelector('.refresh-menu-grid'),cards=[...more.children];
+ function group(id,title){const n=el('div',undefined,'more-purpose');n.id=id;n.append(el('h2',title));return n}
+ const familyGroup=group('moreFamilyGroup','家族の備え'),settingsGroup=group('moreSettingsGroup','アプリの設定・データ'),authorGroup=group('moreAuthorGroup','作者・講座・お問い合わせ');
+ const authorGrid=el('div',undefined,'refresh-menu-grid');authorGrid.append($('optionalLifestyleGuide'));authorGroup.append(authorGrid);
+ familyGroup.append(quick,$('favoritePages'));
+ for(const card of cards){
+  if(card===quick||card.id==='favoritePages'||card.matches('.refresh-title-row,.page-intro,.feature-search-card,.wrap-up-entry'))continue;
+  if(card.id==='lectureInformation'){authorGroup.append(card);continue}
+  if(card.querySelector('h2')?.textContent.trim()==='暮らしに合わせる'){familyGroup.append(card);continue}
+  for(const link of [...card.querySelectorAll(':scope > .more-menu-button')])if(/使い方・お問い合わせ|プライバシーポリシー/.test(link.textContent))authorGroup.append(link);
+  settingsGroup.append(card);
+ }
+ more.append(familyGroup,settingsGroup,authorGroup);
+ const channel='https://youtube.com/@bousai_minimalist?si=XpsfAOzwURehwpo5';
+ function video(host,text,url){const box=el('aside',undefined,'related-video'),link=el('a',text);link.href=url;link.target='_blank';link.rel='noopener noreferrer';box.append(link);host.append(box)}
+ video($('select'),'動画で、必要な物の選び方を学ぶ',channel);
+ video($('set'),'動画で、使う場所・戻す場所の決め方を学ぶ',channel);
+ video($('stock'),'動画で、水・食料・トイレの備えを学ぶ',channel);
+ video(authorGroup,'防災ミニマリストたこのYouTubeを見る',channel);
+ const examVideo=$('examStudy').querySelector('a[href*="youtu"]');if(examVideo)video($('learn'),'防災士試験の例題・音声を動画で学ぶ',examVideo.href);
+
+ const badgePanel=el('div',undefined,'card');badgePanel.id='achievementBadges';badgePanel.append(el('h2','実際にできたこと'));
+ const badges=el('ul',undefined,'milestone-badges'),milestone=el('p',undefined,'milestone-notice');milestone.id='milestoneNotice';milestone.setAttribute('role','status');
+ badgePanel.append(badges,el('p','チェック済みの作業と登録の記録です。災害時の安全性は、その時の状況に合わせて確認してください。','notice'),milestone,action('できたことを共有する',openShare));
+ document.querySelector('#home .refresh-home-mission').after(badgePanel);
+ const completedRooms=()=>readTidyPlaces().filter(item=>item.done);
+ function renderBadges(){
+  badges.replaceChildren();
+  for(const room of completedRooms())badges.append(el('li','✓ '+room.place+'の片付け4項目を完了'));
+  if(supplyStorageReadable()&&supplies.length)badges.append(el('li','✓ 備蓄品を登録（'+supplies.length+'品）'));
+  if(!badges.children.length)badges.append(el('li','場所の片付けや備蓄の登録を進めると、ここに記録が並びます。'));
+ }
+ $('tidyPlaceChecklistTitle').after(el('p','進捗は登録した場所の作業を終えた割合です。家具の固定や避難経路も別に確認しましょう。','notice'));
+ for(const id of ['tidy','tidyAlbum'])$(id).append(action('できたことを共有する',openShare));
+ $('roomReflectionDialog').append(action('この達成を共有する',()=>{$('roomReflectionDialog').close();openShare()}));
+ $('livingCelebrationStep').append(action('できたことを共有する',()=>{$('livingMilestoneDialog').close();openShare()}));
+
+ const shareDialog=el('dialog');shareDialog.id='achievementShareDialog';shareDialog.setAttribute('aria-labelledby','achievementShareTitle');
+ const shareTitle=el('h2','共有する内容を選ぶ');shareTitle.id='achievementShareTitle';shareDialog.append(shareTitle,el('p','送信前に、下の文章と選んだ写真を確認してください。','notice'));
+ function choice(id,text){const label=el('label'),check=el('input');check.type='checkbox';check.id=id;label.append(check,el('span',text));shareDialog.append(label);check.onchange=updateShare;return check}
+ const addressCheck=choice('shareAddress','住所・地域を含める'),address=el('textarea');address.id='shareAddressText';address.className='field';address.rows=2;address.maxLength=200;address.placeholder='共有してよい住所・地域だけ入力';address.setAttribute('aria-label','共有する住所・地域');address.hidden=true;address.oninput=updateShare;shareDialog.append(address);
+ const familyCheck=choice('shareFamily','家族・ペットの表示名、人数、用品・支援メモを含める');
+ const photoHost=el('div');photoHost.id='sharePhotos';shareDialog.append(photoHost);
+ const previewLabel=el('label','共有文の確認');previewLabel.htmlFor='sharePreview';const preview=el('textarea');preview.id='sharePreview';preview.readOnly=true;preview.className='field';
+ const shareStatus=el('p');shareStatus.id='shareStatus';shareStatus.setAttribute('role','status');const downloads=el('div');
+ let photoChoices=[];
+ function updateShare(){
+  const lines=['ととのえ防災で、できたことを記録しました。','片付け '+completedRooms().length+'か所／備蓄登録 '+(supplyStorageReadable()?supplies.length:0)+'品'];
+  address.hidden=!addressCheck.checked;
+  if(addressCheck.checked&&address.value.trim())lines.push('住所・地域\n'+address.value.trim());
+  if(familyCheck.checked)for(const item of loadFamilyProfiles())lines.push([item.label||familyKinds[item.type].name,item.count+(item.type==='pet'?'匹':'人'),item.suppliesNote,item.foodNote,item.supportNote].filter(Boolean).join('／'));
+  lines.push('https://minimalisttako.github.io/totonoe-bousai-web/');preview.value=lines.join('\n\n');downloads.replaceChildren();
+  photoChoices.filter(p=>p.check.checked).forEach((p,i)=>{const link=el('a','選択した写真'+(i+1)+'を保存','secondary');link.href=p.data;link.download='totonoe-photo-'+(i+1)+'.jpg';downloads.append(link)});
+ }
+ async function sendShare(){
+  const files=photoChoices.filter(p=>p.check.checked).map((p,i)=>{const bytes=Uint8Array.from(atob(p.data.split(',')[1]),c=>c.charCodeAt(0));return new File([bytes],'totonoe-photo-'+(i+1)+'.jpg',{type:'image/jpeg'})});
+  const data={title:'ととのえ防災でできたこと',text:preview.value};if(files.length)data.files=files;
+  if(!navigator.share||(files.length&&(!navigator.canShare||!navigator.canShare({files})))){shareStatus.textContent='共有文をコピーし、選んだ写真を保存して投稿先で添付できます。';return}
+  try{await navigator.share(data);shareStatus.textContent='共有操作を完了しました。'}catch(e){shareStatus.textContent=e.name==='AbortError'?'共有をキャンセルしました。':'共有できませんでした。文章をコピーして投稿先に貼り付けられます。'}
+ }
+ async function copyShare(){try{await navigator.clipboard.writeText(preview.value);shareStatus.textContent='共有文をコピーしました。'}catch(e){preview.focus();preview.select();shareStatus.textContent='文章を選択しました。端末のコピー操作を使ってください。'}}
+ shareDialog.append(previewLabel,preview,action('選んだ内容を共有する',sendShare),action('共有文をコピー',copyShare),downloads,shareStatus,action('閉じる',()=>shareDialog.close()));document.body.append(shareDialog);
+ function openShare(){
+  addressCheck.checked=false;familyCheck.checked=false;address.value='';shareStatus.textContent='';photoChoices=[];photoHost.replaceChildren(el('p','写真を添付する場合は、写り込んだ住所や顔なども確認してください。','notice'));
+  for(const item of readTidyPlaces())for(const field of ['beforePhoto','afterPhoto','livingAfterPhoto']){
+   if(!validTidyPhoto(item[field]))continue;
+   const label=el('label'),check=el('input'),image=el('img');check.type='checkbox';image.src=item[field];image.alt='共有する写真の候補';
+   label.append(check,image,el('span',item.place+'／'+({beforePhoto:'片付け前',afterPhoto:'片付け後',livingAfterPhoto:'暮らしの変化'})[field]));photoHost.append(label);photoChoices.push({check,data:item[field]});check.onchange=updateShare;
+  }
+  updateShare();shareDialog.showModal();
+ }
+
+ // Unsaved text stays in the current browser tab, and successful submission removes it.
+ const draftKey='toto-form-drafts-v1';let drafts={},submittingForm=null;
+ try{const value=JSON.parse(sessionStorage.getItem(draftKey)||'{}');if(value&&typeof value==='object'&&!Array.isArray(value))drafts=value}catch(e){}
+ const draftStatus=el('p',undefined,'notice');draftStatus.id='draftStatus';draftStatus.setAttribute('role','status');document.querySelector('header').append(draftStatus);
+ function formKey(form){const section=form.closest('main > section');if(!section||section.id==='reviews'||form.method==='dialog')return null;return section.id+':'+(form.id||[...section.querySelectorAll('form')].indexOf(form))}
+ function fields(form){return [...form.querySelectorAll('input[id],textarea[id],select[id]')].filter(n=>!n.readOnly&&!['file','password','hidden','submit','button'].includes(n.type))}
+ function saveDrafts(){try{sessionStorage.setItem(draftKey,JSON.stringify(drafts))}catch(e){draftStatus.textContent='入力途中の内容を一時保存できません。画面を閉じる前に記録を保存してください。'}}
+ function forgetDraft(form){const id=formKey(form);if(!id)return;delete drafts[id];saveDrafts();form.querySelector('.draft-resume')?.remove()}
+ function clearDrafts(){drafts={};saveDrafts();document.querySelectorAll('.draft-resume').forEach(n=>n.remove())}
+ function restoreDrafts(){
+  for(const form of $(activePage).querySelectorAll('form')){
+   const id=formKey(form),values=drafts[id];if(!id||!values||form.dataset.draftApplied==='true')continue;
+   for(const n of fields(form)){if(!Object.hasOwn(values,n.id))continue;const value=values[n.id];if(['checkbox','radio'].includes(n.type)){if(typeof value==='boolean')n.checked=value}else if(typeof value==='string'&&value.length<=5000)n.value=value}
+   form.dataset.draftApplied='true';const note=el('div',undefined,'draft-resume');note.append(el('span','入力途中の内容を戻しました。写真は必要に応じて選び直してください。'),action('入力途中の内容を取り消す',()=>{forgetDraft(form);form.reset();delete form.dataset.draftApplied}));form.prepend(note);
+   for(let parent=form.parentElement;parent&&parent!==$(activePage);parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
+  }
+ }
+ document.addEventListener('input',event=>{const n=event.target,form=n.form;if(!form||!fields(form).includes(n))return;const id=formKey(form);if(!id)return;const values={};for(const f of fields(form))values[f.id]=['checkbox','radio'].includes(f.type)?f.checked:f.value.slice(0,5000);drafts[id]=values;saveDrafts()});
+ document.addEventListener('change',event=>{if(event.target.matches('select,input[type=checkbox],input[type=radio]'))event.target.dispatchEvent(new Event('input',{bubbles:true}))});
+ document.addEventListener('submit',event=>{submittingForm=event.target;setTimeout(()=>{submittingForm=null},0)},true);
+ document.addEventListener('toto-record-saved',event=>{
+  if(submittingForm)forgetDraft(submittingForm);
+  const {key:savedKey,before,value}=event.detail;
+  if(savedKey===key){try{const old=before===null?[]:JSON.parse(before),items=JSON.parse(value);if(Array.isArray(old)&&!old.length&&Array.isArray(items)&&items.length)milestone.textContent='はじめての備蓄登録、おつかれさまでした！家にある1品を記録できました。'}catch(e){}}
+  queueMicrotask(renderBadges);
+ });
+ window.addEventListener('toto-data-restored',()=>{milestone.textContent='';renderBadges();clearDrafts()});
+
+ let fromHistory=false,shown=activePage;
+ function syncUrl(id,replace){if(fromHistory)return;const url=new URL(location.href);url.searchParams.set('page',id);url.hash='';try{history[replace?'replaceState':'pushState']({...history.state,totonoePage:id,totonoeDepth:replace?(history.state?.totonoeDepth||0):(history.state?.totonoeDepth||0)+1},'',url)}catch(e){}}
+ const previousShow=show;
+ show=function(id){const result=previousShow.apply(this,arguments);if(activePage===id){if(id!==shown){syncUrl(id,false);shown=id}restoreDrafts();renderBadges();draftStatus.hidden=id==='emergency'}return result};
+ syncUrl(activePage,true);
+ window.addEventListener('popstate',()=>{const id=new URL(location.href).searchParams.get('page')||'home';fromHistory=true;try{show(validPage(id)?id:'home');shown=activePage}finally{fromHistory=false}});
+ const previousBack=goBackPage;goBackPage=function(){if(history.state?.totonoeDepth>0){history.back();return}previousBack()};
+
+ // The first explanation is followed by region selection and hazard-map confirmation.
+ const previousFinish=finishTutorial;
+ finishTutorial=function(){const replay=tutorialReplay;const result=previousFinish.apply(this,arguments);if(!replay&&!hazardIsConfirmed()){setupActive=true;openHazardGate(false)}return result};
+ let setupActive=false;
+ const previousHazardFinish=$('hazardFinish').onclick;
+ $('hazardFinish').onclick=function(){previousHazardFinish.apply(this,arguments);if(setupActive&&hazardIsConfirmed()){setupActive=false;$('stockGateDialog').close();show(targetPage)}};
+ const setupCard=$('hazardStartCard');document.querySelector('#home .refresh-home-mission').before(setupCard);
+ function startSetup(){
+  if(activePage==='emergency'||['backup','reviewBackup','evacuationVideos'].includes(entryPage)||document.querySelector('dialog[open]'))return;
+  if(tutorialNeedsGate(activePage)){setupActive=true;tutorialPendingPage=targetPage;openTutorial();return}
+  if(!hazardIsConfirmed()){setupActive=true;openHazardGate(false)}
+ }
+ renderBadges();restoreDrafts();syncHazardGate();
+ const focus=entryUrl.searchParams.get('focus');
+ const targets={family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
+ if(targets[focus])requestAnimationFrame(()=>$(targets[focus]).scrollIntoView({block:'start'}));
+ if(entryUrl.searchParams.get('share')==='1'&&!document.querySelector('dialog[open]'))openShare();
+ if(entryUrl.searchParams.get('guide')==='1'){tutorialPendingPage=targetPage;tutorialState={...tutorialState,step:0};openTutorial()}else queueMicrotask(startSetup);
 })();
