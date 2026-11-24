@@ -66,17 +66,18 @@ async function run() {
     { id: '1', place: '寝室', done: true }, { id: '2', place: '玄関', done: false }
    ]));
   });
+  await page.evaluate(()=>localStorage.setItem('toto-home-safety-v1',JSON.stringify({ sleep:'needs',bedpath:'done',door:'done',hall:'done',fix:'done' })));
   await page.goto(base + '?page=goBag');
   await page.locator('#stockGateDialog[open]').waitFor();
   assert.equal(await page.locator('#goBag').isVisible(), false);
   await page.evaluate(() => {
    const key = 'toto-tidy-v1';
    const rooms = JSON.parse(localStorage.getItem(key));
-   rooms[1].done = true;
-   localStorage.setItem(key, JSON.stringify(rooms));
+   localStorage.setItem('toto-home-safety-v1', JSON.stringify({sleep:'done',bedpath:'done',door:'done',hall:'done',fix:'done'}));
   });
   await page.reload();
   await page.locator('#goBagName').waitFor();
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('toto-tidy-v1'))[1].done),false);
   await page.goto(base + '?page=evacuationVideos');
   await page.locator('#evacuationVideos a[href*="youtu.be"]').first().waitFor();
   assert.equal(await page.locator('#evacuationVideos a[href*="youtu.be"]:visible').count(), 4);
@@ -353,6 +354,7 @@ async function run() {
   await offlinePage.reload();
   await offlinePage.locator('#home').waitFor();
   assert.equal(await offlinePage.locator('#gameDialogueText').textContent() === '', false);
+  await offlinePage.evaluate(()=>openTutorial(true));
   await offlinePage.locator('#tutorialNext').click();
   await offlinePage.locator('#tutorialTitle').getByText('はじめまして！', { exact: true }).waitFor();
   await offlinePage.locator('#tutorialMain').getByText('たこです！', { exact: false }).waitFor();
