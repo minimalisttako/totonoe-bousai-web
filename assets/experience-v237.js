@@ -199,6 +199,7 @@
     item.append(open,remove);row.append(item);
    });host.append(row);
   });
+  toolbar.hidden=activePage==='emergency';
   favoriteToggle.disabled=!allowedPages.includes(activePage);
   favoriteToggle.textContent=preferences.favorites.includes(activePage)?'お気に入りから外す':'お気に入りに追加';favoriteToggle.setAttribute('aria-pressed',String(preferences.favorites.includes(activePage)));
  }
@@ -465,13 +466,7 @@
    "防災ミッションの完了履歴": 29
   },
   emergency: {
-   "災害時の確認画面": 8,
-   "自分の緊急時チェックリスト": 8,
-   "最新の災害情報": 8,
-   "通信が使えない場合の事前確認": 8,
-   "緊急時情報をコピーする": 8,
-   "緊急時情報をメモに控える": 8,
-   "チェック項目を編集（平常時）": 8
+   "緊急時情報をメモに控える": 8
   },
   evacuation: {
    "自宅が安全なら、在宅避難を": 9,
@@ -681,19 +676,19 @@
   [/洗面|浴室|風呂/u,32]
  ];
  const label = node => node.textContent.replace(/[\s→⌄]+$/u,'').replace(/\s+/gu,' ').trim();
- function addIcon(node,number,replaceSelector,object) {
-  if (!node || typeof number !== 'number' || node.querySelector(':scope > .chibi-icon')) return;
+ function addIcon(node,artwork,replaceSelector) {
+  if (!node || (typeof artwork !== 'number' && typeof artwork !== 'string') || node.querySelector(':scope > .chibi-icon')) return;
   const icon = document.createElement('span');
-  const index = number - 1;
   icon.className = 'chibi-icon';
   icon.setAttribute('aria-hidden','true');
-  if (object) {
+  if (typeof artwork==='string') {
    icon.classList.add('object-icon');
-   icon.dataset.objectIcon=object;
-   icon.innerHTML='<svg viewBox="0 0 48 48" focusable="false" aria-hidden="true"><g fill="none" stroke="#35546a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+objectArtwork[object]+'</g></svg>';
+   icon.dataset.objectIcon=artwork;
+   icon.innerHTML='<svg viewBox="0 0 48 48" focusable="false" aria-hidden="true"><g fill="none" stroke="#35546a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+objectArtwork[artwork]+'</g></svg>';
    node.classList.add('with-object-icon');
   } else {
-   icon.dataset.illustration=number;
+   const index=artwork-1;
+   icon.dataset.illustration=artwork;
    icon.style.backgroundPosition=(index % 8 * 100 / 7)+'% '+(Math.floor(index / 8) * 25)+'%';
   }
   const previous = replaceSelector && node.querySelector(replaceSelector);
@@ -711,9 +706,9 @@
  }
  document.querySelectorAll('.refresh-menu-grid button, #more .more-menu-button').forEach(node => {
   const title=label(node);
-  const number=node.id==='optionalLifestyleGuide' ? 4 : shortcuts[title];
-  addIcon(node,number,':scope > svg',shortcutObjects[title]);
-  if (number && node.matches('.more-menu-button,#optionalLifestyleGuide')) {
+  const artwork=node.id==='optionalLifestyleGuide' ? 4 : shortcutObjects[title]??shortcuts[title];
+  addIcon(node,artwork,':scope > svg');
+  if (artwork!==undefined && node.matches('.more-menu-button,#optionalLifestyleGuide')) {
    const icon=node.querySelector(':scope > .chibi-icon');
    const copy=document.createElement('span');
    copy.className='chibi-card-copy';
@@ -742,6 +737,9 @@
    ))) decorate(host);
   }).observe(host,{childList:true,subtree:true});
  }
+ decorateList(document.getElementById('emergencyFamily'),host => {
+  addIcon(host.querySelector(':scope > h3'),'family-card');
+ });
  decorateList(document.getElementById('tidyList'),host => {
   host.querySelectorAll('.tidy-checklist > summary').forEach(node => {
    const place=label(node).split(/\s\d+\//u)[0];
