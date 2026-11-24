@@ -14,22 +14,32 @@ module.exports = async function verifyExperience(browser,base) {
   assert.equal(await fresh.locator('#stockLockBadge').isVisible(),true);
   for (const width of [320,390]) {
    await fresh.setViewportSize({width,height:844});
-   for (const [route,icons] of [['more',[15,9,18,11,4]],['learn',[8,20,9,1]]]) {
+   for (const [route,icons] of [['more',['family-card','map',18,11,4]],['learn',[8,'seasonal-checklist','map',1]]]) {
     await fresh.goto(base+'?page='+route);
     const cards=fresh.locator('#'+route+' .refresh-menu-grid button > .chibi-icon');
-    assert.deepEqual(await cards.evaluateAll(nodes => nodes.map(node => Number(node.dataset.illustration))),icons);
+    assert.deepEqual(await cards.evaluateAll(nodes => nodes.map(node => node.dataset.objectIcon??Number(node.dataset.illustration))),icons);
     assert.equal(await fresh.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    if (route==='learn') {
+     const exam=fresh.locator('#learn > .card').filter({has:fresh.getByRole('button',{name:'例題・音声学習',exact:true})});
+     assert.equal(await exam.locator('h2 > .chibi-icon').count(),1);
+     assert.equal(await exam.locator('.exam-bird,.character-art').count(),0);
+    }
     if (route==='more') {
+     const objects=fresh.locator('#more .more-menu-button > .object-icon');
+     assert.deepEqual(await objects.evaluateAll(nodes=>nodes.map(node=>node.dataset.objectIcon)),
+                      ['weather-card','calculator-bottle','home-checklist','shield-folder','settings-book','settings-book']);
+     assert.equal(await fresh.locator('#more .object-icon > svg').count(),8);
      const rows=fresh.locator('#more :is(.more-menu-button,#optionalLifestyleGuide).with-chibi:visible');
      const placement=await rows.evaluateAll(nodes=>nodes.map(row=>{
       const label=row.querySelector('.chibi-card-copy');
       const copy=label.getBoundingClientRect();
-      const art=row.querySelector('.chibi-icon').getBoundingClientRect();
-      return [copy.width,copy.right,art.left,art.width,row.getBoundingClientRect().right,parseFloat(getComputedStyle(label).fontSize),getComputedStyle(label).color===getComputedStyle(row).color];
+      const icon=row.querySelector('.chibi-icon');
+      const art=icon.getBoundingClientRect();
+      return [copy.width,copy.right,art.left,art.width,row.getBoundingClientRect().right,Boolean(icon.dataset.objectIcon),parseFloat(getComputedStyle(label).fontSize),getComputedStyle(label).color===getComputedStyle(row).color];
      }));
      assert(placement.length>=4);
-     for (const [copyWidth,copyRight,artLeft,artWidth,rowRight,fontSize,labelColorMatches] of placement) {
-      assert(copyWidth>0 && copyRight<=artLeft && artWidth>=(width===320?72:84) && artLeft+artWidth<=rowRight);
+     for (const [copyWidth,copyRight,artLeft,artWidth,rowRight,isObject,fontSize,labelColorMatches] of placement) {
+      assert(copyWidth>0 && copyRight<=artLeft && artWidth>=(isObject?52:width===320?72:84) && artLeft+artWidth<=rowRight);
       assert(fontSize>=15 && labelColorMatches);
      }
      for (const title of ['機能を探す','削除の取り消し']) {
@@ -63,6 +73,10 @@ module.exports = async function verifyExperience(browser,base) {
   await fresh.evaluate(()=>updateHomeSafety('sleep','needs'));
   assert.equal(await fresh.locator('#supplies').isVisible(),false);
   await fresh.goto(base);await fresh.locator('.refresh-home-mission').waitFor();
+  const homeHeadings=fresh.locator('#home :is(.refresh-home-mission,.refresh-journey) > .refresh-heading');
+  assert.equal(await homeHeadings.count(),2);
+  assert.equal(await homeHeadings.locator('.chibi-icon').count(),0);
+  assert(await homeHeadings.evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node,'::before').display==='none')));
   assert.equal(await fresh.locator('.refresh-home-mission > div:first-of-type > .home-priority-action').count(),1);
   assert.equal(await fresh.locator('#homeOtherSuggestions').getAttribute('open'),null);
   for(const width of [320,390]){await fresh.setViewportSize({width,height:844});assert.equal(await fresh.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true)}
