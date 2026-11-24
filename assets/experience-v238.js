@@ -785,7 +785,7 @@
  #achievementShareDialog input[type=checkbox]{flex:0 0 21px;width:21px;height:21px;margin-top:3px}
  #sharePhotos img{width:64px;height:64px;object-fit:cover;border-radius:6px}#sharePreview{width:100%;min-height:130px;font-size:15px;line-height:1.7}
  .related-video{margin:14px 0;padding:14px;background:#f2f8fc;border-radius:12px}.related-video a{display:inline-block;min-height:44px;padding:8px 0}
- .draft-resume{background:#f4f8ee;border-radius:10px;padding:10px;font-size:14px}#draftStatus{font-size:13px;color:#465969}
+ .draft-resume{background:#f4f8ee;border-radius:10px;padding:10px;font-size:14px}#draftStatus{font-size:13px;color:#465969}#draftStatus:empty{display:none}
  `;document.head.append(style);
 
  // Keep each existing control and its event handlers while moving it into a purpose group.
@@ -868,7 +868,7 @@
  function formKey(form){const section=form.closest('main > section');if(!section||section.id==='reviews'||form.method==='dialog')return null;return section.id+':'+(form.id||[...section.querySelectorAll('form')].indexOf(form))}
  function fields(form){return [...form.querySelectorAll('input[id],textarea[id],select[id]')].filter(n=>!n.readOnly&&!['file','password','hidden','submit','button'].includes(n.type))}
  function saveDrafts(){try{sessionStorage.setItem(draftKey,JSON.stringify(drafts))}catch(e){draftStatus.textContent='入力途中の内容を一時保存できません。画面を閉じる前に記録を保存してください。'}}
- function forgetDraft(form){const id=formKey(form);if(!id)return;delete drafts[id];saveDrafts();form.querySelector('.draft-resume')?.remove()}
+ function forgetDraft(form){const id=formKey(form);if(!id)return;delete drafts[id];saveDrafts();delete form.dataset.draftApplied;form.querySelector('.draft-resume')?.remove()}
  function clearDrafts(){drafts={};saveDrafts();document.querySelectorAll('.draft-resume').forEach(n=>n.remove())}
  function restoreDrafts(){
   for(const form of $(activePage).querySelectorAll('form')){
@@ -893,7 +893,7 @@
  function syncUrl(id,replace){if(fromHistory)return;const url=new URL(location.href);url.searchParams.set('page',id);url.hash='';try{history[replace?'replaceState':'pushState']({...history.state,totonoePage:id,totonoeDepth:replace?(history.state?.totonoeDepth||0):(history.state?.totonoeDepth||0)+1},'',url)}catch(e){}}
  const previousShow=show;
  show=function(id){const result=previousShow.apply(this,arguments);if(activePage===id){if(id!==shown){syncUrl(id,false);shown=id}restoreDrafts();renderBadges();draftStatus.hidden=id==='emergency'}return result};
- syncUrl(activePage,true);
+ if(!entryPage||(validPage(entryPage)&&entryPage===activePage))syncUrl(activePage,true);
  window.addEventListener('popstate',()=>{const id=new URL(location.href).searchParams.get('page')||'home';fromHistory=true;try{show(validPage(id)?id:'home');shown=activePage}finally{fromHistory=false}});
  const previousBack=goBackPage;goBackPage=function(){if(history.state?.totonoeDepth>0){history.back();return}previousBack()};
 
