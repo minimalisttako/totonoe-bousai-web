@@ -51,7 +51,7 @@ module.exports=async function verifyUsability(browser,base){
 
   await page.evaluate(()=>localStorage.setItem('toto-home-safety-v1',JSON.stringify({sleep:'done',bedpath:'done',door:'done',hall:'done',fix:'done'})));
   await page.goto(base+'?page=supplies');
-  await page.locator('#supplyAddFold summary').click();
+  await page.locator('#supplyAddFold > summary').click();
   await page.locator('#sname').fill('入力途中の食品');
   await page.locator('#scategory').selectOption('food');
   await page.locator('#smeasureFactor').fill('2');
