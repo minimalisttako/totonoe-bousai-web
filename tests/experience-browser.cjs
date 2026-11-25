@@ -305,7 +305,7 @@ module.exports = async function verifyExperience(browser,base) {
   await page.goto(base+'?page=more&focus=achievements');
   const achievement=page.locator('#more #achievementBadges');
   await achievement.waitFor();
-  assert.match(await page.locator('#preparednessTreeStage').innerText(),/若木\s+トロフィー 5\/8/);
+  assert.match(await page.locator('#preparednessTreeStage').textContent(),/若木トロフィー 5\/8/);
   const collection=page.getByRole('dialog',{name:'バッジ・トロフィー'});
   const entry=achievement.getByRole('button',{name:'バッジ・トロフィーを見る',exact:true});
   await entry.click();
@@ -365,9 +365,15 @@ module.exports = async function verifyExperience(browser,base) {
     [key,tidyKey,homeSafetyKey,'toto-clean-practice-v1'].forEach(storageKey=>localStorage.removeItem(storageKey));
     verifiedSaveJson(achievementKey,{trophies:achievementIds.slice(0,count),daily:null});
    },earned);
-   await page.goto(base+'?page=more&focus=achievements');
-   const art=page.locator('.preparedness-tree-art');
+   await page.goto(base+'?page=home');
+   const art=page.locator('#home .preparedness-tree-art');
    assert.match(await page.locator('#preparednessTreeStage').innerText(),new RegExp('^'+name));
+   const speech=page.locator('#home .game-mascot-scene>.refresh-speech');
+   assert.equal(await page.locator('#homePreparednessTree').isVisible(),true);
+   assert.equal(await page.locator('#home .game-mascot-scene>.character-art:visible').count(),0);
+   assert.equal(await speech.locator('strong').innerText(),earned?'たこ':'防災の木');
+   assert((await speech.locator('span').innerText()).length>5);
+   assert.equal(await page.locator('#home #openAchievementCollection').count(),0);
    const companions=art.locator('.preparedness-tree-friend:visible');
    assert.deepEqual(await companions.evaluateAll(nodes=>nodes.map(node=>node.dataset.friend)),friends);
    assert(await companions.evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).backgroundImage.includes('achievement-friends-and-badges-v245.webp'))));

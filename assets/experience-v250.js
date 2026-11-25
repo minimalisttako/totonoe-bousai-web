@@ -300,11 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v249\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v250\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
+ updates.append(element('h3','v250　2026年11月25日'),element('p','ホームのイラストを防災の木に変更し、登場する仲間がコメントするようにしました。'));
  updates.append(element('h3','v249　2026年11月25日'),element('p','食品・飲料水は期限未入力でも必要量と比較し、ホームから期限の入力をご案内します。'));
  updates.append(element('h3','v248　2026年11月25日'),element('p','備蓄の編集欄が細くなり、文字や数字が読みにくくなる表示を修正しました。'));
  updates.append(element('h3','v247　2026年11月25日'),element('p','トロフィーとバッジをタップすると、獲得日と関連ページへの案内が開きます。'));
@@ -859,6 +860,28 @@
  #todayAchievements{margin:10px 0 6px;padding:8px 10px;background:#f3f7f1;border-radius:8px;color:#2c5140;font-size:13px;line-height:1.5}
  #todayAchievements strong{margin-inline-end:8px;font-size:13px}
  #achievementBadges>h2::before{display:none}
+ #home .home-scene-actions .game-mascot-scene{display:block!important;width:100%!important;max-width:none!important;aspect-ratio:auto!important;min-height:0!important;height:auto!important;padding:0!important;background:transparent!important}
+ #home .game-mascot-scene::before,#home .game-mascot-scene::after{display:none!important}
+ #home .game-mascot-scene>.character-art,#home .game-mascot-scene>.anime-approved-home-image{display:none!important}
+ #homePreparednessTree{width:100%;box-sizing:border-box;padding:12px 12px 8px;background:linear-gradient(145deg,#eff8e6,#e2f1df);border:1px solid #bdd5b9;border-radius:16px}
+ #homePreparednessTree .preparedness-tree-art{width:min(100%,330px);height:205px;margin:auto;background:none}
+ #homePreparednessTree .preparedness-plant{width:205px;bottom:4px}
+ #homePreparednessTree .preparedness-tree-friend{width:85px;bottom:3px}
+ #homePreparednessTree .preparedness-tree-friend[data-friend=tako]{left:0}
+ #homePreparednessTree .preparedness-tree-friend[data-friend=tricera]{right:0}
+ #homePreparednessTree .preparedness-tree-friend[data-friend=shimaenaga]{top:12px;width:70px}
+ #homePreparednessTree .preparedness-tree-copy{display:flex;align-items:center;justify-content:space-between;gap:10px}
+ #homePreparednessTree h3{margin:0;font-size:17px;color:#2b543b}
+ #homePreparednessTree #preparednessTreeStage{margin:0;font-size:14px;text-align:right;color:#365541}
+ #homePreparednessTree #preparednessTreeStage>span{display:inline}
+ #homePreparednessTree .preparedness-count{margin-left:8px;font-size:12px}
+ #home .game-mascot-scene>.refresh-speech{position:relative!important;inset:auto!important;display:flex;max-width:none!important;width:100%!important;margin:10px 0 0!important;min-height:70px!important;border:1px solid #bdd5b9;background:#fff;border-radius:12px;padding:10px 13px;transform:none!important}
+ #home .game-mascot-scene>.refresh-speech::after{display:none}
+ #home .game-mascot-scene>.refresh-speech span{font-size:14px!important;color:#294737;line-height:1.6}
+ #home .game-mascot-scene>.refresh-speech strong{font-size:13px!important;color:#356148}
+ body[data-speech-mode=hidden] #home .game-mascot-scene>.refresh-speech{display:none!important}
+ @media(max-width:350px){#homePreparednessTree .preparedness-tree-art{height:184px}#homePreparednessTree .preparedness-plant{width:180px}#homePreparednessTree .preparedness-tree-friend{width:72px}#homePreparednessTree .preparedness-tree-friend[data-friend=shimaenaga]{width:60px}#homePreparednessTree .preparedness-count{display:block!important;margin:0}}
+
  #achievementBadges .preparedness-tree{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid #bdd5b9;border-radius:14px;background:linear-gradient(145deg,#f6fbf0,#e8f4e6)}
  #achievementBadges .preparedness-tree h3,#achievementBadges .preparedness-tree p{margin:0}
  #preparednessTreeStage>span{display:block}
@@ -955,6 +978,9 @@
  const treeCopy=el('div'),treeStage=el('p');treeStage.id='preparednessTreeStage';
  const treeName=el('span'),treeCount=el('span',undefined,'preparedness-count');treeStage.append(treeName,treeCount);
  treeCopy.append(el('h3','防災の木'),treeStage);tree.append(treeArt,treeCopy);
+ tree.id='homePreparednessTree';treeCopy.className='preparedness-tree-copy';
+ const homeScene=document.querySelector('#home .game-mascot-scene');
+ homeScene.insertBefore(tree,homeScene.querySelector('.refresh-speech'));
  const trophies=el('ul',undefined,'preparedness-trophies');trophies.id='preparednessTrophies';
  const trophySection=el('section'),trophyHeading=el('h3','トロフィー');trophySection.id='preparednessTrophySection';
  trophySection.append(trophyHeading,trophies);
@@ -1025,7 +1051,7 @@
   }
  }
  const milestone=el('p',undefined,'milestone-notice');milestone.id='milestoneNotice';milestone.setAttribute('role','status');
- badgePanel.append(tree,collectionEntry,milestone,action('できたことを共有する',openShare));
+ badgePanel.append(collectionEntry,milestone,action('できたことを共有する',openShare));
  familyGroup.before(badgePanel);
  const completedRooms=()=>readTidyPlaces().filter(item=>item.done);
  const trophyRules=[
@@ -1096,6 +1122,10 @@
 
   const stage=earned.size>=6?3:earned.size>=3?2:earned.size>=1?1:0;
   const stageName=['種','芽','若木','大きな木'][stage];
+  const stageChanged=homeScene.dataset.treeStage!==String(stage);
+  homeScene.dataset.treeStage=String(stage);
+  homeScene.setAttribute('aria-label','成長する防災の木');
+  if(stageChanged)document.dispatchEvent(new Event('toto-tree-stage-changed'));
   selectIllustration(plant,stage);
   friends.forEach(({art},index)=>{art.hidden=index>=stage});
   treeArt.setAttribute('aria-label',[stageName,...friends.slice(0,stage).map(friend=>friend.name)].join('、'));
