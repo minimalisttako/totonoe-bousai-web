@@ -300,11 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v242\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v243\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
+ updates.append(element('h3','v243　2026年11月25日'),element('p','その他に「防災の木」を追加しました。ホームには今日できたことを表示します。'));
  updates.append(element('h3','v242　2026年11月25日'),element('p','片付けページの「ととのえる3ステップ」を削除しました。整理・整頓・備蓄はホームから開けます。'));
  updates.append(element('h3','v241　2026年11月25日'),element('p','住まいの安全点検を2つの画面に分け、お片付けノートを場所ごとに開ける表示にしました。'));
  updates.append(element('h3','v231　2026年11月24日'),element('p','その他のミニマリストのススメを、4枚の青いカードの下に葉のアイコン付き横長カードとして配置しました。'));
@@ -849,6 +850,17 @@
  main :is(button.primary,button.secondary,a.secondary){border-radius:12px;min-height:44px}
  .refresh-tiles .refresh-tile strong{font-size:21px}.refresh-tiles .refresh-tile small{font-size:11px;font-weight:500}
  .more-purpose{margin:22px 0 28px;border-top:2px solid #e2edf1;padding-top:16px}.more-purpose>h2{font-size:21px;margin:0 0 14px}
+ #todayAchievements{margin:10px 0 6px;padding:8px 10px;background:#f3f7f1;border-radius:8px;color:#2c5140;font-size:13px;line-height:1.5}
+ #todayAchievements strong{margin-inline-end:8px;font-size:13px}
+ #achievementBadges>h2::before{display:none}
+ #achievementBadges .preparedness-tree{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid #bdd5b9;border-radius:14px;background:linear-gradient(145deg,#f6fbf0,#e8f4e6)}
+ #achievementBadges .preparedness-tree h3,#achievementBadges .preparedness-tree p{margin:0}
+ .preparedness-tree-icon{display:grid;flex:0 0 64px;min-height:64px;place-items:center;background:#fff;border-radius:50%;font-size:40px;line-height:1}
+ .preparedness-trophies{list-style:none;padding:0;margin:10px 0 16px}
+ .preparedness-trophies li{display:flex;gap:8px;align-items:flex-start;border-bottom:1px solid #e6eee7;padding:8px 0;font-size:14px}
+ .preparedness-trophies li[data-earned=false]{color:#4b5b52}
+ .preparedness-trophies li[data-earned=true]{color:#28553a;font-weight:700}
+ #achievementBadges summary{padding:8px 0;cursor:pointer;font-size:15px;font-weight:700;min-height:44px}
  .milestone-badges{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}.milestone-badges li{background:#eef5eb;border:1px solid #c5dcb5;border-radius:12px;padding:7px 11px;font-size:14px}
  .milestone-notice{padding:12px;background:#fff7dd;border-radius:12px;margin:12px 0;color:#514221}.milestone-notice:empty{display:none}
  #achievementShareDialog{width:min(94vw,620px);max-height:90dvh;overflow:auto}#achievementShareDialog label{display:flex;align-items:flex-start;gap:9px;padding:8px 0;font-size:15px}
@@ -880,16 +892,86 @@
  video(authorGroup,'防災ミニマリストたこのYouTubeを見る',channel);
  const examVideo=$('examStudy').querySelector('a[href*="youtu"]');if(examVideo)video($('learn'),'防災士試験の例題・音声を動画で学ぶ',examVideo.href);
 
+ const todayPanel=el('div');todayPanel.id='todayAchievements';todayPanel.setAttribute('role','status');
+ const todayText=el('span');
+ todayPanel.append(el('strong','今日できたこと'),todayText);
+ $('homeOtherSuggestions').before(todayPanel);
  const badgePanel=el('div',undefined,'card');badgePanel.id='achievementBadges';badgePanel.append(el('h2','実際にできたこと'));
- const badges=el('ul',undefined,'milestone-badges'),milestone=el('p',undefined,'milestone-notice');milestone.id='milestoneNotice';milestone.setAttribute('role','status');
- badgePanel.append(badges,el('p','チェック済みの作業と登録の記録です。災害時の安全性は、その時の状況に合わせて確認してください。','notice'),milestone,action('できたことを共有する',openShare));
- document.querySelector('#home .refresh-home-mission').after(badgePanel);
+ const tree=el('div',undefined,'preparedness-tree'),treeIcon=el('span',undefined,'preparedness-tree-icon');
+ treeIcon.setAttribute('aria-hidden','true');const treeCopy=el('div'),treeStage=el('p');treeStage.id='preparednessTreeStage';
+ treeCopy.append(el('h3','防災の木'),treeStage);tree.append(treeIcon,treeCopy);
+ const trophies=el('ul',undefined,'preparedness-trophies');trophies.id='preparednessTrophies';
+ const trophyFold=el('details'),trophySummary=el('summary');
+ trophyFold.append(trophySummary,trophies);
+ const recordFold=el('details'),badges=el('ul',undefined,'milestone-badges');
+ recordFold.append(el('summary','片付け・備蓄の記録を見る'),badges);
+ const milestone=el('p',undefined,'milestone-notice');milestone.id='milestoneNotice';milestone.setAttribute('role','status');
+ badgePanel.append(tree,trophyFold,recordFold,milestone,action('できたことを共有する',openShare));
+ familyGroup.before(badgePanel);
  const completedRooms=()=>readTidyPlaces().filter(item=>item.done);
- function renderBadges(){
-  badges.replaceChildren();
-  for(const room of completedRooms())badges.append(el('li','✓ '+room.place+'の片付け4項目を完了'));
-  if(supplyStorageReadable()&&supplies.length)badges.append(el('li','✓ 備蓄品を登録（'+supplies.length+'品）'));
-  if(!badges.children.length)badges.append(el('li','場所の片付けや備蓄の登録を進めると、ここに記録が並びます。'));
+ const trophyRules=[
+  ['safety-first','住まいの安全を1項目確認',s=>s.safety>0],
+  ['safety-priority','優先する安全点検を完了',s=>s.priority],
+  ['safety-all','住まいの安全点検をすべて完了',s=>s.allSafety],
+  ['tidy-first','1か所の片付けを完了',s=>s.rooms>=1],
+  ['tidy-three','3か所の片付けを完了',s=>s.rooms>=3],
+  ['stock-first','備蓄品を1品登録',s=>s.stock>=1],
+  ['stock-five','備蓄品を5品登録',s=>s.stock>=5],
+  ['clean-first','掃除を1項目完了',s=>s.cleaned]
+ ];
+ const checkedSafety=state=>Object.keys(state).filter(id=>homeSafetySections.some(section=>section.items.some(([item])=>item===id))&&['done','na'].includes(state[id]));
+ function readAchievements(){
+  try{
+   const record=JSON.parse(localStorage.getItem(achievementKey));
+   return record===null?{trophies:[],daily:null}:validAchievementRecord(record)?record:null;
+  }catch(e){return null}
+ }
+ function renderBadges(change){
+  const date=todayLocalDate(),saved=readAchievements(),rooms=completedRooms(),stock=readSaved(key,[]).length;
+  const safety=checkedSafety(readHomeSafety()),clean=Object.values(readCleanPracticeRaw());
+  const stats={rooms:rooms.length,stock,safety:safety.length,priority:criticalSafetyState().remaining.length===0,allSafety:homeSafetyCounts().unknown===0,cleaned:clean.some(item=>item.done)};
+  const earned=new Set(saved?.trophies??[]);
+  for(const [id,,goal] of trophyRules)if(goal(stats))earned.add(id);
+  let daily=saved?.daily?.date===date?saved.daily:null;
+  if(change){
+   try{
+    const before=JSON.parse(change.before),after=JSON.parse(change.value);
+    if(change.key===homeSafetyKey){
+     const previous=new Set(checkedSafety(before??{}));
+     const completed=checkedSafety(after).filter(id=>!previous.has(id));
+     if(completed.length)daily={date,stock:daily?.stock??0,safety:[...new Set([...(daily?.safety??[]),...completed])]};
+    }
+    if(change.key===key){
+     const additions=after.length-(before?.length??0);
+     if(additions>0)daily={date,safety:daily?.safety??[],stock:Math.min(9999,(daily?.stock??0)+additions)};
+     if(additions>0&&!before?.length)milestone.textContent='はじめての備蓄登録、おつかれさまでした！';
+    }
+   }catch(e){}
+  }
+  const next={trophies:[...earned],daily:daily??saved?.daily??null};
+  if(saved&&JSON.stringify(saved)!==JSON.stringify(next))verifiedSaveJson(achievementKey,next);
+  const updateToday=[
+   ['安全点検',daily?.safety.filter(id=>safety.includes(id)).length??0,'項目'],
+   ['片付け',rooms.filter(room=>room.completedAt===date).length,'か所'],
+   ['掃除',clean.filter(item=>item.done&&todayLocalDate(new Date(item.at))===date).length,'項目'],
+   ['備蓄登録',daily?.stock??0,'品']
+  ].filter(([,count])=>count).map(([label,count,unit])=>label+' '+count+unit).join('・');
+  const line=updateToday||'まだ記録はありません';
+  if(todayText.textContent!==line)todayText.textContent=line;
+
+  const stage=earned.size>=6?['🌳','大きな木']:earned.size>=3?['🌿','若木']:earned.size>=1?['🌱','芽']:['🌰','種'];
+  treeIcon.textContent=stage[0];
+  treeStage.textContent=stage[1]+'　・　トロフィー '+earned.size+'/'+trophyRules.length;
+  trophySummary.textContent='🏆 トロフィーを見る';
+  trophies.replaceChildren(...trophyRules.map(([id,title])=>{
+   const unlocked=earned.has(id),row=el('li');
+   row.dataset.earned=String(unlocked);
+   const icon=el('span',unlocked?'🏆':'🔒');icon.setAttribute('aria-hidden','true');
+   row.append(icon,el('span',title+'（'+(unlocked?'獲得済み':'未獲得')+'）'));return row;
+  }));
+  badges.replaceChildren(...rooms.map(room=>el('li','✓ '+room.place+'の片付け4項目を完了')));
+  if(stock)badges.append(el('li','✓ 備蓄品を登録（'+stock+'品）'));
+  if(!badges.children.length)badges.append(el('li','片付けを完了した場所と、登録した備蓄品の数が表示されます。'));
  }
  $('tidyPlaceChecklistTitle').after(el('p','進捗は登録した場所の作業を終えた割合です。家具の固定や避難経路も別に確認しましょう。','notice'));
  for(const id of ['tidy','tidyAlbum'])$(id).append(action('できたことを共有する',openShare));
@@ -961,12 +1043,25 @@
  document.addEventListener('change',event=>{if(event.target.matches('select,input[type=checkbox],input[type=radio]'))event.target.dispatchEvent(new Event('input',{bubbles:true}))});
  document.addEventListener('submit',event=>{submittingForm=event.target;setTimeout(()=>{submittingForm=null},0)},true);
  document.addEventListener('toto-record-saved',event=>{
+  const change=event.detail;
+  if(change.key===achievementKey)return;
   if(submittingForm)forgetDraft(submittingForm);
-  const {key:savedKey,before,value}=event.detail;
-  if(savedKey===key){try{const old=before===null?[]:JSON.parse(before),items=JSON.parse(value);if(Array.isArray(old)&&!old.length&&Array.isArray(items)&&items.length)milestone.textContent='はじめての備蓄登録、おつかれさまでした！家にある1品を記録できました。'}catch(e){}}
-  queueMicrotask(renderBadges);
+  if([key,tidyKey,homeSafetyKey,'toto-clean-practice-v1'].includes(change.key))queueMicrotask(()=>renderBadges(change));
  });
  window.addEventListener('toto-data-restored',()=>{milestone.textContent='';renderBadges();clearDrafts()});
+ window.addEventListener('storage',event=>{
+  if(event.key===null||[achievementKey,key,tidyKey,homeSafetyKey,'toto-clean-practice-v1'].includes(event.key))renderBadges();
+ });
+ let displayedDay=todayLocalDate();
+ function refreshAchievementDate(){
+  const date=todayLocalDate();
+  if(document.hidden||displayedDay===date)return;
+  displayedDay=date;
+  renderBadges();
+ }
+ window.addEventListener('pageshow',refreshAchievementDate);
+ document.addEventListener('visibilitychange',refreshAchievementDate);
+ setInterval(refreshAchievementDate,30000);
 
  let fromHistory=false,shown=activePage;
  function syncUrl(id,replace){if(fromHistory)return;const url=new URL(location.href);url.searchParams.set('page',id);url.hash='';try{history[replace?'replaceState':'pushState']({...history.state,totonoePage:id,totonoeDepth:replace?(history.state?.totonoeDepth||0):(history.state?.totonoeDepth||0)+1},'',url)}catch(e){}}
@@ -992,7 +1087,8 @@
  $(activePage).append(document.querySelector('.page-feedback-footer'));
  const focus=entryUrl.searchParams.get('focus');
  if(entryPage==='homeSafety'&&focus==='route')openHomeSafetySection(1,false);
- const targets={checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
+ if(entryPage==='home'&&focus==='achievements'&&activePage==='home')show('more');
+ const targets={today:'todayAchievements',checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
  if(targets[focus])requestAnimationFrame(()=>{
   const target=$(targets[focus]);
   target.style.scrollMarginTop=(document.querySelector('header').offsetHeight+12)+'px';

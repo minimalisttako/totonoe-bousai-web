@@ -260,6 +260,41 @@ module.exports = async function verifyExperience(browser,base) {
    await page.setViewportSize({width,height:844});
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   }
+  await page.clock.setFixedTime(new Date('2026-11-25T11:00:00Z'));
+  await page.goto(base+'?page=home&focus=today');
+  const daily=page.locator('#todayAchievements');
+  assert.equal(await daily.evaluate(node=>node.nextElementSibling.id),'homeOtherSuggestions');
+  assert.match(await daily.innerText(),/まだ記録はありません/);
+  assert.equal(await page.locator('#home #achievementBadges').count(),0);
+  await page.evaluate(()=>{
+   updateHomeSafety('fall','done');
+   setCleanPractice('floor',true);
+   saveSaved(key,[...supplies,{name:'今日の備蓄テスト',qty:'1',unit:'個'}]);
+  });
+  assert.match(await daily.innerText(),/安全点検 1項目・掃除 1項目・備蓄登録 1品/);
+  await page.reload();
+  assert.match(await daily.innerText(),/備蓄登録 1品/);
+  await page.goto(base+'?page=more&focus=achievements');
+  const achievement=page.locator('#more #achievementBadges');
+  await achievement.waitFor();
+  assert.match(await page.locator('#preparednessTreeStage').innerText(),/若木.*5\/8/);
+  await achievement.getByText('トロフィーを見る').click();
+  assert.equal(await page.locator('#preparednessTrophies [data-earned=true]').count(),5);
+  const backedUp=await page.evaluate(()=>{
+   const {data}=validateFullBackupObject(JSON.parse(buildFullBackup()));
+   return JSON.parse(data[achievementKey]);
+  });
+  assert.equal(backedUp.trophies.length,5);
+  assert.equal(backedUp.daily.stock,1);
+  await page.evaluate(()=>{
+   saveSaved(key,[]);
+   setCleanPractice('floor',false);
+  });
+  assert.match(await page.locator('#preparednessTreeStage').innerText(),/5\/8/);
+  await page.clock.setFixedTime(new Date('2026-11-26T11:00:00Z'));
+  await page.goto(base+'?page=home&focus=today');
+  assert.match(await daily.innerText(),/まだ記録はありません/);
+  console.log('PASS: dated home summary, trophy growth, persistence after deletion and backup, next-day reset');
   assert.deepEqual(errors,[]);
   console.log('PASS: mobile feature entry points, persistent favorites/simple view, reminders, worksheet, private feedback, stock use/shopping, quota/silent failures, deletion restore and settings backup');
  }finally{await context.close()}
