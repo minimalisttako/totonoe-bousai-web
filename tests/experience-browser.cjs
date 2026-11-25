@@ -101,6 +101,9 @@ module.exports = async function verifyExperience(browser,base) {
   await familyIcon.waitFor();
   assert.equal(await familyIcon.count(),1);
   await fresh.goto(base+'?page=tidy');
+  const tidy=fresh.locator('#tidy');
+  assert.equal(await tidy.getByRole('heading',{name:/ととのえる[3３]ステップ/}).count(),0);
+  assert.equal(await tidy.getByRole('heading',{name:'実践ノート',exact:true}).isVisible(),true);
   const rooms=fresh.locator('#tidyList > .tidy-place');
   assert.equal(await rooms.locator(':scope > summary > .chibi-icon').count(),
                await rooms.count());
@@ -166,6 +169,9 @@ module.exports = async function verifyExperience(browser,base) {
   await fresh.goto(base);await fresh.locator('.refresh-home-mission').waitFor();
   const homeHeadings=fresh.locator('#home :is(.refresh-home-mission,.refresh-journey) > .refresh-heading');
   assert.equal(await homeHeadings.count(),2);
+  const homeSteps=fresh.locator('#home .refresh-journey .refresh-tiles button');
+  assert.deepEqual(await homeSteps.locator('strong').allTextContents(),['整理','整頓','備蓄']);
+  for(const step of await homeSteps.all())assert.equal(await step.isVisible(),true);
   assert.equal(await homeHeadings.locator('.chibi-icon').count(),0);
   assert(await homeHeadings.evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node,'::before').display==='none')));
   assert.equal(await fresh.locator('.refresh-home-mission > div:first-of-type > .home-priority-action').count(),1);

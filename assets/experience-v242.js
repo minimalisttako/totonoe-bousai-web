@@ -300,11 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v241\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v242\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
+ updates.append(element('h3','v242　2026年11月25日'),element('p','片付けページの「ととのえる3ステップ」を削除しました。整理・整頓・備蓄はホームから開けます。'));
  updates.append(element('h3','v241　2026年11月25日'),element('p','住まいの安全点検を2つの画面に分け、お片付けノートを場所ごとに開ける表示にしました。'));
  updates.append(element('h3','v231　2026年11月24日'),element('p','その他のミニマリストのススメを、4枚の青いカードの下に葉のアイコン付き横長カードとして配置しました。'));
  updates.append(element('h3','v230　2026年11月24日'),element('p','優先安全点検の完了で備蓄を解放し、初回設定を必要な場面に分けました。下のメニューを5つに整理し、今日やることは1つと、折りたたんだ追加のおすすめを表示します。'));
@@ -582,7 +583,6 @@
    "記録を書き出す（必要なときだけ）": 1,
    "記録を文章で控える": 1,
    "防災を意識した部屋づくりの実例": 1,
-   "ととのえる３ステップ": 1,
    "実践ノート": 12,
    "写真とチェックで、変化を記録": 12
   },
