@@ -1126,7 +1126,13 @@ nav button[data-page].active {color:var(--tab-color);background:var(--tab-active
 }
 </style>
 
-<style id="checklist-layout-v247">
+<style id="supply-edit-layout-v248">
+#supplies #supplyList>.supply-editing{display:block!important;min-width:0}
+#supplies #supplyList .supply-edit{display:block;width:100%;min-width:0;max-width:100%}
+#supplies #supplyList .supply-edit .supply-label{display:block;width:100%;min-width:0}
+#supplies #supplyList .supply-edit .field{display:block;width:100%;min-width:0;max-width:100%;font-size:16px}
+</style>
+<style id="checklist-layout-v248">
 #homeSafety .home-safety-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
 #homeSafety .home-safety-steps button{min-height:48px;padding:8px 6px;border:1px solid #75998c;border-radius:10px;background:#fff;color:#254f45;font-size:14px;font-weight:700}
 #homeSafety .home-safety-steps button[aria-current="step"]{background:#285e4e;border-color:#285e4e;color:#fff}
@@ -1142,7 +1148,7 @@ nav button[data-page].active {color:var(--tab-color);background:var(--tab-active
 #tidy .tidy-place>summary.with-chibi>.chibi-icon{flex-shrink:0;margin:0}
 #tidy .tidy-place-body{border-top:1px solid #bacdc2;padding:12px 0}
 </style>
-<style id="floating-favorites-v247">
+<style id="floating-favorites-v248">
 main{padding-bottom:calc(160px + env(safe-area-inset-bottom))}
 #favoritesLauncher {
  position:fixed;z-index:32;right:var(--favorites-right,16px);
@@ -2192,8 +2198,8 @@ async function runAppIntegrityAudit(){
  add('HTTPS',location.protocol==='https:'&&window.isSecureContext,location.protocol);
  try{
   const reg=await navigator.serviceWorker.getRegistration('./');
-  const c=await caches.open('totonoe-offline-shell-v247');
-  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/experience-v247.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
+  const c=await caches.open('totonoe-offline-shell-v248');
+  const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/app-icon.svg','./assets/experience-v248.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
   const found=await Promise.all(paths.map(p=>c.match(new URL(p,reg?.scope||new URL('./',location.href)).href)));
   add('オフライン用ファイル',!!reg&&found.every(Boolean),found.filter(Boolean).length+'/'+paths.length+'件（代表ファイル）');
  }catch(e){add('オフライン用ファイル',false,'確認できません')}
@@ -2218,9 +2224,9 @@ async function runReleaseSmokeTests(){
   const registration=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration('./'):null;
   const names=('caches' in window)?await caches.keys():[];
   let ok=false;
-  if(registration&&names.includes('totonoe-offline-shell-v247')){
-   const cache=await caches.open('totonoe-offline-shell-v247');
-   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v247.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
+  if(registration&&names.includes('totonoe-offline-shell-v248')){
+   const cache=await caches.open('totonoe-offline-shell-v248');
+   const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v248.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
    ok=(await Promise.all(paths.map(async p=>{const r=await cache.match(new URL(p,registration.scope).href);return !!(r&&r.ok)}))).every(Boolean);
   }
   rows.push({name:'オフライン用ファイル14件',ok});
@@ -2655,7 +2661,7 @@ function setCommonTask(index,checked){
  done=next;renderTasks();renderHomeNextThree();renderGameHomeDialogue();return true;
 }
 function renderTasks(){if(renderHomeCleaningTasks())return;const holder=document.getElementById('homeTasks'),data=homeMissionItems(),source=document.getElementById('homeMissionSource');if(source)source.textContent=data?'診断結果から選ばれた未完了の優先ミッション':'診断前の共通ミッション（診断すると切り替わります）';if(data){if(data.remaining===0){const complete=document.createElement('p');complete.className='homehint';complete.textContent='優先ミッションはすべて完了しています。診断画面から記録を見直したり、定期点検を行えます。';holder.replaceChildren(complete);updateTaskProgress();return}holder.replaceChildren(...data.items.map(item=>{const label=document.createElement('label');label.className='task';const c=document.createElement('input');c.type='checkbox';c.checked=false;c.onchange=()=>{const next=getMissionState();next[item.key]=c.checked;if(!saveMissionState(next)){c.checked=!c.checked;return}if(c.checked)recordMissionCompletion(item.key,item.label);syncDiagnosisMissionUI();renderTasks();renderHomeNextThree();renderGameHomeDialogue()};label.append(c,document.createTextNode(item.label));return label}));updateTaskProgress();return}holder.replaceChildren(...tasks.map((t,i)=>{const label=document.createElement('label');label.className='task';const c=document.createElement('input');c.type='checkbox';c.checked=done.includes(i);c.onchange=()=>{if(!setCommonTask(i,c.checked))c.checked=!c.checked};label.append(c,document.createTextNode(t));return label}));updateTaskProgress()}
-function addSupply(e){e.preventDefault();const name=document.getElementById('sname').value.trim();const qty=Number(document.getElementById('sqty').value);if(!name||!Number.isInteger(qty)||qty<1||qty>99999)return;const cat=document.getElementById('scategory').value;const factorRaw=document.getElementById('sfactor').value.trim();const factor=Number(factorRaw);if(cat==='water'&&(!factorRaw||!Number.isFinite(factor)||factor<=0||factor>99999)){setStorageStatus('飲料水の容量をリットル（L）で入力してください。例：500mLなら0.5、2Lなら2。',true);return}const rawMeasure=document.getElementById('smeasureFactor').value.trim();if(cat==='food'&&rawMeasure!==''&&!validSupplyMeasure(rawMeasure)){setStorageStatus('1単位あたりの食数・使用回数は0より大きい数で入力してください。不明なら空欄にできます。',true);return}const item={name,qty:String(qty),unit:document.getElementById('sunit').value,exp:document.getElementById('sexp').value,location:document.getElementById('slocation').value.trim(),checkedAt:document.getElementById('schecked').value,nextCheck:document.getElementById('snextCheck').value,checkInterval:document.getElementById('scheckInterval').value,category:cat,factor:cat==='water'?String(factor):'',measureFactor:cat==='food'&&rawMeasure!==''?String(Number(rawMeasure)):''};const next=[...supplies,item];if(!saveSaved(key,next)){setStorageStatus('備蓄を保存できませんでした。端末の保存領域をご確認ください。入力内容は画面に残っています。',true);return}supplies=next;e.target.reset();initializeSupplyInspectionDefaults();updateSupplyCompareHint();document.getElementById('supplySearch').value='';document.getElementById('supplyFilter').value='all';document.getElementById('supplyAddFold').open=false;renderSupplies();setStorageStatus('「'+name+'」を登録しました。',false);document.getElementById('supplyInventoryCard').scrollIntoView({block:'start',behavior:'smooth'})}function editSupply(i,host){const original=supplies[i];if(!original)return;host.replaceChildren();const form=document.createElement('form');form.className='supply-edit';form.style.cssText='padding:12px;border:1px solid #c9d9e9;border-radius:14px;background:#f6f9ff;margin:10px 0';const title=document.createElement('strong');title.textContent='備蓄を編集';form.append(title);const field=(label,value,type='text')=>{const wrap=document.createElement('label');wrap.className='supply-label';wrap.textContent=label;const input=document.createElement('input');input.className='field';input.type=type;input.value=value||'';wrap.append(input);form.append(wrap);return input};const name=field('品名',original.name);name.required=true;name.maxLength=60;const qty=field('数量',String(original.qty??''),'number');qty.min='0';qty.max='99999';qty.step='1';qty.required=true;const unitLabel=document.createElement('label');unitLabel.className='supply-label';unitLabel.textContent='単位';const unit=document.createElement('select');unit.className='field';const existing=Array.from(document.getElementById('sunit').options).map(x=>x.value);if(original.unit&&!existing.includes(original.unit))existing.push(original.unit);existing.forEach(v=>{const opt=document.createElement('option');opt.value=v;opt.textContent=v;unit.append(opt)});unit.value=original.unit||'個';unitLabel.append(unit);form.append(unitLabel);const exp=field('期限（任意）',original.exp,'date');const checkedAt=field('最後に点検した日（任意）',original.checkedAt,'date');const nextCheck=field('次の点検予定日（目安・変更可）',original.nextCheck,'date');const intervalLabel=document.createElement('label');intervalLabel.className='supply-label';intervalLabel.textContent='点検の繰り返し間隔（任意）';const checkInterval=document.createElement('select');checkInterval.className='field';[['','繰り返しなし（その都度設定）'],['1','毎月'],['3','3か月ごと'],['6','6か月ごと'],['12','1年ごと']].forEach(([value,label])=>{const opt=document.createElement('option');opt.value=value;opt.textContent=label;checkInterval.append(opt)});checkInterval.value=String(original.checkInterval||'');checkInterval.onchange=()=>{const n=Number(checkInterval.value);if([1,3,6,12].includes(n))nextCheck.value=advanceInspectionMonths(todayLocalDate(),n)};intervalLabel.append(checkInterval);form.append(intervalLabel);const location=field('保管場所（任意）',original.location);location.maxLength=80;const categoryLabel=document.createElement('label');categoryLabel.className='supply-label';categoryLabel.textContent='備蓄の分類（任意）';const category=document.createElement('select');category.className='field';[['','その他（ライト・救急用品など）'],['water','飲料水（容量を合算）'],['food','食料'],['toilet','非常用トイレ']].forEach(([v,t])=>{const opt=document.createElement('option');opt.value=v;opt.textContent=t;category.append(opt)});category.value=original.category||'';categoryLabel.append(category);form.append(categoryLabel);const factor=field('水1本（1容器）の容量：リットル（L）',original.category==='water'?(original.factor??''):'','number');factor.min='0.001';factor.max='99999';factor.step='any';factor.placeholder='500mLなら0.5、2Lなら2';factor.parentElement.style.display=category.value==='water'?'':'none';const measure=field('数量1単位あたりの食数（任意）',original.category==='food'&&validSupplyMeasure(original.measureFactor)?String(original.measureFactor):'','number');measure.min='0.001';measure.max='99999';measure.step='any';measure.placeholder='不明なら空欄';
+function addSupply(e){e.preventDefault();const name=document.getElementById('sname').value.trim();const qty=Number(document.getElementById('sqty').value);if(!name||!Number.isInteger(qty)||qty<1||qty>99999)return;const cat=document.getElementById('scategory').value;const factorRaw=document.getElementById('sfactor').value.trim();const factor=Number(factorRaw);if(cat==='water'&&(!factorRaw||!Number.isFinite(factor)||factor<=0||factor>99999)){setStorageStatus('飲料水の容量をリットル（L）で入力してください。例：500mLなら0.5、2Lなら2。',true);return}const rawMeasure=document.getElementById('smeasureFactor').value.trim();if(cat==='food'&&rawMeasure!==''&&!validSupplyMeasure(rawMeasure)){setStorageStatus('1単位あたりの食数・使用回数は0より大きい数で入力してください。不明なら空欄にできます。',true);return}const item={name,qty:String(qty),unit:document.getElementById('sunit').value,exp:document.getElementById('sexp').value,location:document.getElementById('slocation').value.trim(),checkedAt:document.getElementById('schecked').value,nextCheck:document.getElementById('snextCheck').value,checkInterval:document.getElementById('scheckInterval').value,category:cat,factor:cat==='water'?String(factor):'',measureFactor:cat==='food'&&rawMeasure!==''?String(Number(rawMeasure)):''};const next=[...supplies,item];if(!saveSaved(key,next)){setStorageStatus('備蓄を保存できませんでした。端末の保存領域をご確認ください。入力内容は画面に残っています。',true);return}supplies=next;e.target.reset();initializeSupplyInspectionDefaults();updateSupplyCompareHint();document.getElementById('supplySearch').value='';document.getElementById('supplyFilter').value='all';document.getElementById('supplyAddFold').open=false;renderSupplies();setStorageStatus('「'+name+'」を登録しました。',false);document.getElementById('supplyInventoryCard').scrollIntoView({block:'start',behavior:'smooth'})}function editSupply(i,host){const original=supplies[i];if(!original)return;host.classList.remove('row','illustrated-stock-row');host.classList.add('supply-editing');host.replaceChildren();const form=document.createElement('form');form.className='supply-edit';form.style.cssText='padding:12px;border:1px solid #c9d9e9;border-radius:14px;background:#f6f9ff;margin:10px 0';const title=document.createElement('strong');title.textContent='備蓄を編集';form.append(title);const field=(label,value,type='text')=>{const wrap=document.createElement('label');wrap.className='supply-label';wrap.textContent=label;const input=document.createElement('input');input.className='field';input.type=type;input.value=value||'';wrap.append(input);form.append(wrap);return input};const name=field('品名',original.name);name.required=true;name.maxLength=60;const qty=field('数量',String(original.qty??''),'number');qty.min='0';qty.max='99999';qty.step='1';qty.required=true;const unitLabel=document.createElement('label');unitLabel.className='supply-label';unitLabel.textContent='単位';const unit=document.createElement('select');unit.className='field';const existing=Array.from(document.getElementById('sunit').options).map(x=>x.value);if(original.unit&&!existing.includes(original.unit))existing.push(original.unit);existing.forEach(v=>{const opt=document.createElement('option');opt.value=v;opt.textContent=v;unit.append(opt)});unit.value=original.unit||'個';unitLabel.append(unit);form.append(unitLabel);const exp=field('期限（任意）',original.exp,'date');const checkedAt=field('最後に点検した日（任意）',original.checkedAt,'date');const nextCheck=field('次の点検予定日（目安・変更可）',original.nextCheck,'date');const intervalLabel=document.createElement('label');intervalLabel.className='supply-label';intervalLabel.textContent='点検の繰り返し間隔（任意）';const checkInterval=document.createElement('select');checkInterval.className='field';[['','繰り返しなし（その都度設定）'],['1','毎月'],['3','3か月ごと'],['6','6か月ごと'],['12','1年ごと']].forEach(([value,label])=>{const opt=document.createElement('option');opt.value=value;opt.textContent=label;checkInterval.append(opt)});checkInterval.value=String(original.checkInterval||'');checkInterval.onchange=()=>{const n=Number(checkInterval.value);if([1,3,6,12].includes(n))nextCheck.value=advanceInspectionMonths(todayLocalDate(),n)};intervalLabel.append(checkInterval);form.append(intervalLabel);const location=field('保管場所（任意）',original.location);location.maxLength=80;const categoryLabel=document.createElement('label');categoryLabel.className='supply-label';categoryLabel.textContent='備蓄の分類（任意）';const category=document.createElement('select');category.className='field';[['','その他（ライト・救急用品など）'],['water','飲料水（容量を合算）'],['food','食料'],['toilet','非常用トイレ']].forEach(([v,t])=>{const opt=document.createElement('option');opt.value=v;opt.textContent=t;category.append(opt)});category.value=original.category||'';categoryLabel.append(category);form.append(categoryLabel);const factor=field('水1本（1容器）の容量：リットル（L）',original.category==='water'?(original.factor??''):'','number');factor.min='0.001';factor.max='99999';factor.step='any';factor.placeholder='500mLなら0.5、2Lなら2';factor.parentElement.style.display=category.value==='water'?'':'none';const measure=field('数量1単位あたりの食数（任意）',original.category==='food'&&validSupplyMeasure(original.measureFactor)?String(original.measureFactor):'','number');measure.min='0.001';measure.max='99999';measure.step='any';measure.placeholder='不明なら空欄';
  let measureBasis=category.value+'|'+unit.value;
  const updateMeasure=()=>{const basis=category.value+'|'+unit.value;if(basis!==measureBasis){measure.value='';factor.value='';measureBasis=basis}factor.parentElement.style.display=category.value==='water'?'':'none';measure.parentElement.style.display=category.value==='food'?'':'none';measure.disabled=category.value!=='food'};
  category.onchange=updateMeasure;unit.onchange=updateMeasure;updateMeasure();const target=field('目標数量（任意・補充チェック用）',original.target??'','number');target.min='1';target.max='99999';target.step='1';target.placeholder='例：24（未設定なら空欄）';const save=document.createElement('button');save.type='submit';save.className='primary';save.textContent='変更を保存';const cancel=document.createElement('button');cancel.type='button';cancel.className='pill';cancel.textContent='キャンセル';cancel.style.marginLeft='8px';cancel.onclick=()=>renderSupplies();form.append(save,cancel);form.onsubmit=e=>{e.preventDefault();const n=name.value.trim(),q=Number(qty.value),t=target.value.trim()===''?null:Number(target.value),cat=category.value,rawFactor=factor.value.trim(),factorValue=Number(rawFactor);if(!n||!Number.isInteger(q)||q<0||q>99999||t!==null&&(!Number.isInteger(t)||t<1||t>99999)||cat==='water'&&(!rawFactor||!Number.isFinite(factorValue)||factorValue<=0||factorValue>99999)){setStorageStatus('品名・0〜99999の数量・目標数量・飲料水の容量を確認してください。',true);return}const rawMeasure=measure.value.trim();if(cat==='food'&&rawMeasure!==''&&!validSupplyMeasure(rawMeasure)){setStorageStatus('食数・使用回数は0より大きい数で入力してください。不明なら空欄にできます。',true);return}const next=supplies.map((v,j)=>j===i?{...v,name:n,qty:String(q),unit:unit.value,exp:exp.value,location:location.value.trim(),checkedAt:checkedAt.value,nextCheck:nextCheck.value,checkInterval:checkInterval.value,target:t===null?'':String(t),category:cat,factor:cat==='water'?String(factorValue):'',measureFactor:cat==='food'&&rawMeasure!==''?String(Number(rawMeasure)):cat==='toilet'&&original.category==='toilet'&&unit.value===original.unit?original.measureFactor||'':''}:v);if(!saveSaved(key,next)){setStorageStatus('変更を保存できませんでした。',true);return}supplies=next;renderSupplies();setStorageStatus('「'+n+'」の変更を保存しました。',false)};host.append(form);host.scrollIntoView({block:'nearest',behavior:'smooth'})}function prepareDuplicateSupply(index){const item=supplies[index];if(!item)return;openSupplyAddForm();const set=(id,value)=>{const input=document.getElementById(id);if(input)input.value=value};set('sname',item.name||'');set('sqty','1');set('sunit',item.unit||'個');set('sexp','');set('slocation',item.location||'');set('schecked','');set('snextCheck','');set('scheckInterval',item.checkInterval||'');set('scategory',['water','food','toilet'].includes(item.category)?item.category:'');set('sfactor',item.category==='water'?(item.factor||''):'');updateSupplyCompareHint();set('smeasureFactor',item.category==='food'&&validSupplyMeasure(item.measureFactor)?String(item.measureFactor):'');const status='「'+(item.name||'備蓄')+'」の品名などを入力欄にコピーしました。数量と新しい期限を確認して「備蓄を追加」を押してください。元の品目は変更していません。';setStorageStatus(status,false);document.getElementById('sname').scrollIntoView({behavior:'smooth',block:'center'})}
@@ -3160,7 +3166,7 @@ async function verifyOfflineShell(target){
  try{
   const scope=new URL('./',location.href);
   const registration=await navigator.serviceWorker.getRegistration(scope.href);
-  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v247'});
+  const cached=await caches.match(scope.href,{cacheName:'totonoe-offline-shell-v248'});
   if(!target.isConnected)return;
   if(registration&&cached&&cached.ok){target.textContent='アプリ本体のオフライン保存：保存済み（機内モードで起動確認してください）'}
   else if(registration){target.textContent='アプリ本体のオフライン保存：準備中・未確認（オンラインで開き直してください）'}
@@ -3889,8 +3895,8 @@ async function checkInstallOffline(){
  try{
   const registration=await navigator.serviceWorker.getRegistration('./');
   if(!registration){el.textContent='まだオフライン準備が完了していません。通信できる状態でページを開き直してください。';return}
-  const cache=await caches.open('totonoe-offline-shell-v247');
-  const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v247.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
+  const cache=await caches.open('totonoe-offline-shell-v248');
+  const urls=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v248.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
   const results=await Promise.all(urls.map(async path=>{
    const url=new URL(path,registration.scope).href;
    return Boolean(await cache.match(url));
@@ -3910,17 +3916,17 @@ async function initOfflineStartup(){
   let ready=registration;
   for(let i=0;i<30;i++){
    ready=await navigator.serviceWorker.getRegistration(registration.scope)||registration;
-   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v247')break;
+   if(await getActiveOfflineWorkerCache(ready)==='totonoe-offline-shell-v248')break;
    set('オフライン用ファイルを準備中です。通信を保って少しお待ちください。');
    await new Promise(resolve=>setTimeout(resolve,650));
   }
   const names=await caches.keys();
-  const cache=names.includes('totonoe-offline-shell-v247')?await caches.open('totonoe-offline-shell-v247'):null;
-  const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v247.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
+  const cache=names.includes('totonoe-offline-shell-v248')?await caches.open('totonoe-offline-shell-v248'):null;
+  const necessary=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v248.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
   const readyFiles=await Promise.all(necessary.map(async p=>{const res=cache?await cache.match(new URL(p,registration.scope).href):null;return !!(res&&res.ok)}));
   const count=readyFiles.filter(Boolean).length;
   const workerCache=await getActiveOfflineWorkerCache(registration);
-  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v247'?'必須ファイル14件の保存とv247の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/'+paths.length+'件。'+(workerCache?'旧版が動作している可能性があります。':'v247の有効化を確認できません。')+'「その他」から再確認・修復してください。');
+  set(count===necessary.length&&workerCache==='totonoe-offline-shell-v248'?'必須ファイル14件の保存とv248の有効化を確認しました。機内モードでも起動を確認してください。':'オフライン用ファイル：'+count+'/'+paths.length+'件。'+(workerCache?'旧版が動作している可能性があります。':'v248の有効化を確認できません。')+'「その他」から再確認・修復してください。');
  }catch(e){set('オフライン起動の準備ができませんでした。通信できる状態で、配信済みアプリを開き直してください。')}
 }
 function runIsolatedRestoreTest(){
@@ -4190,8 +4196,8 @@ async function repairOfflinePreparation(){
  const status=document.getElementById('offlineRepairStatus'),button=document.getElementById('offlineRepairRun');
  if(!status||!button)return;
  button.disabled=true;
- const cacheName='totonoe-offline-shell-v247';
- const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v247.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
+ const cacheName='totonoe-offline-shell-v248';
+ const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v248.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
  const detail=[];
  const finish=async text=>{
   status.textContent=text;
@@ -4253,7 +4259,7 @@ async function repairOfflinePreparation(){
   }
   await inspect();
   const workerCache=await getActiveOfflineWorkerCache(reg);
-  let state=!active?'未有効':workerCache===cacheName?'v247有効':'旧版または未確認';
+  let state=!active?'未有効':workerCache===cacheName?'v248有効':'旧版または未確認';
   if(reg?.installing)state+='・インストール中';
   if(reg?.waiting)state+='・切替待ち';
   const statusText='オフライン用ファイル：'+count+'/'+paths.length+'件。Service Worker：'+state+'。';
@@ -4293,13 +4299,13 @@ async function checkReleaseReadiness(){
   try{
    const reg=await navigator.serviceWorker.getRegistration('./');
    const names=await caches.keys();
-   const current='totonoe-offline-shell-v247';
+   const current='totonoe-offline-shell-v248';
    const cache=names.includes(current)?await caches.open(current):null;
-   const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v247.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp','./manifest.webmanifest'];
+   const paths=['./','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v248.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp','./manifest.webmanifest'];
    const found=cache?await Promise.all(paths.map(async p=>{const response=await cache.match(new URL(p,reg?.scope||new URL('./',location.href)).href);return !!(response&&response.ok)})):[];
    const count=found.filter(Boolean).length;
    const activeCache=await getActiveOfflineWorkerCache(reg);
-   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v247有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
+   add('オフライン用ファイル',activeCache===current&&count===paths.length,'保存済み '+count+'/'+paths.length+'件'+(activeCache===current?'・v248有効':reg?.active?'・旧版の処理が有効です。Safariで再読み込みしてください':'・オフライン処理が有効ではありません'));
   }catch(e){add('オフライン用ファイル',false,'保存状況を取得できません')}
  }else add('オフライン用ファイル',false,'この環境では利用できません');
  const backup=typeof buildFullBackup==='function'&&!!document.getElementById('allBackupText');
@@ -4834,17 +4840,17 @@ function pickPracticeQuestions(random=Math.random,topic='all'){
 }
 
 function formatSupportReport(data){
- return ['【ととのえ防災／不具合報告用情報】','アプリ：v247','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/'+data.total+'件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
+ return ['【ととのえ防災／不具合報告用情報】','アプリ：v248','確認日時：'+data.checkedAt,'ブラウザ：'+data.browser,'通信：'+data.online,'オフライン処理：'+data.worker,'必須ファイル：'+data.count+'/'+data.total+'件','不足：'+(data.missing.length?data.missing.join('、'):'なし'),'※保存記録の内容は含みません。'].join('\n');
 }
 async function buildSupportReport(){
  const button=document.getElementById('supportReportRun'),field=document.getElementById('supportReportText'),status=document.getElementById('supportReportStatus');button.disabled=true;status.textContent='オフライン保存状況を確認中です。';field.value='';
- const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v247.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
+ const paths=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v248.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp'];
  const ua=navigator.userAgent||'',browser=/Edg/.test(ua)?'Edge':/FxiOS|Firefox/.test(ua)?'Firefox':/CriOS|Chrome/.test(ua)?'Chrome':/Safari/.test(ua)?'Safari':'その他';
  const data={checkedAt:new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',dateStyle:'short',timeStyle:'short'}).format(new Date())+'（日本時間）',browser,online:navigator.onLine?'オンラインの可能性あり（接続保証なし）':'オフライン',worker:'利用不可または未確認',count:0,total:paths.length,missing:paths.slice()};
  try{
   if('serviceWorker' in navigator&&'caches' in window){
-   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v247';
-   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v247有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
+   const reg=await navigator.serviceWorker.getRegistration('./'),names=await caches.keys(),current='totonoe-offline-shell-v248';
+   const active=await getActiveOfflineWorkerCache(reg);data.worker=active===current?'v248有効':active?'旧版（'+active+'）':reg?.active?'有効な版を確認できません':'未有効';
    if(names.includes(current)){
     const cache=await caches.open(current),scope=new URL('./',location.href).href;
     const checks=await Promise.all(paths.map(async p=>{const res=await cache.match(new URL(p,scope).href);return !!res?.ok}));
@@ -5351,7 +5357,7 @@ setInterval(()=>{if(document.visibilityState==='visible')renderHomeSceneTime()},
  };
  return `<svg class="painted-illustration" viewBox="0 0 120 125" aria-hidden="true" focusable="false"><ellipse cx="60" cy="115" rx="48" ry="5" fill="#d4bba0" opacity=".16"/><g stroke-linejoin="round" stroke-linecap="round">${art[kind]||art.none}</g></svg>`;
  }
- function illustrateInventory(){document.querySelectorAll('#supplyList>.item.row').forEach(row=>{if(row.querySelector('.inventory-art'))return;const a=make('div','inventory-art',paintedArt(row.dataset.category||'none'));row.prepend(a);row.classList.add('illustrated-stock-row');const item=supplies[Number(row.getAttribute('data-supply-index'))];if(item){const expiry=make('div','inventory-expiry');expiry.textContent=validSupplyDate(item.exp)?'期限 '+item.exp.replaceAll('-','.'):(item.exp?'期限を要確認':'期限未設定');expiry.dataset.state=validSupplyDate(item.exp)&&item.exp<todayLocalDate()?'expired':validSupplyDate(item.exp)&&item.exp<=dateAfterDays(30)?'soon':'normal';row.children[1].append(expiry)}})}
+ function illustrateInventory(){document.querySelectorAll('#supplyList>.item.row').forEach(row=>{if(row.querySelector('.inventory-art,.supply-edit'))return;const a=make('div','inventory-art',paintedArt(row.dataset.category||'none'));row.prepend(a);row.classList.add('illustrated-stock-row');const item=supplies[Number(row.getAttribute('data-supply-index'))];if(item){const expiry=make('div','inventory-expiry');expiry.textContent=validSupplyDate(item.exp)?'期限 '+item.exp.replaceAll('-','.'):(item.exp?'期限を要確認':'期限未設定');expiry.dataset.state=validSupplyDate(item.exp)&&item.exp<todayLocalDate()?'expired':validSupplyDate(item.exp)&&item.exp<=dateAfterDays(30)?'soon':'normal';row.children[1].append(expiry)}})}
 
  function format(n){return Number(n.toFixed(2)).toLocaleString('ja-JP')}
  const stockCardArt={
@@ -6533,7 +6539,7 @@ window.addEventListener('storage',event=>{
  if(event.key===null||[homeSafetyKey,tidyKey,'totonoe-hazard-confirmed',weatherLocationKey].includes(event.key)){syncStockGate();syncHazardGate()}
 });
 </script>
-<script src="./assets/experience-v247.js"></script>
+<script src="./assets/experience-v248.js"></script>
 </body></html>
 
 
