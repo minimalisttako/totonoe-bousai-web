@@ -277,9 +277,19 @@ module.exports = async function verifyExperience(browser,base) {
   await page.goto(base+'?page=more&focus=achievements');
   const achievement=page.locator('#more #achievementBadges');
   await achievement.waitFor();
-  assert.match(await page.locator('#preparednessTreeStage').innerText(),/若木.*5\/8/);
+  assert.match(await page.locator('#preparednessTreeStage').innerText(),/若木\s+トロフィー 5\/8/);
   await achievement.getByText('トロフィーを見る').click();
   assert.equal(await page.locator('#preparednessTrophies [data-earned=true]').count(),5);
+  const medals=page.locator('#preparednessTrophies .preparedness-trophy-art');
+  assert.equal(await medals.count(),8);
+  assert.equal(await medals.evaluateAll(nodes=>new Set(nodes.map(node=>node.style.backgroundPosition)).size),8);
+  const dimensions=await page.evaluate(async()=>{
+   const image=new Image();
+   image.src='./assets/achievement-art-v244.webp';
+   await image.decode();
+   return [image.naturalWidth,image.naturalHeight];
+  });
+  assert.deepEqual(dimensions,[1024,768]);
   const backedUp=await page.evaluate(()=>{
    const {data}=validateFullBackupObject(JSON.parse(buildFullBackup()));
    return JSON.parse(data[achievementKey]);
@@ -295,6 +305,35 @@ module.exports = async function verifyExperience(browser,base) {
   await page.goto(base+'?page=home&focus=today');
   assert.match(await daily.innerText(),/まだ記録はありません/);
   console.log('PASS: dated home summary, trophy growth, persistence after deletion and backup, next-day reset');
+  const stageCases=[
+   [0,'種',[]],
+   [1,'芽',['tako']],
+   [3,'若木',['tako','tricera']],
+   [6,'大きな木',['tako','tricera','shimaenaga']]
+  ];
+  const positions=[];
+  for(const [earned,name,friends] of stageCases){
+   await page.evaluate(count=>{
+    [key,tidyKey,homeSafetyKey,'toto-clean-practice-v1'].forEach(storageKey=>localStorage.removeItem(storageKey));
+    verifiedSaveJson(achievementKey,{trophies:achievementIds.slice(0,count),daily:null});
+   },earned);
+   await page.goto(base+'?page=more&focus=achievements');
+   const art=page.locator('.preparedness-tree-art');
+   assert.match(await page.locator('#preparednessTreeStage').innerText(),new RegExp('^'+name));
+   assert.deepEqual(await art.locator('.preparedness-tree-friend:visible').evaluateAll(nodes=>nodes.map(node=>node.dataset.friend)),friends);
+   positions.push(await art.locator('.preparedness-plant').evaluate(node=>node.style.backgroundPosition));
+   for(const width of [320,390]){
+    await page.setViewportSize({width,height:844});
+    const box=await art.boundingBox();
+    assert(box.width>=100&&box.height>=120);
+    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   }
+  }
+  assert.equal(new Set(positions).size,4);
+  await page.goto(base+'?page=more&focus=trophies');
+  assert.equal(await page.locator('#preparednessTrophyFold').getAttribute('open'),'');
+  assert.equal(await medals.count(),8);
+  console.log('PASS: four medium tree illustrations, cumulative approved characters, eight distinct trophy images, direct trophy route');
   assert.deepEqual(errors,[]);
   console.log('PASS: mobile feature entry points, persistent favorites/simple view, reminders, worksheet, private feedback, stock use/shopping, quota/silent failures, deletion restore and settings backup');
  }finally{await context.close()}
