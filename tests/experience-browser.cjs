@@ -375,8 +375,9 @@ module.exports = async function verifyExperience(browser,base) {
    assert((await speech.locator('span').innerText()).length>5);
    assert.equal(await page.locator('#home #openAchievementCollection').count(),0);
    const companions=art.locator('.preparedness-tree-friend:visible');
-   assert.deepEqual(await companions.evaluateAll(nodes=>nodes.map(node=>node.dataset.friend)),friends);
-   assert(await companions.evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).backgroundImage.includes('achievement-friends-and-badges-v245.webp'))));
+   assert.deepEqual((await art.getAttribute('data-characters')).split(',').filter(Boolean),friends);
+   if(earned<6)assert.equal(await page.locator('#home .game-mascot-scene').getAttribute('data-tree-pose'),'solo');
+   assert(await companions.evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).backgroundImage.match(/achievement-friends-and-badges-v245|home-mascot-poses-v251/))));
    positions.push(await art.locator('.preparedness-plant').evaluate(node=>node.style.backgroundPosition));
    for(const width of [320,390]){
     await page.setViewportSize({width,height:844});
@@ -386,6 +387,18 @@ module.exports = async function verifyExperience(browser,base) {
    }
   }
   assert.equal(new Set(positions).size,4);
+  for(const [i,mode] of ['solo','ride','lift','sleep','drink','exercise'].entries()){
+   await page.evaluate(index=>{Math.random=()=>((index+.1)/6);show('more');show('home')},i);
+   const scene=page.locator('#home .game-mascot-scene');
+   assert.equal(await scene.getAttribute('data-tree-pose'),mode);
+   const group=scene.locator('.preparedness-group');
+   assert.equal(await group.isVisible(),mode!=='solo');
+   const expectedSingles=mode==='solo'?3:['drink','exercise'].includes(mode)?0:1;
+   assert.equal(await scene.locator('.preparedness-tree-friend:visible').count(),expectedSingles);
+   await page.evaluate(()=>document.dispatchEvent(new Event('toto-storage-changed')));
+   assert.equal(await scene.getAttribute('data-tree-pose'),mode);
+  }
+
   await page.goto(base+'?page=more&focus=trophies');
   await collection.waitFor();
   assert.equal(await collection.locator('#preparednessTrophySection .preparedness-trophy-art').count(),8);
@@ -408,7 +421,7 @@ module.exports = async function verifyExperience(browser,base) {
   assert.match(await recordBadges.innerText(),/備蓄品を登録（1品）/);
   const artDimensions=await page.evaluate(async()=>{
    const image=new Image();
-   image.src='./assets/achievement-friends-and-badges-v245.webp';
+   image.src='./assets/achievement-friends-and-badges-v245.webp','./assets/home-mascot-poses-v251.webp';
    await image.decode();
    return [image.naturalWidth,image.naturalHeight];
   });
