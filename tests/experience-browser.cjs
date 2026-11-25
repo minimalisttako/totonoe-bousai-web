@@ -446,6 +446,38 @@ module.exports = async function verifyExperience(browser,base) {
   await page.locator('#homeSafety').waitFor();
   console.log('PASS: dated and legacy achievement details, saved dates, supply and exact room links, safety link');
 
+  await page.evaluate(()=>{
+   saveSaved(key,[
+    {name:'期限未入力の水',category:'water',qty:'5',unit:'本',factor:'2',exp:''},
+    {name:'期限未入力の食料',category:'food',qty:'5',unit:'袋',measureFactor:'2',exp:''},
+    {name:'携帯トイレ',category:'toilet',qty:'15',unit:'個',exp:'2027-01-01'}
+   ]);
+   localStorage.setItem(stockDaysKey,JSON.stringify({people:1,mode:'3'}));
+   localStorage.setItem(toiletFrequencyKey,'5');
+  });
+  await page.goto(base+'?page=supplies');
+  for(const kind of ['water','food']){
+   const card=page.locator('.refresh-stock-stat.'+kind);
+   assert.equal(await card.getAttribute('data-readiness'),'ready');
+   assert.match(await card.innerText(),/10/);
+  }
+  await page.goto(base+'?page=home');
+  const expiryAction=page.getByRole('button',{name:/消費期限・賞味期限を入力/}).first();
+  if(!await expiryAction.isVisible())await page.locator('#homeOtherSuggestions > summary').click();
+  await expiryAction.click();
+  assert.equal(await page.locator('#supplyFilter').inputValue(),'noExpiry');
+  await page.getByRole('button',{name:'期限未入力の水の編集・点検・削除を開く',exact:true}).click();
+  await page.getByRole('button',{name:'期限未入力の水を編集',exact:true}).click();
+  await editor.getByLabel('期限（任意）',{exact:true}).fill('2027-01-01');
+  await editor.getByRole('button',{name:'変更を保存',exact:true}).click();
+  await page.getByRole('button',{name:'期限未入力の食料の編集・点検・削除を開く',exact:true}).click();
+  await page.getByRole('button',{name:'期限未入力の食料を編集',exact:true}).click();
+  await editor.getByLabel('期限（任意）',{exact:true}).fill('2027-01-01');
+  await editor.getByRole('button',{name:'変更を保存',exact:true}).click();
+  await page.goto(base+'?page=home');
+  assert.equal(await page.getByRole('button',{name:/消費期限・賞味期限を入力/}).count(),0);
+  console.log('PASS: undated food/water count toward required stock, expiry task opens missing dates and disappears after entry');
+
   assert.deepEqual(errors,[]);
   console.log('PASS: mobile feature entry points, persistent favorites/simple view, reminders, worksheet, private feedback, stock use/shopping, quota/silent failures, deletion restore and settings backup');
  }finally{await context.close()}
