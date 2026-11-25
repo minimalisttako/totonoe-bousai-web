@@ -112,7 +112,7 @@ module.exports = async function verifyExperience(browser,base) {
   const secondRoom=rooms.nth(1);
   const firstSummary=firstRoom.locator(':scope > summary');
   assert.deepEqual(await firstSummary.evaluate(node=>[...node.children].map(child=>child.className)),
-                   ['chibi-icon','tidy-place-name','tidy-place-progress-count']);
+                   ['chibi-icon','tidy-place-name','tidy-place-progress-count','context-help-button']);
   assert.equal(await firstSummary.locator('.tidy-place-progress-count').innerText(),'0/4 完了');
   assert.equal(await firstSummary.evaluate(node=>getComputedStyle(node).listStyleType),'none');
   await firstSummary.click();
@@ -140,7 +140,7 @@ module.exports = async function verifyExperience(browser,base) {
   await fresh.reload();
   const completedSummary=rooms.locator(':scope > summary').filter({hasText:'4/4 完了'});
   assert.equal(await completedSummary.locator('.tidy-place-progress-count').innerText(),'4/4 完了');
-  assert.equal(await completedSummary.evaluate(node=>node.textContent.trim().endsWith('4/4 完了')),true);
+  assert.match(await completedSummary.locator('.context-help-button').getAttribute('aria-label'),/解説ヘルプ/);
   const sprite=await fresh.evaluate(async () => {
    const image=new Image();
    image.src='./assets/chibi-icons-v232.webp';

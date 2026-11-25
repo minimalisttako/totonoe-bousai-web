@@ -15,35 +15,41 @@ module.exports=async function(browser,base){
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  try{
   await page.goto(base+'?page=learn&focus=reasons');
-  const guide=page.locator('#preparednessReasons');await guide.waitFor();
-  assert.match(await guide.innerText(),/なぜ危ない/);
-  assert.equal(await guide.locator('.reason-sources a').count(),3);
-  await guide.locator('#reasonPlaces>summary').click();
-  assert.equal(await guide.locator('.reason-places>section').count(),8);
-  for(const width of [320,390]){await page.setViewportSize({width,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
-  await guide.getByRole('button',{name:'片付けを始める',exact:true}).click();
-  const kitchen=page.locator('#tidy-record-why-kitchen');await kitchen.locator(':scope>summary').click();
-  const before=await page.evaluate(()=>localStorage.getItem('toto-tidy-v1'));
-  assert.match(await kitchen.locator('.tidy-reason>p').innerText(),/食器/);
-  await kitchen.locator('.tidy-reason summary').click();
-  assert.match(await kitchen.locator('.tidy-reason details p').innerText(),/落ちる/);
-  assert.equal(await page.evaluate(()=>localStorage.getItem('toto-tidy-v1')),before);
-  await kitchen.locator('.tidy-reason button').click();
-  await guide.waitFor();
-  await guide.getByRole('button',{name:'トイレの必要量を確認する'}).click();
-  await page.locator('#stockCalculator').waitFor();
-  assert.equal(await page.locator('#supplyCalcFold').evaluate(n=>n.open),true);
-  await page.locator('#stockCalculator').getByRole('button',{name:'なぜ非常用トイレが必要？'}).click();
-  await guide.waitFor();assert.match(await page.locator('#reasonToilet').innerText(),/排水管/);
-  await page.goto(base+'?page=learn&focus=bosReason');
-  assert.match(await page.locator('#reasonBos').innerText(),/作者のおすすめ/);
-  assert.match(await page.locator('#reasonBos').innerText(),/課題の条件ではありません/);
-  await page.locator('#reasonBos').getByRole('button',{name:'備蓄ページのおすすめを見る'}).click();
-  assert.equal(await page.locator('#supplyRecommendations').evaluate(n=>n.open),true);
+  const guide=page.locator('#preparednessReasons'),dialog=page.locator('#contextHelpDialog'),close=page.locator('#contextHelpClose');await guide.waitFor();
+  assert.match(await guide.innerText(),/解説ヘルプ/);
+  assert((await guide.locator('[data-help-topic]').count())>=20);
+  const search=guide.locator('#contextHelpSearch');await search.fill('キッチン');
+  assert.equal(await guide.locator('[data-help-topic]').count(),1);
+  await guide.locator('[data-help-topic="room:キッチン"]').click();await dialog.waitFor();
+  const canonical=await dialog.locator('#contextHelpBody').innerText();
+  assert.match(canonical,/食器/);assert.equal(await dialog.locator('.reason-sources a').count(),4);
+  for(const width of [320,390]){await page.setViewportSize({width,height:844});const box=await dialog.boundingBox();assert(box.width<width);assert(box.height<=844*.74);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+  await close.click();await search.fill('存在しない解説');assert(await guide.getByText('該当する解説がありません。別の言葉で探してください。').isVisible());await search.fill('');
   await page.goto(base+'?page=tidy');
-  const custom=page.locator('#tidy-record-why-custom');await custom.locator(':scope>summary').click();
-  assert.match(await custom.locator('.tidy-reason').innerText(),/通れる場所/);
+  const kitchen=page.locator('#tidy-record-why-kitchen'),question=kitchen.locator(':scope>summary .context-help-button');
+  const before=await page.evaluate(()=>localStorage.getItem('toto-tidy-v1'));
+  assert.equal(await kitchen.evaluate(n=>n.open),false);
+  await question.click();await dialog.waitFor();
+  assert.equal(await kitchen.evaluate(n=>n.open),false,'Question mark must not toggle the room');
+  assert.equal(await dialog.locator('#contextHelpBody').innerText(),canonical);
+  assert.equal(await page.evaluate(()=>localStorage.getItem('toto-tidy-v1')),before);
+  await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
+  assert(await question.evaluate(n=>n===document.activeElement));
+  await kitchen.locator(':scope>summary').click();assert.equal(await kitchen.locator('.tidy-reason').count(),0);
+  await page.goto(base+'?page=supplies');
+  await page.locator('#supplyEssentials>summary').click();
+  for(const heading of ['現金・大切な書類','薬・健康管理','水・食料・トイレ','停電への備え','家族やペットに合わせて']){
+   const button=page.locator('#supplyEssentials h3').filter({hasText:heading}).locator('.context-help-button');
+   await button.click();await dialog.waitFor();assert((await dialog.locator('#contextHelpBody').innerText()).length>50);await close.click();
+  }
+  await page.goto(base+'?page=learn&focus=toiletReason');await dialog.waitFor();assert.match(await dialog.innerText(),/排水管/);
+  await dialog.getByRole('button',{name:'トイレの必要量を確認する',exact:true}).click();await dialog.waitFor({state:'hidden'});assert.equal(await page.locator('#supplyCalcFold').evaluate(n=>n.open),true);
+  const people=page.locator('#calcPeople');await people.fill('4');
+  await page.locator('#stockCalculator h2 .context-help-button').click();await dialog.waitFor();await close.click();assert.equal(await people.inputValue(),'4');
+  await page.goto(base+'?page=learn&focus=bosReason');await dialog.waitFor();assert.match(await dialog.innerText(),/作者のおすすめ/);assert.match(await dialog.innerText(),/課題の条件ではありません/);
+  await dialog.getByRole('button',{name:'備蓄ページのおすすめを見る'}).click();assert.equal(await page.locator('#supplyRecommendations').evaluate(n=>n.open),true);
+  await page.goto(base+'?page=tidy');const custom=page.locator('#tidy-record-why-custom');await custom.locator(':scope>summary .context-help-button').click();await dialog.waitFor();assert.match(await dialog.innerText(),/通れる場所/);
   assert.deepEqual(errors,[]);
-  console.log('PASS: offline-readable beginner reasons, eight rooms and custom fallback, unchanged checks, working tidy/calculator/product routes, sources and author distinction, mobile widths');
+  console.log('PASS: shared searchable help catalogue and contextual dialogs, closed-room click isolation, focus/Escape, preserved checks and inputs, five supply sections, legacy links, action routes, custom rooms and 320/390px');
  }finally{await context.close()}
 };
