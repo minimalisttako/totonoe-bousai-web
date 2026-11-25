@@ -300,12 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v253\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v254\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
- updates.append(element('h3','v253　2026年11月25日'),element('p','防災の木の見出しとランクを上にまとめ、木の下にキャラクター名とイラスト付きの吹き出しを配置しました。'));
+ updates.append(element('h3','v254　2026年11月25日'),element('p','片付けと備蓄が必要な理由を学ぶ案内と、各場所の「なぜ？」を追加しました。'));
  updates.append(element('h3','v249　2026年11月25日'),element('p','食品・飲料水は期限未入力でも必要量と比較し、ホームから期限の入力をご案内します。'));
  updates.append(element('h3','v248　2026年11月25日'),element('p','備蓄の編集欄が細くなり、文字や数字が読みにくくなる表示を修正しました。'));
  updates.append(element('h3','v247　2026年11月25日'),element('p','トロフィーとバッジをタップすると、獲得日と関連ページへの案内が開きます。'));
@@ -968,6 +968,31 @@
  video(authorGroup,'防災ミニマリストたこのYouTubeを見る',channel);
  const examVideo=$('examStudy').querySelector('a[href*="youtu"]');if(examVideo)video($('learn'),'防災士試験の例題・音声を動画で学ぶ',examVideo.href);
 
+
+ const reasons=el('section',undefined,'card beginner-reasons');reasons.id='preparednessReasons';
+ reasons.innerHTML=`<h2>片付けと備蓄が必要な理由</h2>
+ <p class="notice">理由が分かると、最初の一歩を選びやすくなります。このページだけで読めます。</p>
+ <div class="reason-index" role="navigation" aria-label="理由の目次"><a href="#reasonTidy">片付ける目的</a><a href="#reasonPlaces">場所ごとの危険</a><a href="#reasonToilet">非常用トイレ</a><a href="#reasonBos">BOSを選ぶ理由</a></div>
+ <section id="reasonTidy"><h3>何のために片付けるの？</h3><p>目的は、けがを減らすこと、出口まで通れること、必要な物をすぐ取り出せることです。全部を一度に片付ける必要はありません。</p>
+ <h3>物が多いと、なぜ危ないの？</h3><p>床の荷物はつまずく原因になり、高い所の物や家具は揺れで落ちたり倒れたりすることがあります。まず床・出入口・寝る場所の周りから整えましょう。</p><p class="notice">物の数だけで安全は決まりません。置く場所や家具の固定も大切です。ミニマリストは作者がおすすめする暮らし方の一つで、無理に持ち物を減らす必要はありません。</p><div data-reason-action="tidy"></div></section>
+ <details id="reasonPlaces"><summary>場所ごとの危険と、最初の一歩を見る</summary><div class="reason-places"></div></details>
+ <section id="reasonToilet"><h3>なぜ非常用トイレを備えるの？</h3><p>断水・停電や排水管の損傷で、いつもの水洗トイレを使えなくなることがあります。水があっても排水管が壊れていれば流せません。使用できるか分からないときは無理に流さず、自治体や建物の管理者の案内を確認しましょう。</p><p>便器に袋を取り付けて使う携帯トイレを備えると、水を流さずに対応できます。人数と回数から必要量を考え、1回分を試して、家の便器に合うか・家族が使えるかを確認しておきましょう。</p><div data-reason-action="stock"></div></section>
+ <section id="reasonBos"><h3>たこがBOSをおすすめする理由</h3><p class="reason-author">ここは作者のおすすめです。</p><p>固めることに加え、使用後のにおい対策まで備える点を重視しています。紹介しているBOSの4点セットは、防臭袋・凝固剤・汚物袋・便器カバーをまとめてそろえられます。</p><p>この商品を買うことが課題の条件ではありません。ほかの商品でも、袋の大きさ・必要回数・におい対策・保管場所を比べて選べます。</p><details><summary>選ぶ前に確認したいこと</summary><p>商品によってセット内容が異なります。たとえば1回分の商品には便器カバーが付きません。防臭に関する性能はメーカーの表示です。説明書どおりに使い、使用済み袋の保管・処分は自治体の案内に従ってください。</p></details><div data-reason-action="bos"></div></section>
+ <details class="reason-sources"><summary>説明の参考・公式情報</summary><p>防災の基本は自治体の案内、商品の内容はメーカー公式情報を参考にしています。作者の選定理由と分けて掲載しています。2026年11月25日確認。</p>
+ <ul><li><a href="https://www.bousai.metro.tokyo.lg.jp/bousai/1000027/1005737.html" target="_blank" rel="noopener noreferrer">東京都：家具類の転倒・落下・移動防止対策 ↗</a></li><li><a href="https://www.pref.kanagawa.jp/docs/j8g/bousai/keitaitoirebitiku.html" target="_blank" rel="noopener noreferrer">神奈川県：携帯トイレを備蓄しましょう ↗</a></li><li><a href="https://bos-bos.com/product/toilet/" target="_blank" rel="noopener noreferrer">BOS公式：セット内容・使い方 ↗</a></li></ul><p class="notice">本文は通信がなくても読めます。外部サイトは通信が必要です。</p></details>`;
+ for(const [place,[short,explanation]] of Object.entries(tidyReasonTemplates)){
+  const item=el('section');item.append(el('h4',place),el('p',short),el('p',explanation));reasons.querySelector('.reason-places').append(item);
+ }
+ reasons.querySelector('[data-reason-action=tidy]').append(action('片付けを始める',()=>show('tidy')),action('住まいの安全を確認する',()=>show('homeSafety')));
+ reasons.querySelector('[data-reason-action=stock]').append(action('トイレの必要量を確認する',()=>{show('supplies');if(activePage!=='supplies')return;$('supplyCalcFold').open=true;$('stockCalculator').scrollIntoView({block:'start'})}));
+ reasons.querySelector('[data-reason-action=bos]').append(action('備蓄ページのおすすめを見る',()=>{show('supplies');if(activePage!=='supplies')return;const panel=$('supplyRecommendations');panel.open=true;panel.scrollIntoView({block:'start'})}));
+ const learn=$('learn'),learnTitle=learn.querySelector(':scope>.refresh-title-row');if(learnTitle)learnTitle.after(reasons);else learn.prepend(reasons);
+ const learnIntro=el('div',undefined,'reason-entry');learnIntro.append(action('はじめに：片付けと備蓄が必要な理由',()=>openPreparednessReasons()));$('tidy').prepend(learnIntro);
+ const stockReason=el('div',undefined,'reason-entry');stockReason.append(action('なぜ非常用トイレが必要？',()=>openPreparednessReasons('reasonToilet')));$('stock').querySelector('.card').prepend(stockReason);
+ const calculatorReason=el('p');calculatorReason.append(action('なぜ非常用トイレが必要？',()=>openPreparednessReasons('reasonToilet')));$('stockCalculator').querySelector('h2').after(calculatorReason);
+ const bosReason=el('p');bosReason.append(action('BOSを選ぶ理由・選ぶときの注意点',()=>openPreparednessReasons('reasonBos')));$('supplyRecommendations').querySelector('.affiliate-product').prepend(bosReason);
+ const reasonStyle=el('style');reasonStyle.textContent=`.beginner-reasons>section,.beginner-reasons>details{border-top:1px solid #d9e6df;padding-top:12px;margin-top:16px}.beginner-reasons h3{font-size:18px}.beginner-reasons h4{margin-bottom:4px}.beginner-reasons p{font-size:14px;line-height:1.75}.beginner-reasons summary,.tidy-reason summary{cursor:pointer;font-weight:700;min-height:44px;padding:10px 0;line-height:1.5}.reason-index{display:flex;flex-wrap:wrap;gap:6px 14px}.reason-index a{font-size:14px;min-height:44px;display:inline-flex;align-items:center}.reason-author{font-size:12px!important;color:#5b6655}.reason-places>section{padding:8px 0;border-bottom:1px solid #e3ebe4}.reason-sources a{display:inline-block;min-height:44px;padding:8px 0}.reason-entry{margin:8px 0 14px}.tidy-reason{background:#f0f6ed;border-radius:10px;padding:9px 12px;margin:0 0 12px}.tidy-reason>p{font-size:14px;margin:0}.tidy-reason details p{font-size:14px;margin:4px 0 10px}.tidy-reason button{font-size:13px}.beginner-reasons [data-reason-action]{display:flex;flex-wrap:wrap;gap:8px}.beginner-reasons{scroll-margin-top:100px}.beginner-reasons section{scroll-margin-top:100px}`;document.head.append(reasonStyle);
+
  const todayPanel=el('div');todayPanel.id='todayAchievements';todayPanel.setAttribute('role','status');
  const todayText=el('span');
  todayPanel.append(el('strong','今日できたこと'),todayText);
@@ -1300,7 +1325,7 @@
  if(entryPage==='homeSafety'&&focus==='route')openHomeSafetySection(1,false);
  if(entryPage==='home'&&focus==='achievements'&&activePage==='home')show('more');
  const wantsCollection=entryPage==='more'&&['collection','badges','trophies'].includes(focus);
- const targets={today:'todayAchievements',checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
+ const targets={reasons:'preparednessReasons',toiletReason:'reasonToilet',bosReason:'reasonBos',today:'todayAchievements',checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
  if(targets[focus])requestAnimationFrame(()=>{
   const target=$(targets[focus]);
   target.style.scrollMarginTop=(document.querySelector('header').offsetHeight+12)+'px';
