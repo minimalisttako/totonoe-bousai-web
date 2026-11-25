@@ -18,3 +18,12 @@ c.supplies.push({category:'food',qty:'1',exp:'2020-01-01'});assert.equal(pages()
 c.supplies[2].exp='2027-01-01';otherSafety=1;assert.equal(pages()[0],'homeSafety');assert.equal(c.cleanHomeReady(),false);
 otherSafety=0;readable=false;assert.equal(pages()[0],'supplies');
 console.log('PASS: safety/evacuation/tidy/stock order; safety-first guidance at all progress levels; cleaning works without diagnosis; unfinished missions, missing food, expiry and safety override cleaning; failed task save keeps prior state; no redundant seasonal prompt after completion');
+
+readable=true;otherSafety=0;
+c.supplies=['water','food','toilet'].map(category=>({category,qty:'2',exp:''}));
+const expiryTask=c.homePriorityActions().find(item=>item.page==='supplies');
+assert.equal(expiryTask.label,'消費期限・賞味期限を入力');
+assert.equal(expiryTask.filter,'noExpiry');
+c.supplies[0].exp='2027-01-01';c.supplies[1].exp='2027-01-01';
+assert(!c.homePriorityActions().some(item=>item.filter==='noExpiry'));
+console.log('PASS: undated food and drinking water prompt expiry entry; toilet alone does not prompt');
