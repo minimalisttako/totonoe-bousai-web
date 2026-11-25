@@ -300,12 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v252\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v253\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
- updates.append(element('h3','v252　2026年11月25日'),element('p','木の葉と幹が見えるように、仲間のサイズと配置を調整しました。'));
+ updates.append(element('h3','v253　2026年11月25日'),element('p','防災の木の見出しとランクを上にまとめ、木の下にキャラクター名とイラスト付きの吹き出しを配置しました。'));
  updates.append(element('h3','v249　2026年11月25日'),element('p','食品・飲料水は期限未入力でも必要量と比較し、ホームから期限の入力をご案内します。'));
  updates.append(element('h3','v248　2026年11月25日'),element('p','備蓄の編集欄が細くなり、文字や数字が読みにくくなる表示を修正しました。'));
  updates.append(element('h3','v247　2026年11月25日'),element('p','トロフィーとバッジをタップすると、獲得日と関連ページへの案内が開きます。'));
@@ -864,7 +864,7 @@
  #home .game-mascot-scene::before,#home .game-mascot-scene::after{display:none!important}
  #home .game-mascot-scene>.character-art,#home .game-mascot-scene>.anime-approved-home-image{display:none!important}
  #homePreparednessTree{width:100%;box-sizing:border-box;padding:12px 12px 8px;background:linear-gradient(145deg,#eff8e6,#e2f1df);border:1px solid #bdd5b9;border-radius:16px}
- #homePreparednessTree .preparedness-tree-art{width:min(100%,340px);height:174px;margin:auto;background:none}
+ #homePreparednessTree .preparedness-tree-art{width:min(100%,340px);height:174px;margin:6px auto 12px;background:none}
  #homePreparednessTree .preparedness-plant{width:205px;bottom:4px}
  #homePreparednessTree .preparedness-tree-friend{width:72px;bottom:0}
  #homePreparednessTree .preparedness-tree-friend[data-friend=tako]{left:0}
@@ -876,17 +876,22 @@
  #homePreparednessTree .preparedness-group[data-pose=lift]{left:auto;right:0;width:132px}
  #homePreparednessTree .preparedness-group[data-pose=drink],#homePreparednessTree .preparedness-group[data-pose=exercise]{width:230px;bottom:-49px;left:50%;transform:translateX(-50%)}
  #home .game-mascot-scene:not([data-tree-pose=solo]) .preparedness-tree-friend[data-friend=shimaenaga]{bottom:16px}
- #homePreparednessTree .preparedness-tree-copy{display:flex;align-items:center;justify-content:space-between;gap:10px}
- #homePreparednessTree h3{margin:0;font-size:17px;color:#2b543b}
- #homePreparednessTree #preparednessTreeStage{margin:0;font-size:14px;text-align:right;color:#365541}
+ #homePreparednessTree .preparedness-tree-copy{display:flex;align-items:center;justify-content:space-between;gap:6px}
+ #homePreparednessTree h3{margin:0;font-size:16px;white-space:nowrap;color:#2b543b}
+ #homePreparednessTree #preparednessTreeStage{margin:0;font-size:12px;text-align:right;color:#365541;display:flex;align-items:baseline;justify-content:flex-end;flex-wrap:wrap;gap:3px 6px}
  #homePreparednessTree #preparednessTreeStage>span{display:inline}
- #homePreparednessTree .preparedness-count{margin-left:8px;font-size:12px}
- #home .game-mascot-scene>.refresh-speech{position:relative!important;inset:auto!important;display:flex;max-width:none!important;width:100%!important;margin:10px 0 0!important;min-height:70px!important;border:1px solid #bdd5b9;background:#fff;border-radius:12px;padding:10px 13px;transform:none!important}
- #home .game-mascot-scene>.refresh-speech::after{display:none}
- #home .game-mascot-scene>.refresh-speech span{font-size:14px!important;color:#294737;line-height:1.6}
- #home .game-mascot-scene>.refresh-speech strong{font-size:13px!important;color:#356148}
- body[data-speech-mode=hidden] #home .game-mascot-scene>.refresh-speech{display:none!important}
- @media(max-width:350px){#homePreparednessTree .preparedness-tree-art{height:160px}#homePreparednessTree .preparedness-plant{width:180px}#homePreparednessTree .preparedness-tree-friend{width:66px}#homePreparednessTree .preparedness-tree-friend[data-friend=tricera]{width:76px}#homePreparednessTree .preparedness-tree-friend[data-friend=shimaenaga]{width:54px}#homePreparednessTree .preparedness-group{width:132px}#homePreparednessTree .preparedness-group[data-pose=lift]{width:120px}#homePreparednessTree .preparedness-group[data-pose=drink],#homePreparednessTree .preparedness-group[data-pose=exercise]{width:210px;bottom:-46px}#homePreparednessTree .preparedness-count{display:block!important;margin:0}}
+ #homePreparednessTree .preparedness-count{margin:0!important;font-size:11px}
+ #homePreparednessTree>.refresh-speech{position:relative!important;inset:auto!important;display:flex;max-width:none!important;width:100%!important;margin:0!important;min-height:58px!important;border:1px solid #bdd5b9;background:#fff;border-radius:12px;padding:7px 10px 7px 49px;transform:none!important}
+ #homePreparednessTree>.refresh-speech::after{content:"";display:block;position:absolute;top:-6px;left:21px;width:10px;height:10px;background:#fff;border-top:1px solid #bdd5b9;border-left:1px solid #bdd5b9;transform:rotate(45deg)}
+ #homePreparednessTree>.refresh-speech::before{content:"";position:absolute;left:7px;top:9px;width:34px;height:34px;background:url('./assets/achievement-friends-and-badges-v245.webp') no-repeat;background-size:400% 300%;background-position:0 0}
+ #homePreparednessTree>.refresh-speech[data-kind=tricera]::before{background-position:33.333333% 0}
+ #homePreparednessTree>.refresh-speech[data-kind=bird]::before{background-position:66.666667% 0}
+ #homePreparednessTree>.refresh-speech[data-kind=tree]::before{background-image:url('./assets/achievement-art-v244.webp')}
+
+ #homePreparednessTree>.refresh-speech span{font-size:13px!important;color:#294737;line-height:1.5}
+ #homePreparednessTree>.refresh-speech strong{font-size:12px!important;color:#356148}
+ body[data-speech-mode=hidden] #homePreparednessTree>.refresh-speech{display:none!important}
+ @media(max-width:350px){#homePreparednessTree .preparedness-tree-art{height:160px}#homePreparednessTree .preparedness-plant{width:180px}#homePreparednessTree .preparedness-tree-friend{width:66px}#homePreparednessTree .preparedness-tree-friend[data-friend=tricera]{width:76px}#homePreparednessTree .preparedness-tree-friend[data-friend=shimaenaga]{width:54px}#homePreparednessTree .preparedness-group{width:132px}#homePreparednessTree .preparedness-group[data-pose=lift]{width:120px}#homePreparednessTree .preparedness-group[data-pose=drink],#homePreparednessTree .preparedness-group[data-pose=exercise]{width:210px;bottom:-46px}#homePreparednessTree h3{font-size:15px}#homePreparednessTree #preparednessTreeStage{font-size:11px}#homePreparednessTree .preparedness-count{font-size:10px}}
 
  #achievementBadges .preparedness-tree{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid #bdd5b9;border-radius:14px;background:linear-gradient(145deg,#f6fbf0,#e8f4e6)}
  #achievementBadges .preparedness-tree h3,#achievementBadges .preparedness-tree p{margin:0}
@@ -1006,10 +1011,11 @@
  }
  const treeCopy=el('div'),treeStage=el('p');treeStage.id='preparednessTreeStage';
  const treeName=el('span'),treeCount=el('span',undefined,'preparedness-count');treeStage.append(treeName,treeCount);
- treeCopy.append(el('h3','防災の木'),treeStage);tree.append(treeArt,treeCopy);
+ treeCopy.append(el('h3','防災の木'),treeStage);tree.append(treeCopy,treeArt);
  tree.id='homePreparednessTree';treeCopy.className='preparedness-tree-copy';
  const homeScene=document.querySelector('#home .game-mascot-scene');
  homeScene.insertBefore(tree,homeScene.querySelector('.refresh-speech'));
+ tree.append(homeScene.querySelector('.refresh-speech'));
  const trophies=el('ul',undefined,'preparedness-trophies');trophies.id='preparednessTrophies';
  const trophySection=el('section'),trophyHeading=el('h3','トロフィー');trophySection.id='preparednessTrophySection';
  trophySection.append(trophyHeading,trophies);

@@ -362,17 +362,24 @@ module.exports = async function verifyExperience(browser,base) {
   const positions=[];
   for(const [earned,name,friends] of stageCases){
    await page.evaluate(count=>{
+    localStorage.setItem('toto-mascot-speech-v1',JSON.stringify('auto'));
     [key,tidyKey,homeSafetyKey,'toto-clean-practice-v1'].forEach(storageKey=>localStorage.removeItem(storageKey));
     verifiedSaveJson(achievementKey,{trophies:achievementIds.slice(0,count),daily:null});
    },earned);
    await page.goto(base+'?page=home');
    const art=page.locator('#home .preparedness-tree-art');
    assert.match(await page.locator('#preparednessTreeStage').innerText(),new RegExp('^'+name));
-   const speech=page.locator('#home .game-mascot-scene>.refresh-speech');
+   const speech=page.locator('#homePreparednessTree>.refresh-speech');
    assert.equal(await page.locator('#homePreparednessTree').isVisible(),true);
    assert.equal(await page.locator('#home .game-mascot-scene>.character-art:visible').count(),0);
    assert.equal(await speech.locator('strong').innerText(),earned?'たこ':'防災の木');
    assert((await speech.locator('span').innerText()).length>5);
+   await page.evaluate(()=>{const toggle=document.getElementById('simpleDisplay');if(toggle.checked)toggle.click()});
+   const header=await page.locator('#homePreparednessTree .preparedness-tree-copy').boundingBox();
+   const picture=await art.boundingBox(),bubble=await speech.boundingBox();
+   assert(header.y+header.height<=picture.y,'Tree heading must be above artwork');
+   assert(bubble.y>=picture.y+picture.height,'Speech must be below artwork');
+   assert.notEqual(await speech.evaluate(node=>getComputedStyle(node,'::before').backgroundImage),'none');
    assert.equal(await page.locator('#home #openAchievementCollection').count(),0);
    const companions=art.locator('.preparedness-tree-friend:visible');
    assert.deepEqual((await art.getAttribute('data-characters')).split(',').filter(Boolean),friends);
