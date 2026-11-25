@@ -25,6 +25,7 @@ async function run() {
   browser = await chromium.launch({ executablePath: process.env.TOTO_CHROMIUM_PATH || undefined });
   await require('./usability-browser.cjs')(browser,base);
   await require('./experience-browser.cjs')(browser,base);
+  await require('./beginner-reasons-browser.cjs')(browser,base);
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', isMobile: true, hasTouch: true });
   await context.route('**/*', route => route.request().url().startsWith(base) ? route.continue() : route.abort());
   const page = await context.newPage();
