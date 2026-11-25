@@ -278,7 +278,18 @@ module.exports = async function verifyExperience(browser,base) {
   const achievement=page.locator('#more #achievementBadges');
   await achievement.waitFor();
   assert.match(await page.locator('#preparednessTreeStage').innerText(),/若木\s+トロフィー 5\/8/);
-  await achievement.getByText('トロフィーを見る').click();
+  const collection=page.getByRole('dialog',{name:'バッジ・トロフィー'});
+  const entry=achievement.getByRole('button',{name:'バッジ・トロフィーを見る',exact:true});
+  await entry.click();
+  await collection.waitFor();
+  assert.equal(await collection.getByRole('heading',{name:'片付け・備蓄のバッジ'}).count(),1);
+  assert.equal(await collection.getByRole('heading',{name:'トロフィー',exact:true}).count(),1);
+  const closeCollection=collection.getByRole('button',{name:'バッジ・トロフィーを閉じる'});
+  assert.equal(await closeCollection.innerText(),'×');
+  await closeCollection.click();
+  await collection.waitFor({state:'hidden'});
+  await page.waitForFunction(()=>document.activeElement.id==='openAchievementCollection');
+  assert.equal(await achievement.isVisible(),true);
   assert.equal(await page.locator('#preparednessTrophies [data-earned=true]').count(),5);
   const medals=page.locator('#preparednessTrophies .preparedness-trophy-art');
   assert.equal(await medals.count(),8);
@@ -333,17 +344,21 @@ module.exports = async function verifyExperience(browser,base) {
   }
   assert.equal(new Set(positions).size,4);
   await page.goto(base+'?page=more&focus=trophies');
-  assert.equal(await page.locator('#preparednessTrophyFold').getAttribute('open'),'');
-  assert.equal(await medals.count(),8);
+  await collection.waitFor();
+  assert.equal(await collection.locator('#preparednessTrophySection .preparedness-trophy-art').count(),8);
+  await closeCollection.click();
+  await collection.waitFor({state:'hidden'});
+  await page.waitForFunction(()=>new URL(location.href).searchParams.get('focus')==='achievements');
   console.log('PASS: four medium tree illustrations, cumulative approved characters, eight distinct trophy images, direct trophy route');
   await page.evaluate(()=>{
    saveTidyPlaces(tidyDefaultPlaces.map((place,i)=>({id:'badge-'+i,place,done:true,stepChecks:[true,true,true,true]})));
    saveSaved(key,[{name:'備蓄バッジのテスト',qty:'1'}]);
   });
   await page.goto(base+'?page=more&focus=badges');
-  const recordBadges=page.locator('#preparednessRecordBadges');
-  assert.equal(await recordBadges.getAttribute('open'),'');
-  assert.equal(await page.locator('#preparednessTrophyFold').getAttribute('open'),null);
+  await collection.waitFor();
+  const recordBadges=collection.locator('#preparednessRecordBadges');
+  assert.equal(await recordBadges.isVisible(),true);
+  assert.equal(await collection.locator('#preparednessTrophySection').isVisible(),true);
   const badgeArt=recordBadges.locator('.milestone-badge-art');
   assert.equal(await badgeArt.count(),7);
   assert.equal(await badgeArt.evaluateAll(nodes=>new Set(nodes.map(node=>node.style.backgroundPosition)).size),7);
@@ -356,7 +371,22 @@ module.exports = async function verifyExperience(browser,base) {
   });
   assert.deepEqual(artDimensions,[1024,768]);
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-  console.log('PASS: separately linked record badges with distinct art for six rooms and stock');
+  for(const width of [320,390]){
+   await page.setViewportSize({width,height:620});
+   const closeBefore=await closeCollection.boundingBox();
+   assert(closeBefore.x+closeBefore.width<=width&&closeBefore.y<45&&closeBefore.width>=44);
+   await collection.locator('.achievement-collection-scroll').evaluate(node=>{node.scrollTop=node.scrollHeight});
+   const closeAfter=await closeCollection.boundingBox();
+   assert.equal(closeBefore.y,closeAfter.y);
+  }
+  await page.goto(base+'?page=more&focus=collection');
+  await collection.waitFor();
+  await closeCollection.click();
+  await collection.waitFor({state:'hidden'});
+  await page.waitForFunction(()=>new URL(location.href).searchParams.get('focus')==='achievements');
+  await page.reload();
+  assert.equal(await collection.count(),0);
+  console.log('PASS: shared badge and trophy screen, pinned close button, mobile layout, previous links, focus restoration and reload');
 
   assert.deepEqual(errors,[]);
   console.log('PASS: mobile feature entry points, persistent favorites/simple view, reminders, worksheet, private feedback, stock use/shopping, quota/silent failures, deletion restore and settings backup');

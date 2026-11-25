@@ -300,11 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v245\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v246\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
+ updates.append(element('h3','v246　2026年11月25日'),element('p','バッジとトロフィーを同じ画面で見られるようにしました。'));
  updates.append(element('h3','v245　2026年11月25日'),element('p','片付け・備蓄のバッジを追加し、防災の木の仲間を新しいイラストにしました。'));
  updates.append(element('h3','v244　2026年11月25日'),element('p','防災の木に成長段階ごとの絵と仲間を追加し、8つのトロフィーにそれぞれのイラストを付けました。'));
  updates.append(element('h3','v243　2026年11月25日'),element('p','その他に「防災の木」を追加しました。ホームには今日できたことを表示します。'));
@@ -874,7 +875,19 @@
  .preparedness-trophies li[data-earned=false]{color:#4b5b52}
  .preparedness-trophies li[data-earned=false] .preparedness-trophy-art{filter:saturate(.35);opacity:.62}
  .preparedness-trophies li[data-earned=true]{color:#28553a;font-weight:700}
- #achievementBadges summary{padding:8px 0;cursor:pointer;font-size:15px;font-weight:700;min-height:44px}
+ #openAchievementCollection{margin-top:12px}
+ #achievementCollection{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;border:0;border-radius:0;padding:0;background:#f8fbf7;color:#20392d;overflow:hidden}
+ #achievementCollection[open]{display:flex;flex-direction:column}
+ body:has(#achievementCollection[open]){overflow:hidden}
+ .achievement-collection-bar{flex:none;background:#fff;border-bottom:1px solid #dce8dd;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left))}
+ .achievement-collection-bar>div{display:flex;justify-content:space-between;align-items:center;gap:10px;max-width:640px;margin:auto}
+ #achievementCollectionTitle{margin:0;font-size:clamp(18px,5vw,24px)}
+ #achievementCollectionClose{display:grid;place-items:center;flex:none;width:44px;height:44px;border:1px solid #c9dbcd;border-radius:12px;background:#eff6f0;color:#20392d;font-size:24px;line-height:1;cursor:pointer}
+ .achievement-collection-scroll{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain}
+ .achievement-collection-content{max-width:640px;margin:auto;padding:18px max(14px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+ .achievement-collection-content section{margin:0 0 18px;padding:14px;border:1px solid #dae6dc;border-radius:14px;background:#fff}
+ .achievement-collection-content h3{margin:0 0 8px;font-size:17px;font-weight:700}
+
  .milestone-badges{display:grid;gap:8px;list-style:none;padding:0}
  .milestone-badges li{display:flex;align-items:center;gap:10px;min-width:0;background:#f8faf5;border:1px solid #dfe9d7;border-radius:12px;padding:7px 10px;font-size:14px;overflow-wrap:anywhere}
  .milestone-badge-art{flex:0 0 48px;width:48px}
@@ -932,11 +945,38 @@
  const treeName=el('span'),treeCount=el('span',undefined,'preparedness-count');treeStage.append(treeName,treeCount);
  treeCopy.append(el('h3','防災の木'),treeStage);tree.append(treeArt,treeCopy);
  const trophies=el('ul',undefined,'preparedness-trophies');trophies.id='preparednessTrophies';
- const trophyFold=el('details'),trophySummary=el('summary');trophyFold.id='preparednessTrophyFold';
- trophyFold.append(trophySummary,trophies);
- const recordFold=el('details'),badges=el('ul',undefined,'milestone-badges');
- recordFold.id='preparednessRecordBadges';
- recordFold.append(el('summary','片付け・備蓄のバッジを見る'),badges);
+ const trophySection=el('section'),trophyHeading=el('h3','トロフィー');trophySection.id='preparednessTrophySection';
+ trophySection.append(trophyHeading,trophies);
+ const badgeSection=el('section'),badges=el('ul',undefined,'milestone-badges');
+ badgeSection.id='preparednessRecordBadges';
+ badgeSection.append(el('h3','片付け・備蓄のバッジ'),badges);
+ const collection=el('dialog');collection.id='achievementCollection';
+ const collectionTitle=el('h2','バッジ・トロフィー');collectionTitle.id='achievementCollectionTitle';
+ collection.setAttribute('aria-labelledby',collectionTitle.id);
+ const closeCollection=action('×',()=>collection.close());closeCollection.id='achievementCollectionClose';
+ closeCollection.setAttribute('aria-label','バッジ・トロフィーを閉じる');closeCollection.autofocus=true;
+ const collectionBar=el('div',undefined,'achievement-collection-bar'),collectionBarInner=el('div');
+ collectionBarInner.append(collectionTitle,closeCollection);collectionBar.append(collectionBarInner);
+ const collectionScroll=el('div',undefined,'achievement-collection-scroll'),collectionContent=el('div',undefined,'achievement-collection-content');
+ collectionContent.append(badgeSection,trophySection);collectionScroll.append(collectionContent);
+ collection.append(collectionBar,collectionScroll);document.body.append(collection);
+ const collectionEntry=action('バッジ・トロフィーを見る',()=>openCollection());
+ collectionEntry.id='openAchievementCollection';collectionEntry.setAttribute('aria-haspopup','dialog');collectionEntry.setAttribute('aria-controls',collection.id);
+ function openCollection(section){
+  if(collection.open)return;
+  collection.showModal();
+  closeCollection.focus({preventScroll:true});
+  collectionScroll.scrollTop=0;
+  if(section==='trophies')trophySection.scrollIntoView({block:'start'});
+ }
+ collection.addEventListener('close',()=>{
+  const url=new URL(location.href);
+  if(url.searchParams.get('page')==='more'&&['collection','badges','trophies'].includes(url.searchParams.get('focus'))){
+   url.searchParams.set('focus','achievements');
+   try{history.replaceState(history.state,'',url)}catch(e){}
+  }
+  if(activePage==='more')collectionEntry.focus();
+ });
  function recordBadge(label,cell){
   const badge=el('li'),art=el('span',undefined,'preparedness-friend-badge milestone-badge-art');
   art.setAttribute('aria-hidden','true');selectIllustration(art,cell);
@@ -954,7 +994,7 @@
   }
  }
  const milestone=el('p',undefined,'milestone-notice');milestone.id='milestoneNotice';milestone.setAttribute('role','status');
- badgePanel.append(tree,trophyFold,recordFold,milestone,action('できたことを共有する',openShare));
+ badgePanel.append(tree,collectionEntry,milestone,action('できたことを共有する',openShare));
  familyGroup.before(badgePanel);
  const completedRooms=()=>readTidyPlaces().filter(item=>item.done);
  const trophyRules=[
@@ -1014,7 +1054,6 @@
   treeArt.setAttribute('aria-label',[stageName,...friends.slice(0,stage).map(friend=>friend.name)].join('、'));
   treeName.textContent=stageName;
   treeCount.textContent='トロフィー '+earned.size+'/'+trophyRules.length;
-  trophySummary.textContent='トロフィーを見る';
   trophies.replaceChildren(...trophyRules.map(([id,title],index)=>{
    const unlocked=earned.has(id),row=el('li');
    row.dataset.earned=String(unlocked);
@@ -1141,14 +1180,14 @@
  const focus=entryUrl.searchParams.get('focus');
  if(entryPage==='homeSafety'&&focus==='route')openHomeSafetySection(1,false);
  if(entryPage==='home'&&focus==='achievements'&&activePage==='home')show('more');
- if(entryPage==='more'&&focus==='trophies')trophyFold.open=true;
- if(entryPage==='more'&&focus==='badges')recordFold.open=true;
- const targets={badges:'preparednessRecordBadges',trophies:'preparednessTrophyFold',today:'todayAchievements',checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
+ const wantsCollection=entryPage==='more'&&['collection','badges','trophies'].includes(focus);
+ const targets={today:'todayAchievements',checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
  if(targets[focus])requestAnimationFrame(()=>{
   const target=$(targets[focus]);
   target.style.scrollMarginTop=(document.querySelector('header').offsetHeight+12)+'px';
   target.scrollIntoView({block:'start'});
  });
+ if(wantsCollection&&activePage==='more'&&!document.querySelector('dialog[open]'))openCollection(focus);
  if(entryUrl.searchParams.get('share')==='1'&&!document.querySelector('dialog[open]'))openShare();
  if(entryUrl.searchParams.get('guide')==='1'){tutorialPendingPage=targetPage;tutorialState={...tutorialState,step:0};openTutorial()}else queueMicrotask(startSetup);
 })();
