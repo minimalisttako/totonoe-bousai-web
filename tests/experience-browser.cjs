@@ -320,7 +320,9 @@ module.exports = async function verifyExperience(browser,base) {
    await page.goto(base+'?page=more&focus=achievements');
    const art=page.locator('.preparedness-tree-art');
    assert.match(await page.locator('#preparednessTreeStage').innerText(),new RegExp('^'+name));
-   assert.deepEqual(await art.locator('.preparedness-tree-friend:visible').evaluateAll(nodes=>nodes.map(node=>node.dataset.friend)),friends);
+   const companions=art.locator('.preparedness-tree-friend:visible');
+   assert.deepEqual(await companions.evaluateAll(nodes=>nodes.map(node=>node.dataset.friend)),friends);
+   assert(await companions.evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).backgroundImage.includes('achievement-friends-and-badges-v245.webp'))));
    positions.push(await art.locator('.preparedness-plant').evaluate(node=>node.style.backgroundPosition));
    for(const width of [320,390]){
     await page.setViewportSize({width,height:844});
@@ -334,6 +336,28 @@ module.exports = async function verifyExperience(browser,base) {
   assert.equal(await page.locator('#preparednessTrophyFold').getAttribute('open'),'');
   assert.equal(await medals.count(),8);
   console.log('PASS: four medium tree illustrations, cumulative approved characters, eight distinct trophy images, direct trophy route');
+  await page.evaluate(()=>{
+   saveTidyPlaces(tidyDefaultPlaces.map((place,i)=>({id:'badge-'+i,place,done:true,stepChecks:[true,true,true,true]})));
+   saveSaved(key,[{name:'備蓄バッジのテスト',qty:'1'}]);
+  });
+  await page.goto(base+'?page=more&focus=badges');
+  const recordBadges=page.locator('#preparednessRecordBadges');
+  assert.equal(await recordBadges.getAttribute('open'),'');
+  assert.equal(await page.locator('#preparednessTrophyFold').getAttribute('open'),null);
+  const badgeArt=recordBadges.locator('.milestone-badge-art');
+  assert.equal(await badgeArt.count(),7);
+  assert.equal(await badgeArt.evaluateAll(nodes=>new Set(nodes.map(node=>node.style.backgroundPosition)).size),7);
+  assert.match(await recordBadges.innerText(),/備蓄品を登録（1品）/);
+  const artDimensions=await page.evaluate(async()=>{
+   const image=new Image();
+   image.src='./assets/achievement-friends-and-badges-v245.webp';
+   await image.decode();
+   return [image.naturalWidth,image.naturalHeight];
+  });
+  assert.deepEqual(artDimensions,[1024,768]);
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  console.log('PASS: separately linked record badges with distinct art for six rooms and stock');
+
   assert.deepEqual(errors,[]);
   console.log('PASS: mobile feature entry points, persistent favorites/simple view, reminders, worksheet, private feedback, stock use/shopping, quota/silent failures, deletion restore and settings backup');
  }finally{await context.close()}
