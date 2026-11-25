@@ -300,12 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v251\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v252\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
- updates.append(element('h3','v251　2026年11月25日'),element('p','防災の木をコンパクトにし、仲間のポーズをランダム表示にしました。大きな木ではペア＋1匹とトリオも登場します。'));
+ updates.append(element('h3','v252　2026年11月25日'),element('p','木の葉と幹が見えるように、仲間のサイズと配置を調整しました。'));
  updates.append(element('h3','v249　2026年11月25日'),element('p','食品・飲料水は期限未入力でも必要量と比較し、ホームから期限の入力をご案内します。'));
  updates.append(element('h3','v248　2026年11月25日'),element('p','備蓄の編集欄が細くなり、文字や数字が読みにくくなる表示を修正しました。'));
  updates.append(element('h3','v247　2026年11月25日'),element('p','トロフィーとバッジをタップすると、獲得日と関連ページへの案内が開きます。'));
@@ -864,16 +864,18 @@
  #home .game-mascot-scene::before,#home .game-mascot-scene::after{display:none!important}
  #home .game-mascot-scene>.character-art,#home .game-mascot-scene>.anime-approved-home-image{display:none!important}
  #homePreparednessTree{width:100%;box-sizing:border-box;padding:12px 12px 8px;background:linear-gradient(145deg,#eff8e6,#e2f1df);border:1px solid #bdd5b9;border-radius:16px}
- #homePreparednessTree .preparedness-tree-art{width:min(100%,270px);height:174px;margin:auto;background:none}
+ #homePreparednessTree .preparedness-tree-art{width:min(100%,340px);height:174px;margin:auto;background:none}
  #homePreparednessTree .preparedness-plant{width:205px;bottom:4px}
- #homePreparednessTree .preparedness-tree-friend{width:85px;bottom:3px}
+ #homePreparednessTree .preparedness-tree-friend{width:72px;bottom:0}
  #homePreparednessTree .preparedness-tree-friend[data-friend=tako]{left:0}
- #homePreparednessTree .preparedness-tree-friend[data-friend=tricera]{right:0;width:96px}
- #homePreparednessTree .preparedness-tree-friend[data-friend=shimaenaga]{top:12px;width:70px}
+ #homePreparednessTree .preparedness-tree-friend[data-friend=tricera]{right:0;width:82px}
+ #homePreparednessTree .preparedness-tree-friend[data-friend=shimaenaga]{top:auto;bottom:82px;right:8px;width:60px}
  #homePreparednessTree .preparedness-tree-friend,#homePreparednessTree .preparedness-group{z-index:2}
  #homePreparednessTree .preparedness-pose{background-image:url('./assets/home-mascot-poses-v251.webp');background-size:400% 300%;background-repeat:no-repeat}
- #homePreparednessTree .preparedness-group{position:absolute;width:176px;aspect-ratio:1;bottom:0;left:50%;transform:translateX(-50%)}
- #homePreparednessTree .preparedness-group[data-pose=drink],#homePreparednessTree .preparedness-group[data-pose=exercise]{width:270px;bottom:-35px}
+ #homePreparednessTree .preparedness-group{position:absolute;width:148px;aspect-ratio:1;bottom:0;left:0}
+ #homePreparednessTree .preparedness-group[data-pose=lift]{left:auto;right:0;width:132px}
+ #homePreparednessTree .preparedness-group[data-pose=drink],#homePreparednessTree .preparedness-group[data-pose=exercise]{width:230px;bottom:-49px;left:50%;transform:translateX(-50%)}
+ #home .game-mascot-scene:not([data-tree-pose=solo]) .preparedness-tree-friend[data-friend=shimaenaga]{bottom:16px}
  #homePreparednessTree .preparedness-tree-copy{display:flex;align-items:center;justify-content:space-between;gap:10px}
  #homePreparednessTree h3{margin:0;font-size:17px;color:#2b543b}
  #homePreparednessTree #preparednessTreeStage{margin:0;font-size:14px;text-align:right;color:#365541}
@@ -884,7 +886,7 @@
  #home .game-mascot-scene>.refresh-speech span{font-size:14px!important;color:#294737;line-height:1.6}
  #home .game-mascot-scene>.refresh-speech strong{font-size:13px!important;color:#356148}
  body[data-speech-mode=hidden] #home .game-mascot-scene>.refresh-speech{display:none!important}
- @media(max-width:350px){#homePreparednessTree .preparedness-tree-art{height:160px}#homePreparednessTree .preparedness-plant{width:180px}#homePreparednessTree .preparedness-tree-friend{width:72px}#homePreparednessTree .preparedness-tree-friend[data-friend=shimaenaga]{width:60px}#homePreparednessTree .preparedness-count{display:block!important;margin:0}}
+ @media(max-width:350px){#homePreparednessTree .preparedness-tree-art{height:160px}#homePreparednessTree .preparedness-plant{width:180px}#homePreparednessTree .preparedness-tree-friend{width:66px}#homePreparednessTree .preparedness-tree-friend[data-friend=tricera]{width:76px}#homePreparednessTree .preparedness-tree-friend[data-friend=shimaenaga]{width:54px}#homePreparednessTree .preparedness-group{width:132px}#homePreparednessTree .preparedness-group[data-pose=lift]{width:120px}#homePreparednessTree .preparedness-group[data-pose=drink],#homePreparednessTree .preparedness-group[data-pose=exercise]{width:210px;bottom:-46px}#homePreparednessTree .preparedness-count{display:block!important;margin:0}}
 
  #achievementBadges .preparedness-tree{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid #bdd5b9;border-radius:14px;background:linear-gradient(145deg,#f6fbf0,#e8f4e6)}
  #achievementBadges .preparedness-tree h3,#achievementBadges .preparedness-tree p{margin:0}
@@ -997,7 +999,7 @@
   if(mode!=='solo'){
    selectIllustration(sceneGroup,{ride:6,lift:7,sleep:8,drink:9,exercise:10}[mode]);
    const third={ride:2,lift:1,sleep:0}[mode];
-   friends.forEach(({art},index)=>{art.hidden=index!==third;if(index===third){art.style.top='auto';art.style.left=index===0?'0':'auto';art.style.right=index===0?'auto':'0'}});
+   friends.forEach(({art},index)=>{art.hidden=index!==third;if(index===third){art.style.top='auto';art.style.left=mode==='lift'?'0':'auto';art.style.right=mode==='lift'?'auto':'0'}});
   }
   treeArt.dataset.characters=friends.slice(0,stage).map(f=>f.art.dataset.friend).join(',');
   treeArt.setAttribute('aria-label',[['種','芽','若木','大きな木'][stage],stage?poseNames[mode]:'',...friends.slice(0,stage).map(f=>f.art.dataset.friend)].filter(Boolean).join('、'));
