@@ -300,12 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v254\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v255\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
- updates.append(element('h3','v254　2026年11月25日'),element('p','片付けと備蓄が必要な理由を学ぶ案内と、各場所の「なぜ？」を追加しました。'));
+ updates.append(element('h3','v255　2026年11月25日'),element('p','機能の「？」から小さな解説ヘルプを開けるようにし、学ぶに同じ解説の一覧と検索をまとめました。'));
  updates.append(element('h3','v249　2026年11月25日'),element('p','食品・飲料水は期限未入力でも必要量と比較し、ホームから期限の入力をご案内します。'));
  updates.append(element('h3','v248　2026年11月25日'),element('p','備蓄の編集欄が細くなり、文字や数字が読みにくくなる表示を修正しました。'));
  updates.append(element('h3','v247　2026年11月25日'),element('p','トロフィーとバッジをタップすると、獲得日と関連ページへの案内が開きます。'));
@@ -993,6 +993,67 @@
  const bosReason=el('p');bosReason.append(action('BOSを選ぶ理由・選ぶときの注意点',()=>openPreparednessReasons('reasonBos')));$('supplyRecommendations').querySelector('.affiliate-product').prepend(bosReason);
  const reasonStyle=el('style');reasonStyle.textContent=`.beginner-reasons>section,.beginner-reasons>details{border-top:1px solid #d9e6df;padding-top:12px;margin-top:16px}.beginner-reasons h3{font-size:18px}.beginner-reasons h4{margin-bottom:4px}.beginner-reasons p{font-size:14px;line-height:1.75}.beginner-reasons summary,.tidy-reason summary{cursor:pointer;font-weight:700;min-height:44px;padding:10px 0;line-height:1.5}.reason-index{display:flex;flex-wrap:wrap;gap:6px 14px}.reason-index a{font-size:14px;min-height:44px;display:inline-flex;align-items:center}.reason-author{font-size:12px!important;color:#5b6655}.reason-places>section{padding:8px 0;border-bottom:1px solid #e3ebe4}.reason-sources a{display:inline-block;min-height:44px;padding:8px 0}.reason-entry{margin:8px 0 14px}.tidy-reason{background:#f0f6ed;border-radius:10px;padding:9px 12px;margin:0 0 12px}.tidy-reason>p{font-size:14px;margin:0}.tidy-reason details p{font-size:14px;margin:4px 0 10px}.tidy-reason button{font-size:13px}.beginner-reasons [data-reason-action]{display:flex;flex-wrap:wrap;gap:8px}.beginner-reasons{scroll-margin-top:100px}.beginner-reasons section{scroll-margin-top:100px}`;document.head.append(reasonStyle);
 
+ // A single help catalogue powers both contextual question marks and Learn.
+ const helpTopics=new Map(),helpGroups=['片付けの理由','場所ごとの片付け','備蓄の理由','機能の使い方'];
+ const originalSections={tidy:reasons.querySelector('#reasonTidy'),toilet:reasons.querySelector('#reasonToilet'),bos:reasons.querySelector('#reasonBos')};
+ const helpSources=reasons.querySelector('.reason-sources').cloneNode(true);
+ const extraSource=el('li'),extraSourceLink=el('a','政府広報オンライン：災害に事前に備える ↗');extraSourceLink.href='https://www.gov-online.go.jp/tokusyu/bousai/preparation.html';extraSourceLink.target='_blank';extraSourceLink.rel='noopener noreferrer';extraSource.append(extraSourceLink);helpSources.querySelector('ul').append(extraSource);
+ function helpCopy(node){const copy=node.cloneNode(true);copy.removeAttribute('id');copy.querySelectorAll('[id]').forEach(n=>n.removeAttribute('id'));copy.querySelectorAll('[data-reason-action]').forEach(n=>n.remove());if(copy.tagName==='SECTION'&&copy.firstElementChild?.tagName==='H3')copy.firstElementChild.remove();return copy}
+ function addHelp(id,title,category,text,run,label){helpTopics.set(id,{id,title,category,body:typeof text==='function'?text:()=>{const box=el('div');for(const line of text)box.append(el('p',line));return box},run,label})}
+ addHelp('tidy','片付ける目的・物が多いと危ない理由','片付けの理由',()=>helpCopy(originalSections.tidy),()=>show('tidy'),'片付けを始める');
+ addHelp('toilet','なぜ非常用トイレが必要？','備蓄の理由',()=>helpCopy(originalSections.toilet),()=>{show('supplies');if(activePage==='supplies'){$('supplyCalcFold').open=true;$('stockCalculator').scrollIntoView({block:'start'})}},'トイレの必要量を確認する');
+ addHelp('bos','たこがBOSをおすすめする理由','備蓄の理由',()=>helpCopy(originalSections.bos),()=>{show('supplies');if(activePage==='supplies'){$('supplyRecommendations').open=true;$('supplyRecommendations').scrollIntoView({block:'start'})}},'備蓄ページのおすすめを見る');
+ for(const place of Object.keys(tidyReasonTemplates))addHelp('room:'+place,place+'で気をつけたいこと','場所ごとの片付け',tidyReasonFor(place),()=>show('tidy'),'片付けノートを開く');
+ const essentials=[
+ ['valuables','現金・大切な書類',['避難先でも本人確認や家族との連絡ができるよう、必要な情報と持ち出す物を確認します。現金も備えの候補です。','連絡先は紙にも控え、保管場所を家族で共有しましょう。']],
+ ['health','薬・健康管理',['普段使う薬やお薬手帳は、いつもの治療や薬の情報を伝えるための備えです。眼鏡や補聴器など、自分の生活に必要な物も一緒に確認しましょう。','薬の量や保管方法は、医師・薬剤師と確認して備えましょう。']],
+ ['waterFoodToilet','水・食料・トイレ',['ライフラインが止まったときに、自分や家族の生活を続けるための備えです。飲み水、食べ慣れた食料、水を流さず使える携帯トイレを確認しましょう。','備蓄目安の計算で人数と日数を確認し、手持ちの数量を登録します。トイレの必要性は「なぜ非常用トイレが必要？」で詳しく読めます。']],
+ ['power','停電への備え',['暗い中でも周囲を確認し、連絡や情報収集を続けるための備えです。懐中電灯・予備電池・携帯電話の充電手段を確認しましょう。','家族が分かる場所に置き、普段から点灯・充電できるか確認しておきましょう。']],
+ ['family','家族やペットに合わせて',['家族によって必要な物は異なります。乳幼児、介護、アレルギー、ペットなど、自分の家庭で欠かせない物を確認するための欄です。','普段使っている物を出発点に、家族の事情に合う備えを考えましょう。']]
+ ];
+ for(const [id,title,text] of essentials)addHelp(id,title,'備蓄の理由',text);
+ addHelp('inventory','備蓄の登録・数量・期限','機能の使い方',['家にある備蓄を登録し、数量・期限・置き場所を確認する機能です。使ったら数量を減らし、不足した分を補充します。','食品と飲用水は期限が未入力でも数量に数えます。ただし期限の点検はできないため、分かるものから登録しましょう。分類や食数が未設定だと必要量の計算に反映できない場合があります。']);
+ addHelp('calculator','わが家の備蓄目安の計算','機能の使い方',['人数・備える日数・トイレの使用回数を入力して、家庭の備蓄目安を確認します。トイレの回数は、家族の実際の使い方に合わせます。','目安と登録済みの備蓄を比べて不足を確認します。一般的な目安が全員に合うとは限らないので、家族の事情に合わせて考えましょう。']);
+ addHelp('safety','住まいの安全点検','機能の使い方',['寝る場所、出口までの通り道、家具などを自己確認する機能です。まだ分からない場所は未確認のまま残せます。','備蓄管理の前に、優先する安全項目を確認します。チェックを終えるだけで災害時の安全が保証されるわけではありません。']);
+ addHelp('tree','防災の木・トロフィー・バッジ','機能の使い方',['記録した行動や達成に応じて、防災の木が種・芽・若木・大きな木へ成長します。大きな木では仲間のペアやトリオもランダムに登場します。','トロフィーと片付け・備蓄のバッジは「その他」で確認できます。安全性の点数ではなく、取り組んだ記録です。']);
+ const contextHelp=el('dialog');contextHelp.id='contextHelpDialog';contextHelp.setAttribute('aria-labelledby','contextHelpTitle');
+ const helpBar=el('div',undefined,'context-help-bar'),helpTitle=el('h2');helpTitle.id='contextHelpTitle';
+ const helpClose=action('×',()=>contextHelp.close());helpClose.id='contextHelpClose';helpClose.setAttribute('aria-label','解説ヘルプを閉じる');
+ const helpBody=el('div');helpBody.id='contextHelpBody';helpBar.append(helpTitle,helpClose);contextHelp.append(helpBar,helpBody);document.body.append(contextHelp);
+ let helpTrigger=null,helpOrigin=null;
+ function showContextHelp(id,trigger){
+  let topic=helpTopics.get(id);if(!topic&&id.startsWith('room:')){const place=id.slice(5);topic={id,title:place+'で気をつけたいこと',category:'場所ごとの片付け',body:()=>{const box=el('div');tidyReasonFor(place).forEach(t=>box.append(el('p',t)));return box}}}
+  if(!topic)return;
+  if(document.querySelector('dialog[open]')&&!contextHelp.open)return;
+  helpTrigger=trigger||document.activeElement;helpOrigin=activePage;helpTitle.textContent=topic.title;helpBody.replaceChildren(topic.body());
+  helpBody.append(helpCopy(helpSources));
+  const links=el('div',undefined,'context-help-actions');
+  if(topic.run)links.append(action(topic.label,()=>{contextHelp.close();topic.run()}));
+  links.append(action('学ぶで解説ヘルプを探す',()=>{contextHelp.close();openPreparednessReasons()}));helpBody.append(links);
+  contextHelp.dataset.topic=id;if(!contextHelp.open)contextHelp.showModal();helpBody.scrollTop=0;helpClose.focus({preventScroll:true});
+ }
+ window.totoOpenContextHelp=showContextHelp;
+ contextHelp.addEventListener('close',()=>{if(helpOrigin===activePage&&helpTrigger?.isConnected)helpTrigger.focus({preventScroll:true})});
+ function helpButton(id,title){const button=action('？',event=>{event.preventDefault();event.stopPropagation();showContextHelp(id,button)});button.className='context-help-button';button.setAttribute('aria-label',title+'の解説ヘルプ');return button}
+ function attachHelp(heading,id){if(!heading)return;heading.classList.add('context-help-heading');heading.append(helpButton(id,helpTopics.get(id).title))}
+ // Replace the long explanation panel with a searchable, grouped catalogue.
+ reasons.replaceChildren(el('h2','解説ヘルプ'),el('p','各機能の「？」と同じ説明を、ここからまとめて読めます。','notice'));
+ const searchLabel=el('label','解説を探す');searchLabel.htmlFor='contextHelpSearch';const helpSearch=el('input');helpSearch.id='contextHelpSearch';helpSearch.className='field';helpSearch.type='search';helpSearch.placeholder='場所・備蓄・使い方で検索';
+ const helpList=el('div'),helpEmpty=el('p','該当する解説がありません。別の言葉で探してください。','notice');helpEmpty.hidden=true;reasons.append(searchLabel,helpSearch,helpList,helpEmpty);
+ function renderHelpIndex(){const query=helpSearch.value.trim().toLocaleLowerCase('ja-JP');helpList.replaceChildren();let count=0;
+  for(const category of helpGroups){const topics=[...helpTopics.values()].filter(t=>t.category===category&&(!query||(t.title+' '+t.body().textContent).toLocaleLowerCase('ja-JP').includes(query)));if(!topics.length)continue;
+   const section=el('section',undefined,'help-index-group');section.append(el('h3',category));for(const topic of topics){const button=action(topic.title+'  ›',()=>showContextHelp(topic.id,button));button.className='help-index-entry';button.dataset.helpTopic=topic.id;section.append(button);count++}helpList.append(section);
+  }helpEmpty.hidden=count!==0;
+ }
+ helpSearch.addEventListener('input',renderHelpIndex);renderHelpIndex();
+ document.querySelectorAll('.reason-entry').forEach(n=>n.remove());calculatorReason.remove();bosReason.remove();
+ attachHelp($('tidy').querySelector('.refresh-title-row h2')||$('tidy').querySelector('h2'),'tidy');
+ attachHelp($('stock').querySelector('h2'),'toilet');attachHelp($('stockCalculator').querySelector('h2'),'calculator');attachHelp($('supplyInventoryCard').querySelector('h2'),'inventory');
+ attachHelp($('homeSafety').querySelector('h2'),'safety');
+ [...$('supplyEssentials').querySelectorAll('h3')].forEach((heading,index)=>{if(essentials[index])attachHelp(heading,essentials[index][0])});
+ attachHelp($('supplyRecommendations').querySelector('.affiliate-product h3'),'bos');
+ const helpStyle=el('style');helpStyle.textContent=`.context-help-heading{display:flex!important;align-items:center;gap:8px;justify-content:space-between}.context-help-button{display:inline-grid!important;place-items:center;flex:0 0 36px;width:36px!important;min-width:36px!important;height:44px;min-height:44px!important;margin:0!important;padding:0!important;border:0;background:transparent!important;color:#36745d;font-size:20px!important;font-weight:800;border-radius:50%;cursor:pointer}.context-help-button:focus-visible{outline:3px solid #2071bc;outline-offset:1px}#contextHelpDialog{box-sizing:border-box;width:calc(100% - 28px);max-width:460px;max-height:72dvh;margin:auto;padding:0;border:1px solid #a9c8b5;border-radius:16px;background:#fff;color:#203c30;overflow:hidden}#contextHelpDialog[open]{display:flex;flex-direction:column}#contextHelpDialog::backdrop{background:#132b244d}body:has(#contextHelpDialog[open]){overflow:hidden}.context-help-bar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px 8px 16px;border-bottom:1px solid #dae7df;background:#f1f7ef}#contextHelpTitle{margin:0;font-size:17px;line-height:1.5}#contextHelpClose{flex:none;min-width:44px;height:44px;margin:0;padding:0;border:0;font-size:25px;background:transparent;color:#264d3a}#contextHelpBody{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:4px 16px 16px;font-size:14px;line-height:1.7}#contextHelpBody h3{font-size:16px}#contextHelpBody p{margin:10px 0}#contextHelpBody summary{cursor:pointer;padding:9px 0;font-weight:700}#contextHelpBody a{overflow-wrap:anywhere}#contextHelpBody .reason-sources{font-size:12px;color:#53695c;margin-top:16px}.context-help-actions{display:grid;gap:8px;margin-top:14px}.context-help-actions button{font-size:13px;min-height:44px}.help-index-group{margin-top:14px;padding-top:4px;border-top:1px solid #dce7de}.help-index-group h3{font-size:16px;margin:10px 0 6px}.help-index-entry{display:block;box-sizing:border-box;width:100%;text-align:left;min-height:44px;padding:10px 8px;border:0;border-bottom:1px solid #edf1ed;background:transparent;color:#2c5d49;font-size:14px;cursor:pointer}#contextHelpSearch{box-sizing:border-box;width:100%;margin:4px 0 8px}.beginner-reasons label{font-size:13px}@media(max-width:350px){#tidy .tidy-place>summary{gap:5px}#tidy .tidy-place-name{font-size:14px}#tidy .tidy-place-progress-count{font-size:12px}#tidy .tidy-place>summary.with-chibi>.chibi-icon{width:32px;height:32px}.context-help-button{flex-basis:32px;width:32px!important;min-width:32px!important}}`;document.head.append(helpStyle);
+
  const todayPanel=el('div');todayPanel.id='todayAchievements';todayPanel.setAttribute('role','status');
  const todayText=el('span');
  todayPanel.append(el('strong','今日できたこと'),todayText);
@@ -1037,7 +1098,7 @@
  const treeCopy=el('div'),treeStage=el('p');treeStage.id='preparednessTreeStage';
  const treeName=el('span'),treeCount=el('span',undefined,'preparedness-count');treeStage.append(treeName,treeCount);
  treeCopy.append(el('h3','防災の木'),treeStage);tree.append(treeCopy,treeArt);
- tree.id='homePreparednessTree';treeCopy.className='preparedness-tree-copy';
+ tree.id='homePreparednessTree';treeCopy.className='preparedness-tree-copy';attachHelp(treeCopy.querySelector('h3'),'tree');
  const homeScene=document.querySelector('#home .game-mascot-scene');
  homeScene.insertBefore(tree,homeScene.querySelector('.refresh-speech'));
  tree.append(homeScene.querySelector('.refresh-speech'));
@@ -1324,8 +1385,9 @@
  const focus=entryUrl.searchParams.get('focus');
  if(entryPage==='homeSafety'&&focus==='route')openHomeSafetySection(1,false);
  if(entryPage==='home'&&focus==='achievements'&&activePage==='home')show('more');
+ if(entryPage==='learn'&&['toiletReason','bosReason'].includes(focus))requestAnimationFrame(()=>showContextHelp(focus==='toiletReason'?'toilet':'bos'));
  const wantsCollection=entryPage==='more'&&['collection','badges','trophies'].includes(focus);
- const targets={reasons:'preparednessReasons',toiletReason:'reasonToilet',bosReason:'reasonBos',today:'todayAchievements',checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
+ const targets={reasons:'preparednessReasons',today:'todayAchievements',checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
  if(targets[focus])requestAnimationFrame(()=>{
   const target=$(targets[focus]);
   target.style.scrollMarginTop=(document.querySelector('header').offsetHeight+12)+'px';
