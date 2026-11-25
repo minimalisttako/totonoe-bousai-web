@@ -300,11 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v240\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v241\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
+ updates.append(element('h3','v241　2026年11月25日'),element('p','住まいの安全点検を2つの画面に分け、お片付けノートを場所ごとに開ける表示にしました。'));
  updates.append(element('h3','v231　2026年11月24日'),element('p','その他のミニマリストのススメを、4枚の青いカードの下に葉のアイコン付き横長カードとして配置しました。'));
  updates.append(element('h3','v230　2026年11月24日'),element('p','優先安全点検の完了で備蓄を解放し、初回設定を必要な場面に分けました。下のメニューを5つに整理し、今日やることは1つと、折りたたんだ追加のおすすめを表示します。'));
  updates.append(element('h3','v229　2026年11月23日'),element('p','住まいの安全点検が完了したら、場所ごとのチェックリストへ進める案内を追加しました。'));
@@ -814,7 +815,7 @@
  });
  decorateList(document.getElementById('tidyList'),host => {
   host.querySelectorAll('.tidy-checklist > summary').forEach(node => {
-   const place=label(node).split(/\s\d+\//u)[0];
+   const place=node.querySelector('.tidy-place-name').textContent;
    addIcon(node,tidyPlaces.find(([pattern]) => pattern.test(place))?.[1] ?? 1);
   });
  });
@@ -990,7 +991,8 @@
  renderBadges();restoreDrafts();syncHazardGate();
  $(activePage).append(document.querySelector('.page-feedback-footer'));
  const focus=entryUrl.searchParams.get('focus');
- const targets={family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
+ if(entryPage==='homeSafety'&&focus==='route')openHomeSafetySection(1,false);
+ const targets={checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
  if(targets[focus])requestAnimationFrame(()=>{
   const target=$(targets[focus]);
   target.style.scrollMarginTop=(document.querySelector('header').offsetHeight+12)+'px';

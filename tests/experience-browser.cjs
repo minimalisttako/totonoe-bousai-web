@@ -12,6 +12,20 @@ module.exports = async function verifyExperience(browser,base) {
  try {
   await fresh.goto(base+'?page=homeSafety');await fresh.locator('#safe-sleep').waitFor();
   assert.equal(await fresh.locator('dialog[open]').count(),0);
+  assert.equal(await fresh.locator('#furnitureSafetyPanel').isVisible(),true);
+  assert.equal(await fresh.locator('#routeSafetyPanel').isVisible(),false);
+  await fresh.locator('#furnitureSafetyPanel > button').click();
+  assert.equal(await fresh.locator('#furnitureSafetyPanel').isVisible(),false);
+  assert.equal(await fresh.locator('#routeSafetyTitle').evaluate(node=>document.activeElement===node),true);
+  await fresh.locator('#routeSafetyPanel > button').click();
+  assert.equal(await fresh.locator('#furnitureSafetyTitle').evaluate(node=>document.activeElement===node),true);
+  await fresh.goto(base+'?page=homeSafety&focus=route');
+  await fresh.locator('#routeSafetyTitle').waitFor();
+  for(const width of [320,390]){
+   await fresh.setViewportSize({width,height:844});
+   assert.equal(await fresh.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+   assert.equal(await fresh.locator('#routeSafetyPanel').evaluate(node=>getComputedStyle(node).borderTopWidth),'4px');
+  }
   assert.equal(await fresh.locator('nav button').count(),5);
   assert.equal(await fresh.locator('nav .chibi-icon').count(),0);
   const navIcons=fresh.locator('nav button > svg.nav-icon');
@@ -87,8 +101,43 @@ module.exports = async function verifyExperience(browser,base) {
   await familyIcon.waitFor();
   assert.equal(await familyIcon.count(),1);
   await fresh.goto(base+'?page=tidy');
-  assert.equal(await fresh.locator('#tidyList .tidy-checklist summary > .chibi-icon').count(),
-               await fresh.locator('#tidyList .tidy-checklist summary').count());
+  const rooms=fresh.locator('#tidyList > .tidy-place');
+  assert.equal(await rooms.locator(':scope > summary > .chibi-icon').count(),
+               await rooms.count());
+  assert.equal(await rooms.locator('.tidy-place-body:visible').count(),0);
+  const firstRoom=rooms.first();
+  const secondRoom=rooms.nth(1);
+  const firstSummary=firstRoom.locator(':scope > summary');
+  assert.deepEqual(await firstSummary.evaluate(node=>[...node.children].map(child=>child.className)),
+                   ['chibi-icon','tidy-place-name','tidy-place-progress-count']);
+  assert.equal(await firstSummary.locator('.tidy-place-progress-count').innerText(),'0/4 完了');
+  assert.equal(await firstSummary.evaluate(node=>getComputedStyle(node).listStyleType),'none');
+  await firstSummary.click();
+  await firstRoom.locator('.tidy-step-list').waitFor();
+  await firstRoom.getByText('Before／After写真を残す',{exact:true}).waitFor();
+  await firstRoom.getByText('メモ・記録・削除（必要なときだけ）',{exact:true}).click();
+  await firstRoom.getByRole('button',{name:'記録を編集（任意）'}).click();
+  await firstRoom.getByText('場所の名前',{exact:true}).waitFor();
+  await firstRoom.getByRole('button',{name:'キャンセル',exact:true}).click();
+  assert.equal(await firstRoom.getAttribute('open'),'');
+  const firstTask=firstRoom.locator('.tidy-step-list input').first();
+  await firstTask.check();
+  assert.equal(await firstTask.isChecked(),true);
+  assert.match(await firstRoom.locator(':scope > summary').innerText(),/1\/4 完了/);
+  await secondRoom.locator(':scope > summary').click();
+  await firstRoom.locator('.tidy-place-body').waitFor({state:'hidden'});
+  await secondRoom.locator('.tidy-place-body').waitFor();
+  await fresh.reload();
+  assert.equal(await rooms.locator('.tidy-place-body:visible').count(),0);
+  assert.match(await firstRoom.locator(':scope > summary').innerText(),/1\/4 完了/);
+  await fresh.evaluate(()=>{
+   const records=readTidyPlaces();
+   saveTidyPlaces(records.map((room,i)=>i===0?{...room,stepChecks:[true,true,true,true],done:true}:room));
+  });
+  await fresh.reload();
+  const completedSummary=rooms.locator(':scope > summary').filter({hasText:'4/4 完了'});
+  assert.equal(await completedSummary.locator('.tidy-place-progress-count').innerText(),'4/4 完了');
+  assert.equal(await completedSummary.evaluate(node=>node.textContent.trim().endsWith('4/4 完了')),true);
   const sprite=await fresh.evaluate(async () => {
    const image=new Image();
    image.src='./assets/chibi-icons-v232.webp';
@@ -99,7 +148,12 @@ module.exports = async function verifyExperience(browser,base) {
   await fresh.goto(base+'?page=supplies');await fresh.locator('#stockGateDialog[open]').waitFor();
   assert.equal(await fresh.locator('#supplies').isVisible(),false);
   await fresh.locator('#stockGateNext').click();await fresh.locator('#safe-sleep').waitFor();
-  for(const field of ['sleep','fix','bedpath','door'])await fresh.locator('#safe-'+field).selectOption('done');
+  for(const field of ['sleep','fix'])await fresh.locator('#safe-'+field).selectOption('done');
+  await fresh.locator('nav [data-page="supplies"]').click();
+  await fresh.locator('#stockGateNext').click();
+  await fresh.locator('#safe-bedpath').waitFor();
+  assert.equal(await fresh.locator('#safe-bedpath').evaluate(node=>document.activeElement===node),true);
+  for(const field of ['bedpath','door'])await fresh.locator('#safe-'+field).selectOption('done');
   assert.equal(await fresh.evaluate(()=>stockIsUnlocked()),false);
   await fresh.locator('#safe-hall').selectOption('na');await fresh.locator('#stockGateDialog[open]').waitFor();
   await fresh.locator('#stockGateNext').click();await fresh.locator('#optionalStockSetup').waitFor();
@@ -117,6 +171,7 @@ module.exports = async function verifyExperience(browser,base) {
   assert.equal(await fresh.locator('.refresh-home-mission > div:first-of-type > .home-priority-action').count(),1);
   assert.equal(await fresh.locator('#homeOtherSuggestions').getAttribute('open'),null);
   for(const width of [320,390]){await fresh.setViewportSize({width,height:844});assert.equal(await fresh.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true)}
+  console.log('PASS: separate safety sections and direct route link; tidy accordions, room edit and progress persistence');
   console.log('PASS: no mandatory regional/profile forms before safety, five tabs, safety required for stock, unfinished rooms allowed, optional quantity setup, persistent unlock and relock, single primary mission');
  }finally{await firstUse.close()}
  const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});

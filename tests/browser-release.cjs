@@ -226,7 +226,9 @@ async function run() {
   console.log('PASS: browser startup, pre-setup backup, first-use guide, room gate, evacuation links and review deduplication');
   await page.evaluate(()=>localStorage.removeItem('toto-first-operation-guides-v1'));
   await page.goto(base+'?page=tidy');
-  const photoFold=page.locator('[data-tidy-photo-guide]').first();
+  const photoRoom=page.locator('#tidyList > .tidy-place').first();
+  await photoRoom.locator(':scope > summary').click();
+  const photoFold=photoRoom.locator('[data-tidy-photo-guide]');
   await photoFold.locator('summary').click();
   const photoGuide=photoFold.locator('.first-operation-guide');
   await photoGuide.waitFor();
