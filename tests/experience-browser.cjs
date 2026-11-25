@@ -284,6 +284,13 @@ module.exports = async function verifyExperience(browser,base) {
   await collection.waitFor();
   assert.equal(await collection.getByRole('heading',{name:'片付け・備蓄のバッジ'}).count(),1);
   assert.equal(await collection.getByRole('heading',{name:'トロフィー',exact:true}).count(),1);
+  const datedTrophy=collection.locator('[data-achievement="clean-first"]');
+  await datedTrophy.locator('summary').click();
+  assert.equal(await datedTrophy.locator('time').getAttribute('datetime'),'2026-11-25');
+  assert.match(await datedTrophy.innerText(),/獲得日 2026年11月25日/);
+  const legacyTrophy=collection.locator('[data-achievement="safety-first"]');
+  await legacyTrophy.locator('summary').click();
+  assert.match(await legacyTrophy.innerText(),/獲得日の記録なし/);
   const closeCollection=collection.getByRole('button',{name:'バッジ・トロフィーを閉じる'});
   assert.equal(await closeCollection.innerText(),'×');
   await closeCollection.click();
@@ -307,6 +314,8 @@ module.exports = async function verifyExperience(browser,base) {
   });
   assert.equal(backedUp.trophies.length,5);
   assert.equal(backedUp.daily.stock,1);
+  assert.equal(backedUp.earnedOn['clean-first'],'2026-11-25');
+  assert.equal(backedUp.earnedOn['safety-first'],undefined);
   await page.evaluate(()=>{
    saveSaved(key,[]);
    setCleanPractice('floor',false);
@@ -351,7 +360,7 @@ module.exports = async function verifyExperience(browser,base) {
   await page.waitForFunction(()=>new URL(location.href).searchParams.get('focus')==='achievements');
   console.log('PASS: four medium tree illustrations, cumulative approved characters, eight distinct trophy images, direct trophy route');
   await page.evaluate(()=>{
-   saveTidyPlaces(tidyDefaultPlaces.map((place,i)=>({id:'badge-'+i,place,done:true,stepChecks:[true,true,true,true]})));
+   saveTidyPlaces(tidyDefaultPlaces.map((place,i)=>({id:'badge-'+i,place,done:true,stepChecks:[true,true,true,true],completedAt:'2026-11-20'})));
    saveSaved(key,[{name:'備蓄バッジのテスト',qty:'1'}]);
   });
   await page.goto(base+'?page=more&focus=badges');
@@ -387,6 +396,27 @@ module.exports = async function verifyExperience(browser,base) {
   await page.reload();
   assert.equal(await collection.count(),0);
   console.log('PASS: shared badge and trophy screen, pinned close button, mobile layout, previous links, focus restoration and reload');
+  await page.goto(base+'?page=more&focus=collection');
+  const stockBadge=collection.locator('[data-achievement="stock-badge"]');
+  await stockBadge.locator('summary').click();
+  assert.equal(await stockBadge.locator('time').getAttribute('datetime'),'2026-11-26');
+  await page.evaluate(()=>verifiedSaveJson(homeSafetyKey,{sleep:'done',bedpath:'done',door:'done',hall:'done',fix:'done'}));
+  await stockBadge.getByRole('button',{name:'備蓄管理へ',exact:true}).click();
+  await collection.waitFor({state:'hidden'});
+  await page.locator('#supplies').waitFor();
+  await page.goto(base+'?page=more&focus=badges');
+  const roomBadge=collection.locator('[data-achievement="room:badge-0"]');
+  await roomBadge.locator('summary').click();
+  assert.equal(await roomBadge.locator('time').getAttribute('datetime'),'2026-11-20');
+  await roomBadge.getByRole('button',{name:'玄関のチェックリストへ'}).click();
+  await collection.waitFor({state:'hidden'});
+  await page.locator('#tidy-record-badge-0[open]').waitFor();
+  await page.goto(base+'?page=more&focus=trophies');
+  await legacyTrophy.locator('summary').click();
+  await legacyTrophy.getByRole('button',{name:'住まいの安全点検へ'}).click();
+  await collection.waitFor({state:'hidden'});
+  await page.locator('#homeSafety').waitFor();
+  console.log('PASS: dated and legacy achievement details, saved dates, supply and exact room links, safety link');
 
   assert.deepEqual(errors,[]);
   console.log('PASS: mobile feature entry points, persistent favorites/simple view, reminders, worksheet, private feedback, stock use/shopping, quota/silent failures, deletion restore and settings backup');
