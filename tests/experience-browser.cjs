@@ -230,6 +230,34 @@ module.exports = async function verifyExperience(browser,base) {
   assert.match(mail,/ページ：その他/);assert.match(mail,/表示確認の感想/);assert.doesNotMatch(mail,/テスト食品/);
   await page.locator('#feedbackDialog').getByRole('button',{name:'閉じる',exact:true}).click();
   await page.evaluate(()=>show('supplies'));await page.locator('#dailySupplyTools').waitFor();
+  await page.getByRole('button',{name:'テスト食品の編集・点検・削除を開く',exact:true}).click();
+  await page.getByRole('button',{name:'テスト食品を編集',exact:true}).click();
+  const editor=page.locator('#supplyList .supply-edit');
+  for(const width of [320,390,430]){
+   await page.setViewportSize({width,height:844});
+   const sizes=await editor.evaluate(form=>{
+    const row=form.parentElement;
+    const fields=[...form.querySelectorAll('.field')].filter(field=>field.getClientRects().length);
+    return {rowWidth:row.getBoundingClientRect().width,formWidth:form.getBoundingClientRect().width,
+     minField:Math.min(...fields.map(field=>field.getBoundingClientRect().width)),
+     display:getComputedStyle(row).display,art:row.querySelectorAll('.inventory-art').length,
+     fits:document.documentElement.scrollWidth<=innerWidth};
+   });
+   assert(sizes.formWidth>=sizes.rowWidth-30&&sizes.minField>170&&sizes.display==='block'&&sizes.art===0&&sizes.fits,JSON.stringify(sizes));
+  }
+  await editor.getByLabel('数量',{exact:true}).fill('48');
+  await editor.getByRole('button',{name:'キャンセル',exact:true}).click();
+  assert.equal(await page.evaluate(()=>supplies[0].qty),'3');
+  await page.getByRole('button',{name:'テスト食品の編集・点検・削除を開く',exact:true}).click();
+  await page.getByRole('button',{name:'テスト食品を編集',exact:true}).click();
+  await editor.getByLabel('目標数量（任意・補充チェック用）',{exact:true}).fill('5');
+  await editor.getByRole('button',{name:'変更を保存',exact:true}).click();
+  await editor.waitFor({state:'detached'});
+  await page.reload();
+  await page.locator('#supplies').waitFor();
+  assert.equal(await page.evaluate(()=>supplies[0].target),'5');
+  assert.equal(await page.locator('#supplyList>.illustrated-stock-row').count(),2);
+  console.log('PASS: supply editor uses full row width at 320/390/430px, cancel preserves quantity, save/reload preserves fields');
   assert.match(await page.locator('#useSoonList').textContent(),/テスト食品/);
   await page.locator('#useSoonList button').first().click();
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('toto-supplies-v1'))[0].qty),'2');
