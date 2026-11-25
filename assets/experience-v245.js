@@ -300,11 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v244\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v245\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
+ updates.append(element('h3','v245　2026年11月25日'),element('p','片付け・備蓄のバッジを追加し、防災の木の仲間を新しいイラストにしました。'));
  updates.append(element('h3','v244　2026年11月25日'),element('p','防災の木に成長段階ごとの絵と仲間を追加し、8つのトロフィーにそれぞれのイラストを付けました。'));
  updates.append(element('h3','v243　2026年11月25日'),element('p','その他に「防災の木」を追加しました。ホームには今日できたことを表示します。'));
  updates.append(element('h3','v242　2026年11月25日'),element('p','片付けページの「ととのえる3ステップ」を削除しました。整理・整頓・備蓄はホームから開けます。'));
@@ -861,11 +862,12 @@
  .preparedness-tree-art{position:relative;flex:0 0 clamp(104px,39vw,164px);height:134px;border-radius:10px;background:radial-gradient(ellipse at 50% 82%,#d7e8c7 0%,#f7faf0 73%)}
  .preparedness-illustration{display:block;aspect-ratio:1;background:url("./assets/achievement-art-v244.webp") no-repeat;background-size:400% 300%}
  .preparedness-plant{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:min(100%,128px)}
- .preparedness-tree-friend{position:absolute;bottom:1px;--chibi-size:54px}
- .preparedness-tree-friend[data-friend=tako]{left:-1px;background-position:57.142857% 25%}
- .preparedness-tree-friend[data-friend=tricera]{right:-3px;background-position:57.142857% 0}
- .preparedness-tree-friend[data-friend=shimaenaga]{left:50%;bottom:-5px;transform:translateX(-50%);--chibi-size:46px;background-position:100% 0}
- @media(max-width:340px){.preparedness-tree-art{height:122px;flex-basis:44%}.preparedness-tree-friend{--chibi-size:46px}.preparedness-tree-friend[data-friend=shimaenaga]{--chibi-size:40px}}
+ .preparedness-friend-badge{display:block;aspect-ratio:1;background:url("./assets/achievement-friends-and-badges-v245.webp") no-repeat;background-size:400% 300%}
+ .preparedness-tree-friend{position:absolute;width:57px;bottom:2px}
+ .preparedness-tree-friend[data-friend=tako]{left:-1px}
+ .preparedness-tree-friend[data-friend=tricera]{right:-2px}
+ .preparedness-tree-friend[data-friend=shimaenaga]{right:0;top:2px;bottom:auto;width:49px}
+ @media(max-width:340px){.preparedness-tree-art{height:122px;flex-basis:44%}.preparedness-tree-friend{width:49px}.preparedness-tree-friend[data-friend=shimaenaga]{width:41px}}
  .preparedness-trophies{list-style:none;padding:0;margin:10px 0 16px}
  .preparedness-trophies li{display:flex;gap:10px;align-items:center;border-bottom:1px solid #e6eee7;padding:6px 0;font-size:14px}
  .preparedness-trophy-art{width:50px;flex:none}
@@ -873,7 +875,11 @@
  .preparedness-trophies li[data-earned=false] .preparedness-trophy-art{filter:saturate(.35);opacity:.62}
  .preparedness-trophies li[data-earned=true]{color:#28553a;font-weight:700}
  #achievementBadges summary{padding:8px 0;cursor:pointer;font-size:15px;font-weight:700;min-height:44px}
- .milestone-badges{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}.milestone-badges li{background:#eef5eb;border:1px solid #c5dcb5;border-radius:12px;padding:7px 11px;font-size:14px}
+ .milestone-badges{display:grid;gap:8px;list-style:none;padding:0}
+ .milestone-badges li{display:flex;align-items:center;gap:10px;min-width:0;background:#f8faf5;border:1px solid #dfe9d7;border-radius:12px;padding:7px 10px;font-size:14px;overflow-wrap:anywhere}
+ .milestone-badge-art{flex:0 0 48px;width:48px}
+ .milestone-badge-label{min-width:0}
+
  .milestone-notice{padding:12px;background:#fff7dd;border-radius:12px;margin:12px 0;color:#514221}.milestone-notice:empty{display:none}
  #achievementShareDialog{width:min(94vw,620px);max-height:90dvh;overflow:auto}#achievementShareDialog label{display:flex;align-items:flex-start;gap:9px;padding:8px 0;font-size:15px}
  #achievementShareDialog input[type=checkbox]{flex:0 0 21px;width:21px;height:21px;margin-top:3px}
@@ -916,9 +922,10 @@
  function selectIllustration(node,cell){
   node.style.backgroundPosition=(cell%4*100/3)+'% '+(Math.floor(cell/4)*50)+'%';
  }
- const friends=[['tako','たこ'],['tricera','トリケラさん'],['shimaenaga','シマエナガさん']].map(([id,name])=>{
-  const art=el('span',undefined,'chibi-icon preparedness-tree-friend');
-  art.dataset.friend=id;art.setAttribute('aria-hidden','true');return {art,name};
+ const friends=[['tako','水やりするたこ'],['tricera','草を摘まんで食べるトリケラさん'],['shimaenaga','羽ばたいてやって来るシマエナガさん']].map(([id,name],index)=>{
+  const art=el('span',undefined,'preparedness-friend-badge preparedness-tree-friend');
+  art.dataset.friend=id;art.setAttribute('aria-hidden','true');selectIllustration(art,index);
+  return {art,name};
  });
  treeArt.append(plant,...friends.map(friend=>friend.art));
  const treeCopy=el('div'),treeStage=el('p');treeStage.id='preparednessTreeStage';
@@ -928,7 +935,24 @@
  const trophyFold=el('details'),trophySummary=el('summary');trophyFold.id='preparednessTrophyFold';
  trophyFold.append(trophySummary,trophies);
  const recordFold=el('details'),badges=el('ul',undefined,'milestone-badges');
- recordFold.append(el('summary','片付け・備蓄の記録を見る'),badges);
+ recordFold.id='preparednessRecordBadges';
+ recordFold.append(el('summary','片付け・備蓄のバッジを見る'),badges);
+ function recordBadge(label,cell){
+  const badge=el('li'),art=el('span',undefined,'preparedness-friend-badge milestone-badge-art');
+  art.setAttribute('aria-hidden','true');selectIllustration(art,cell);
+  badge.append(art,el('span',label,'milestone-badge-label'));return badge;
+ }
+ function roomBadgeCell(place){
+  switch(place){
+   case '玄関':return 4;
+   case 'リビング':return 5;
+   case '寝室':return 6;
+   case 'キッチン':return 7;
+   case '洗面・トイレ':return 8;
+   case '浴室':return 9;
+   default:return /収納|押入れ|押し入れ|クローゼット/.test(place)?11:10;
+  }
+ }
  const milestone=el('p',undefined,'milestone-notice');milestone.id='milestoneNotice';milestone.setAttribute('role','status');
  badgePanel.append(tree,trophyFold,recordFold,milestone,action('できたことを共有する',openShare));
  familyGroup.before(badgePanel);
@@ -998,8 +1022,8 @@
    art.setAttribute('aria-hidden','true');selectIllustration(art,index+4);
    row.append(art,el('span',title+'（'+(unlocked?'獲得済み':'未獲得')+'）'));return row;
   }));
-  badges.replaceChildren(...rooms.map(room=>el('li','✓ '+room.place+'の片付け4項目を完了')));
-  if(stock)badges.append(el('li','✓ 備蓄品を登録（'+stock+'品）'));
+  badges.replaceChildren(...rooms.map(room=>recordBadge(room.place+'の片付け4項目を完了',roomBadgeCell(room.place))));
+  if(stock)badges.append(recordBadge('備蓄品を登録（'+stock+'品）',3));
   if(!badges.children.length)badges.append(el('li','片付けを完了した場所と、登録した備蓄品の数が表示されます。'));
  }
  $('tidyPlaceChecklistTitle').after(el('p','進捗は登録した場所の作業を終えた割合です。家具の固定や避難経路も別に確認しましょう。','notice'));
@@ -1118,7 +1142,8 @@
  if(entryPage==='homeSafety'&&focus==='route')openHomeSafetySection(1,false);
  if(entryPage==='home'&&focus==='achievements'&&activePage==='home')show('more');
  if(entryPage==='more'&&focus==='trophies')trophyFold.open=true;
- const targets={trophies:'preparednessTrophyFold',today:'todayAchievements',checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
+ if(entryPage==='more'&&focus==='badges')recordFold.open=true;
+ const targets={badges:'preparednessRecordBadges',trophies:'preparednessTrophyFold',today:'todayAchievements',checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
  if(targets[focus])requestAnimationFrame(()=>{
   const target=$(targets[focus]);
   target.style.scrollMarginTop=(document.querySelector('header').offsetHeight+12)+'px';
