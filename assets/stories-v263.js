@@ -5,6 +5,7 @@ const episodes=[{"id":0,"title":"防災とお片付けのアプリ","image":"./a
  const storageKey='toto-stories-v1';
  const empty=()=>({version:1,introductions:null,unlocked:[],read:[],introduced:[]});
  let damaged=false,pending=null,setupContinuation=null,setupRunning=false,current=null,returnFocus=null,loaded=false;
+ let startupActive=false,startupWaiting=false,startupTarget='home';
  const node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n};
  const button=(text,fn)=>{const n=node('button',text);n.type='button';n.className='secondary';n.onclick=fn;return n};
  function read(){
@@ -96,34 +97,27 @@ const episodes=[{"id":0,"title":"防災とお片付けのアプリ","image":"./a
   const {id,mode}=current;
   const saved=save(s=>({...s,read:markRead&&loaded?[...new Set([...s.read,id])]:s.read,introduced:mode==='archive'?s.introduced:[...new Set([...s.introduced,id])]}));
   if(!saved&&markRead)return;
-  if(!saved&&mode==='onboarding'){current=null;dialog.close();resumeSetup();return;}
+  if(!saved&&mode==='startup'){current=null;dialog.close();runStartup(id===0?'region':'choice');return;}
   current=null;dialog.close();
-  if(mode==='onboarding'){
-   if(id===0){pending={id:1,page:activePage,mode:'onboarding'};schedule()}
-   else showChoice();
-  }
+  if(mode==='startup')runStartup(id===0?'region':state.introductions===null?'choice':'hazard');
  }
  function showChoice(){
   current={mode:'choice'};title.textContent='4コマストーリーの設定';image.hidden=true;loadStatus.textContent='';choice.hidden=false;zoom.hidden=true;next.hidden=true;
   if(!dialog.open)dialog.showModal();choice.querySelector('button').focus({preventScroll:true});
  }
- function resumeSetup(){setupRunning=false;const continuation=setupContinuation;setupContinuation=null;if(continuation)continuation()}
+ function resumeSetup(){if(startupActive){runStartup('hazard');return}setupRunning=false;const continuation=setupContinuation;setupContinuation=null;if(continuation)continuation()}
  function choose(enabled){
   if(!save(s=>({...s,introductions:enabled})))return false;
-  current=null;setupRunning=false;dialog.close();const continuation=setupContinuation;setupContinuation=null;if(continuation)continuation();visit(activePage);return true;
+  current=null;dialog.close();if(startupActive){runStartup('hazard');return true}setupRunning=false;const continuation=setupContinuation;setupContinuation=null;if(continuation)continuation();visit(activePage);return true;
  }
  let timer=null;
  function schedule(){clearTimeout(timer);timer=setTimeout(flush,80)}
  function flush(){
   if(document.hidden||activePage==='emergency'||document.querySelector('dialog[open]'))return;
-  if(setupContinuation&&!setupRunning){
-   if(damaged){resumeSetup();return}
-   if(state.introductions===null){setupRunning=true;const id=state.introduced.includes(0)?1:0;if(state.introduced.includes(1)){showChoice();return}if(!open(id,'onboarding'))resumeSetup();return}
-   const continuation=setupContinuation;setupContinuation=null;continuation();visit(activePage);return;
-  }
+  if(startupWaiting){startupWaiting=false;runStartup(tutorialState.startup||'welcome');return}
   if(!pending)return;
   if(pending.page!==activePage){pending=null;return}
-  if(pending.mode!=='onboarding'&&(state.introductions!==true||state.introduced.includes(pending.id))){pending=null;return}
+  if(pending.mode!=='startup'&&(state.introductions!==true||state.introduced.includes(pending.id))){pending=null;return}
   // Do not take focus from a partially entered form or from another modal.
   if(document.activeElement?.matches('input,textarea,select,[contenteditable=true]'))return;
   const request=pending;pending=null;open(request.id,request.mode);
@@ -143,7 +137,7 @@ const episodes=[{"id":0,"title":"防災とお片付けのアプリ","image":"./a
   if(ids.length)request(ids[0]);
  }
  const previousShow=show;
- show=function(id){const before=activePage,result=previousShow.apply(this,arguments);if(activePage===id&&before!==id){if(id==='emergency'){setupContinuation=null;setupRunning=false;current=null;pending=null;if(dialog.open)dialog.close()}visit(id);}return result};
+ show=function(id){const before=activePage,result=previousShow.apply(this,arguments);if(activePage===id&&before!==id){if(id==='emergency'){startupActive=false;startupWaiting=false;setupContinuation=null;setupRunning=false;current=null;pending=null;if(dialog.open)dialog.close()}visit(id);}return result};
  // Secondary introductions follow the specific operation, rather than episode number.
  document.addEventListener('click',event=>{
   const target=event.target.closest('button,summary,label,input,select');if(!target||target.closest('#comicStoryDialog,#comicArchive'))return;
@@ -182,14 +176,67 @@ const episodes=[{"id":0,"title":"防災とお片付けのアプリ","image":"./a
  }
  document.addEventListener('toto-record-saved',e=>{if(e.detail?.key===storageKey)return;setTimeout(progress,0)});
  window.addEventListener('storage',e=>{if(e.key===storageKey||e.key===null){pending=null;renderArchive();if(current?.mode==='intro'&&state.introductions!==true){current=null;dialog.close()}}else if(e.key===achievementKey){progress();schedule()}});
- window.addEventListener('toto-data-restored',()=>{pending=null;setupContinuation=null;setupRunning=false;current=null;if(dialog.open)dialog.close();renderArchive()});
+ window.addEventListener('toto-data-restored',()=>{startupActive=false;startupWaiting=false;pending=null;setupContinuation=null;setupRunning=false;current=null;if(dialog.open)dialog.close();renderArchive()});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden){renderArchive();schedule()}});
  document.addEventListener('focusout',schedule);
  new MutationObserver(schedule).observe(document.body,{subtree:true,attributes:true,attributeFilter:['open']});
  renderArchive();
+ // A single initial flow interleaves the two retained guide screens with the comics.
+ const baseMoveTutorial=moveTutorial,baseFinishTutorial=finishTutorial,basePauseTutorial=pauseTutorial;
+ moveTutorial=function(delta){
+  if(!startupActive||tutorialReplay)return baseMoveTutorial.apply(this,arguments);
+  if(tutorialState.startup==='welcome'&&delta>0)runStartup('comic0');
+  else if(tutorialState.startup==='launch')runStartup(delta>0?'comic1':'region');
+ };
+ finishTutorial=function(){
+  if(startupActive&&!tutorialReplay&&['welcome','launch'].includes(tutorialState.startup)){runStartup(tutorialState.startup==='welcome'?'comic0':'comic1');return}
+  return baseFinishTutorial.apply(this,arguments);
+ };
+ pauseTutorial=function(){
+  if(startupActive&&!tutorialReplay){startupActive=false;startupWaiting=false;setupRunning=false;setupContinuation=null;pending=null;}
+  return basePauseTutorial.apply(this,arguments);
+ };
+ function completeStartup(){
+  startupActive=false;startupWaiting=false;setupRunning=false;pending=null;
+  tutorialPendingPage=startupTarget==='home'?'homeSafety':startupTarget;
+  baseFinishTutorial(true);
+  const continuation=setupContinuation;setupContinuation=null;if(continuation)continuation();
+  visit(activePage);
+ }
+ function runStartup(phase){
+  if(!startupActive||activePage==='emergency')return;
+  pending=null;setupRunning=true;
+  tutorialState={...tutorialState,version:3,step:phase==='launch'?1:0,startup:phase};saveTutorialState();
+  if(document.getElementById('tutorialDialog').open)closeTutorial();
+  if(phase==='welcome'||phase==='launch'){
+   tutorialReplay=false;openTutorial();
+   document.getElementById('tutorialNext').textContent=phase==='welcome'?'第0話を読む':'第1話を読む';
+  }else if(phase==='comic0'||phase==='comic1'){
+   if(!open(phase==='comic0'?0:1,'startup'))runStartup(phase==='comic0'?'region':state.introductions===null?'choice':'hazard');
+  }else if(phase==='region')openSharedRegion(()=>runStartup('launch'),{direct:true});
+  else if(phase==='choice'){
+   if(state.introductions===null)showChoice();else runStartup('hazard');
+  }else if(phase==='hazard'){
+   if(hazardIsConfirmed())completeStartup();else openHazardGate(false);
+  }else completeStartup();
+ }
+ const previousOpenHazardGate=openHazardGate;
+ openHazardGate=function(unlocked){
+  if(!unlocked&&!tutorialState.completed&&!tutorialReplay&&tutorialState.startup!=='hazard'){
+   startupActive=true;startupWaiting=false;startupTarget=activePage;runStartup(tutorialState.startup||'welcome');return;
+  }
+  return previousOpenHazardGate.apply(this,arguments);
+ };
+ const previousHazardFinish=document.getElementById('hazardFinish').onclick;
+ document.getElementById('hazardFinish').onclick=function(){
+  previousHazardFinish.apply(this,arguments);
+  if(startupActive&&tutorialState.startup==='hazard'&&hazardIsConfirmed()){
+   document.getElementById('stockGateDialog').close();completeStartup();
+  }
+ };
  window.totoStories={startSetup(continuation){
   if(activePage==='emergency'||['backup','reviewBackup','evacuationVideos'].includes(new URL(location.href).searchParams.get('page')))return;
-  setupContinuation=continuation;schedule();
+  if(tutorialState.completed){continuation();visit(activePage);return}
+  setupContinuation=continuation;startupTarget=activePage;startupActive=true;setupRunning=true;startupWaiting=true;schedule();
  }};
-
 })();

@@ -18,27 +18,30 @@ for(const name of ['readTutorialState','saveTutorialState','tutorialNeedsGate','
 vm.runInContext(source.slice(start,end)+"let activePage='more'",c);
 assert.equal(c.tutorialNeedsGate('supplies'),true);assert.equal(c.tutorialNeedsGate('emergency'),false);
 c.openTutorial();assert(el('tutorialDialog').open);
-c.moveTutorial(1);
-assert.equal(el('tutorialTitle').textContent,'はじめまして！');
-assert.match(el('tutorialMain').children[0].src,/tako/);
-assert.match(el('tutorialSupport').children[0].src,/tricera/);
-assert.match(el('tutorialDetail').children[0].src,/shimaenaga/);
+assert.equal(el('tutorialTitle').textContent,'ととのえ防災を始めてくれてありがとう！');
 assert.equal(el('tutorialWelcomeBird').hidden,false);
-c.moveTutorial(1);c.moveTutorial(1);assert.equal(c.readTutorialState().step,3);assert.match(el('tutorialSupport').children[0].src,/shimaenaga/);
+c.moveTutorial(1);
+assert.equal(el('tutorialTitle').textContent,'さっそく、ひとつ始めましょう。');
+assert(el('tutorialStep').textContent.includes('2 / 2'));
+assert.equal(el('tutorialWelcomeBird').hidden,true);
+c.moveTutorial(-1);assert(el('tutorialStep').textContent.includes('1 / 2'));
 c.openTutorialEmergency();assert.equal(routes.at(-1),'emergency');assert(!c.readTutorialState().completed);assert(c.tutorialNeedsGate('home'));
-c.openTutorial();assert(el('tutorialStep').textContent.includes('4 / 5'));c.moveTutorial(1);c.moveTutorial(1);assert.equal(routes.at(-1),'homeSafety');assert(!c.tutorialNeedsGate('supplies'));assert(c.readTutorialState().completed);
-c.openTutorial(true);assert(el('tutorialStep').textContent.includes('1 / 5'));c.pauseTutorial();assert.equal(routes.at(-1),'more');assert(c.readTutorialState().completed);
-for(const bad of ['bad','null','{"version":1,"step":-1,"completed":false}','{"version":1,"step":4,"completed":false}','{"version":1,"step":0,"completed":"yes"}']){store.set('toto-tutorial-v1',bad);assert.equal(c.readTutorialState().step,0);assert(!c.readTutorialState().completed)}
-vm.runInContext('tutorialState={version:2,step:2,completed:false};tutorialSessionUnlocked=false;tutorialReplay=false;',c);c.pauseTutorial();assert(!c.readTutorialState().completed);assert(!c.tutorialNeedsGate('home'));
+c.openTutorial();c.moveTutorial(1);c.moveTutorial(1);assert.equal(routes.at(-1),'homeSafety');assert(!c.tutorialNeedsGate('supplies'));assert(c.readTutorialState().completed);
+c.openTutorial(true);assert(el('tutorialStep').textContent.includes('1 / 2'));c.pauseTutorial();assert.equal(routes.at(-1),'more');assert(c.readTutorialState().completed);
+for(const bad of ['bad','null','{"version":1,"step":-1,"completed":false}','{"version":1,"step":4,"completed":false}','{"version":1,"step":0,"completed":"yes"}','{"version":3,"step":2,"completed":false}']){store.set('toto-tutorial-v1',bad);assert.equal(c.readTutorialState().step,0);assert(!c.readTutorialState().completed)}
+vm.runInContext("tutorialState={version:3,step:1,completed:false,startup:'launch'};tutorialSessionUnlocked=false;tutorialReplay=false;",c);c.pauseTutorial();assert(!c.readTutorialState().completed);assert(!c.tutorialNeedsGate('home'));
 vm.runInContext('tutorialSessionUnlocked=false;',c);assert(c.tutorialNeedsGate('home'));fail=true;c.finishTutorial(true);assert(!c.tutorialNeedsGate('home'));assert.equal(store.get('private-record'),'keep');
 fail=false;
 for(const completed of [false,true]){
  store.set('toto-tutorial-v1',JSON.stringify({version:1,step:2,completed}));
- assert.equal(c.readTutorialState().step,3);
- assert.equal(c.readTutorialState().completed,completed);
+ assert.equal(c.readTutorialState().step,0);assert.equal(c.readTutorialState().completed,completed);
+ store.set('toto-tutorial-v1',JSON.stringify({version:2,step:4,completed}));
+ assert.equal(c.readTutorialState().step,1);assert.equal(c.readTutorialState().completed,completed);
 }
-store.set('toto-tutorial-v1',JSON.stringify({version:2,step:5,completed:false}));
-assert.equal(c.readTutorialState().step,0);
+for(const startup of ['welcome','comic0','region','launch','comic1','choice','hazard']){
+ store.set('toto-tutorial-v1',JSON.stringify({version:3,step:0,completed:false,startup}));assert.equal(c.readTutorialState().startup,startup);
+}
+store.set('toto-tutorial-v1',JSON.stringify({version:2,step:5,completed:false}));assert.equal(c.readTutorialState().step,0);
 const a=source.indexOf('const pageNames='),b=source.indexOf(';let activePage=',a);const names=vm.runInNewContext(source.slice(a,b)+';pageNames');const x=source.indexOf('const pageMascotGuides='),y=source.indexOf('\nfunction contextualMascotAdvice',x);const guides=vm.runInNewContext(source.slice(x,y)+';pageMascotGuides');for(const id of Object.keys(names))if(id!=='home')assert(guides[id],id);
 console.log('PASS: first use, resume, emergency bypass, completion, replay, pause, skip with failed storage, corrupt state, record isolation and mascot coverage for every page.');
 

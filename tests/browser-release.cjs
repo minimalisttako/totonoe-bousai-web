@@ -369,36 +369,17 @@ async function run() {
   assert.equal(await offlinePage.locator('#gameDialogueText').textContent() === '', false);
   await offlinePage.evaluate(()=>openTutorial(true));
   await offlinePage.locator('#tutorialNext').click();
-  await offlinePage.locator('#tutorialTitle').getByText('はじめまして！', { exact: true }).waitFor();
-  await offlinePage.locator('#tutorialMain').getByText('たこです！', { exact: false }).waitFor();
-  await offlinePage.locator('#tutorialSupport').getByText('トリケラです。', { exact: false }).waitFor();
-  await offlinePage.locator('#tutorialDetail').getByText('シマエナガです。', { exact: false }).waitFor();
-  assert.equal(await offlinePage.locator('#tutorialWelcomeBird').isVisible(), true);
-  for(let step=2;step<=4;step++){
-   await offlinePage.locator('#tutorialNext').click();
-   for(const width of [320,390]){
-    await offlinePage.setViewportSize({width,height:844});
-    const detail=await offlinePage.locator('#tutorialDetail').evaluate(el=>{
-     const parent=getComputedStyle(el.parentElement);
-     return {
-      mascotLayout:el.classList.contains('page-intro-line'),
-      width:el.getBoundingClientRect().width,
-      available:el.parentElement.clientWidth-parseFloat(parent.paddingLeft)-parseFloat(parent.paddingRight),
-      height:el.getBoundingClientRect().height
-     };
-    });
-    assert.equal(detail.mascotLayout,false);
-    assert.ok(detail.width>=detail.available-2,JSON.stringify(detail));
-    assert.ok(detail.height<240,JSON.stringify(detail));
-   }
+  await offlinePage.locator('#tutorialTitle').getByText('さっそく、ひとつ始めましょう。',{exact:true}).waitFor();
+  for(const width of [320,390]){
+   await offlinePage.setViewportSize({width,height:844});
+   assert.equal(await offlinePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+   const sizes=await offlinePage.locator('#tutorialDetail').evaluate(el=>({width:el.getBoundingClientRect().width,available:el.parentElement.clientWidth-parseFloat(getComputedStyle(el.parentElement).paddingLeft)-parseFloat(getComputedStyle(el.parentElement).paddingRight)}));
+   assert(sizes.width>=sizes.available-2,JSON.stringify(sizes));
   }
   await offlinePage.locator('#tutorialBack').click();
-  await offlinePage.locator('#tutorialBack').click();
-  await offlinePage.locator('#tutorialBack').click();
-  assert.equal(await offlinePage.locator('#tutorialDetail').evaluate(el=>el.classList.contains('page-intro-line')),true);
+  await offlinePage.locator('#tutorialTitle').getByText('ととのえ防災を始めてくれてありがとう！',{exact:true}).waitFor();
   await offlinePage.locator('#tutorialNext').click();
-  assert.equal(await offlinePage.locator('#tutorialDetail').evaluate(el=>el.classList.contains('page-intro-line')),false);
-  console.log('PASS: tutorial detail uses full width after mascot introduction at 320px and 390px, including back navigation');
+  console.log('PASS: only the two retained tutorial screens fit 320/390px and can be replayed offline');
 
   await offlinePage.locator('#tutorialDialog[open]').getByRole('button', { name: '災害時モードをすぐ開く' }).click();
   await offlinePage.locator('#emergency').waitFor();

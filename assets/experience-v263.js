@@ -1637,5 +1637,5 @@
  });
  if(wantsCollection&&activePage==='more'&&!document.querySelector('dialog[open]'))openCollection(focus);
  if(entryUrl.searchParams.get('share')==='1'&&!document.querySelector('dialog[open]'))openShare();
- if(entryUrl.searchParams.get('guide')==='1'){tutorialPendingPage=targetPage;tutorialState={...tutorialState,step:0};openTutorial()}else if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>window.totoStories?window.totoStories.startSetup(startSetup):startSetup(),{once:true});else if(window.totoStories)window.totoStories.startSetup(startSetup);else startSetup();
+ if(entryUrl.searchParams.get('guide')==='1'){tutorialPendingPage=targetPage;tutorialState={...tutorialState,step:0};openTutorial(true)}else if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>window.totoStories?window.totoStories.startSetup(startSetup):startSetup(),{once:true});else if(window.totoStories)window.totoStories.startSetup(startSetup);else startSetup();
 })();
