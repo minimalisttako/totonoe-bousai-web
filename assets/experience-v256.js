@@ -300,12 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v255\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v256\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
- updates.append(element('h3','v255　2026年11月25日'),element('p','機能の「？」から小さな解説ヘルプを開けるようにし、学ぶに同じ解説の一覧と検索をまとめました。'));
+ updates.append(element('h3','v256　2026年11月26日'),element('p','各機能を本＋解説ボタンに統一し、各ページ・入力欄の初心者向け解説を増やしました。学ぶではカテゴリとキーワードで探せます。'));
  updates.append(element('h3','v249　2026年11月25日'),element('p','食品・飲料水は期限未入力でも必要量と比較し、ホームから期限の入力をご案内します。'));
  updates.append(element('h3','v248　2026年11月25日'),element('p','備蓄の編集欄が細くなり、文字や数字が読みにくくなる表示を修正しました。'));
  updates.append(element('h3','v247　2026年11月25日'),element('p','トロフィーとバッジをタップすると、獲得日と関連ページへの案内が開きます。'));
@@ -1009,13 +1009,118 @@
  ['health','薬・健康管理',['普段使う薬やお薬手帳は、いつもの治療や薬の情報を伝えるための備えです。眼鏡や補聴器など、自分の生活に必要な物も一緒に確認しましょう。','薬の量や保管方法は、医師・薬剤師と確認して備えましょう。']],
  ['waterFoodToilet','水・食料・トイレ',['ライフラインが止まったときに、自分や家族の生活を続けるための備えです。飲み水、食べ慣れた食料、水を流さず使える携帯トイレを確認しましょう。','備蓄目安の計算で人数と日数を確認し、手持ちの数量を登録します。トイレの必要性は「なぜ非常用トイレが必要？」で詳しく読めます。']],
  ['power','停電への備え',['暗い中でも周囲を確認し、連絡や情報収集を続けるための備えです。懐中電灯・予備電池・携帯電話の充電手段を確認しましょう。','家族が分かる場所に置き、普段から点灯・充電できるか確認しておきましょう。']],
- ['family','家族やペットに合わせて',['家族によって必要な物は異なります。乳幼児、介護、アレルギー、ペットなど、自分の家庭で欠かせない物を確認するための欄です。','普段使っている物を出発点に、家族の事情に合う備えを考えましょう。']]
+ ['familySupplies','家族やペットに合わせて',['家族によって必要な物は異なります。乳幼児、介護、アレルギー、ペットなど、自分の家庭で欠かせない物を確認するための欄です。','普段使っている物を出発点に、家族の事情に合う備えを考えましょう。']]
  ];
  for(const [id,title,text] of essentials)addHelp(id,title,'備蓄の理由',text);
  addHelp('inventory','備蓄の登録・数量・期限','機能の使い方',['家にある備蓄を登録し、数量・期限・置き場所を確認する機能です。使ったら数量を減らし、不足した分を補充します。','食品と飲用水は期限が未入力でも数量に数えます。ただし期限の点検はできないため、分かるものから登録しましょう。分類や食数が未設定だと必要量の計算に反映できない場合があります。']);
  addHelp('calculator','わが家の備蓄目安の計算','機能の使い方',['人数・備える日数・トイレの使用回数を入力して、家庭の備蓄目安を確認します。トイレの回数は、家族の実際の使い方に合わせます。','目安と登録済みの備蓄を比べて不足を確認します。一般的な目安が全員に合うとは限らないので、家族の事情に合わせて考えましょう。']);
- addHelp('safety','住まいの安全点検','機能の使い方',['寝る場所、出口までの通り道、家具などを自己確認する機能です。まだ分からない場所は未確認のまま残せます。','備蓄管理の前に、優先する安全項目を確認します。チェックを終えるだけで災害時の安全が保証されるわけではありません。']);
- addHelp('tree','防災の木・トロフィー・バッジ','機能の使い方',['記録した行動や達成に応じて、防災の木が種・芽・若木・大きな木へ成長します。大きな木では仲間のペアやトリオもランダムに登場します。','トロフィーと片付け・備蓄のバッジは「その他」で確認できます。安全性の点数ではなく、取り組んだ記録です。']);
+ addHelp('safety','住まいの安全点検','機能の使い方',['寝る場所、出口までの通り道、家具などを自己確認する機能です。未確認はまだ調べていない、要対策は直すことがある、対策済みは実際に確認・対処した、該当なしは自宅にはその項目がないという意味です。','備蓄管理の前に、優先する安全項目を確認します。チェックを終えるだけで災害時の安全が保証されるわけではありません。']);
+ addHelp('tree','防災の木・トロフィー・バッジ','機能の使い方',['トロフィーの獲得が進むと、種・芽・若木・大きな木へ成長します。1個で芽、3個で若木、6個で大きな木になります。大きな木では仲間のペアやトリオもランダムに登場します。','トロフィーと片付け・備蓄のバッジは「その他」で確認できます。安全性の点数ではなく、取り組んだ記録です。']);
+ const beginnerHelpCategories=['はじめに・毎日の使い方','片付け・掃除','備蓄・持ち出し','住まいの安全・避難','家族・暮らし','学ぶ・訓練','天気・地域','記録・共有','設定・データ保護'];
+ const categoryAliases={'片付けの理由':'片付け・掃除','場所ごとの片付け':'片付け・掃除','備蓄の理由':'備蓄・持ち出し','機能の使い方':'はじめに・毎日の使い方'};
+ for(const topic of helpTopics.values())topic.category=categoryAliases[topic.category]||topic.category;
+ for(const [id,category] of [['inventory','備蓄・持ち出し'],['calculator','備蓄・持ち出し'],['safety','住まいの安全・避難'],['tree','記録・共有']])helpTopics.get(id).category=category;
+ helpGroups.splice(0,helpGroups.length,...beginnerHelpCategories);
+ const expandedHelp=[
+ ['home','ホームから何を始める？',0,'最初に確認したいことと、次に取り組む作業を探す入口です。','「今日やること」に出ている項目を1つ開きます。全部を一度に終える必要はありません。分からない機能は、その横の「本＋解説」から読めます。'],
+ ['learn','学ぶページ・解説の探し方',0,'機能の使い方や備える理由を、カテゴリ別に確認するページです。','カテゴリを開くか、場所や言葉で検索します。一覧と各機能の「本＋解説」は同じ説明を開きます。'],
+ ['more','その他のメニュー',0,'家族、避難計画、訓練、設定など、普段の作業以外の入口をまとめています。','目的に合う見出しから開きます。よく使うページは、お気に入りに登録すると探しやすくなります。'],
+ ['priorities','今日の優先チェック・次にやること',0,'まだ確認していないことや記録から、次の作業を探すための案内です。','表示された項目を開いて、実際に確認してから記録します。表示順は取り組む目安で、現場の危険や緊急性を自動判定するものではありません。'],
+ ['featureSearch','機能を名前から探す',0,'どのメニューにあるか分からない機能を検索する入口です。','「トイレ」「避難」「写真」など、やりたいことの言葉を入れます。解説の本文を調べたいときは、学ぶの「解説を探す」を使います。'],
+ ['start','初めて使うとき・機能の解放',0,'地域や自宅の危険を確認し、住まいの安全点検から備えを進めます。','鍵の付いた機能は、ボタンの案内に従って先に必要な確認をします。説明を読んだだけでは安全点検や作業の完了にはなりません。'],
+ ['sorting','整理：残す物を選ぶ',1,'整理は、使う物と使っていない物を見直し、必要な物を選ぶことです。','床や作業台の物を確認し、使う・迷う・手放す候補に分けます。大切な物や家族の物を、急いで捨てる必要はありません。'],
+ ['organizing','整頓・収納：使う場所と戻す場所',1,'整頓は、必要な物を使いやすい場所に置くことです。収納は、出し入れしやすく収めることです。','よく使う場所の近くに定位置を作り、重い物の落下や通路をふさぐ配置に注意します。置き場所を決めたら、家族にも伝えましょう。'],
+ ['tidyChecklist','片付けの4項目と完了数',1,'場所ごとに小さな作業を確認するチェックリストです。0/4は、4項目のうち0項目を終えたという意味です。','場所名を開き、実際に終えた項目にチェックします。置き場所を決める項目は、先に整理の2項目を終えると選べます。作業と関連する住まいの安全点検は別の記録です。'],
+ ['tidyAdd','片付ける場所を追加する',1,'一覧にない部屋や収納も、自分で名前を付けて記録できます。','場所を選び、自由な名前が必要なときは入力して追加します。作業メモや写真は、必要なときだけ残せます。'],
+ ['tidyNotes','片付けの作業メモ・次の一歩',1,'どこで困っているか、次に何をするかを忘れないためのメモです。','「床の箱を棚へ戻す」のように、短く具体的に書きます。メモを書くことと、チェック項目の完了は別です。'],
+ ['tidyPhotos','Before／After写真とは？',1,'Beforeは片付ける前、Afterは片付けた後の写真です。同じ場所の変化を見返せます。','写真欄を開いて、前後の写真を選びます。顔・住所・書類などが写っていないか、保存や共有の前に確認しましょう。'],
+ ['tidyExport','片付け記録を文章で控える',7,'場所や作業の記録を、コピーできる文章にする機能です。','表示内容を確認してメモなどへ控えます。文章の控えは、写真も含めて復元するバックアップファイルとは異なります。'],
+ ['clean','掃除の実践・片付けとの違い',1,'片付けで置き場所を整えた後、床などを掃除して暮らしを保つための記録です。','終えた掃除にチェックします。繰り返す作業なので、設定した日数・時刻が来ると、次の掃除のためにチェックが解除されます。'],
+ ['cleanSchedule','掃除チェックの解除日・時刻',1,'次に掃除する目安を、自分の生活に合わせて決める設定です。','何日後に解除するかと時刻を設定して保存します。解除は次の作業を示すためのもので、前に掃除した事実を否定する意味ではありません。'],
+ ['minimalism','ミニマリストのススメ',4,'作者がおすすめする暮らし方の一つを紹介しています。持ち物を減らすこと自体が目的ではありません。','どんな暮らしにしたいかを考え、使う物・好きな物・必要な備えを残します。家族の考えや生活に合わせ、無理に取り入れる必要はありません。'],
+ ['album','成長アルバム・達成記録',7,'片付けの写真や取り組んだ変化を、まとめて見返す機能です。','表示を絞り込んで写真を確認します。写真を見返すことと、他の人に送ることは別です。共有するときは内容を選んで確認します。'],
+ ['stock','備蓄とは？ 持ち出しとの違い',2,'備蓄は、自宅などで生活を続けるために用意しておく水・食料・日用品です。','まず手元にある物と保管場所を確認します。持って避難する荷物は重さや持てる量も考えて、防災リュックなどの欄で別に確認します。'],
+ ['supplyAdd','備蓄品を登録・編集する',2,'手元にある物を記録して、数・期限・保管場所を把握する機能です。','品名と数量を入れ、分かる分類・単位・期限を追加して保存します。編集後も保存を確認し、使った分を数量から減らします。'],
+ ['quantity','数量：いくつ持っているか',2,'数量は、今ある本数・個数・袋数などです。1箱なら「1箱」のように、単位とセットで記録します。','水6本を1本ずつ数えるなら数量6・単位本にします。携帯トイレは、使える回数が計算に合うよう内容を確認して登録しましょう。'],
+ ['unit','単位：本・個・袋・回など',2,'単位は、数量が何を数えているかを表します。箱と本を混ぜると、残量を取り違える原因になります。','自分が使ったときに減らしやすい単位を選びます。計算に使う水の容量や食品の食数は、必要な欄で別に設定します。'],
+ ['category','備蓄の分類と必要量への反映',2,'飲用水・食料・トイレなど、何の備えかを区別する設定です。','品名だけでは用途を正しく判断できないことがあるため、必要量と比べたい品は分類を確認します。分類が不明なままの品は、一覧と計算結果を見比べて見直しましょう。'],
+ ['waterCapacity','水1本・1容器の容量とL',2,'L（リットル）は水の量を表す単位です。数量ではなく、1本や1容器に入っている容量を入力します。','例：2Lの水が6本なら、数量6・1本の容量2Lです。500mLは0.5Lです。生活用の水と、飲むための水は分けて確認します。'],
+ ['foodServings','数量1単位あたりの食数',2,'1個・1袋・1箱が、何食分として数えられるかを表します。数量と掛け合わせて食料の量を見ます。','例：2食分入りが3袋なら、数量3・1袋あたり2食分です。1つのお菓子をそのまま1食と決めず、中身や食べ方を確認しましょう。'],
+ ['expiry','商品の期限・未入力・期限切れ',2,'商品の賞味期限・使用期限などを、パッケージで確認して記録する欄です。点検する日とは別です。','食品・飲用水は期限が空欄でも数量に数えますが、期限の確認が必要な品として案内します。期限切れと表示されても安全性を自動判定する機能ではありません。'],
+ ['stockLocation','保管場所を記録する',2,'必要なときに見つけられるよう、物を置いた場所を残します。','「台所の下段」「玄関の棚」など、自分と家族が分かる名前にします。場所を移したら記録も直しましょう。'],
+ ['stockInspection','商品の期限と点検予定日の違い',2,'最後に点検した日は、実際に中身や数量を確かめた日です。次の点検予定日は、次に見直すための目安です。','点検したら数量・期限・保管場所を確認します。点検予定日を変えても、商品の賞味・使用期限が延びるわけではありません。'],
+ ['inspectionInterval','点検を繰り返す間隔',2,'定期的に残量や状態を見直すため、次に確認する間隔を決めます。','生活に合う間隔を選び、予定日を確認して保存します。予定が来たら実物を見て、記録も更新しましょう。'],
+ ['stockTarget','目標数量・不足数',2,'目標数量は、この品をいくつ持っておきたいかという自分の目安です。今ある数量とは別です。','同じ単位で目標と手持ちを比べます。目標を入れただけでは買ったことにはならず、補充後に数量も更新します。'],
+ ['useStock','備蓄を使う・先に使う品',2,'普段から備蓄を使い、減った分を補うための機能です。','対象の品を確認して使う数量を減らします。「先に使う」は登録した期限などからの案内です。実物の状態や商品の表示も確認しましょう。'],
+ ['shopping','補充リスト・買い物メモ',2,'不足している物や買い足したい物を、買い物中に見返すためのメモです。','内容と単位を確認して持ち出します。メモに載せることや共有することだけでは、備蓄の数量は増えません。買って補充した後に更新します。'],
+ ['filters','検索・絞り込みの使い方',0,'たくさんの記録の中から、見たい物だけを表示する機能です。','言葉を入れるか表示条件を選びます。見つからないときは検索欄と条件を戻して確認します。絞り込んでも元の記録は削除されません。'],
+ ['pouch','0次持ち出し・防災ポーチとは？',2,'0次持ち出しは、普段から外出時に持ち歩く備えという意味で使っています。','使い慣れた小型ライトや必要な用品など、外出先と持ち運べる量に合わせます。自宅に置く備蓄や、避難時に持つリュックとは分けて考えましょう。'],
+ ['pouchChecks','持ち物のチェック・点検日',2,'持ち物リストで、今持っている物と見直す日を記録します。','実際に入っているか、電池や期限に問題がないか確認してチェックします。リストのチェックだけで、中身が自動で補充されるわけではありません。'],
+ ['goBag','1次持ち出し・防災リュックとは？',2,'自宅から避難するときに、すぐ持ち出すための荷物という意味で使っています。','自分や家族に必要な物を選び、背負って持ち運べるか試します。自宅用の備蓄を全部詰め込む必要はありません。鍵の表示がある場合は案内された準備を先に確認します。'],
+ ['safetyBedroom','寝る場所・家具の安全点検',3,'寝る場所へ家具が倒れたり物が落ちたりしないか、危険を確認する欄です。','実際の配置を見て、未確認・要対策・対策済み・該当なしを選びます。分からない状態を、完了にするためだけに対策済みへ変えないようにしましょう。'],
+ ['safetyRoute','避難経路・動線とは？',3,'動線は、人が通る道筋です。ここでは寝る場所や部屋から出口まで、安全に通れるかを確認します。','ドアの開閉、床の物、倒れると通路をふさぐ家具を見ます。屋外の経路は、自宅周辺の災害リスクも合わせて確認します。'],
+ ['hazard','ハザードマップとは？',3,'洪水・土砂災害・津波など、地域で想定される災害の危険を確認する地図です。','自治体などの地図で自宅や職場の場所を探し、凡例を見て災害の種類と避難先を確認します。色の有無だけで、あらゆる災害に対する安全が決まるわけではありません。'],
+ ['evacuation','マイ避難計画の作り方',3,'家族が、どこへ・どの道で・いつ・どう連絡して避難するかを、平常時に考えて保存する機能です。','地域の危険を確認してから、分かる項目を自分の言葉で書きます。保存は自治体への提出ではなく、家族で見返すための記録です。'],
+ ['hazardMemo','自宅周辺の災害リスクの書き方',3,'確認したハザードマップの内容を、避難計画に残す欄です。','例：「川の近くで浸水想定を確認」「裏手の斜面の区域を確認」のように書きます。まだ調べていない内容を、危険なしと決めつけないようにしましょう。'],
+ ['destination','避難先・安全な場所の選び方',3,'災害の種類や自宅の状況に応じて、向かう先を考える欄です。','自治体が示す場所と、家族が利用できる避難先を確認して記録します。地震・洪水・津波などで使える場所が異なることがあるため、名前だけでなく対象の災害も確かめます。'],
+ ['route','避難する経路と注意点',3,'避難先までの道と、途中で気をつける場所を残します。','地図だけでなく平常時に歩いて確認し、通れない場合の別の道も考えます。災害時は事前の経路にこだわらず、現場と自治体の最新の案内を確認します。'],
+ ['timing','避難を始めるタイミング',3,'移動にかかる時間や支援の必要性も含め、早めに行動するための約束を考えます。','自治体の避難情報や気象庁の情報をどこで見るか、家族で確認して書きます。アプリは現在地の危険や避難開始時刻を自動判定しません。'],
+ ['contacts','家族との連絡方法',3,'普段の連絡が使えない場合も考え、誰と何で連絡するかを決めます。','電話以外の方法や、離れて住む家族との確認方法も相談して記録します。端末を見られない場合に備え、必要な情報は紙などでも控えましょう。'],
+ ['meeting','連絡できない場合の集合・安否確認',3,'家族に連絡できないとき、どう安全を確かめ合うかを決める欄です。','集合場所や確認手順を相談します。危険な場所へ集合する約束にならないよう、災害の種類と移動の安全も考えましょう。'],
+ ['reviewPlan','避難計画の見直しと訓練',3,'引越しや家族の変化に合わせて、計画が今も使えるか見直します。','見直す日を決め、実際に道や連絡方法を試したら訓練・確認の記録に残します。予定を入れただけでは確認済みにはなりません。'],
+ ['emergency','災害時ページでできること',3,'事前に保存した確認項目や避難・家族の情報を、急ぐときに見返すページです。','平常時に記録を整えておきます。災害時はまず身の安全を確保し、最新の自治体・気象庁等の案内を確認してください。保存情報は現在の安全を保証しません。'],
+ ['emergencyMemo','緊急時情報をコピー・紙に控える',3,'端末や通信が使えないときにも見返せるよう、必要な情報を控えるための機能です。','含める情報を選び、コピー前に内容を確認します。家族・ペットの個別情報などは、渡す相手に必要な範囲だけにしましょう。'],
+ ['family','家族・ペットの防災カルテ',4,'一人ひとりに必要な用品、食事、移動の支援などを忘れないための記録です。','家族の種類と人数・頭数を確認し、必要な内容だけ書きます。表示名は、本名や住所を使わず区別できる名前でも構いません。'],
+ ['familyNumbers','人数・頭数・世帯人数の違い',4,'家族・ペットの登録数と、備蓄の計算に使う世帯人数は、それぞれの画面で確認します。','人とペットでは必要な備えが異なります。人数を変えた後は、計算欄の設定と表示される必要量も見直しましょう。'],
+ ['familyNeeds','家族ごとの食事・用品・支援',4,'乳幼児、介護、アレルギー、ペットなど、家庭ごとの事情を伝えやすくするメモです。','普段使う物や避難に必要な支援を書きます。薬や療養上の備えは、担当の医師・薬剤師等と相談して確認しましょう。'],
+ ['diagnosis','家庭別の防災弱点診断',4,'回答から、自分の家庭で見直したい備えを考える入口です。','実際の状態に近い選択肢で答え、結果から確認する項目を選びます。医学的な診断や、災害時の安全を保証する判定ではありません。'],
+ ['readiness','わが家の防災準備状況',4,'アプリの記録から、確認できたこと・まだ確認したいことを見返すページです。','表示された次の項目を開いて、実物や家族の状況を確かめます。進捗の数字だけで、家の安全性や必要な備えが完全に分かるわけではありません。'],
+ ['outage','停電・断水シミュレーター',4,'人数・日数・手持ちの備えから、生活を続ける準備を考えるための目安です。','想定する期間とトイレの回数・在庫を入れて結果を見ます。実際にいつ復旧するかや、停電が起きるかを予測する機能ではありません。'],
+ ['seasonal','季節別の防災点検',4,'暑さ・寒さなど、季節や状況で変わる備えを見直すチェックです。','対象の季節を選び、実際に確認した項目を記録します。季節や家族の状態が変わったら、前に確認した内容も見直しましょう。'],
+ ['moving','引越し前後の防災確認',4,'新しい住まい・地域に合わせて、危険と備えを見直すための案内です。','転居前、荷造り、入居直後、地域の備えの順で確認します。地域を変えたら、天気の設定と避難計画も新しい場所の内容に直しましょう。'],
+ ['training','訓練・実践記録',5,'実際に歩いた・使った・確認した経験と、次に直すことを残します。','実施日と内容を選び、気づいたことを短く書いて保存します。読むだけの学習と、実際に行った確認は分けて振り返ると役立ちます。'],
+ ['quiz','アプリ内の基礎例題',5,'防災の知識を、選択問題と解説で確認する学習機能です。','分野と問題数を選んで解き、正解だけでなく理由も読みます。公式試験そのものや合格を保証する機能ではありません。'],
+ ['quizReview','間違えた問題・学習結果の見直し',5,'答えを覚えるだけでなく、分からなかった理由を確認するための機能です。','結果や解説から見直し、必要ならもう一度解きます。解説の検索では、気になる言葉から問題を探せます。'],
+ ['exam','防災士試験の動画・音声学習',5,'作者の例題動画や音声など、学習を進めるための入口です。','自分に合う形式を選んで学びます。外部動画は通信が必要です。試験の最新情報は、案内されている公式の情報で確認してください。'],
+ ['videos','実例動画の見方',5,'作者が実際の備えや暮らしを紹介する動画への入口です。','動画は考え方や使い方の参考にして、自分の家族・住まいに合う部分を取り入れます。再生は外部サイトで行うため、通信が必要です。'],
+ ['weather','地域の天気予報の見方',6,'設定した地域の天気や気温を確認する機能です。','対象の地域・地点と取得時刻を確かめて読みます。取得に失敗した場合や古い表示の場合は、気象庁等で最新情報を確認します。'],
+ ['weatherRegion','天気の地域・気温地点・市区町村',6,'予報の地域、気温を表示する地点、警報等の市区町村は、対象範囲が異なることがあります。','自宅など確認したい場所に合うものを選び、表示される地名も確かめます。引越しや別の地域を見る場合は、設定を見直しましょう。'],
+ ['warnings','警報・注意報と避難情報',6,'気象庁の防災気象情報と、自治体が発令する避難情報は、発表元と役割が異なります。','対象地域・発表時刻・情報の内容を確認し、自治体の避難情報や気象庁の最新案内も確認します。アプリの表示だけで避難の要否を決めないようにしましょう。'],
+ ['weatherStale','取得時刻・更新・通信エラー',6,'取得時刻は、アプリが情報を取りに行った時刻の目安です。今この瞬間の状態と同じとは限りません。','通信できないと最新情報に更新できません。古い情報や取得できない状態を、危険がないという意味に受け取らないようにしましょう。'],
+ ['events','地域の防災イベントを探す',6,'地域や月などの条件から、防災に関する体験や学習の情報を探す入口です。','地域と内容を選び、開催日時・対象・申込みの要否は主催者の最新案内で確認します。外部の情報を見るには通信が必要です。'],
+ ['reviews','備蓄レビュー・みんなの投稿',7,'使った人の感想を読み、自分の備えを考える参考にする機能です。','商品や分類から探します。感想は個人の体験で、すべての人に同じ効果や使いやすさがあるとは限りません。'],
+ ['reviewWrite','使った備蓄のレビューを書く',7,'自分が実際に使って分かったことを、商品名・評価・感想で残します。','どんな場面で使ったか、良かった点と気をつけたい点を書き、保存先や公開の操作を確認します。使っていない商品の体験を作って書かないようにしましょう。'],
+ ['reviewPhotos','レビューの写真と個人情報',7,'写真を付けると、使い方や大きさを伝えやすくなります。','顔、宛名、レシート、位置が分かる物などが写っていないか確認します。この端末の保存と、他の人への公開は別の操作です。'],
+ ['reviewPublic','この端末のレビュー・公開レビュー',7,'この端末に残す記録と、他の人が読める公開投稿は別です。','公開する場合はログインや投稿の案内を確認し、公開前に内容を見直します。端末のバックアップと公開先のアカウント管理も別に確認しましょう。'],
+ ['account','公開投稿用のアカウント・削除',8,'公開レビューなど、ログインが必要な機能で使うアカウントです。','ログアウトとアカウント削除は異なります。削除前に、確認画面で消える情報と残る端末の記録を読み、必要な控えを保存してください。'],
+ ['favorites','お気に入り・星ボタン',0,'よく使うページを、すぐ開けるように登録する機能です。','星のボタンから現在のページを登録・解除し、一覧から開きます。登録できるのは8件までです。不要なページを外すと別のページを追加できます。'],
+ ['share','できたことを共有する',7,'取り組んだ内容を、相手に伝える文章などにまとめる機能です。','含める項目を選び、プレビューを確認してからコピーや共有をします。ボタンを押しただけで、すべての個人メモを公開する仕組みではありません。'],
+ ['sharePrivacy','写真・家族メモを含めるとき',7,'家族の事情や家の写真には、他の人に見せたくない情報が含まれることがあります。','誰に何を伝えるかを決め、共有前の画面で内容を確認します。相手に渡した後の保存や転送までは、このアプリでは取り消せません。'],
+ ['backup','バックアップ：記録の控えを作る',8,'端末内の記録が消えたり機種変更したりしたときに備え、復元に使うファイルを保存します。','今の端末で書き出し、保存先にファイルがあることを確かめます。バックアップには個人のメモや写真が含まれる場合があるため、保管先にも注意しましょう。'],
+ ['restore','復元：控えから記録を戻す',8,'前に保存したバックアップを読み込み、記録を戻す操作です。','現在の記録も先にバックアップし、読み込むファイルと表示される確認内容をよく見ます。今の記録がどう変わるかを確認してから実行しましょう。'],
+ ['backupTypes','アプリ全体・備蓄だけ・レビューの控え',8,'書き出す方法によって、含まれる記録の範囲が異なります。','JSON（ジェイソン）は、アプリが記録を読み戻すためのデータ形式です。中身を編集せず保存します。機種変更ではアプリ全体のバックアップを確認し、備蓄だけの控えや文章と、含まれる範囲を区別しましょう。'],
+ ['offline','ホーム画面への追加・オフライン準備',8,'一度読み込んだアプリと保存した記録を、通信がないときも使えるよう準備します。','通信できるときに案内に従って準備し、機内モードなどで起動を確認します。天気の更新、公開レビュー、外部リンク・動画は通信が必要です。'],
+ ['deviceStorage','記録はどこに保存される？',8,'片付けや備蓄などの多くの記録は、使っている端末・ブラウザの中に保存します。','別の端末やブラウザに自動で同じ記録が出るとは限りません。データ消去や故障に備え、定期的にアプリ全体のバックアップを保存しましょう。'],
+ ['saveFailure','保存できない・記録が見つからない',8,'保存の失敗や、いつもと違う端末・ブラウザの利用などが考えられます。','画面の案内と保存状況を確認します。慌ててデータを消したり初期化したりせず、入力内容を控え、必要なら不具合報告用の情報を確認して相談しましょう。'],
+ ['deleteRestore','削除・取り消しの違い',8,'削除は記録を取り除く操作です。取り消しの案内が出る場合は、そこから戻せます。','何を消すかを確認してから操作します。取り消せる範囲や期間は案内に従い、すべての削除が後で戻せるとは考えないようにしましょう。'],
+ ['display','簡易表示・表示設定',8,'大きなキャラクターのイラストや余白など、見え方を自分に合わせる設定です。','通常表示と簡易表示を切り替えて使いやすい方を選びます。記録の数や作業の完了とは別の設定です。'],
+ ['speech','キャラクターのコメント表示',8,'キャラクターのひとことを、自動交代・固定・非表示から選べます。','自動交代では約15秒ごとに変わります。読みやすさに合わせて変更します。コメントは励ましや案内で、最新の災害情報ではありません。'],
+ ['reminders','期限・点検のお知らせ',8,'記録した期限や予定日から、見直したい項目を一覧で確認する機能です。','お知らせを表示する設定と、各品の期限・点検日を確認します。表示を有効にしただけで、端末へ必ずプッシュ通知が届くという意味ではありません。'],
+ ['calendar','カレンダーへ予定を書き出す',8,'期限や点検日などを、カレンダーで見返すためのファイルにする機能です。ICS（アイシーエス）は、予定をカレンダーへ取り込むための形式です。','書き出した予定をカレンダー側で読み込み、日付や通知を確認します。後からアプリの記録を直しても、取り込んだ予定が自動で直るとは限りません。'],
+ ['feedback','感想・不具合を伝える',8,'使って困ったことや感想を、作者へ相談する入口です。','ページ名・起きたこと・再現する操作を短く書きます。メール作成画面が開く方式では、内容を確認し、自分で送信して初めて相手に届きます。'],
+ ['support','不具合報告用の情報',8,'動作状況などを、相談時に説明しやすくするための情報です。','コピー前の画面で内容を確認し、必要なものを相談に添えます。私的な記録をまとめて送る前に、個人情報が含まれていないか確かめましょう。'],
+ ['privacy','プライバシー・データ保護',8,'端末への保存、外部サイト、公開投稿など、情報の扱いを確認する案内です。','写真や家族の情報を残す前、共有する前に、保存先と公開範囲を確かめます。詳しい方針はプライバシーポリシーから確認できます。'],
+ ['lecture','講座・相談の案内',5,'作者の講座やワークシートを使った学びについて、内容や相談先を確認する入口です。','開催条件や料金の案内を読み、希望する内容を相談します。アプリのチェックを終えるために、講座への申込みが必要なわけではありません。'],
+ ['worksheet','ワークシート・PDFの見本',5,'紙に書きながら考えたり、講座や家庭で使い方を確認したりするための資料です。','見本を開いて内容を確認します。PDFなどの外部資料を開くときは、通信や保存先も確認しましょう。'],
+ ['releaseNews','更新内容・公開状況',8,'アプリの変更点や、利用できる範囲を確認する案内です。','更新後は必要な記録があるか確認します。開発中・試作中と書かれた機能は、その画面の案内も確認してから使いましょう。']
+ ];
+ expandedHelp.push(['recommendations','おすすめ欄・PR・外部ショップ',2,'作者が紹介する備えの候補をまとめた欄です。PRは広告を含むことを示し、リンク経由の購入で運営者に報酬が入る場合があります。','購入はアプリの課題の条件ではありません。手持ちの物や家庭に合うかを確認し、価格・在庫・送料・商品内容は外部ショップの最新表示で確かめましょう。']);
+ expandedHelp.push(['evacuationPlaces','避難場所と避難所の違い',3,'指定緊急避難場所は、災害の危険から命を守るために緊急に避難する場所です。指定避難所は、避難した人が一定期間生活するための施設です。','同じ施設が両方に指定されることもあります。近いという理由だけで選ばず、対象の災害と自治体の最新の案内を確認して、避難計画に残しましょう。']);
+ for(const [id,title,index,why,how] of expandedHelp)addHelp(id,title,beginnerHelpCategories[index],[why,how]);
+ for(const [id,category] of [['stock','備蓄・持ち出し']])helpTopics.get(id).category=category;
+ for(const [href,title] of [['https://www.jma.go.jp/jma/kishou/know/bosai/alertlevel.html','気象庁：防災気象情報と警戒レベル'],['https://www.bousai.go.jp/oukyu/hinanjouhou/r3_hinanjouhou_guideline/','防災情報：避難情報に関するガイドライン'],['https://www.bousai.go.jp/taisaku/hinanbasyo.html','防災情報：避難場所と避難所']]){const li=el('li'),a=el('a',title+' ↗');a.href=href;a.target='_blank';a.rel='noopener noreferrer';li.append(a);helpSources.querySelector('ul').append(li)}
+ helpSources.querySelector('p').textContent='防災の説明は自治体・政府・気象庁、商品情報はメーカーの公式情報を参考にしています。作者の選定理由やアプリの操作説明と分けて読めます。2026年11月確認。';
+
  const contextHelp=el('dialog');contextHelp.id='contextHelpDialog';contextHelp.setAttribute('aria-labelledby','contextHelpTitle');
  const helpBar=el('div',undefined,'context-help-bar'),helpTitle=el('h2');helpTitle.id='contextHelpTitle';
  const helpClose=action('×',()=>contextHelp.close());helpClose.id='contextHelpClose';helpClose.setAttribute('aria-label','解説ヘルプを閉じる');
@@ -1024,7 +1129,7 @@
  function showContextHelp(id,trigger){
   let topic=helpTopics.get(id);if(!topic&&id.startsWith('room:')){const place=id.slice(5);topic={id,title:place+'で気をつけたいこと',category:'場所ごとの片付け',body:()=>{const box=el('div');tidyReasonFor(place).forEach(t=>box.append(el('p',t)));return box}}}
   if(!topic)return;
-  if(document.querySelector('dialog[open]')&&!contextHelp.open)return;
+
   helpTrigger=trigger||document.activeElement;helpOrigin=activePage;helpTitle.textContent=topic.title;helpBody.replaceChildren(topic.body());
   helpBody.append(helpCopy(helpSources));
   const links=el('div',undefined,'context-help-actions');
@@ -1034,21 +1139,38 @@
  }
  window.totoOpenContextHelp=showContextHelp;
  contextHelp.addEventListener('close',()=>{if(helpOrigin===activePage&&helpTrigger?.isConnected)helpTrigger.focus({preventScroll:true})});
- function helpButton(id,title){const button=action('？',event=>{event.preventDefault();event.stopPropagation();showContextHelp(id,button)});button.className='context-help-button';button.setAttribute('aria-label',title+'の解説ヘルプ');return button}
- function attachHelp(heading,id){if(!heading)return;heading.classList.add('context-help-heading');heading.append(helpButton(id,helpTopics.get(id).title))}
+ function helpButton(id,title){const button=action('',event=>{event.preventDefault();event.stopPropagation();showContextHelp(id,button)});button.className='context-help-button';paintContextHelpButton(button);button.dataset.contextHelpTopic=id;button.setAttribute('aria-label',title+'の解説ヘルプ');button.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' ')event.stopPropagation()});return button}
+ let helpLabelSequence=0;
+ function attachHelp(heading,id){
+  if(!heading||!helpTopics.has(id)||heading.querySelector(':scope>.context-help-button')||heading.closest('#contextHelpDialog,#preparednessReasons'))return;
+  if(heading.tagName==='LABEL'){
+   heading.classList.add('context-help-label');
+   const text=heading.querySelector(':scope>.context-help-label-text')||el('span',undefined,'context-help-label-text');
+   for(const node of [...heading.childNodes])if(node.nodeType===3)text.append(node);
+   if(text.textContent.trim()){
+    heading.prepend(text);if(!text.id)text.id=heading.dataset.contextHelpLabel||('context-help-label-'+(++helpLabelSequence));heading.dataset.contextHelpLabel=text.id;
+    const control=heading.htmlFor?$(heading.htmlFor):heading.querySelector('input,select,textarea');
+    if(control&&!control.hasAttribute('aria-label')&&!control.hasAttribute('aria-labelledby'))control.setAttribute('aria-labelledby',text.id);
+   }
+  }else {if(/^H[23]$/.test(heading.tagName)&&!heading.hasAttribute('aria-label'))heading.setAttribute('aria-label',helpText(heading));heading.classList.add('context-help-heading');}
+  heading.append(helpButton(id,helpTopics.get(id).title));
+ }
  // Replace the long explanation panel with a searchable, grouped catalogue.
- reasons.replaceChildren(el('h2','解説ヘルプ'),el('p','各機能の「？」と同じ説明を、ここからまとめて読めます。','notice'));
+ reasons.replaceChildren(el('h2','解説ヘルプ'),el('p','各機能の「本＋解説」と同じ説明をまとめています。カテゴリを開くか、言葉で検索してください。','notice'));
  const searchLabel=el('label','解説を探す');searchLabel.htmlFor='contextHelpSearch';const helpSearch=el('input');helpSearch.id='contextHelpSearch';helpSearch.className='field';helpSearch.type='search';helpSearch.placeholder='場所・備蓄・使い方で検索';
  const helpList=el('div'),helpEmpty=el('p','該当する解説がありません。別の言葉で探してください。','notice');helpEmpty.hidden=true;reasons.append(searchLabel,helpSearch,helpList,helpEmpty);
- function renderHelpIndex(){const query=helpSearch.value.trim().toLocaleLowerCase('ja-JP');helpList.replaceChildren();let count=0;
-  for(const category of helpGroups){const topics=[...helpTopics.values()].filter(t=>t.category===category&&(!query||(t.title+' '+t.body().textContent).toLocaleLowerCase('ja-JP').includes(query)));if(!topics.length)continue;
-   const section=el('section',undefined,'help-index-group');section.append(el('h3',category));for(const topic of topics){const button=action(topic.title+'  ›',()=>showContextHelp(topic.id,button));button.className='help-index-entry';button.dataset.helpTopic=topic.id;section.append(button);count++}helpList.append(section);
-  }helpEmpty.hidden=count!==0;
+ const categoryLabel=el('label','カテゴリで探す');categoryLabel.htmlFor='contextHelpCategory';const helpCategory=el('select');helpCategory.id='contextHelpCategory';helpCategory.className='field';
+ const allCategories=el('option','すべてのカテゴリ');allCategories.value='';helpCategory.append(allCategories);for(const name of helpGroups){const option=el('option',name);option.value=name;helpCategory.append(option)}
+ const helpCount=el('p',undefined,'notice');helpCount.id='contextHelpCount';helpCount.setAttribute('role','status');reasons.insertBefore(categoryLabel,searchLabel);reasons.insertBefore(helpCategory,searchLabel);reasons.insertBefore(helpCount,helpList);
+ function renderHelpIndex(){const query=helpSearch.value.trim().toLocaleLowerCase('ja-JP'),selected=helpCategory.value;helpList.replaceChildren();let count=0;
+  for(const category of helpGroups){if(selected&&selected!==category)continue;const topics=[...helpTopics.values()].filter(t=>t.category===category&&(!query||(t.title+' '+t.body().textContent).toLocaleLowerCase('ja-JP').includes(query)));if(!topics.length)continue;
+   const section=el('details',undefined,'help-index-group');section.dataset.category=category;section.open=!!(query||selected);section.append(el('summary',category+'（'+topics.length+'件）'));for(const topic of topics){const button=action(topic.title+'  ›',()=>showContextHelp(topic.id,button));button.className='help-index-entry';button.dataset.helpTopic=topic.id;section.append(button);count++}helpList.append(section);
+  }helpEmpty.hidden=count!==0;helpCount.textContent=query||selected?'該当する解説 '+count+'件':'解説 '+count+'件 ／ '+helpGroups.length+'カテゴリ';
  }
- helpSearch.addEventListener('input',renderHelpIndex);renderHelpIndex();
+ helpSearch.addEventListener('input',renderHelpIndex);helpCategory.addEventListener('change',renderHelpIndex);renderHelpIndex();
  document.querySelectorAll('.reason-entry').forEach(n=>n.remove());calculatorReason.remove();bosReason.remove();
  attachHelp($('tidy').querySelector('.refresh-title-row h2')||$('tidy').querySelector('h2'),'tidy');
- attachHelp($('stock').querySelector('h2'),'toilet');attachHelp($('stockCalculator').querySelector('h2'),'calculator');attachHelp($('supplyInventoryCard').querySelector('h2'),'inventory');
+ attachHelp($('stock').querySelector('h2'),'stock');attachHelp($('stockCalculator').querySelector('h2'),'calculator');attachHelp($('supplyInventoryCard').querySelector('h2'),'inventory');
  attachHelp($('homeSafety').querySelector('h2'),'safety');
  [...$('supplyEssentials').querySelectorAll('h3')].forEach((heading,index)=>{if(essentials[index])attachHelp(heading,essentials[index][0])});
  attachHelp($('supplyRecommendations').querySelector('.affiliate-product h3'),'bos');
@@ -1381,7 +1503,94 @@
   if(!hazardIsConfirmed()){setupActive=true;openHazardGate(false)}
  }
  renderBadges();restoreDrafts();syncHazardGate();
+ let customRoomHelpKey='';
+ function syncCustomRoomHelp(){
+  let places;try{places=[...new Set(readTidyPlaces().map(record=>record.place).filter(place=>place&&!Object.prototype.hasOwnProperty.call(tidyReasonTemplates,place)))].sort()}catch(e){return}
+  const key=JSON.stringify(places);if(key===customRoomHelpKey)return;customRoomHelpKey=key;
+  for(const [id,topic] of helpTopics)if(topic.customRoom)helpTopics.delete(id);
+  for(const place of places){const id='room:'+place;addHelp(id,place+'で気をつけたいこと','片付け・掃除',tidyReasonFor(place),()=>show('tidy'),'片付けノートを開く');helpTopics.get(id).customRoom=true}
+  renderHelpIndex();
+ }
+ const pageHelp={home:'home',learn:'learn',minimalistGuide:'minimalism',select:'sorting',set:'organizing',stock:'stock',supplies:'inventory',reviews:'reviews',diagnosis:'diagnosis',emergency:'emergency',evacuation:'evacuation',homeSafety:'safety',pouch:'pouch',goBag:'goBag',tidy:'tidyChecklist',seasonalCheck:'seasonal',readiness:'readiness',family:'family',training:'training',moving:'moving',outage:'outage',examStudy:'exam',weather:'weather',events:'events',practiceQuiz:'quiz',helpGuide:'deviceStorage',cleanPractice:'clean',tidyAlbum:'album',more:'more'};
+ const helpFieldTopics={
+  sqty:'quantity',sunit:'unit',scategory:'category',sfactor:'waterCapacity',smeasureFactor:'foodServings',sexp:'expiry',slocation:'stockLocation',schecked:'stockInspection',snextCheck:'stockInspection',scheckInterval:'inspectionInterval',starget:'stockTarget',
+  calcPeople:'familyNumbers',calcDays:'calculator',calcCustomDays:'calculator',calcToiletPerDay:'toilet',stockSetupPeople:'familyNumbers',stockSetupDays:'calculator',stockSetupToilet:'toilet',
+  evHazard:'hazardMemo',evPlace:'destination',evRoute:'route',evTiming:'timing',evContacts:'contacts',evMeeting:'meeting',evacuationNextReview:'reviewPlan',
+  familyType:'family',familyLabel:'family',familyCount:'familyNumbers',familySuppliesNote:'familyNeeds',familyFoodNote:'familyNeeds',familySupportNote:'familyNeeds',
+  tidyPlace:'tidyAdd',tidyCustom:'tidyAdd',tidyNext:'tidyNotes',tidyBefore:'tidyNotes',tidyExportText:'tidyExport',tidyAlbumFilter:'album',
+  cleanResetDays:'cleanSchedule',cleanResetTime:'cleanSchedule',seasonalType:'seasonal',drillDate:'training',drillType:'training',drillNote:'training',trainingHistoryFilter:'training',
+  outagePeople:'outage',outageDays:'outage',outageCustomDays:'outage',outageToilet:'outage',outageToiletStock:'outage',
+  weatherOffice:'weatherRegion',weatherArea:'weatherRegion',weatherStation:'weatherRegion',warningCity:'warnings',sharedRegionOffice:'weatherRegion',sharedRegionCity:'weatherRegion',
+  eventPrefecture:'events',eventCity:'events',eventKind:'events',eventMonth:'events',practiceTopic:'quiz',practiceGuideSearch:'quizReview',
+  reviewProduct:'reviewWrite',reviewCategory:'reviewWrite',reviewStars:'reviewWrite',reviewComment:'reviewWrite',reviewPhotoInput:'reviewPhotos',sharedReviewSearch:'reviews',reviewSearch:'reviews',
+  pouchName:'pouch',pouchNote:'pouch',pouchNextCheck:'pouchChecks',goBagName:'goBag',supplySearch:'filters',supplyFilter:'filters',tidySearch:'filters',tidyFilter:'filters',pouchSearch:'filters',pouchFilter:'filters',
+  fullBackupFile:'restore',allBackupText:'restore',backupText:'backupTypes',reviewBackupFile:'backupTypes',reviewBackupText:'backupTypes',supportReportText:'support',emergencyChecklistEdit:'emergency',replenishmentCopyText:'shopping',featureSearch:'featureSearch'
+ };
+ const helpHeadingRules={
+  home:[[/ハザード/,'hazard'],[/優先|やること|おすすめ/,'priorities'],[/天気|気温/,'weather'],[/警報|注意報/,'warnings'],[/お知らせ|期限|点検/,'reminders'],[/できたこと|防災の木/,'tree']],
+  learn:[[/試験|無料学習/,'exam'],[/4ステップ/,'tidyChecklist'],[/3ステップ/,'stock'],[/動画|夏と冬|在宅|離れる/,'videos']],
+  minimalistGuide:[[/理想|暮らし|ミニマリスト/,'minimalism'],[/整理|選ぶ|手放/,'sorting'],[/整頓|収納/,'organizing'],[/掃除/,'clean']],
+  supplies:[[/BOS/,'bos'],[/無印|Anker|おすすめ/,'recommendations'],[/補充|買い物/,'shopping'],[/使う・買い足す|先に使う/,'useStock'],[/アプリ全体|機種変更/,'backup'],[/レビュー.*バックアップ/,'backupTypes'],[/バックアップ|コピー・貼り付け/,'backupTypes'],[/復元/,'restore'],[/食料の内容量/,'foodServings'],[/備蓄目安|人数と日数/,'calculator'],[/飲料水の内訳/,'waterCapacity'],[/持ち出し/,'goBag'],[/備蓄を登録|品を登録/,'supplyAdd'],[/検索・絞り込み/,'filters'],[/保管場所・点検/,'stockInspection'],[/必要なもの/,'stock']],
+  tidy:[[/写真|Before|After/,'tidyPhotos'],[/メモ|作業|困りごと/,'tidyNotes'],[/新しい|場所を追加/,'tidyAdd'],[/文章|書き出す/,'tidyExport'],[/検索|絞り込み/,'filters'],[/動画|実例/,'videos'],[/削除/,'deleteRestore']],
+  reviews:[[/公開投稿とアカウント|ログイン/,'account'],[/端末のレビュー/,'reviewPublic'],[/レビューを書く/,'reviewWrite'],[/投稿|レビュー/,'reviews']],
+  emergency:[[/最新|災害情報/,'warnings'],[/メモ|コピー/,'emergencyMemo'],[/編集|チェック/,'emergency']],
+  evacuation:[[/在宅|安全なら/,'destination'],[/見直し/,'reviewPlan'],[/訓練|確認の記録/,'training']],
+  homeSafety:[[/寝る場所|家具/,'safetyBedroom'],[/経路|動線/,'safetyRoute']],
+  pouch:[[/点検|持ち物/,'pouchChecks'],[/実例|一例/,'videos'],[/検索/,'filters']],goBag:[[/実例|一例/,'videos']],
+  family:[[/人数|頭数/,'familyNumbers'],[/個別|支援|備えの確認/,'familyNeeds']],
+  examStudy:[[/間違|解説|検索/,'quizReview'],[/例題/,'quiz'],[/動画|音声/,'exam']],practiceQuiz:[[/結果|間違/,'quizReview']],
+  weather:[[/警報|注意報/,'warnings'],[/気温|地点/,'weatherRegion']],
+  helpGuide:[[/機種変更|復元/,'restore'],[/保存でき|見つから/,'saveFailure'],[/保存される/,'deviceStorage'],[/通信|オフライン/,'offline'],[/プライバシー/,'privacy'],[/問い合わせ/,'feedback'],[/公開状況/,'releaseNews'],[/初めて|はじめて/,'start']],
+  cleanPractice:[[/設定|解除|時刻|間隔/,'cleanSchedule']],
+  more:[[/削除.*取り消し/,'deleteRestore'],[/機能を探す/,'featureSearch'],[/お気に入り/,'favorites'],[/バックアップ|機種変更/,'backup'],[/オフライン|ホーム画面/,'offline'],[/表示|簡易/,'display'],[/吹き出し|コメント/,'speech'],[/期限|点検のお知らせ/,'reminders'],[/カレンダー|通知/,'calendar'],[/講座|料金|相談/,'lecture'],[/ワークシート|見本|PDF/,'worksheet'],[/更新|公開|リリース|試作/,'releaseNews'],[/不具合報告用|動作診断|整合性|スモーク|検証|データの総合点検/,'support'],[/プライバシー/,'privacy'],[/保存状態|保存状況/,'deviceStorage'],[/はじめて|初めて|使い方/,'start']]
+ };
+ const helpSpecificScopes=[
+  ['#favoritesTitle','favorites'],['#feedbackTitle','feedback'],['#shoppingTitle','shopping'],['#lectureInformation h2,#workshopDetails h3','lecture'],['#appUpdateNews>summary','releaseNews'],['#reminderCard h2','reminders'],['#displaySettings h2,#simpleDisplayCard h2','display'],
+  ['#achievementCollectionTitle,#achievementBadges>h2,#preparednessTrophySection>h3,#preparednessRecordBadges>h3','tree'],['#achievementShareDialog h2,#achievementShareDialog h3,#achievementShareDialog summary,#achievementShareDialog label','share'],
+  ['#fullBackupDialog h2,#fullBackupDialog summary','backup'],['#stockSetupTitle','calculator'],['#sharedRegionTitle','weatherRegion'],['#hazardGateTitle','hazard']
+ ];
+ const pageHelpSelector=Object.keys(pageHelp).map(id=>'#'+id).join(',');
+ function helpText(node){const copy=node.cloneNode(true);copy.querySelectorAll('.context-help-button,input,select,textarea,.chibi-icon').forEach(n=>n.remove());return copy.textContent.trim()}
+ function headingTopic(node,page){const text=helpText(node);for(const [match,id] of helpHeadingRules[page]||[])if(match.test(text))return id;return pageHelp[page]}
+ function bindBeginnerHelp(){
+  syncCustomRoomHelp();
+  for(const [selector,id] of helpSpecificScopes)document.querySelectorAll(selector).forEach(node=>attachHelp(node,id));
+  document.querySelectorAll('label[for]').forEach(label=>{const id=helpFieldTopics[label.htmlFor];if(id)attachHelp(label,id)});
+  document.querySelectorAll('.supply-edit .supply-label').forEach(label=>{
+   const text=helpText(label),rules=[[/食数|食料|内容量/,'foodServings'],[/容量|リットル/,'waterCapacity'],[/目標/,'stockTarget'],[/分類/,'category'],[/単位/,'unit'],[/数量/,'quantity'],[/繰り返し/,'inspectionInterval'],[/点検/,'stockInspection'],[/期限/,'expiry'],[/保管/,'stockLocation'],[/品名/,'supplyAdd']];
+   const match=rules.find(([pattern])=>pattern.test(text));if(match)attachHelp(label,match[1]);
+  });
+  document.querySelectorAll('main section h2,main section h3,main section summary').forEach(node=>{
+   if(node.closest('#preparednessReasons,#contextHelpDialog,.tidy-place,.refresh-speech,.page-feedback-footer,.help-index-group'))return;
+   if(node.closest('a,button')||node.querySelector(':scope>.context-help-button'))return;
+   const section=node.closest(pageHelpSelector);if(!section)return;const page=section.id;
+   if(page==='more'&&!helpHeadingRules.more.some(([pattern])=>pattern.test(helpText(node)))&&node!==section.querySelector('h2'))return;
+   if(page==='practiceQuiz'&&node.tagName!=='H2')return;
+   attachHelp(node,headingTopic(node,page));
+  });
+  // The small home widgets are created separately from page headings.
+  for(const [selector,id] of [['#homeWeatherPlace','weatherRegion'],['#homeWarningLabel','warnings'],['#todayAchievements>strong','tree']]){const node=document.querySelector(selector);if(node)attachHelp(node,id)}
+ }
+ // Keep field help on editors and cards created after the initial render.
+ let beginnerHelpQueued=false;
+ const beginnerHelpObserver=new MutationObserver(records=>{
+  const changed=records.some(record=>!record.target.closest?.('#contextHelpDialog,#preparednessReasons')&&([...record.removedNodes].some(node=>node.nodeType===1&&node.matches('.context-help-button'))||[...record.addedNodes].some(node=>node.nodeType===1&&!node.matches('.context-help-button,.context-help-label-text,.help-book-icon,.help-button-label')&&!node.closest?.('.context-help-button'))));
+  if(!changed||beginnerHelpQueued)return;beginnerHelpQueued=true;queueMicrotask(()=>{beginnerHelpQueued=false;bindBeginnerHelp()});
+ });
+ bindBeginnerHelp();beginnerHelpObserver.observe(document.body,{childList:true,subtree:true});
+ // Expose a read-only audit of topics and page coverage for release verification.
+ window.TotonoeHelpAudit=()=>({topics:[...helpTopics.values()].map(({id,title,category})=>({id,title,category})),pages:{...pageHelp}});
+
  $(activePage).append(document.querySelector('.page-feedback-footer'));
+
+ const beginnerHelpStyle=el('style');beginnerHelpStyle.textContent=`
+ .context-help-button{display:inline-flex!important;align-items:center;justify-content:center;gap:4px;flex:0 0 68px;min-width:68px!important;width:68px!important;height:44px;padding:4px!important;border:1px solid #aac8b6;background:#f8fbf7!important;border-radius:22px;font-size:11px!important;line-height:1.2;color:#347255}
+ .context-help-button>.help-book-icon{display:block;width:19px;height:19px;flex:none}.context-help-button>.help-button-label{display:inline;font-size:12px!important;font-weight:700;color:inherit;line-height:1.2}
+ label.context-help-label{display:block!important;position:relative;min-width:0}label.context-help-label>.context-help-label-text{display:block;min-height:34px;padding-right:76px;line-height:1.5}label.context-help-label>.context-help-button{position:absolute;top:-5px;right:0}
+ #contextHelpCategory{width:100%;box-sizing:border-box;margin:4px 0 10px}.help-index-group>summary{font-size:15px;font-weight:700;cursor:pointer;min-height:44px;padding:10px 3px;line-height:1.5}.help-index-group{border:1px solid #dce7de;border-radius:10px;padding:2px 9px;margin:8px 0}.help-index-group .help-index-entry:last-child{border-bottom:0}
+ #homePreparednessTree .context-help-button{flex-basis:58px;min-width:58px!important;width:58px!important;border:0;height:36px;min-height:36px!important;background:transparent!important}
+ @media(max-width:350px){.context-help-button{flex-basis:62px;min-width:62px!important;width:62px!important}.context-help-button>.help-book-icon{width:17px;height:17px}#tidy .tidy-place>summary{gap:4px}#tidy .tidy-place-name{font-size:13px}#tidy .tidy-place-progress-count{font-size:11px}}
+ `;document.head.append(beginnerHelpStyle);
  const focus=entryUrl.searchParams.get('focus');
  if(entryPage==='homeSafety'&&focus==='route')openHomeSafetySection(1,false);
  if(entryPage==='home'&&focus==='achievements'&&activePage==='home')show('more');
