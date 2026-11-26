@@ -1188,7 +1188,7 @@
  const todayText=el('span');
  todayPanel.append(el('strong','今日できたこと'),todayText);
  $('homeOtherSuggestions').before(todayPanel);
- const badgePanel=el('div',undefined,'card');badgePanel.id='achievementBadges';badgePanel.append(el('h2','実際にできたこと'));
+ const badgePanel=el('details',undefined,'card');badgePanel.id='achievementBadges';badgePanel.append(el('summary','トロフィー・バッジ'));
  const tree=el('div',undefined,'preparedness-tree'),treeArt=el('div',undefined,'preparedness-tree-art');
  treeArt.setAttribute('role','img');
  const plant=el('span',undefined,'preparedness-illustration preparedness-plant');
@@ -1637,5 +1637,5 @@
  });
  if(wantsCollection&&activePage==='more'&&!document.querySelector('dialog[open]'))openCollection(focus);
  if(entryUrl.searchParams.get('share')==='1'&&!document.querySelector('dialog[open]'))openShare();
- if(entryUrl.searchParams.get('guide')==='1'){tutorialPendingPage=targetPage;tutorialState={...tutorialState,step:0};openTutorial()}else queueMicrotask(startSetup);
+ if(entryUrl.searchParams.get('guide')==='1'){tutorialPendingPage=targetPage;tutorialState={...tutorialState,step:0};openTutorial()}else if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>window.totoStories?window.totoStories.startSetup(startSetup):startSetup(),{once:true});else if(window.totoStories)window.totoStories.startSetup(startSetup);else startSetup();
 })();

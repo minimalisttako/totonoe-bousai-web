@@ -40,6 +40,17 @@ print(f'PASS: offline startup diagnostics and support report show {offline_versi
 syntax=r"const fs=require('fs');const s=fs.readFileSync(0,'utf8');let count=0;for(const m of s.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)){new Function(m[1]);count++;}if(!count)throw Error('No inline scripts checked');console.log('PASS: JavaScript syntax ('+count+' scripts)');"
 subprocess.run(['node','-e',syntax],input=source,text=True,check=True)
 subprocess.run(['node','--check',str(root/'offline-worker.js')],check=True)
+subprocess.run(['node','--check',str(root/'assets/stories-v261.js')],check=True)
+stories=(root/'assets/stories-v261.js').read_text()
+episodes=json.loads(re.search(r'const episodes=(\[[^\n]+\]);',stories)[1])
+assert [ep['id'] for ep in episodes]==list(range(40)), 'Missing comic episodes'
+for ep in episodes:
+    image=root/ep['image'].removeprefix('./')
+    data=image.read_bytes()
+    assert data[:4]==b'RIFF' and data[8:12]==b'WEBP', 'Invalid comic image'
+    assert ep['image'] in worker, 'Comic missing from offline cache'
+assert './assets/stories-v261.js' in worker, 'Comic module missing from offline cache'
+print('PASS: 40 comic pages and viewer are bundled for offline use')
 for test in ['wrap-up.cjs','home-scene.cjs','home-temperature.cjs','tutorial.cjs','backup-roundtrip-v79.cjs','supply-storage.cjs','supply-import.cjs','daily-behavior.cjs','replenishment.cjs','training.cjs','seasonal.cjs','feature-search.cjs','home-priorities.cjs','settings-hydration.cjs','weather-warnings.cjs','supply-measure-entry.cjs','backup-file-flow.cjs','supply-search.cjs','supply-dates.cjs','practice-review.cjs','practice-bank.cjs','readiness-links.cjs','emergency-checklist.cjs','tidy-milestones.cjs']:
     subprocess.run(['node',str(root/'tests'/test),str(root/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/experience.cjs')],check=True)

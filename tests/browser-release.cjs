@@ -23,6 +23,13 @@ async function run() {
  let browser;
  try {
   browser = await chromium.launch({ executablePath: process.env.TOTO_CHROMIUM_PATH || undefined });
+  await require('./stories-browser.cjs')(browser,base);
+  const originalNewContext=browser.newContext.bind(browser);
+  browser.newContext=async options=>{
+   const context=await originalNewContext(options);
+   await context.addInitScript(()=>{if(!localStorage.getItem('toto-stories-v1'))localStorage.setItem('toto-stories-v1',JSON.stringify({version:1,introductions:false,unlocked:[],read:[],introduced:[]}))});
+   return context;
+  };
   await require('./usability-browser.cjs')(browser,base);
   await require('./experience-browser.cjs')(browser,base);
   await require('./beginner-reasons-browser.cjs')(browser,base);
