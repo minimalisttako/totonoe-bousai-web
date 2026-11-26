@@ -1,7 +1,7 @@
 /* ととのえ防災：v232 オフライン起動保護。ユーザーの記録データはキャッシュに含めない。 */
-const CACHE='totonoe-offline-shell-v257';
+const CACHE='totonoe-offline-shell-v258';
 const ROOT=new URL('./',self.registration.scope).href;
-const PATHS=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v257.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp','./assets/home-mascot-poses-v251.webp'];
+const PATHS=['./','./manifest.webmanifest','./assets/mascot-tako-open-v30.svg','./assets/mascot-tako-blink-v30.svg','./assets/mascot-tricera-open-v30.svg','./assets/mascot-tricera-blink-v30.svg','./assets/mascot-shimaenaga-open-v30.svg','./assets/mascot-shimaenaga-blink-v30.svg','./assets/app-icon.svg','./assets/experience-v258.js','./assets/home-sky-background.svg','./assets/chibi-icons-v232.webp','./assets/achievement-art-v244.webp','./assets/achievement-friends-and-badges-v245.webp','./assets/home-mascot-poses-v251.webp'];
 const URLS=PATHS.map(p=>new URL(p,ROOT).href);
 const ASSETROOT=new URL('./assets/',ROOT).pathname;
 const HOME=new URL('./',ROOT).pathname;

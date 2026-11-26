@@ -5,6 +5,7 @@ module.exports=async function(browser,base){
  await context.addInitScript(()=>{
   if(localStorage.getItem('reason-test-seeded'))return;
   localStorage.setItem('reason-test-seeded','1');
+  localStorage.setItem('totonoe-first-evacuation-plan-completed','1');
   localStorage.setItem('toto-tutorial-v1',JSON.stringify({version:2,step:4,completed:true}));
   localStorage.setItem('toto-weather-location-v1',JSON.stringify({office:'400000',area:'400010',station:'',warningCity:'4013000'}));
   localStorage.setItem('totonoe-hazard-confirmed','4013000');
@@ -14,6 +15,13 @@ module.exports=async function(browser,base){
  });
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  try{
+  await page.goto(base+'?page=learn');
+  for(const id of ['learnHomePreparedness','learnAwayPreparedness','preparednessReasons']){
+   const fold=page.locator('#'+id);await fold.waitFor();assert.equal(await fold.evaluate(node=>node.tagName),'DETAILS');assert.equal(await fold.evaluate(node=>node.open),false);
+   await fold.locator(':scope>summary').click();assert.equal(await fold.evaluate(node=>node.open),true);
+   if(id!=='preparednessReasons')assert.equal(await fold.locator('a[href*="youtu.be"]:visible').count(),2);
+   await fold.locator(':scope>summary').click();assert.equal(await fold.evaluate(node=>node.open),false);
+  }
   await page.goto(base+'?page=learn&focus=reasons');
   const guide=page.locator('#preparednessReasons'),dialog=page.locator('#contextHelpDialog'),close=page.locator('#contextHelpClose');await guide.waitFor();
   assert.match(await guide.innerText(),/解説ヘルプ/);
@@ -28,7 +36,7 @@ module.exports=async function(browser,base){
    assert(audit.topics.some(t=>t.id===topic));
    assert((await page.locator('#'+id+' .context-help-button').count())>0,'Missing page help: '+id);
   }
-  const rendered=await page.evaluate(()=>TotonoeHelpAudit().topics.map(topic=>{totoOpenContextHelp(topic.id,document.querySelector('#preparednessReasons h2'));const dialog=document.getElementById('contextHelpDialog'),body=document.getElementById('contextHelpBody');const result=[topic.id,document.getElementById('contextHelpTitle').textContent,body.firstElementChild?.textContent||body.textContent];dialog.close();return result}));
+  const rendered=await page.evaluate(()=>TotonoeHelpAudit().topics.map(topic=>{totoOpenContextHelp(topic.id,document.querySelector('#preparednessReasons>summary'));const dialog=document.getElementById('contextHelpDialog'),body=document.getElementById('contextHelpBody');const result=[topic.id,document.getElementById('contextHelpTitle').textContent,body.firstElementChild?.textContent||body.textContent];dialog.close();return result}));
   for(const [id,title,body] of rendered){assert(title.length>2,id);assert(body.length>35,id)}
   assert(await page.locator('.context-help-button').evaluateAll(nodes=>nodes.every(n=>n.querySelector('svg')&&n.textContent==='解説')));
   await guide.locator('.help-index-group').filter({hasText:'片付け・掃除'}).locator(':scope>summary').click();

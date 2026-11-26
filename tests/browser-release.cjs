@@ -81,6 +81,8 @@ async function run() {
   await page.locator('#goBagName').waitFor();
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('toto-tidy-v1'))[1].done),false);
   await page.goto(base + '?page=evacuationVideos');
+  await page.locator('#learnHomePreparedness>summary').click();
+  await page.locator('#learnAwayPreparedness>summary').click();
   await page.locator('#evacuationVideos a[href*="youtu.be"]').first().waitFor();
   assert.equal(await page.locator('#evacuationVideos a[href*="youtu.be"]:visible').count(), 4);
   await page.goto(base + '?page=reviewBackup');

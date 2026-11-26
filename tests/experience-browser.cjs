@@ -394,17 +394,22 @@ module.exports = async function verifyExperience(browser,base) {
    }
   }
   assert.equal(new Set(positions).size,4);
-  for(const [i,mode] of ['solo','ride','lift','sleep','drink','exercise'].entries()){
-   await page.evaluate(index=>{Math.random=()=>((index+.1)/6);show('more');show('home')},i);
-   const scene=page.locator('#home .game-mascot-scene');
-   assert.equal(await scene.getAttribute('data-tree-pose'),mode);
-   const group=scene.locator('.preparedness-group');
-   assert.equal(await group.isVisible(),mode!=='solo');
-   const expectedSingles=mode==='solo'?3:['drink','exercise'].includes(mode)?0:1;
-   assert.equal(await scene.locator('.preparedness-tree-friend:visible').count(),expectedSingles);
-   await page.evaluate(()=>document.dispatchEvent(new Event('toto-storage-changed')));
-   assert.equal(await scene.getAttribute('data-tree-pose'),mode);
+  for(const earned of [6,7,8]){
+   await page.evaluate(count=>{verifiedSaveJson(achievementKey,{trophies:achievementIds.slice(0,count),daily:null});window.dispatchEvent(new StorageEvent('storage',{key:achievementKey}))},earned);
+   const modes=earned===8?['solo','ride','lift','sleep','drink','exercise']:['solo','ride','lift','sleep'];
+   for(const [i,mode] of modes.entries()){
+    await page.evaluate(({i,total})=>{Math.random=()=>((i+.1)/total);show('more');show('home')},{i,total:modes.length});
+    const scene=page.locator('#home .game-mascot-scene');assert.equal(await scene.getAttribute('data-tree-pose'),mode);
+    const group=scene.locator('.preparedness-group');assert.equal(await group.isVisible(),mode!=='solo');
+    const expectedSingles=mode==='solo'?3:['drink','exercise'].includes(mode)?0:1;
+    assert.equal(await scene.locator('.preparedness-tree-friend:visible').count(),expectedSingles);
+    await page.evaluate(()=>document.dispatchEvent(new Event('toto-storage-changed')));assert.equal(await scene.getAttribute('data-tree-pose'),mode);
+   }
   }
+  // Dropping below full completion during restore must invalidate a cached trio.
+  await page.evaluate(()=>{verifiedSaveJson(achievementKey,{trophies:achievementIds.slice(0,7),daily:null});window.dispatchEvent(new StorageEvent('storage',{key:achievementKey}))});
+  assert(!['drink','exercise'].includes(await page.locator('#home .game-mascot-scene').getAttribute('data-tree-pose')));
+  await page.evaluate(()=>{verifiedSaveJson(achievementKey,{trophies:achievementIds.slice(0,8),daily:null});window.dispatchEvent(new StorageEvent('storage',{key:achievementKey}))});
 
   for(const mode of ['solo','sleep']){
    await page.evaluate(mode=>{let calls=0;Math.random=()=>(++calls===1?(mode==='sleep'?.51:0):0);show('more');show('home')},mode);
