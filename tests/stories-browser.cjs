@@ -1,19 +1,41 @@
 const assert=require('node:assert/strict');
 module.exports=async(browser,base)=>{
  const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
- await context.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
+ await context.route('**/*',route=>{
+  if(route.request().url().includes('common/const/area.json'))return route.fulfill({json:{offices:{'400000':{name:'福岡県'}},class10s:{'400010':{name:'福岡地方',parent:'400000'}},class15s:{'400011':{name:'福岡地区',parent:'400010'}},class20s:{'4013000':{name:'福岡市',parent:'400011'}}}});
+  return route.request().url().startsWith(base)?route.continue():route.abort();
+ });
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  const opened=page.locator('#comicStoryDialog[open]');
  const next=async()=>{await page.locator('#comicStoryContinue:enabled').click()};
  const waitEpisode=async id=>{await opened.locator('#comicStoryTitle').filter({hasText:'第'+id+'話'}).waitFor();await page.locator('#comicStoryContinue:enabled').waitFor()};
  await page.goto(base);
- await waitEpisode(0);await next();await waitEpisode(1);await next();
+ await page.locator('#tutorialDialog[open]').waitFor();
+ assert.match(await page.locator('#tutorialTitle').textContent(),/始めてくれてありがとう/);
+ assert.match(await page.locator('#tutorialStep').textContent(),/1 \/ 2/);
+ await page.locator('#tutorialNext').click();await waitEpisode(0);await next();
+ await page.locator('#sharedRegionDialog[open]').waitFor();
+ // Resume at region selection without repeating the welcome or comic 0.
+ await page.reload();await page.locator('#sharedRegionDialog[open]').waitFor();
+ await page.locator('#sharedRegionDialog form[method=dialog] button').click();
+ await page.locator('#hazardStartAction').click();await page.locator('#sharedRegionDialog[open]').waitFor();
+ await page.locator('#sharedRegionOffice').selectOption('400000');
+ await page.locator('#sharedRegionCity').selectOption('4013000');await page.locator('#sharedRegionSave').click();
+ await page.locator('#tutorialDialog[open]').waitFor();
+ assert.match(await page.locator('#tutorialTitle').textContent(),/さっそく/);
+ assert.match(await page.locator('#tutorialStep').textContent(),/2 \/ 2/);
+ assert.equal(await page.locator('#stockGateDialog[open],#hazardGateDialog[open]').count(),0);
+ await page.locator('#tutorialNext').click();await waitEpisode(1);await next();
  await page.getByRole('button',{name:'オフにする・そのまま使う',exact:true}).click();
+ await page.locator('#hazardGateDialog[open]').waitFor();
+ await page.locator('#hazardConfirmed').check();await page.locator('#hazardFinish').click();
+ assert.equal(await page.evaluate(()=>tutorialState.completed),true);
+ assert.equal(await page.locator('dialog[open]').count(),0);
  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('toto-stories-v1')).read),[0,1]);
  await page.evaluate(()=>{
   for(const d of document.querySelectorAll('dialog[open]'))d.close();
   localStorage.setItem('toto-tutorial-v1',JSON.stringify({version:2,step:4,completed:true}));
-  tutorialState={version:2,step:4,completed:true};tutorialSessionUnlocked=true;
+  tutorialState=readTutorialState();tutorialSessionUnlocked=true;
   localStorage.setItem('toto-weather-location-v1',JSON.stringify({office:'400000',area:'400010',station:'',warningCity:'4013000'}));
   localStorage.setItem('totonoe-hazard-confirmed','4013000');
   show('weather');
@@ -88,12 +110,8 @@ module.exports=async(browser,base)=>{
  });
  await direct.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
  const entry=await direct.newPage();await entry.goto(base+'?page=weather');
- for(const id of [0,1]){
-  await entry.locator('#comicStoryDialog[open] #comicStoryTitle').filter({hasText:'第'+id+'話'}).waitFor();
-  await entry.locator('#comicStoryContinue:enabled').click();
- }
- await entry.getByRole('button',{name:'オンにする・4コマで始める',exact:true}).click();
- await entry.locator('#comicStoryDialog[open] #comicStoryTitle').filter({hasText:'第21話'}).waitFor();
+ assert.equal(await entry.locator('#tutorialDialog[open],#comicStoryDialog[open]').count(),0);
+ assert.equal(await entry.locator('#weather').isVisible(),true);
  await direct.close();
- console.log('PASS: comic onboarding 0/1 and choice; opt-out still unlocks archive; free-order first-use; no repeat; zoom; persistence; backup validation; restore/cross-tab; corrupt data; emergency access');
+ console.log('PASS: startup welcome → comic 0 → region → retained launch guide → comic 1 → choice → hazard; resume and completed-user migration; opt-out still unlocks archive; free-order first-use; no repeat; zoom; persistence; backup validation; restore/cross-tab; corrupt data; emergency access');
 };

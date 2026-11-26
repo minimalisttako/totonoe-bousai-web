@@ -15,12 +15,14 @@ module.exports=async function verifyUsability(browser,base){
  try{
   await page.goto(base);
   await page.locator('#tutorialDialog[open]').waitFor();
-  for(let i=0;i<5;i++)await page.locator('#tutorialNext').click();
+  await page.locator('#tutorialNext').click();
+  await page.locator('#comicStoryContinue:enabled').click();
   await page.locator('#sharedRegionDialog[open]').waitFor();
   await page.locator('#sharedRegionOffice').selectOption('400000');
   await page.locator('#sharedRegionCity').selectOption('4013000');
   await page.locator('#sharedRegionSave').click();
-  await page.locator('#stockGateNext').click();
+  await page.locator('#tutorialNext').click();
+  await page.locator('#comicStoryContinue:enabled').click();
   await page.locator('#hazardGateDialog[open]').waitFor();
   await page.locator('#hazardConfirmed').check();
   await page.locator('#hazardFinish').click();
