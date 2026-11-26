@@ -50,7 +50,11 @@ for ep in episodes:
     assert data[:4]==b'RIFF' and data[8:12]==b'WEBP', 'Invalid comic image'
     assert ep['image'] in worker, 'Comic missing from offline cache'
 assert './assets/stories-v261.js' in worker, 'Comic module missing from offline cache'
-print('PASS: 40 comic pages and viewer are bundled for offline use')
+for file_list in re.findall(r'const (?:paths|urls|necessary)=(\[[^\n;]+\]);',source):
+    if './assets/experience-v261.js' not in file_list: continue
+    assert './assets/stories-v261.js' in file_list, 'Offline diagnostic omits comic viewer'
+    assert all(ep['image'] in file_list for ep in episodes), 'Offline diagnostic omits comic pages'
+print('PASS: 40 comic pages and viewer are bundled and checked by all offline diagnostics')
 for test in ['wrap-up.cjs','home-scene.cjs','home-temperature.cjs','tutorial.cjs','backup-roundtrip-v79.cjs','supply-storage.cjs','supply-import.cjs','daily-behavior.cjs','replenishment.cjs','training.cjs','seasonal.cjs','feature-search.cjs','home-priorities.cjs','settings-hydration.cjs','weather-warnings.cjs','supply-measure-entry.cjs','backup-file-flow.cjs','supply-search.cjs','supply-dates.cjs','practice-review.cjs','practice-bank.cjs','readiness-links.cjs','emergency-checklist.cjs','tidy-milestones.cjs']:
     subprocess.run(['node',str(root/'tests'/test),str(root/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/experience.cjs')],check=True)
