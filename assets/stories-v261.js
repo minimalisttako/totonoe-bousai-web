@@ -110,7 +110,7 @@ const episodes=[{"id":0,"title":"防災とお片付けのアプリ","image":"./a
  function resumeSetup(){setupRunning=false;const continuation=setupContinuation;setupContinuation=null;if(continuation)continuation()}
  function choose(enabled){
   if(!save(s=>({...s,introductions:enabled})))return false;
-  current=null;setupRunning=false;dialog.close();const continuation=setupContinuation;setupContinuation=null;if(continuation)continuation();return true;
+  current=null;setupRunning=false;dialog.close();const continuation=setupContinuation;setupContinuation=null;if(continuation)continuation();visit(activePage);return true;
  }
  let timer=null;
  function schedule(){clearTimeout(timer);timer=setTimeout(flush,80)}

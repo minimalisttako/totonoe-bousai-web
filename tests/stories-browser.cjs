@@ -80,5 +80,20 @@ module.exports=async(browser,base)=>{
  await brokenPage.locator('#tutorialDialog[open]').waitFor();
  assert.equal(await brokenPage.evaluate(()=>localStorage.getItem('toto-stories-v1')),'{broken');
  await broken.close();
+ const direct=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
+ await direct.addInitScript(()=>{
+  localStorage.setItem('toto-tutorial-v1',JSON.stringify({version:2,step:4,completed:true}));
+  localStorage.setItem('toto-weather-location-v1',JSON.stringify({office:'400000',area:'400010',station:'',warningCity:'4013000'}));
+  localStorage.setItem('totonoe-hazard-confirmed','4013000');
+ });
+ await direct.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
+ const entry=await direct.newPage();await entry.goto(base+'?page=weather');
+ for(const id of [0,1]){
+  await entry.locator('#comicStoryDialog[open] #comicStoryTitle').filter({hasText:'第'+id+'話'}).waitFor();
+  await entry.locator('#comicStoryContinue:enabled').click();
+ }
+ await entry.getByRole('button',{name:'オンにする・4コマで始める',exact:true}).click();
+ await entry.locator('#comicStoryDialog[open] #comicStoryTitle').filter({hasText:'第21話'}).waitFor();
+ await direct.close();
  console.log('PASS: comic onboarding 0/1 and choice; opt-out still unlocks archive; free-order first-use; no repeat; zoom; persistence; backup validation; restore/cross-tab; corrupt data; emergency access');
 };
