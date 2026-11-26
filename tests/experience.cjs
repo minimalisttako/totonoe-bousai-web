@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const {validPreferences,removedRecord,putBack,useSoon,validDate,calendarText} = require('../assets/experience-v260.js');
+const {validPreferences,removedRecord,putBack,useSoon,validDate,calendarText} = require('../assets/experience-v261.js');
 const preferences={simple:false,reminders:true,favorites:['more','supplies']};
 assert.equal(validPreferences(preferences),true);
 assert.equal(validPreferences({...preferences,favorites:['more','more']}),false);
