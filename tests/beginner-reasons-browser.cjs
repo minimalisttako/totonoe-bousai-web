@@ -36,6 +36,28 @@ module.exports=async function(browser,base){
    assert(audit.topics.some(t=>t.id===topic));
    assert((await page.locator('#'+id+' .context-help-button').count())>0,'Missing page help: '+id);
   }
+  const repeatedHelp=await page.evaluate(()=>{
+   const scopes=new Map(),duplicates=[];
+   document.querySelectorAll('.context-help-button').forEach(button=>{
+    const node=button.parentElement,scope=node.closest('details,.card,dialog')||node.closest('section')||node.parentElement;
+    if(!scopes.has(scope))scopes.set(scope,new Set());const topics=scopes.get(scope),id=button.dataset.contextHelpTopic;
+    if(topics.has(id))duplicates.push([scope.id,id]);topics.add(id);
+   });return duplicates;
+  });
+  assert.deepEqual(repeatedHelp,[],'Each card/fold should offer the same explanation only once');
+  assert.equal(await page.locator('#pouchAddFold h2,#tidyAddFold h2,#tidyExportFold h2,#evacuationEditFold h2').count(),0);
+  const featureSearch=page.locator('#featureSearch');
+  assert.equal(await page.locator('label[for="featureSearch"]').count(),0);
+  assert.equal(await featureSearch.getAttribute('aria-labelledby'),'featureSearchTitle');
+  assert.equal(await page.locator('.feature-search-card .context-help-button').count(),1);
+  assert.equal(await page.locator('label[for="calcDays"] .context-help-button').count(),0);
+  assert.equal(await page.locator('label[for="calcPeople"] .context-help-button').count(),1);
+  assert.equal(await page.locator('#stockReviewForm').locator('..').locator('[data-context-help-topic="reviewWrite"]').count(),1);
+  await page.evaluate(()=>show('more'));await featureSearch.fill('トイレ');
+  assert((await page.locator('#featureSearchResults button').count())>0);
+  await page.locator('.feature-search-card [data-context-help-topic="featureSearch"]').click();await dialog.waitFor();
+  await close.click();assert.equal(await featureSearch.inputValue(),'トイレ');
+  await page.evaluate(()=>show('learn'));
   const rendered=await page.evaluate(()=>TotonoeHelpAudit().topics.map(topic=>{totoOpenContextHelp(topic.id,document.querySelector('#preparednessReasons>summary'));const dialog=document.getElementById('contextHelpDialog'),body=document.getElementById('contextHelpBody');const result=[topic.id,document.getElementById('contextHelpTitle').textContent,body.firstElementChild?.textContent||body.textContent];dialog.close();return result}));
   for(const [id,title,body] of rendered){assert(title.length>2,id);assert(body.length>35,id)}
   assert(await page.locator('.context-help-button').evaluateAll(nodes=>nodes.every(n=>n.querySelector('svg')&&n.textContent==='解説')));

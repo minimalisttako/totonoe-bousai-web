@@ -300,12 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v258\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v259\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
- updates.append(element('h3','v258　2026年11月26日'),element('p','学ぶの動画2分類と解説ヘルプを折りたたみにし、トリオイラストはトロフィー8/8達成時だけ抽選するようにしました。'));
+ updates.append(element('h3','v259　2026年11月26日'),element('p','機能検索の重複した見出しを削除し、各ページの同じ枠内で繰り返される解説ボタンを1つにまとめました。'));
  updates.append(element('h3','v249　2026年11月25日'),element('p','食品・飲料水は期限未入力でも必要量と比較し、ホームから期限の入力をご案内します。'));
  updates.append(element('h3','v248　2026年11月25日'),element('p','備蓄の編集欄が細くなり、文字や数字が読みにくくなる表示を修正しました。'));
  updates.append(element('h3','v247　2026年11月25日'),element('p','トロフィーとバッジをタップすると、獲得日と関連ページへの案内が開きます。'));
@@ -1149,8 +1149,9 @@
  window.totoOpenContextHelp=showContextHelp;
  contextHelp.addEventListener('close',()=>{if(helpOrigin===activePage&&helpTrigger?.isConnected)helpTrigger.focus({preventScroll:true})});
  function helpButton(id,title){const button=action('',event=>{event.preventDefault();event.stopPropagation();showContextHelp(id,button)});button.className='context-help-button';paintContextHelpButton(button);button.dataset.contextHelpTopic=id;button.setAttribute('aria-label',title+'の解説ヘルプ');button.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' ')event.stopPropagation()});return button}
- let helpLabelSequence=0;
+ let helpLabelSequence=0,helpTargetQueue=null;
  function attachHelp(heading,id){
+  if(helpTargetQueue){if(heading&&!helpTargetQueue.has(heading))helpTargetQueue.set(heading,heading.querySelector(':scope>.context-help-button')?.dataset.contextHelpTopic||id);return}
   if(!heading||!helpTopics.has(id)||heading.querySelector(':scope>.context-help-button')||heading.closest('#contextHelpDialog,#preparednessReasons'))return;
   if(heading.tagName==='LABEL'){
    heading.classList.add('context-help-label');
@@ -1536,7 +1537,7 @@
   eventPrefecture:'events',eventCity:'events',eventKind:'events',eventMonth:'events',practiceTopic:'quiz',practiceGuideSearch:'quizReview',
   reviewProduct:'reviewWrite',reviewCategory:'reviewWrite',reviewStars:'reviewWrite',reviewComment:'reviewWrite',reviewPhotoInput:'reviewPhotos',sharedReviewSearch:'reviews',reviewSearch:'reviews',
   pouchName:'pouch',pouchNote:'pouch',pouchNextCheck:'pouchChecks',goBagName:'goBag',supplySearch:'filters',supplyFilter:'filters',tidySearch:'filters',tidyFilter:'filters',pouchSearch:'filters',pouchFilter:'filters',
-  fullBackupFile:'restore',allBackupText:'restore',backupText:'backupTypes',reviewBackupFile:'backupTypes',reviewBackupText:'backupTypes',supportReportText:'support',emergencyChecklistEdit:'emergency',replenishmentCopyText:'shopping',featureSearch:'featureSearch'
+  fullBackupFile:'restore',allBackupText:'restore',backupText:'backupTypes',reviewBackupFile:'backupTypes',reviewBackupText:'backupTypes',supportReportText:'support',emergencyChecklistEdit:'emergency',replenishmentCopyText:'shopping'
  };
  const helpHeadingRules={
   home:[[/ハザード/,'hazard'],[/優先|やること|おすすめ/,'priorities'],[/天気|気温/,'weather'],[/警報|注意報/,'warnings'],[/お知らせ|期限|点検/,'reminders'],[/できたこと|防災の木/,'tree']],
@@ -1566,6 +1567,8 @@
  function headingTopic(node,page){const text=helpText(node);for(const [match,id] of helpHeadingRules[page]||[])if(match.test(text))return id;return pageHelp[page]}
  function bindBeginnerHelp(){
   syncCustomRoomHelp();
+  helpTargetQueue=new Map();
+  document.querySelectorAll('.context-help-button').forEach(button=>helpTargetQueue.set(button.parentElement,button.dataset.contextHelpTopic));
   for(const [selector,id] of helpSpecificScopes)document.querySelectorAll(selector).forEach(node=>attachHelp(node,id));
   document.querySelectorAll('label[for]').forEach(label=>{const id=helpFieldTopics[label.htmlFor];if(id)attachHelp(label,id)});
   document.querySelectorAll('.supply-edit .supply-label').forEach(label=>{
@@ -1582,6 +1585,22 @@
   });
   // The small home widgets are created separately from page headings.
   for(const [selector,id] of [['#homeWeatherPlace','weatherRegion'],['#homeWarningLabel','warnings'],['#todayAchievements>strong','tree']]){const node=document.querySelector(selector);if(node)attachHelp(node,id)}
+  // Keep one copy of each explanation within a card or fold, preferring its heading.
+  // Gather first so newly rendered fields cannot steal the heading's help button.
+  const targets=[...helpTargetQueue].filter(([node,id])=>node.isConnected&&helpTopics.has(id));helpTargetQueue=null;
+  const groups=new Map();
+  for(const [node,id] of targets){
+   const scope=node.closest('details,.card,dialog')||node.closest('section')||node.parentElement;
+   if(!groups.has(scope))groups.set(scope,new Map());
+   const topics=groups.get(scope);if(!topics.has(id))topics.set(id,[]);topics.get(id).push(node);
+  }
+  for(const topics of groups.values())for(const [id,nodes] of topics){
+   const preferred=nodes.find(node=>node.matches('summary'))||nodes.find(node=>node.matches('h2,h3'))||nodes[0];
+   for(const node of nodes){
+    if(node===preferred){attachHelp(node,id);continue}
+    node.querySelector(':scope>.context-help-button')?.remove();node.classList.remove('context-help-heading');
+   }
+  }
  }
  // Keep field help on editors and cards created after the initial render.
  let beginnerHelpQueued=false;
