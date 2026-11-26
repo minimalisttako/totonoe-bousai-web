@@ -18,29 +18,25 @@ module.exports=async function(browser,base){
   const guide=page.locator('#preparednessReasons'),dialog=page.locator('#contextHelpDialog'),close=page.locator('#contextHelpClose');await guide.waitFor();
   assert.match(await guide.innerText(),/解説ヘルプ/);
   assert((await guide.locator('[data-help-topic]').count())>=100);
-  assert.equal(await guide.locator('#contextHelpCategory option').count(),10);
-  await guide.locator('#contextHelpCategory').selectOption('備蓄・持ち出し');
-  assert(await guide.locator('.help-index-group').evaluateAll(nodes=>nodes.every(n=>n.open&&n.dataset.category==='備蓄・持ち出し')));
-  await guide.locator('#contextHelpCategory').selectOption('');
-  await guide.locator('#contextHelpSearch').fill('仕事部屋');
+  assert.equal(await guide.locator('input,select').count(),0);
+  assert.equal(await guide.locator('.help-index-group').count(),9);
+  assert(await guide.locator('.help-index-group').evaluateAll(nodes=>nodes.every(node=>!node.open)));
   assert.equal(await guide.locator('[data-help-topic="room:仕事部屋"]').count(),1);
-  await guide.locator('#contextHelpSearch').fill('');
   const audit=await page.evaluate(()=>TotonoeHelpAudit());
   assert.equal(new Set(audit.topics.map(t=>t.id)).size,audit.topics.length);
   for(const [id,topic] of Object.entries(audit.pages)){
    assert(audit.topics.some(t=>t.id===topic));
    assert((await page.locator('#'+id+' .context-help-button').count())>0,'Missing page help: '+id);
   }
-  const rendered=await page.evaluate(()=>TotonoeHelpAudit().topics.map(topic=>{totoOpenContextHelp(topic.id,document.getElementById('contextHelpSearch'));const dialog=document.getElementById('contextHelpDialog'),body=document.getElementById('contextHelpBody');const result=[topic.id,document.getElementById('contextHelpTitle').textContent,body.firstElementChild?.textContent||body.textContent];dialog.close();return result}));
+  const rendered=await page.evaluate(()=>TotonoeHelpAudit().topics.map(topic=>{totoOpenContextHelp(topic.id,document.querySelector('#preparednessReasons h2'));const dialog=document.getElementById('contextHelpDialog'),body=document.getElementById('contextHelpBody');const result=[topic.id,document.getElementById('contextHelpTitle').textContent,body.firstElementChild?.textContent||body.textContent];dialog.close();return result}));
   for(const [id,title,body] of rendered){assert(title.length>2,id);assert(body.length>35,id)}
   assert(await page.locator('.context-help-button').evaluateAll(nodes=>nodes.every(n=>n.querySelector('svg')&&n.textContent==='解説')));
-  const search=guide.locator('#contextHelpSearch');await search.fill('キッチン');
-  assert.equal(await guide.locator('[data-help-topic]').count(),1);
+  await guide.locator('.help-index-group').filter({hasText:'片付け・掃除'}).locator(':scope>summary').click();
   await guide.locator('[data-help-topic="room:キッチン"]').click();await dialog.waitFor();
   const canonical=await dialog.locator('#contextHelpBody').innerText();
   assert.match(canonical,/食器/);assert.equal(await dialog.locator('.reason-sources a').count(),7);
   for(const width of [320,390]){await page.setViewportSize({width,height:844});const box=await dialog.boundingBox();assert(box.width<width);assert(box.height<=844*.74);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
-  await close.click();await search.fill('存在しない解説');assert(await guide.getByText('該当する解説がありません。別の言葉で探してください。').isVisible());await search.fill('');
+  await close.click();
   await page.goto(base+'?page=tidy');
   const kitchen=page.locator('#tidy-record-why-kitchen'),question=kitchen.locator(':scope>summary .context-help-button');
   const before=await page.evaluate(()=>localStorage.getItem('toto-tidy-v1'));
@@ -53,6 +49,8 @@ module.exports=async function(browser,base){
   assert(await question.evaluate(n=>n===document.activeElement));
   await kitchen.locator(':scope>summary').click();assert.equal(await kitchen.locator('.tidy-reason').count(),0);
   await page.goto(base+'?page=supplies');
+  assert.equal(await page.locator('#supplyAddFold>.supply-fold-content>.card:first-child>h2').count(),0);
+  assert.equal(await page.locator('#supplyAddFold>summary .context-help-button').count(),1);
   await page.locator('#supplyEssentials>summary').click();
   for(const heading of ['現金・大切な書類','薬・健康管理','水・食料・トイレ','停電への備え','家族やペットに合わせて']){
    const button=page.locator('#supplyEssentials h3').filter({hasText:heading}).locator('.context-help-button');
@@ -79,6 +77,6 @@ module.exports=async function(browser,base){
    }
   }
   assert.deepEqual(errors,[]);
-  console.log('PASS: shared searchable help catalogue and contextual dialogs, closed-room click isolation, focus/Escape, preserved checks and inputs, all pages and 100+ topics, nine categories, book labels, field accessibility, nested dialogs, preserved records/inputs, legacy links, action routes and 320/390px');
+  console.log('PASS: compact category-only help catalogue and contextual dialogs, closed-room click isolation, focus/Escape, preserved checks and inputs, all pages and 100+ topics, nine categories, book labels, field accessibility, nested dialogs, preserved records/inputs, legacy links, action routes and 320/390px');
  }finally{await context.close()}
 };

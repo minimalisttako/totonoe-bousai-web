@@ -406,6 +406,13 @@ module.exports = async function verifyExperience(browser,base) {
    assert.equal(await scene.getAttribute('data-tree-pose'),mode);
   }
 
+  for(const mode of ['solo','sleep']){
+   await page.evaluate(mode=>{let calls=0;Math.random=()=>(++calls===1?(mode==='sleep'?.51:0):0);show('more');show('home')},mode);
+   const result=await page.locator('#home .preparedness-tree-art').evaluate(node=>{const tako=node.querySelector('[data-friend=tako]'),plant=node.querySelector('.preparedness-plant'),a=tako.getBoundingClientRect(),b=plant.getBoundingClientRect();return {watering:tako.dataset.watering,left:a.left,right:a.right,center:b.left+b.width/2,transform:getComputedStyle(tako).transform,bottom:parseFloat(getComputedStyle(tako).bottom)}});
+   assert.equal(result.watering,'true');assert(result.bottom>=24);
+   if(mode==='sleep'){assert.match(result.transform,/matrix\(-1/);assert(Math.abs(result.left-result.center)<20)}
+   else {assert.equal(result.transform,'none');assert(result.left<result.center&&result.right<result.center+20)}
+  }
   await page.goto(base+'?page=more&focus=trophies');
   await collection.waitFor();
   assert.equal(await collection.locator('#preparednessTrophySection .preparedness-trophy-art').count(),8);
