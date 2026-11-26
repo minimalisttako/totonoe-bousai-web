@@ -300,12 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v256\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v257\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
- updates.append(element('h3','v256　2026年11月26日'),element('p','各機能を本＋解説ボタンに統一し、各ページ・入力欄の初心者向け解説を増やしました。学ぶではカテゴリとキーワードで探せます。'));
+ updates.append(element('h3','v257　2026年11月26日'),element('p','解説ヘルプの検索欄と備蓄登録の重複見出しを削除し、たこが木の根元に水をかける向き・位置へ調整しました。'));
  updates.append(element('h3','v249　2026年11月25日'),element('p','食品・飲料水は期限未入力でも必要量と比較し、ホームから期限の入力をご案内します。'));
  updates.append(element('h3','v248　2026年11月25日'),element('p','備蓄の編集欄が細くなり、文字や数字が読みにくくなる表示を修正しました。'));
  updates.append(element('h3','v247　2026年11月25日'),element('p','トロフィーとバッジをタップすると、獲得日と関連ページへの案内が開きます。'));
@@ -1023,10 +1023,10 @@
  helpGroups.splice(0,helpGroups.length,...beginnerHelpCategories);
  const expandedHelp=[
  ['home','ホームから何を始める？',0,'最初に確認したいことと、次に取り組む作業を探す入口です。','「今日やること」に出ている項目を1つ開きます。全部を一度に終える必要はありません。分からない機能は、その横の「本＋解説」から読めます。'],
- ['learn','学ぶページ・解説の探し方',0,'機能の使い方や備える理由を、カテゴリ別に確認するページです。','カテゴリを開くか、場所や言葉で検索します。一覧と各機能の「本＋解説」は同じ説明を開きます。'],
+ ['learn','学ぶページ・解説の探し方',0,'機能の使い方や備える理由を、カテゴリ別に確認するページです。','カテゴリを開き、読みたい解説を選びます。一覧と各機能の「本＋解説」は同じ説明を開きます。'],
  ['more','その他のメニュー',0,'家族、避難計画、訓練、設定など、普段の作業以外の入口をまとめています。','目的に合う見出しから開きます。よく使うページは、お気に入りに登録すると探しやすくなります。'],
  ['priorities','今日の優先チェック・次にやること',0,'まだ確認していないことや記録から、次の作業を探すための案内です。','表示された項目を開いて、実際に確認してから記録します。表示順は取り組む目安で、現場の危険や緊急性を自動判定するものではありません。'],
- ['featureSearch','機能を名前から探す',0,'どのメニューにあるか分からない機能を検索する入口です。','「トイレ」「避難」「写真」など、やりたいことの言葉を入れます。解説の本文を調べたいときは、学ぶの「解説を探す」を使います。'],
+ ['featureSearch','機能を名前から探す',0,'どのメニューにあるか分からない機能を検索する入口です。','「トイレ」「避難」「写真」など、やりたいことの言葉を入れます。解説を読みたいときは、学ぶのカテゴリ一覧から選びます。'],
  ['start','初めて使うとき・機能の解放',0,'地域や自宅の危険を確認し、住まいの安全点検から備えを進めます。','鍵の付いた機能は、ボタンの案内に従って先に必要な確認をします。説明を読んだだけでは安全点検や作業の完了にはなりません。'],
  ['sorting','整理：残す物を選ぶ',1,'整理は、使う物と使っていない物を見直し、必要な物を選ぶことです。','床や作業台の物を確認し、使う・迷う・手放す候補に分けます。大切な物や家族の物を、急いで捨てる必要はありません。'],
  ['organizing','整頓・収納：使う場所と戻す場所',1,'整頓は、必要な物を使いやすい場所に置くことです。収納は、出し入れしやすく収めることです。','よく使う場所の近くに定位置を作り、重い物の落下や通路をふさぐ配置に注意します。置き場所を決めたら、家族にも伝えましょう。'],
@@ -1156,18 +1156,16 @@
   heading.append(helpButton(id,helpTopics.get(id).title));
  }
  // Replace the long explanation panel with a searchable, grouped catalogue.
- reasons.replaceChildren(el('h2','解説ヘルプ'),el('p','各機能の「本＋解説」と同じ説明をまとめています。カテゴリを開くか、言葉で検索してください。','notice'));
- const searchLabel=el('label','解説を探す');searchLabel.htmlFor='contextHelpSearch';const helpSearch=el('input');helpSearch.id='contextHelpSearch';helpSearch.className='field';helpSearch.type='search';helpSearch.placeholder='場所・備蓄・使い方で検索';
- const helpList=el('div'),helpEmpty=el('p','該当する解説がありません。別の言葉で探してください。','notice');helpEmpty.hidden=true;reasons.append(searchLabel,helpSearch,helpList,helpEmpty);
- const categoryLabel=el('label','カテゴリで探す');categoryLabel.htmlFor='contextHelpCategory';const helpCategory=el('select');helpCategory.id='contextHelpCategory';helpCategory.className='field';
- const allCategories=el('option','すべてのカテゴリ');allCategories.value='';helpCategory.append(allCategories);for(const name of helpGroups){const option=el('option',name);option.value=name;helpCategory.append(option)}
- const helpCount=el('p',undefined,'notice');helpCount.id='contextHelpCount';helpCount.setAttribute('role','status');reasons.insertBefore(categoryLabel,searchLabel);reasons.insertBefore(helpCategory,searchLabel);reasons.insertBefore(helpCount,helpList);
- function renderHelpIndex(){const query=helpSearch.value.trim().toLocaleLowerCase('ja-JP'),selected=helpCategory.value;helpList.replaceChildren();let count=0;
-  for(const category of helpGroups){if(selected&&selected!==category)continue;const topics=[...helpTopics.values()].filter(t=>t.category===category&&(!query||(t.title+' '+t.body().textContent).toLocaleLowerCase('ja-JP').includes(query)));if(!topics.length)continue;
-   const section=el('details',undefined,'help-index-group');section.dataset.category=category;section.open=!!(query||selected);section.append(el('summary',category+'（'+topics.length+'件）'));for(const topic of topics){const button=action(topic.title+'  ›',()=>showContextHelp(topic.id,button));button.className='help-index-entry';button.dataset.helpTopic=topic.id;section.append(button);count++}helpList.append(section);
-  }helpEmpty.hidden=count!==0;helpCount.textContent=query||selected?'該当する解説 '+count+'件':'解説 '+count+'件 ／ '+helpGroups.length+'カテゴリ';
+ reasons.replaceChildren(el('h2','解説ヘルプ'),el('p','各機能の「本＋解説」と同じ説明をまとめています。カテゴリを開いて解説を選んでください。','notice'));
+ const helpCount=el('p',undefined,'notice');helpCount.id='contextHelpCount';const helpList=el('div');reasons.append(helpCount,helpList);
+ function renderHelpIndex(){
+  const opened=new Set([...helpList.querySelectorAll('.help-index-group[open]')].map(node=>node.dataset.category));helpList.replaceChildren();let count=0;
+  for(const category of helpGroups){const topics=[...helpTopics.values()].filter(topic=>topic.category===category);if(!topics.length)continue;
+   const section=el('details',undefined,'help-index-group');section.dataset.category=category;section.open=opened.has(category);section.append(el('summary',category+'（'+topics.length+'件）'));
+   for(const topic of topics){const button=action(topic.title+'  ›',()=>showContextHelp(topic.id,button));button.className='help-index-entry';button.dataset.helpTopic=topic.id;section.append(button);count++}helpList.append(section);
+  }helpCount.textContent='解説 '+count+'件 ／ '+helpGroups.length+'カテゴリ';
  }
- helpSearch.addEventListener('input',renderHelpIndex);helpCategory.addEventListener('change',renderHelpIndex);renderHelpIndex();
+ renderHelpIndex();
  document.querySelectorAll('.reason-entry').forEach(n=>n.remove());calculatorReason.remove();bosReason.remove();
  attachHelp($('tidy').querySelector('.refresh-title-row h2')||$('tidy').querySelector('h2'),'tidy');
  attachHelp($('stock').querySelector('h2'),'stock');attachHelp($('stockCalculator').querySelector('h2'),'calculator');attachHelp($('supplyInventoryCard').querySelector('h2'),'inventory');
@@ -1204,8 +1202,8 @@
   }
   const {mode,variants}=sceneChoice;homeScene.dataset.treePose=mode;
   friends.forEach(({art},index)=>{
-   art.hidden=index>=stage;art.classList.remove('preparedness-pose');art.style.removeProperty('left');art.style.removeProperty('right');art.style.removeProperty('top');
-   const variant=variants[index],cells=[[0,0,1],[11,2,3],[2,4,5]];
+   art.hidden=index>=stage;art.classList.remove('preparedness-pose');art.style.removeProperty('left');art.style.removeProperty('right');art.style.removeProperty('top');art.style.removeProperty('transform');art.style.removeProperty('bottom');
+   const variant=variants[index];art.dataset.variant=String(variant);const cells=[[0,0,1],[11,2,3],[2,4,5]];
    if(variant||index===1){art.classList.add('preparedness-pose');selectIllustration(art,cells[index][variant])}else selectIllustration(art,index);
   });
   sceneGroup.hidden=mode==='solo';sceneGroup.dataset.pose=mode;
@@ -1213,6 +1211,11 @@
    selectIllustration(sceneGroup,{ride:6,lift:7,sleep:8,drink:9,exercise:10}[mode]);
    const third={ride:2,lift:1,sleep:0}[mode];
    friends.forEach(({art},index)=>{art.hidden=index!==third;if(index===third){art.style.top='auto';art.style.left=mode==='lift'?'0':'auto';art.style.right=mode==='lift'?'auto':'0'}});
+  }
+  const watering=stage>0&&variants[0]===0&&(mode==='solo'||mode==='sleep'),tako=friends[0].art;
+  tako.dataset.watering=String(watering);
+  if(watering){
+   const fromRight=mode==='sleep';tako.style.left=fromRight?'auto':'calc(50% - 74px)';tako.style.right=fromRight?'calc(50% - 74px)':'auto';tako.style.transform=fromRight?'scaleX(-1)':'none';tako.style.bottom='26px';
   }
   treeArt.dataset.characters=friends.slice(0,stage).map(f=>f.art.dataset.friend).join(',');
   treeArt.setAttribute('aria-label',[['種','芽','若木','大きな木'][stage],stage?poseNames[mode]:'',...friends.slice(0,stage).map(f=>f.art.dataset.friend)].filter(Boolean).join('、'));
