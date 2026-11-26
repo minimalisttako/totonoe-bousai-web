@@ -300,12 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v259\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v260\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
- updates.append(element('h3','v259　2026年11月26日'),element('p','機能検索の重複した見出しを削除し、各ページの同じ枠内で繰り返される解説ボタンを1つにまとめました。'));
+ updates.append(element('h3','v260　2026年11月26日'),element('p','防災の木の水分補給とラジオ体操を、前足を修正した高解像度のトリオイラストに差し替えました。'));
  updates.append(element('h3','v249　2026年11月25日'),element('p','食品・飲料水は期限未入力でも必要量と比較し、ホームから期限の入力をご案内します。'));
  updates.append(element('h3','v248　2026年11月25日'),element('p','備蓄の編集欄が細くなり、文字や数字が読みにくくなる表示を修正しました。'));
  updates.append(element('h3','v247　2026年11月25日'),element('p','トロフィーとバッジをタップすると、獲得日と関連ページへの案内が開きます。'));
@@ -874,7 +874,7 @@
  #homePreparednessTree .preparedness-pose{background-image:url('./assets/home-mascot-poses-v251.webp');background-size:400% 300%;background-repeat:no-repeat}
  #homePreparednessTree .preparedness-group{position:absolute;width:148px;aspect-ratio:1;bottom:0;left:0}
  #homePreparednessTree .preparedness-group[data-pose=lift]{left:auto;right:0;width:132px}
- #homePreparednessTree .preparedness-group[data-pose=drink],#homePreparednessTree .preparedness-group[data-pose=exercise]{width:230px;bottom:-49px;left:50%;transform:translateX(-50%)}
+ #homePreparednessTree .preparedness-group[data-pose=drink],#homePreparednessTree .preparedness-group[data-pose=exercise]{width:230px;aspect-ratio:2;background-image:url('./assets/home-trio-v260.webp');background-size:100% 200%;bottom:0;left:50%;transform:translateX(-50%)}
  #home .game-mascot-scene:not([data-tree-pose=solo]) .preparedness-tree-friend[data-friend=shimaenaga]{bottom:16px}
  #homePreparednessTree .preparedness-tree-copy{display:flex;align-items:center;justify-content:space-between;gap:6px}
  #homePreparednessTree h3{margin:0;font-size:16px;white-space:nowrap;color:#2b543b}
@@ -891,7 +891,7 @@
  #homePreparednessTree>.refresh-speech span{font-size:13px!important;color:#294737;line-height:1.5}
  #homePreparednessTree>.refresh-speech strong{font-size:12px!important;color:#356148}
  body[data-speech-mode=hidden] #homePreparednessTree>.refresh-speech{display:none!important}
- @media(max-width:350px){#homePreparednessTree .preparedness-tree-art{height:160px}#homePreparednessTree .preparedness-plant{width:180px}#homePreparednessTree .preparedness-tree-friend{width:66px}#homePreparednessTree .preparedness-tree-friend[data-friend=tricera]{width:76px}#homePreparednessTree .preparedness-tree-friend[data-friend=shimaenaga]{width:54px}#homePreparednessTree .preparedness-group{width:132px}#homePreparednessTree .preparedness-group[data-pose=lift]{width:120px}#homePreparednessTree .preparedness-group[data-pose=drink],#homePreparednessTree .preparedness-group[data-pose=exercise]{width:210px;bottom:-46px}#homePreparednessTree h3{font-size:15px}#homePreparednessTree #preparednessTreeStage{font-size:11px}#homePreparednessTree .preparedness-count{font-size:10px}}
+ @media(max-width:350px){#homePreparednessTree .preparedness-tree-art{height:160px}#homePreparednessTree .preparedness-plant{width:180px}#homePreparednessTree .preparedness-tree-friend{width:66px}#homePreparednessTree .preparedness-tree-friend[data-friend=tricera]{width:76px}#homePreparednessTree .preparedness-tree-friend[data-friend=shimaenaga]{width:54px}#homePreparednessTree .preparedness-group{width:132px}#homePreparednessTree .preparedness-group[data-pose=lift]{width:120px}#homePreparednessTree .preparedness-group[data-pose=drink],#homePreparednessTree .preparedness-group[data-pose=exercise]{width:210px;bottom:0}#homePreparednessTree h3{font-size:15px}#homePreparednessTree #preparednessTreeStage{font-size:11px}#homePreparednessTree .preparedness-count{font-size:10px}}
 
  #achievementBadges .preparedness-tree{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid #bdd5b9;border-radius:14px;background:linear-gradient(145deg,#f6fbf0,#e8f4e6)}
  #achievementBadges .preparedness-tree h3,#achievementBadges .preparedness-tree p{margin:0}
@@ -1218,7 +1218,8 @@
   });
   sceneGroup.hidden=mode==='solo';sceneGroup.dataset.pose=mode;
   if(mode!=='solo'){
-   selectIllustration(sceneGroup,{ride:6,lift:7,sleep:8,drink:9,exercise:10}[mode]);
+   if(mode==='drink'||mode==='exercise')sceneGroup.style.backgroundPosition=mode==='drink'?'center top':'center bottom';
+   else selectIllustration(sceneGroup,{ride:6,lift:7,sleep:8}[mode]);
    const third={ride:2,lift:1,sleep:0}[mode];
    friends.forEach(({art},index)=>{art.hidden=index!==third;if(index===third){art.style.top='auto';art.style.left=mode==='lift'?'0':'auto';art.style.right=mode==='lift'?'auto':'0'}});
   }
