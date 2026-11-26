@@ -300,12 +300,12 @@
  const contact=element('p','送信先：totonoe.bousai.support@gmail.com','notice');
  feedbackDialog.append(feedbackTitle,feedbackContext,feedbackLabel,email,feedbackCopy,feedbackFallback,contact,feedbackStatus,button('閉じる',()=>feedbackDialog.close()));document.body.append(feedbackDialog);
  let feedbackPage='home';
- function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v257\n\n'+feedbackText.value}
+ function feedbackBody() {return 'ととのえ防災 ご意見・不具合\nページ：'+pageTitle(feedbackPage)+'\nバージョン：v258\n\n'+feedbackText.value}
  function updateFeedbackLink(){email.href='mailto:totonoe.bousai.support@gmail.com?subject='+encodeURIComponent('ととのえ防災 ご意見・不具合（'+pageTitle(feedbackPage)+'）')+'&body='+encodeURIComponent(feedbackBody())}
  feedbackText.addEventListener('input',updateFeedbackLink);
  function openFeedback(){feedbackPage=activePage;feedbackContext.textContent='対象ページ：'+pageTitle(feedbackPage)+'。備蓄・住所・写真などの記録は自動添付しません。';feedbackStatus.textContent='';feedbackFallback.hidden=true;updateFeedbackLink();feedbackDialog.showModal()}
  const updates=element('details',undefined,'card experience-card');updates.id='appUpdateNews';updates.append(element('summary','更新のお知らせ'));
- updates.append(element('h3','v257　2026年11月26日'),element('p','解説ヘルプの検索欄と備蓄登録の重複見出しを削除し、たこが木の根元に水をかける向き・位置へ調整しました。'));
+ updates.append(element('h3','v258　2026年11月26日'),element('p','学ぶの動画2分類と解説ヘルプを折りたたみにし、トリオイラストはトロフィー8/8達成時だけ抽選するようにしました。'));
  updates.append(element('h3','v249　2026年11月25日'),element('p','食品・飲料水は期限未入力でも必要量と比較し、ホームから期限の入力をご案内します。'));
  updates.append(element('h3','v248　2026年11月25日'),element('p','備蓄の編集欄が細くなり、文字や数字が読みにくくなる表示を修正しました。'));
  updates.append(element('h3','v247　2026年11月25日'),element('p','トロフィーとバッジをタップすると、獲得日と関連ページへの案内が開きます。'));
@@ -969,7 +969,7 @@
  const examVideo=$('examStudy').querySelector('a[href*="youtu"]');if(examVideo)video($('learn'),'防災士試験の例題・音声を動画で学ぶ',examVideo.href);
 
 
- const reasons=el('section',undefined,'card beginner-reasons');reasons.id='preparednessReasons';
+ const reasons=el('details',undefined,'card beginner-reasons learn-compact-fold');reasons.id='preparednessReasons';
  reasons.innerHTML=`<h2>片付けと備蓄が必要な理由</h2>
  <p class="notice">理由が分かると、最初の一歩を選びやすくなります。このページだけで読めます。</p>
  <div class="reason-index" role="navigation" aria-label="理由の目次"><a href="#reasonTidy">片付ける目的</a><a href="#reasonPlaces">場所ごとの危険</a><a href="#reasonToilet">非常用トイレ</a><a href="#reasonBos">BOSを選ぶ理由</a></div>
@@ -993,6 +993,15 @@
  const bosReason=el('p');bosReason.append(action('BOSを選ぶ理由・選ぶときの注意点',()=>openPreparednessReasons('reasonBos')));$('supplyRecommendations').querySelector('.affiliate-product').prepend(bosReason);
  const reasonStyle=el('style');reasonStyle.textContent=`.beginner-reasons>section,.beginner-reasons>details{border-top:1px solid #d9e6df;padding-top:12px;margin-top:16px}.beginner-reasons h3{font-size:18px}.beginner-reasons h4{margin-bottom:4px}.beginner-reasons p{font-size:14px;line-height:1.75}.beginner-reasons summary,.tidy-reason summary{cursor:pointer;font-weight:700;min-height:44px;padding:10px 0;line-height:1.5}.reason-index{display:flex;flex-wrap:wrap;gap:6px 14px}.reason-index a{font-size:14px;min-height:44px;display:inline-flex;align-items:center}.reason-author{font-size:12px!important;color:#5b6655}.reason-places>section{padding:8px 0;border-bottom:1px solid #e3ebe4}.reason-sources a{display:inline-block;min-height:44px;padding:8px 0}.reason-entry{margin:8px 0 14px}.tidy-reason{background:#f0f6ed;border-radius:10px;padding:9px 12px;margin:0 0 12px}.tidy-reason>p{font-size:14px;margin:0}.tidy-reason details p{font-size:14px;margin:4px 0 10px}.tidy-reason button{font-size:13px}.beginner-reasons [data-reason-action]{display:flex;flex-wrap:wrap;gap:8px}.beginner-reasons{scroll-margin-top:100px}.beginner-reasons section{scroll-margin-top:100px}`;document.head.append(reasonStyle);
 
+ // Keep the two video groups independently collapsed without changing their locks or links.
+ function foldLearnVideos(title,id){
+  const heading=[...$('learn').querySelectorAll('h3')].find(node=>node.textContent.trim()===title);if(!heading)return;
+  const fold=el('details',undefined,'learn-compact-fold');fold.id=id;const summary=el('summary');summary.className=heading.className;summary.append(...heading.childNodes);
+  const body=el('div',undefined,'learn-fold-body');let next=heading.nextElementSibling;heading.before(fold);heading.remove();fold.append(summary,body);
+  while(next&&next.matches('.author-video-entry')){const current=next;next=next.nextElementSibling;body.append(current)}
+ }
+ foldLearnVideos('自宅で過ごす備え','learnHomePreparedness');foldLearnVideos('自宅を離れるときの備え','learnAwayPreparedness');
+ const learnFoldStyle=el('style');learnFoldStyle.textContent=`#learn .learn-compact-fold{margin:10px 0;border:1px solid #cbdcd2;border-radius:14px;padding:0!important;background:#fff}#learn .learn-compact-fold>summary{display:flex;align-items:center;gap:8px;padding:10px 12px;min-height:52px;cursor:pointer;list-style:none;font-size:16px;font-weight:700;color:#254f3d}#learn .learn-compact-fold>summary::-webkit-details-marker{display:none}#learn .learn-compact-fold>summary::before{content:'▸';flex:none;display:inline-block;width:12px;color:#42745d}#learn .learn-compact-fold[open]>summary::before{transform:rotate(90deg)}#learn .learn-compact-fold>.learn-fold-body{padding:0 12px 12px}#learn #preparednessReasons>p,#learn #preparednessReasons>div{margin:10px 12px}#learn .learn-compact-fold>summary .chibi-icon{flex:none;width:30px;height:30px}#learn .learn-compact-fold>summary:focus-visible{outline:3px solid #317cbd;outline-offset:2px}`;document.head.append(learnFoldStyle);
  // A single help catalogue powers both contextual question marks and Learn.
  const helpTopics=new Map(),helpGroups=['片付けの理由','場所ごとの片付け','備蓄の理由','機能の使い方'];
  const originalSections={tidy:reasons.querySelector('#reasonTidy'),toilet:reasons.querySelector('#reasonToilet'),bos:reasons.querySelector('#reasonBos')};
@@ -1015,7 +1024,7 @@
  addHelp('inventory','備蓄の登録・数量・期限','機能の使い方',['家にある備蓄を登録し、数量・期限・置き場所を確認する機能です。使ったら数量を減らし、不足した分を補充します。','食品と飲用水は期限が未入力でも数量に数えます。ただし期限の点検はできないため、分かるものから登録しましょう。分類や食数が未設定だと必要量の計算に反映できない場合があります。']);
  addHelp('calculator','わが家の備蓄目安の計算','機能の使い方',['人数・備える日数・トイレの使用回数を入力して、家庭の備蓄目安を確認します。トイレの回数は、家族の実際の使い方に合わせます。','目安と登録済みの備蓄を比べて不足を確認します。一般的な目安が全員に合うとは限らないので、家族の事情に合わせて考えましょう。']);
  addHelp('safety','住まいの安全点検','機能の使い方',['寝る場所、出口までの通り道、家具などを自己確認する機能です。未確認はまだ調べていない、要対策は直すことがある、対策済みは実際に確認・対処した、該当なしは自宅にはその項目がないという意味です。','備蓄管理の前に、優先する安全項目を確認します。チェックを終えるだけで災害時の安全が保証されるわけではありません。']);
- addHelp('tree','防災の木・トロフィー・バッジ','機能の使い方',['トロフィーの獲得が進むと、種・芽・若木・大きな木へ成長します。1個で芽、3個で若木、6個で大きな木になります。大きな木では仲間のペアやトリオもランダムに登場します。','トロフィーと片付け・備蓄のバッジは「その他」で確認できます。安全性の点数ではなく、取り組んだ記録です。']);
+ addHelp('tree','防災の木・トロフィー・バッジ','機能の使い方',['トロフィーの獲得が進むと、種・芽・若木・大きな木へ成長します。1個で芽、3個で若木、6個で大きな木になります。大きな木ではペア＋1匹の構図が登場し、8/8達成後にトリオ2種類も抽選に加わります。','トロフィーと片付け・備蓄のバッジは「その他」で確認できます。安全性の点数ではなく、取り組んだ記録です。']);
  const beginnerHelpCategories=['はじめに・毎日の使い方','片付け・掃除','備蓄・持ち出し','住まいの安全・避難','家族・暮らし','学ぶ・訓練','天気・地域','記録・共有','設定・データ保護'];
  const categoryAliases={'片付けの理由':'片付け・掃除','場所ごとの片付け':'片付け・掃除','備蓄の理由':'備蓄・持ち出し','機能の使い方':'はじめに・毎日の使い方'};
  for(const topic of helpTopics.values())topic.category=categoryAliases[topic.category]||topic.category;
@@ -1156,7 +1165,7 @@
   heading.append(helpButton(id,helpTopics.get(id).title));
  }
  // Replace the long explanation panel with a searchable, grouped catalogue.
- reasons.replaceChildren(el('h2','解説ヘルプ'),el('p','各機能の「本＋解説」と同じ説明をまとめています。カテゴリを開いて解説を選んでください。','notice'));
+ reasons.replaceChildren(el('summary','解説ヘルプ'),el('p','各機能の「本＋解説」と同じ説明をまとめています。カテゴリを開いて解説を選んでください。','notice'));
  const helpCount=el('p',undefined,'notice');helpCount.id='contextHelpCount';const helpList=el('div');reasons.append(helpCount,helpList);
  function renderHelpIndex(){
   const opened=new Set([...helpList.querySelectorAll('.help-index-group[open]')].map(node=>node.dataset.category));helpList.replaceChildren();let count=0;
@@ -1195,10 +1204,10 @@
  treeArt.append(plant,...friends.map(friend=>friend.art),sceneGroup);
  let sceneChoice=null;
  const poseNames={solo:'仲間たち',ride:'たこがトリケラさんに乗り、シマエナガさんも一緒',lift:'シマエナガさんがたこの帽子をつかんで飛び、トリケラさんも一緒',sleep:'トリケラさんの背中で眠るシマエナガさんとたこ',drink:'みんなでペットボトルの水を飲む',exercise:'みんなでラジオ体操'};
- function renderTreeScene(stage,reroll){
-  if(!sceneChoice||reroll||sceneChoice.stage!==stage){
-   const modes=stage===3?['solo','ride','lift','sleep','drink','exercise']:['solo'];
-   sceneChoice={stage,mode:modes[Math.floor(Math.random()*modes.length)],variants:friends.map(()=>Math.floor(Math.random()*3))};
+ function renderTreeScene(stage,reroll,allTrophies=false){
+  if(!sceneChoice||reroll||sceneChoice.stage!==stage||sceneChoice.allTrophies!==allTrophies){
+   const modes=stage===3?(allTrophies?['solo','ride','lift','sleep','drink','exercise']:['solo','ride','lift','sleep']):['solo'];
+   sceneChoice={stage,allTrophies,mode:modes[Math.floor(Math.random()*modes.length)],variants:friends.map(()=>Math.floor(Math.random()*3))};
   }
   const {mode,variants}=sceneChoice;homeScene.dataset.treePose=mode;
   friends.forEach(({art},index)=>{
@@ -1373,7 +1382,7 @@
   homeScene.setAttribute('aria-label','成長する防災の木');
   if(stageChanged)document.dispatchEvent(new Event('toto-tree-stage-changed'));
   selectIllustration(plant,stage);
-  renderTreeScene(stage,false);
+  renderTreeScene(stage,false,earned.size>=trophyRules.length);
   treeName.textContent=stageName;
   treeCount.textContent='トロフィー '+earned.size+'/'+trophyRules.length;
   const openItems=new Set([...collectionContent.querySelectorAll('.achievement-item[open]')].map(item=>item.dataset.achievement));
@@ -1531,7 +1540,7 @@
  };
  const helpHeadingRules={
   home:[[/ハザード/,'hazard'],[/優先|やること|おすすめ/,'priorities'],[/天気|気温/,'weather'],[/警報|注意報/,'warnings'],[/お知らせ|期限|点検/,'reminders'],[/できたこと|防災の木/,'tree']],
-  learn:[[/試験|無料学習/,'exam'],[/4ステップ/,'tidyChecklist'],[/3ステップ/,'stock'],[/動画|夏と冬|在宅|離れる/,'videos']],
+  learn:[[/試験|無料学習/,'exam'],[/4ステップ/,'tidyChecklist'],[/3ステップ/,'stock'],[/動画|夏と冬|在宅|離れる|自宅で過ごす/,'videos']],
   minimalistGuide:[[/理想|暮らし|ミニマリスト/,'minimalism'],[/整理|選ぶ|手放/,'sorting'],[/整頓|収納/,'organizing'],[/掃除/,'clean']],
   supplies:[[/BOS/,'bos'],[/無印|Anker|おすすめ/,'recommendations'],[/補充|買い物/,'shopping'],[/使う・買い足す|先に使う/,'useStock'],[/アプリ全体|機種変更/,'backup'],[/レビュー.*バックアップ/,'backupTypes'],[/バックアップ|コピー・貼り付け/,'backupTypes'],[/復元/,'restore'],[/食料の内容量/,'foodServings'],[/備蓄目安|人数と日数/,'calculator'],[/飲料水の内訳/,'waterCapacity'],[/持ち出し/,'goBag'],[/備蓄を登録|品を登録/,'supplyAdd'],[/検索・絞り込み/,'filters'],[/保管場所・点検/,'stockInspection'],[/必要なもの/,'stock']],
   tidy:[[/写真|Before|After/,'tidyPhotos'],[/メモ|作業|困りごと/,'tidyNotes'],[/新しい|場所を追加/,'tidyAdd'],[/文章|書き出す/,'tidyExport'],[/検索|絞り込み/,'filters'],[/動画|実例/,'videos'],[/削除/,'deleteRestore']],
@@ -1602,6 +1611,7 @@
  const targets={reasons:'preparednessReasons',today:'todayAchievements',checklist:'tidyPlaceChecklist',family:'moreFamilyGroup',settings:'moreSettingsGroup',author:'moreAuthorGroup',achievements:'achievementBadges'};
  if(targets[focus])requestAnimationFrame(()=>{
   const target=$(targets[focus]);
+  for(let node=target;node;node=node.parentElement)if(node.tagName==='DETAILS')node.open=true;
   target.style.scrollMarginTop=(document.querySelector('header').offsetHeight+12)+'px';
   target.scrollIntoView({block:'start'});
  });
