@@ -1180,7 +1180,10 @@ main{padding-bottom:calc(160px + env(safe-area-inset-bottom))}
 .page-feedback-footer #pageFeedback .chibi-icon{--chibi-size:22px}
 </style>
 <style id="home-tree-only-v265">
-/* Legacy home figures remain clone sources for other pages, but must never paint on Home. */
+/* Legacy home artwork must not paint before the tree loads. Figures remain clone sources elsewhere. */
+#home .game-mascot-scene{background:transparent!important}
+#home .game-mascot-scene::before,
+#home .game-mascot-scene::after{display:none!important}
 #home .game-mascot-scene > .character-art,
 #home .game-mascot-scene > .anime-approved-home-image{display:none!important}
 </style>

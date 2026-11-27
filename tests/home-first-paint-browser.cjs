@@ -28,6 +28,7 @@ module.exports=async(browser,base)=>{
    assert.equal(await page.locator('#home .game-mascot-scene>.character-art:visible').count(),0);
    assert.equal(await page.locator('#home .anime-approved-home-image:visible').count(),0);
    assert.equal(await page.locator('#homePreparednessTree').count(),0);
+   assert.deepEqual(await page.locator('#home .game-mascot-scene').evaluate(n=>[getComputedStyle(n).backgroundImage,getComputedStyle(n,'::before').display,getComputedStyle(n,'::after').display]),['none','none','none']);
   }
   release();await navigation;await page.locator('#homePreparednessTree').waitFor();
   assert.equal(await page.locator('#home .game-mascot-scene>.character-art:visible').count(),0);
@@ -45,6 +46,7 @@ module.exports=async(browser,base)=>{
   const page=await failed.newPage();await page.goto(base);
   assert.equal(await page.locator('#home .game-mascot-scene>.character-art:visible').count(),0);
   assert.equal(await page.locator('#home .anime-approved-home-image:visible').count(),0);
+  assert.deepEqual(await page.locator('#home .game-mascot-scene').evaluate(n=>[getComputedStyle(n).backgroundImage,getComputedStyle(n,'::before').display,getComputedStyle(n,'::after').display]),['none','none','none']);
  }finally{await failed.close()}
  console.log('PASS: legacy home art never paints during delayed/failed tree loading at 320/390px; tree and other-page characters remain visible');
 };
