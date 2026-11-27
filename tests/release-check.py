@@ -59,3 +59,5 @@ for test in ['wrap-up.cjs','home-scene.cjs','home-temperature.cjs','tutorial.cjs
     subprocess.run(['node',str(root/'tests'/test),str(root/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/experience.cjs')],check=True)
 print(f'PASS: {len(ids)} element IDs, {len(page.handlers)} handlers, labels, routes and matching offline versions')
+
+subprocess.run([sys.executable,str(root/'tests/native-ci-check.py')],check=True)
