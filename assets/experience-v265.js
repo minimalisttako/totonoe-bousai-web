@@ -1207,7 +1207,7 @@
  const poseNames={solo:'仲間たち',ride:'たこがトリケラさんに乗り、シマエナガさんも一緒',lift:'シマエナガさんがたこの帽子をつかんで飛び、トリケラさんも一緒',sleep:'トリケラさんの背中で眠るシマエナガさんとたこ',drink:'みんなでペットボトルの水を飲む',exercise:'みんなでラジオ体操'};
  function renderTreeScene(stage,reroll,allTrophies=false){
   if(!sceneChoice||reroll||sceneChoice.stage!==stage||sceneChoice.allTrophies!==allTrophies){
-   const modes=stage===3?(allTrophies?['solo','ride','lift','sleep','drink','exercise']:['solo','ride','lift','sleep']):['solo'];
+   const modes=stage===3&&allTrophies?['solo','ride','lift','sleep','drink','exercise']:['solo'];
    sceneChoice={stage,allTrophies,mode:modes[Math.floor(Math.random()*modes.length)],variants:friends.map(()=>Math.floor(Math.random()*3))};
   }
   const {mode,variants}=sceneChoice;homeScene.dataset.treePose=mode;
