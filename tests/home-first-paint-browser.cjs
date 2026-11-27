@@ -1,4 +1,8 @@
 const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
+const scripts=[...fs.readFileSync(path.join(__dirname,'../index.html'),'utf8').matchAll(/<script src="\.\/assets\/((?:experience|stories)-v\d+\.js)"/g)].map(match=>match[1]);
+const experience=scripts.find(name=>name.startsWith('experience-'));
+assert(experience&&scripts.length===2,'Expected versioned home scripts');
 module.exports=async(browser,base)=>{
  const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
  await context.addInitScript(()=>{
@@ -11,7 +15,7 @@ module.exports=async(browser,base)=>{
  const gate=new Promise(resolve=>release=resolve),requestStarted=new Promise(resolve=>started=resolve);
  await context.route('**/*',async route=>{
   const url=route.request().url();
-  if(url.endsWith('/assets/experience-v265.js')){started();await gate;return route.continue()}
+  if(new URL(url).pathname.endsWith('/assets/'+experience)){started();await gate;return route.continue()}
   return url.startsWith(base)?route.continue():route.abort();
  });
  const page=await context.newPage();
@@ -34,7 +38,7 @@ module.exports=async(browser,base)=>{
  const failed=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
  await failed.route('**/*',route=>{
   const url=route.request().url();
-  if(/\/(experience|stories)-v265\.js$/.test(url))return route.abort();
+  if(scripts.some(name=>new URL(url).pathname.endsWith('/assets/'+name)))return route.abort();
   return url.startsWith(base)?route.continue():route.abort();
  });
  try{
