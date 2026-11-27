@@ -14,7 +14,7 @@ c.document.createElement = tag => ({
 for(const id of ['tutorialMain','tutorialSupport','tutorialDetail'])Object.assign(el(id),c.document.createElement('p'));
 vm.runInContext(extract('renderMascotLine'),c);
 const start=source.indexOf("const tutorialKey="),end=source.indexOf('const moreGroupKey=',start);
-for(const name of ['readTutorialState','saveTutorialState','tutorialNeedsGate','renderTutorial','openTutorial','moveTutorial','closeTutorial','pauseTutorial','finishTutorial','openTutorialEmergency'])vm.runInContext(extract(name),c);
+for(const name of ['readTutorialState','saveTutorialState','tutorialNeedsGate','renderTutorial','openTutorial','moveTutorial','closeTutorial','pauseTutorial','finishTutorialReplay','finishTutorial','openTutorialEmergency'])vm.runInContext(extract(name),c);
 vm.runInContext(source.slice(start,end)+"let activePage='more'",c);
 assert.equal(c.tutorialNeedsGate('supplies'),true);assert.equal(c.tutorialNeedsGate('emergency'),false);
 c.openTutorial();assert(el('tutorialDialog').open);

@@ -4,7 +4,7 @@
 const episodes=[{"id":0,"title":"防災とお片付けのアプリ","image":"./assets/comic-v261-00.webp"},{"id":1,"title":"ハザードマップの確認","image":"./assets/comic-v261-01.webp"},{"id":2,"title":"通れない玄関","image":"./assets/comic-v261-02.webp"},{"id":3,"title":"ライトはどこ？","image":"./assets/comic-v261-03.webp"},{"id":4,"title":"ごはんはあるけど…","image":"./assets/comic-v261-04.webp"},{"id":5,"title":"ここで寝ていて大丈夫？","image":"./assets/comic-v261-05.webp"},{"id":6,"title":"この家具、動かない？","image":"./assets/comic-v261-06.webp"},{"id":7,"title":"見たつもり、だったかも","image":"./assets/comic-v261-07.webp"},{"id":8,"title":"まずは、ここだけ！","image":"./assets/comic-v261-08.webp"},{"id":9,"title":"片付いた場所が増えた！","image":"./assets/comic-v261-09.webp"},{"id":10,"title":"掃除の前に、ひと仕事？","image":"./assets/comic-v261-10.webp"},{"id":11,"title":"家に何があるんだっけ？","image":"./assets/comic-v261-11.webp"},{"id":12,"title":"これで足りるの？","image":"./assets/comic-v261-12.webp"},{"id":13,"title":"数えてみたら、意外な結果","image":"./assets/comic-v261-13.webp"},{"id":14,"title":"あれ？ この日付は…？","image":"./assets/comic-v261-14.webp"},{"id":15,"title":"食べたら、なくなった！","image":"./assets/comic-v261-15.webp"},{"id":16,"title":"リュック、持ち上がらない！","image":"./assets/comic-v261-16.webp"},{"id":17,"title":"みんな同じでいいの？","image":"./assets/comic-v261-17.webp"},{"id":18,"title":"決めただけで、できるかな？","image":"./assets/comic-v261-18.webp"},{"id":19,"title":"防災の木と、これからの暮らし","image":"./assets/comic-v261-19.webp"},{"id":20,"title":"お出かけ中だったら？","image":"./assets/comic-v261-20.webp"},{"id":21,"title":"この天気、どう見ればいい？","image":"./assets/comic-v261-21.webp"},{"id":22,"title":"電気と水が止まったら？","image":"./assets/comic-v261-22.webp"},{"id":23,"title":"夏の備えのまま、冬が来た","image":"./assets/comic-v261-23.webp"},{"id":24,"title":"引っ越したら、備えもお引っ越し","image":"./assets/comic-v261-24.webp"},{"id":25,"title":"何から見直せばいい？","image":"./assets/comic-v261-25.webp"},{"id":26,"title":"全然進んでない…と思ったら","image":"./assets/comic-v261-26.webp"},{"id":27,"title":"この道具、どう選ぶ？","image":"./assets/comic-v261-27.webp"},{"id":28,"title":"知っているつもりだった！","image":"./assets/comic-v261-28.webp"},{"id":29,"title":"防災を、もっと学びたい","image":"./assets/comic-v261-29.webp"},{"id":30,"title":"一緒にやってみよう！","image":"./assets/comic-v261-30.webp"},{"id":31,"title":"記録が消えたら困る！","image":"./assets/comic-v261-31.webp"},{"id":32,"title":"通信できない時、開ける？","image":"./assets/comic-v261-32.webp"},{"id":33,"title":"あの機能、どこだった？","image":"./assets/comic-v261-33.webp"},{"id":34,"title":"どんな暮らしにしたい？","image":"./assets/comic-v261-34.webp"},{"id":35,"title":"少なくすれば、いいのかな？","image":"./assets/comic-v261-35.webp"},{"id":36,"title":"たこのエクスカリバー理論","image":"./assets/comic-v261-36.webp"},{"id":37,"title":"「いつか使う」がいっぱい","image":"./assets/comic-v261-37.webp"},{"id":38,"title":"戻す場所がある暮らし","image":"./assets/comic-v261-38.webp"},{"id":39,"title":"わたしたちの、ととのう暮らし","image":"./assets/comic-v261-39.webp"}];
  const storageKey='toto-stories-v1';
  const empty=()=>({version:1,introductions:null,unlocked:[],read:[],introduced:[]});
- let damaged=false,pending=null,setupContinuation=null,setupRunning=false,current=null,returnFocus=null,loaded=false;
+ let damaged=false,pending=null,setupContinuation=null,setupRunning=false,current=null,returnFocus=null,returnFocusStory=null,loaded=false;
  let startupActive=false,startupWaiting=false,startupTarget='home';
  const node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n};
  const button=(text,fn)=>{const n=node('button',text);n.type='button';n.className='secondary';n.onclick=fn;return n};
@@ -67,22 +67,26 @@ const episodes=[{"id":0,"title":"防災とお片付けのアプリ","image":"./a
  const next=button('読み終えた・使ってみる',()=>finish(true));next.id='comicStoryContinue';next.className='primary';
  footer.append(emergency,next);dialog.append(bar,scroll,footer);document.body.append(dialog);
  dialog.addEventListener('cancel',e=>{e.preventDefault();finish(false)});
- dialog.addEventListener('close',()=>{if(returnFocus?.isConnected&&!document.querySelector('dialog[open]'))returnFocus.focus({preventScroll:true});returnFocus=null;schedule()});
+ dialog.addEventListener('close',()=>{
+  const target=returnFocus?.isConnected?returnFocus:returnFocusStory!==null?document.querySelector('#comicArchiveList [data-comic-read="'+returnFocusStory+'"]'):null;
+  if(target?.getClientRects().length&&!document.querySelector('dialog[open]'))target.focus({preventScroll:true});
+  returnFocus=null;returnFocusStory=null;schedule();
+ });
  function renderArchive(){
   state=read();toggle.checked=state.introductions===true;toggle.disabled=damaged;
   if(damaged)status.textContent='4コマの記録を読み込めませんでした。バックアップの復元をご確認ください。';
   count.textContent='読了 '+state.read.length+'話 ／ 全40話';list.replaceChildren();
   const ids=[...new Set([0,1,...state.unlocked])].sort((a,b)=>a-b);
-  for(const id of ids){const item=node('li'),ep=episodes[id];item.append(button('第'+id+'話　'+ep.title+'　'+(state.read.includes(id)?'✓ 読了':'未読'),()=>{if(unlock([id]))open(id,'archive')}));list.append(item)}
+  for(const id of ids){const item=node('li'),ep=episodes[id],readButton=button('第'+id+'話　'+ep.title+'　'+(state.read.includes(id)?'✓ 読了':'未読'),()=>{if(unlock([id]))open(id,'archive')});readButton.dataset.comicRead=String(id);item.append(readButton);list.append(item)}
  }
  toggle.onchange=()=>{const enabled=toggle.checked;if(save(s=>({...s,introductions:enabled}))) {pending=null;status.textContent=enabled?'4コマの導入をオンにしました。次に使う機能から表示します。':'4コマの導入をオフにしました。漫画はここで読めます。'}else toggle.checked=state.introductions===true};
  function open(id,mode='intro'){
   if(dialog.open||document.querySelector('dialog[open]')||activePage==='emergency')return false;
   if(!unlock([id]))return false;
-  current={id,mode};loaded=false;returnFocus=document.activeElement;
+  current={id,mode};loaded=false;returnFocus=document.activeElement;returnFocusStory=returnFocus?.closest('#comicArchiveList button')?id:null;
   title.textContent='第'+id+'話　'+episodes[id].title;
   image.hidden=false;choice.hidden=true;zoom.hidden=false;next.hidden=false;next.disabled=true;
-  next.textContent=mode==='onboarding'?'次へ':mode==='archive'?'読み終えた・一覧に戻る':'読み終えた・使ってみる';
+  next.textContent=mode==='startup'?'次へ':mode==='archive'?'読み終えた・一覧に戻る':'読み終えた・使ってみる';
   scroll.classList.remove('comic-zoom');zoom.textContent='拡大';zoom.setAttribute('aria-pressed','false');scroll.scrollTop=0;scroll.scrollLeft=0;
   image.alt='第'+id+'話「'+episodes[id].title+'」の4コマ漫画';
   loadStatus.textContent='漫画を読み込んでいます…';
@@ -117,14 +121,15 @@ const episodes=[{"id":0,"title":"防災とお片付けのアプリ","image":"./a
   if(startupWaiting){startupWaiting=false;runStartup(tutorialState.startup||'welcome');return}
   if(!pending)return;
   if(pending.page!==activePage){pending=null;return}
-  if(pending.mode!=='startup'&&(state.introductions!==true||state.introduced.includes(pending.id))){pending=null;return}
+  if(pending.mode!=='startup'&&(state.introductions!==true||alreadyPresented(pending.id))){pending=null;return}
   // Do not take focus from a partially entered form or from another modal.
   if(document.activeElement?.matches('input,textarea,select,[contenteditable=true]'))return;
   const request=pending;pending=null;open(request.id,request.mode);
  }
+ function alreadyPresented(id){return state.introduced.includes(id)||state.read.includes(id)}
  function request(id){
   if(activePage==='emergency'||!available(id)||!unlock([id]))return;
-  if(state.introductions===true&&!state.introduced.includes(id)&&!setupRunning){pending={id,page:activePage,mode:'intro'};schedule()}
+  if(state.introductions===true&&!alreadyPresented(id)&&!setupRunning){pending={id,page:activePage,mode:'intro'};schedule()}
  }
  function visit(page){
   if(page==='emergency'){pending=null;return}
@@ -132,7 +137,7 @@ const episodes=[{"id":0,"title":"防災とお片付けのアプリ","image":"./a
   const ids=(page==='minimalistGuide'&&!minimalistGuideIsUnlocked()?[]:pageEpisodes[page]||[]).filter(available);unlock(ids);
   if(hasTree()){
    unlock([19]);
-   if(!state.introduced.includes(19)&&['home','more','minimalistGuide'].includes(page)){request(19);return}
+   if(!alreadyPresented(19)&&['home','more','minimalistGuide'].includes(page)){request(19);return}
   }
   if(ids.length)request(ids[0]);
  }
@@ -170,7 +175,7 @@ const episodes=[{"id":0,"title":"防災とお片付けのアプリ","image":"./a
  function progress(){
   if(activePage==='emergency')return;
   renderArchive();
-  if(hasTree()){unlock([19]);if(['home','more','minimalistGuide'].includes(activePage)&&!state.introduced.includes(19))request(19)}
+  if(hasTree()){unlock([19]);if(['home','more','minimalistGuide'].includes(activePage)&&!alreadyPresented(19))request(19)}
   if(activePage==='tidy'&&readTidyPlaces().filter(x=>x.done).length>=3)request(9);
   if(activePage==='supplies'&&readSaved(key,[]).length>=5)request(13);
  }

@@ -40,8 +40,8 @@ print(f'PASS: offline startup diagnostics and support report show {offline_versi
 syntax=r"const fs=require('fs');const s=fs.readFileSync(0,'utf8');let count=0;for(const m of s.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)){new Function(m[1]);count++;}if(!count)throw Error('No inline scripts checked');console.log('PASS: JavaScript syntax ('+count+' scripts)');"
 subprocess.run(['node','-e',syntax],input=source,text=True,check=True)
 subprocess.run(['node','--check',str(root/'offline-worker.js')],check=True)
-subprocess.run(['node','--check',str(root/'assets/stories-v263.js')],check=True)
-stories=(root/'assets/stories-v263.js').read_text()
+subprocess.run(['node','--check',str(root/'assets/stories-v264.js')],check=True)
+stories=(root/'assets/stories-v264.js').read_text()
 episodes=json.loads(re.search(r'const episodes=(\[[^\n]+\]);',stories)[1])
 assert [ep['id'] for ep in episodes]==list(range(40)), 'Missing comic episodes'
 for ep in episodes:
@@ -49,10 +49,10 @@ for ep in episodes:
     data=image.read_bytes()
     assert data[:4]==b'RIFF' and data[8:12]==b'WEBP', 'Invalid comic image'
     assert ep['image'] in worker, 'Comic missing from offline cache'
-assert './assets/stories-v263.js' in worker, 'Comic module missing from offline cache'
+assert './assets/stories-v264.js' in worker, 'Comic module missing from offline cache'
 for file_list in re.findall(r'const (?:paths|urls|necessary)=(\[[^\n;]+\]);',source):
-    if './assets/experience-v263.js' not in file_list: continue
-    assert './assets/stories-v263.js' in file_list, 'Offline diagnostic omits comic viewer'
+    if './assets/experience-v264.js' not in file_list: continue
+    assert './assets/stories-v264.js' in file_list, 'Offline diagnostic omits comic viewer'
     assert all(ep['image'] in file_list for ep in episodes), 'Offline diagnostic omits comic pages'
 print('PASS: 40 comic pages and viewer are bundled and checked by all offline diagnostics')
 for test in ['wrap-up.cjs','home-scene.cjs','home-temperature.cjs','tutorial.cjs','backup-roundtrip-v79.cjs','supply-storage.cjs','supply-import.cjs','daily-behavior.cjs','replenishment.cjs','training.cjs','seasonal.cjs','feature-search.cjs','home-priorities.cjs','settings-hydration.cjs','weather-warnings.cjs','supply-measure-entry.cjs','backup-file-flow.cjs','supply-search.cjs','supply-dates.cjs','practice-review.cjs','practice-bank.cjs','readiness-links.cjs','emergency-checklist.cjs','tidy-milestones.cjs']:

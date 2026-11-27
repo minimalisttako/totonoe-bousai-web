@@ -23,6 +23,7 @@ async function run() {
  let browser;
  try {
   browser = await chromium.launch({ executablePath: process.env.TOTO_CHROMIUM_PATH || undefined });
+  await require('./review-flow-browser.cjs')(browser,base);
   await require('./stories-browser.cjs')(browser,base);
   const originalNewContext=browser.newContext.bind(browser);
   browser.newContext=async options=>{
